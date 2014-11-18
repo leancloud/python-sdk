@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from leancloud import rest
 from leancloud.fields import AnyField
 
 
@@ -16,15 +17,17 @@ class AVObjectMeta(type):
     def __new__(cls, name, bases, attrs):
         super_new = super(AVObjectMeta, cls).__new__
 
+        attrs['_class_name'] = name
+
         if '_fields' in attrs:
             if not isinstance(attrs['_fields'], dict):
                 raise InvalidAVObject
         else:
             attrs['_fields'] = {}
 
-        for name, attr in attrs.iteritems():
+        for key, attr in attrs.iteritems():
             if isinstance(attr, AnyField):
-                attrs['_fields'][name] = attr
+                attrs['_fields'][key] = attr
 
         if 'meta' in attrs:
             attrs['_meta'] = attrs.pop('meta')
@@ -43,13 +46,17 @@ class AVObject(object):
         return type(name, (cls,), {})
 
     def save(self):
-        pass
+        data = {k: getattr(self, k) for k in self._fields.keys()}
+        result = rest.post('/classes/%s' % self._class_name, data)
+        self.set('objectId', result['objectId'])
+        self.set('object_id', result['objectId'])
 
     def set(self, key, value):
         if key not in self._fields:
             self._fields[key] = AnyField
-        self.key = value
+        setattr(self, key, value)
 
     def get(self, key):
-        if key not in self._fileds:
+        if key not in self._fields:
             raise AttributeError(key)
+        return getattr(self, key)
