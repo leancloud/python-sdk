@@ -2,13 +2,15 @@
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
-from avobject import AVObject
-from query import Query
-from settings import init
+import rest
+from .avobject import AVObject
+from .avquery import AVQuery
+from .settings import init
 
 
 __all__ = [
     'init',
-    'Query'
+    'rest',
+    'AVQuery'
     'AVObject',
 ]

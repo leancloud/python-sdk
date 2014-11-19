@@ -4,7 +4,7 @@ from nose.tools import eq_
 from nose.tools import with_setup
 
 import leancloud
-from leancloud import Query
+from leancloud import AVQuery
 from leancloud import AVObject
 
 __author__ = 'asaka <lan@leancloud.rocks>'

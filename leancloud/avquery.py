@@ -2,11 +2,11 @@
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
-from leancloud import AVObject
 from leancloud import rest
+from leancloud.avobject import AVObject
 
 
-class Query(object):
+class AVQuery(object):
     def __init__(self, query_class):
         if isinstance(query_class, basestring):
             query_class = AVObject.extend(query_class)
@@ -23,7 +23,7 @@ class Query(object):
     def do_cloud_query(self, cql, *pvalues):
         params = {'cql': cql}
         if len(pvalues) == 1 and isinstance(pvalues[0], [tuple, list]):
-            pvalus = pvalues[0]
+            pvalues = pvalues[0]
         if len(pvalues) > 0:
             params['pvalues'] = pvalues
 
@@ -50,7 +50,6 @@ class Query(object):
             params['order'] = self.order
         params.update(self.extra)
         return params
-
 
     def get(self, object_id):
         self.equal_to('objectId', object_id)

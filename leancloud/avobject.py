@@ -32,14 +32,26 @@ class AVObjectMeta(type):
         if 'meta' in attrs:
             attrs['_meta'] = attrs.pop('meta')
 
+        def objects(*args, **kwargs):
+            from leancloud import AVQuery
+            return AVQuery(*args, **kwargs)
+        if 'objects' in attrs:
+            raise RuntimeError('objects field can\'t override in sub class')
+        attrs['objects'] = objects
+
         return super_new(cls, name, bases, attrs)
 
 
 class AVObject(object):
     __metaclass__ = AVObjectMeta
 
-    def __init__(self):
-        pass
+    def __init__(self, **kwargs):
+        self.id = None
+        self.created_at = None
+        self.updated_at = None
+
+        for k, v in kwargs.iteritems():
+            self.set(k, v)
 
     @classmethod
     def extend(cls, name):
@@ -51,6 +63,13 @@ class AVObject(object):
         self.set('objectId', result['objectId'])
         self.set('object_id', result['objectId'])
 
+    def delete(self):
+        if not self.id:
+            return False
+        result = rest.delete('/classes/{}/{}'.format(self._class_name, self.id))
+        # TODO: check the result
+        return True
+
     def set(self, key, value):
         if key not in self._fields:
             self._fields[key] = AnyField
@@ -60,3 +79,75 @@ class AVObject(object):
         if key not in self._fields:
             raise AttributeError(key)
         return getattr(self, key)
+
+
+'''
+class AVObject(object):
+    def __init__(self, attributes):
+        self.id = None
+
+        self._server_data = {}
+        self._op_set_queue = []
+        self.attributes = {}
+
+        self._hashed_object = {}
+        self._escaped_attributes = {}
+        self.cid = ''  # TODO
+        self.changed = {}
+        self._silent = {}
+        self._pending = {}
+
+    def get(self, attr):
+        return self.attributes[attr]
+
+    def has(self, attr):
+        return attr in self.attributes
+
+    def set(self, key, value):
+        pass
+
+    def unset(self, attr):
+        pass
+
+    def increment(self, attr, amount):
+        pass
+
+    def add(self, attr, item):
+        pass
+
+    def add_unique(self, attr, item):
+        pass
+
+    def remove(self, attr, item):
+        pass
+
+    def op(self, attr):
+        pass
+
+    def clean(self):
+        pass
+
+    def fetch(self):
+        pass
+
+    def save(self):
+        pass
+
+    def destroy(self):
+        if not self.id:  # TODO
+            return False
+        rest.delete('/classes/{}/{}'.format(self._class_name, self.id))
+        return True
+
+    def parse(self, response, status):
+        pass
+
+    def clone(self):
+        pass
+
+    def is_new(self):
+        return True if self.id else False
+
+    def change(self):
+        pass
+'''
