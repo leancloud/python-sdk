@@ -20,7 +20,11 @@ def need_sdk_init(func):
 
 @need_sdk_init
 def get(url, params):
-    pass
+    result = requests.get(BASE_URL + url, headers={
+        'X-AVOSCloud-Application-Id': settings.APP_ID,
+        'X-AVOSCloud-Application-Key': settings.KEY,
+    }, data=params).json()
+    return result
 
 
 @need_sdk_init

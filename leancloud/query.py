@@ -2,9 +2,14 @@
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
+from leancloud import AVObject
+from leancloud import rest
+
 
 class Query(object):
     def __init__(self, query_class):
+        if isinstance(query_class, basestring):
+            query_class = AVObject.extend(query_class)
         self.query_class = query_class
 
         self.where = {}
@@ -13,6 +18,57 @@ class Query(object):
         self.skip = 0
         self.extra = {}
         self.order = []
+        self.select = []
+
+    def dump(self):
+        """
+        :return: Returns a dict representation of this query.
+        :rtype: dict
+        """
+        params = {
+            'where': self.where,
+        }
+        if self.include:
+            params['include'] = ','.join(self.include)
+        if self.select:
+            params['keys'] = ','.join(self.select)
+        if self.limit >= 0:
+            params['limit'] = self.limit
+        if self.skip > 0:
+            params['skip'] = self.skip
+        if self.order:
+            params['order'] = self.order
+        params.update(self.extra)
+        return params
+
+
+    def get(self, object_id):
+        self.equal_to('objectId', object_id)
+        return self.first()
+
+    def find(self):
+        result = rest.get('/classes/{}'.format(self.query_class._class_name), self.dump())
+        # TODO: loads the results to AVObject
+        return result
+
+    def destory_all(self):
+        # TODO
+        pass
+
+    def count(self):
+        params = self.dump()
+        params['limit'] = 0
+        params['count'] = 1
+        result = rest.get('/classes/{}'.format(self.query_class._class_name), params)
+        return result['count']
+
+    def skit(self, n):
+        self.skip = n
+        return self
+
+    def limit(self, n):
+        self.limit = n
+        return self
 
     def equal_to(self, key, value):
         self.where[key] = value
@@ -64,7 +120,7 @@ class Query(object):
         self._add_condition(key, '$exists', False)
         return self
 
-    # TODO: reg condition
+    # TODO: regex condition
 
     def ascending(self, key):
         self.order = [key]
@@ -82,7 +138,7 @@ class Query(object):
         self.order.append('-{}'.format(key))
         return self
 
-    # TODO: geo query
+    # TODO: GEO query
 
     def include(self, *keys):
         if len(keys) == 1 and isinstance(keys[0], [list, tuple]):
