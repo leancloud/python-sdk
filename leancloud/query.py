@@ -20,6 +20,16 @@ class Query(object):
         self.order = []
         self.select = []
 
+    def do_cloud_query(self, cql, *pvalues):
+        params = {'cql': cql}
+        if len(pvalues) == 1 and isinstance(pvalues[0], [tuple, list]):
+            pvalus = pvalues[0]
+        if len(pvalues) > 0:
+            params['pvalues'] = pvalues
+
+        result = rest.get('/cloudQuery', params)
+        return result
+
     def dump(self):
         """
         :return: Returns a dict representation of this query.
@@ -62,9 +72,13 @@ class Query(object):
         result = rest.get('/classes/{}'.format(self.query_class._class_name), params)
         return result['count']
 
-    def skit(self, n):
+    def skip(self, n):
         self.skip = n
         return self
+
+    def first(self):
+        params = self.dump()
+        params['limit'] = 1
 
     def limit(self, n):
         self.limit = n
