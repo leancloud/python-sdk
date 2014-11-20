@@ -12,6 +12,10 @@ class QueryError(Exception):
         self.error = error
 
 
+class NotExists(Exception):
+    pass
+
+
 class AVQuery(object):
     def __init__(self, query_class):
         if isinstance(query_class, basestring):
@@ -82,6 +86,14 @@ class AVQuery(object):
 
         return results
 
+    def first(self):
+        params = self.dump()
+        params['limit'] = 1
+        result = rest.get('/classes/{}'.format(self.query_class._class_name), params)
+        if not result:
+            raise NotExists
+        return self.parse_list_result(result)[0]
+
     def get(self, object_id):
         self.equal_to('objectId', object_id)
         return self.first()
@@ -104,10 +116,6 @@ class AVQuery(object):
     def skip(self, n):
         self.skip = n
         return self
-
-    def first(self):
-        params = self.dump()
-        params['limit'] = 1
 
     def limit(self, n):
         self.limit = n
