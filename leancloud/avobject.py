@@ -32,12 +32,12 @@ class AVObjectMeta(type):
         if 'meta' in attrs:
             attrs['_meta'] = attrs.pop('meta')
 
-        def objects(*args, **kwargs):
+        def query(*args, **kwargs):
             from leancloud import AVQuery
             return AVQuery(*args, **kwargs)
         if 'objects' in attrs:
             raise RuntimeError('objects field can\'t override in sub class')
-        attrs['objects'] = objects
+        attrs['objects'] = query
 
         return super_new(cls, name, bases, attrs)
 
@@ -53,20 +53,23 @@ class AVObject(object):
         for k, v in kwargs.iteritems():
             self.set(k, v)
 
+    def __repr__(self):
+        return '<{} id: {}>'.format(self._class_name, self.id)
+
     @classmethod
     def extend(cls, name):
         return type(name, (cls,), {})
 
     def save(self):
-        data = {k: getattr(self, k) for k in self._fields.keys()}
+        data = {k: getattr(self, k, None) for k in self._fields.keys()}
         result = rest.post('/classes/%s' % self._class_name, data)
-        self.set('objectId', result['objectId'])
-        self.set('object_id', result['objectId'])
+        self.set('id', result['objectId'])
 
     def delete(self):
         if not self.id:
             return False
         result = rest.delete('/classes/{}/{}'.format(self._class_name, self.id))
+        # print result
         # TODO: check the result
         return True
 

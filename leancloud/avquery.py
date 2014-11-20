@@ -6,6 +6,12 @@ from leancloud import rest
 from leancloud.avobject import AVObject
 
 
+class QueryError(Exception):
+    def __init__(self, code, error):
+        self.code = code
+        self.error = error
+
+
 class AVQuery(object):
     def __init__(self, query_class):
         if isinstance(query_class, basestring):
@@ -51,18 +57,42 @@ class AVQuery(object):
         params.update(self.extra)
         return params
 
+    def parse_result(self, result):
+        if 'error' in result:
+            raise QueryError(result['code'], result['error'])
+
+        obj = self.query_class
+        for k, v in result.iteritems():
+            obj.set(k, v)
+        obj.id = obj.objectId
+
+        return obj
+
+    def parse_list_result(self, raw):
+        if 'error' in raw:
+            raise QueryError(raw['code'], raw['error'])
+
+        results = []
+        for result in raw['results']:
+            obj = self.query_class()
+            for k, v in result.iteritems():
+                obj.set(k, v)
+            obj.id = obj.objectId
+            results.append(obj)
+
+        return results
+
     def get(self, object_id):
         self.equal_to('objectId', object_id)
         return self.first()
 
     def find(self):
         result = rest.get('/classes/{}'.format(self.query_class._class_name), self.dump())
-        # TODO: loads the results to AVObject
-        return result
+        return self.parse_list_result(result)
 
     def destory_all(self):
-        # TODO
-        pass
+        result = rest.delete('/classes/{}'.format(self.query_class._class_name), self.dump())
+        return result
 
     def count(self):
         params = self.dump()

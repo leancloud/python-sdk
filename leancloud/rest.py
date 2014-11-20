@@ -42,5 +42,11 @@ def put(url, params):
 
 
 @need_sdk_init
-def delete(url, params):
-    pass
+def delete(url, params=None):
+    if params == None:
+        params = {}
+    result = requests.delete(BASE_URL + url, headers={
+        'X-AVOSCloud-Application-Id': settings.APP_ID,
+        'X-AVOSCloud-Application-Key': settings.KEY,
+    }, json=params).json()
+    return result
