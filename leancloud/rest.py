@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import json
+
 import requests
 
 from leancloud import settings
@@ -20,10 +22,13 @@ def need_sdk_init(func):
 
 @need_sdk_init
 def get(url, params):
+    for k, v in params.iteritems():
+        if isinstance(v, dict):
+            params[k] = json.dumps(v)
     result = requests.get(BASE_URL + url, headers={
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
-    }, data=params).json()
+    }, params=params).json()
     return result
 
 

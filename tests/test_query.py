@@ -29,6 +29,8 @@ def setup_func():
     for album in albums:
         album.delete()
 
+    global game_scores
+    game_scores = []
     for i in xrange(10):
         game_score = GameScore()
         game_score.set('score', i)
@@ -37,9 +39,10 @@ def setup_func():
 
 
 def destroy_func():
-    albums = AVQuery(GameScore).find()
-    for album in albums:
-        album.delete()
+    pass
+    # albums = AVQuery(GameScore).find()
+    # for album in albums:
+    #     album.delete()
 
 
 @with_setup(setup_func, destroy_func)
@@ -53,13 +56,14 @@ def test_find():
 def test_first():
     q = AVQuery(GameScore)
     game_score = q.first()
+    assert game_score
 
 
 @with_setup(setup_func, destroy_func)
 def test_get():
     q = AVQuery(GameScore)
-    old_game_score = game_scores[0]
-    q.get(old_game_score.id)
+    local_game_score = game_scores[0]
+    q.get(local_game_score.id)
 
 
 @with_setup(setup_func, destroy_func)

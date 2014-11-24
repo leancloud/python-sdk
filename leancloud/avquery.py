@@ -11,6 +11,9 @@ class QueryError(Exception):
         self.code = code
         self.error = error
 
+    def __repr(self):
+        return '{} {}'.format(self.code, self.error)
+
 
 class NotExists(Exception):
     pass
