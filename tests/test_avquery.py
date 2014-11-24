@@ -4,13 +4,13 @@ from nose.tools import eq_
 from nose.tools import with_setup
 
 import leancloud
-from leancloud import AVQuery
-from leancloud import AVObject
+from leancloud import Query
+from leancloud import Object
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-class GameScore(AVObject):
+class GameScore(Object):
     pass
 
 
@@ -23,7 +23,7 @@ def setup_func():
         'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd',
     )
 
-    albums = AVQuery(GameScore).find()
+    albums = Query(GameScore).find()
     for album in albums:
         album.delete()
 
@@ -46,37 +46,43 @@ def destroy_func():
 @with_setup(setup_func, destroy_func)
 def test_basic_query():
     # find
-    q = AVQuery(GameScore)
+    q = Query(GameScore)
     results = q.find()
     eq_(len(results), 10)
 
     # first
-    q = AVQuery(GameScore)
+    q = Query(GameScore)
     game_score = q.first()
     assert game_score
 
     # get
-    q = AVQuery(GameScore)
+    q = Query(GameScore)
     local_game_score = game_scores[0]
     q.get(local_game_score.id)
 
     # count
-    q = AVQuery(GameScore)
+    q = Query(GameScore)
     eq_(q.count(), 10)
 
     # descending
-    q = AVQuery(GameScore).descending('score')
+    q = Query(GameScore).descending('score')
     eq_([x.score for x in q.find()], range(9, -1, -1))
 
     # greater_than
-    q = AVQuery(GameScore).greater_than('score', 5).ascending('score')
+    q = Query(GameScore).greater_than('score', 5).ascending('score')
     eq_([x.score for x in q.find()], range(6, 10))
 
-    q = AVQuery(GameScore).greater_than_or_equal_to('score', 5).ascending('score')
+    q = Query(GameScore).greater_than_or_equal_to('score', 5).ascending('score')
     eq_([x.score for x in q.find()], range(5, 10))
 
-    q = AVQuery(GameScore).less_than('score', 5).ascending('score')
+    q = Query(GameScore).less_than('score', 5).ascending('score')
     eq_([x.score for x in q.find()], range(0, 5))
 
-    q = AVQuery(GameScore).less_than_or_equal_to('score', 5).ascending('score')
+    q = Query(GameScore).less_than_or_equal_to('score', 5).ascending('score')
     eq_([x.score for x in q.find()], range(0, 6))
+
+    q = Query(GameScore).contained_in('score', [1, 2, 3]).ascending('score')
+    eq_([x.score for x in q.find()], range(1, 4))
+
+    q = Query(GameScore).not_contained_in('score', [0, 1, 2, 3]).ascending('score')
+    eq_([x.score for x in q.find()], range(4, 10))

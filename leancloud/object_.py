@@ -11,11 +11,11 @@ class InvalidAVObject(Exception):
     pass
 
 
-class AVObjectMeta(type):
+class ObjectMeta(type):
     """Metaclass for build AVObject
     """
     def __new__(cls, name, bases, attrs):
-        super_new = super(AVObjectMeta, cls).__new__
+        super_new = super(ObjectMeta, cls).__new__
 
         attrs['_class_name'] = name
 
@@ -33,8 +33,8 @@ class AVObjectMeta(type):
             attrs['_meta'] = attrs.pop('meta')
 
         def query(*args, **kwargs):
-            from leancloud import AVQuery
-            return AVQuery(*args, **kwargs)
+            from leancloud import Query
+            return Query(*args, **kwargs)
         if 'objects' in attrs:
             raise RuntimeError('objects field can\'t override in sub class')
         attrs['objects'] = query
@@ -42,8 +42,8 @@ class AVObjectMeta(type):
         return super_new(cls, name, bases, attrs)
 
 
-class AVObject(object):
-    __metaclass__ = AVObjectMeta
+class Object(object):
+    __metaclass__ = ObjectMeta
 
     def __init__(self, **kwargs):
         self.id = None

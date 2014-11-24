@@ -3,7 +3,7 @@
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 from leancloud import rest
-from leancloud.avobject import AVObject
+from leancloud.object_ import Object
 
 
 class QueryError(Exception):
@@ -19,10 +19,10 @@ class NotExists(Exception):
     pass
 
 
-class AVQuery(object):
+class Query(object):
     def __init__(self, query_class):
         if isinstance(query_class, basestring):
-            query_class = AVObject.extend(query_class)
+            query_class = Object.extend(query_class)
         self._query_class = query_class
 
         self._where = {}

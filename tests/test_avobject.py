@@ -4,7 +4,7 @@ from nose.tools import with_setup
 from nose.tools import ok_
 
 import leancloud
-from leancloud import AVObject
+from leancloud import Object
 from leancloud.fields import AnyField
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -18,18 +18,18 @@ def setup_func():
 
 
 def test_extend():
-    ok_(AVObject.extend('Album'))
+    ok_(Object.extend('Album'))
 
 
 def test_class_extend():
-    class Album(AVObject):
+    class Album(Object):
         title = AnyField()
 
     assert 'title' in Album._fields
 
 
 def test_set():
-    Album = AVObject.extend('Album')
+    Album = Object.extend('Album')
     album = Album()
     album.set('title', 'Once')
     assert album.title == 'Once'
@@ -37,7 +37,7 @@ def test_set():
 
 
 def test_get():
-    Album = AVObject.extend('Album')
+    Album = Object.extend('Album')
     album = Album()
     album.set('title', 'Once')
 
@@ -46,8 +46,9 @@ def test_get():
 
 @with_setup(setup_func)
 def test_save():
-    Album = AVObject.extend('Album')
+    Album = Object.extend('Album')
     album = Album()
     album.set('title', 'Once')
 
     album.save()
+

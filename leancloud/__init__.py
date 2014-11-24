@@ -3,14 +3,14 @@
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 import rest
-from .avobject import AVObject
-from .avquery import AVQuery
+from .object_ import Object
+from .query import Query
 from .settings import init
 
 
 __all__ = [
     'init',
     'rest',
-    'AVQuery'
-    'AVObject',
+    'Query'
+    'Object',
 ]
