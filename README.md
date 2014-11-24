@@ -1,4 +1,4 @@
 Python-SDK
 ==========
 
-LeanCloud Python SDK
+LeanCloud Python SDK (under development)
