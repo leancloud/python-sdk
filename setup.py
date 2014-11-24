@@ -13,7 +13,7 @@ setup(
     author='asaka',
     author_email='lan@leancloud.rocks',
 
-    license='BSD-2-Clause',
+    license='LGPL',
 
     classifiers=[
         'Development Status :: 3 - Alpha',
