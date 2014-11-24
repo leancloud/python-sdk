@@ -23,15 +23,15 @@ class AVQuery(object):
     def __init__(self, query_class):
         if isinstance(query_class, basestring):
             query_class = AVObject.extend(query_class)
-        self.query_class = query_class
+        self._query_class = query_class
 
-        self.where = {}
-        self.include = {}
-        self.limit = -1
-        self.skip = 0
-        self.extra = {}
-        self.order = []
-        self.select = []
+        self._where = {}
+        self._include = {}
+        self._limit = -1
+        self._skip = 0
+        self._extra = {}
+        self._order = []
+        self._select = []
 
     def do_cloud_query(self, cql, *pvalues):
         params = {'cql': cql}
@@ -49,39 +49,39 @@ class AVQuery(object):
         :rtype: dict
         """
         params = {
-            'where': self.where,
+            'where': self._where,
         }
-        if self.include:
-            params['include'] = ','.join(self.include)
-        if self.select:
-            params['keys'] = ','.join(self.select)
-        if self.limit >= 0:
-            params['limit'] = self.limit
-        if self.skip > 0:
-            params['skip'] = self.skip
-        if self.order:
-            params['order'] = self.order
-        params.update(self.extra)
+        if self._include:
+            params['include'] = ','.join(self._include)
+        if self._select:
+            params['keys'] = ','.join(self._select)
+        if self._limit >= 0:
+            params['limit'] = self._limit
+        if self._skip > 0:
+            params['skip'] = self._skip
+        if self._order:
+            params['order'] = self._order
+        params.update(self._extra)
         return params
 
-    def parse_result(self, result):
+    def _parse_result(self, result):
         if 'error' in result:
             raise QueryError(result['code'], result['error'])
 
-        obj = self.query_class
+        obj = self._query_class
         for k, v in result.iteritems():
             obj.set(k, v)
         obj.id = obj.objectId
 
         return obj
 
-    def parse_list_result(self, raw):
+    def _parse_list_result(self, raw):
         if 'error' in raw:
             raise QueryError(raw['code'], raw['error'])
 
         results = []
         for result in raw['results']:
-            obj = self.query_class()
+            obj = self._query_class()
             for k, v in result.iteritems():
                 obj.set(k, v)
             obj.id = obj.objectId
@@ -92,46 +92,46 @@ class AVQuery(object):
     def first(self):
         params = self.dump()
         params['limit'] = 1
-        result = rest.get('/classes/{}'.format(self.query_class._class_name), params)
+        result = rest.get('/classes/{}'.format(self._query_class._class_name), params)
         if not result:
             raise NotExists
-        return self.parse_list_result(result)[0]
+        return self._parse_list_result(result)[0]
 
     def get(self, object_id):
         self.equal_to('objectId', object_id)
         return self.first()
 
     def find(self):
-        result = rest.get('/classes/{}'.format(self.query_class._class_name), self.dump())
-        return self.parse_list_result(result)
+        result = rest.get('/classes/{}'.format(self._query_class._class_name), self.dump())
+        return self._parse_list_result(result)
 
     def destory_all(self):
-        result = rest.delete('/classes/{}'.format(self.query_class._class_name), self.dump())
+        result = rest.delete('/classes/{}'.format(self._query_class._class_name), self.dump())
         return result
 
     def count(self):
         params = self.dump()
         params['limit'] = 0
         params['count'] = 1
-        result = rest.get('/classes/{}'.format(self.query_class._class_name), params)
+        result = rest.get('/classes/{}'.format(self._query_class._class_name), params)
         return result['count']
 
     def skip(self, n):
-        self.skip = n
+        self._skip = n
         return self
 
     def limit(self, n):
-        self.limit = n
+        self._limit = n
         return self
 
     def equal_to(self, key, value):
-        self.where[key] = value
+        self._where[key] = value
         return self
 
     def _add_condition(self, key, condition, value):
-        if not self.where.get(key):
-            self.where[key] = {}
-        self.where[key][condition] = value
+        if not self._where.get(key):
+            self._where[key] = {}
+        self._where[key][condition] = value
         return self
 
     def not_equal_to(self, key, value):
@@ -177,19 +177,19 @@ class AVQuery(object):
     # TODO: regex condition
 
     def ascending(self, key):
-        self.order = [key]
+        self._order = [key]
         return self
 
     def add_ascending(self, key):
-        self.order.append(key)
+        self._order.append(key)
         return self
 
     def descending(self, key):
-        self.order = ['-{}'.format(key)]
+        self._order = ['-{}'.format(key)]
         return self
 
     def add_descending(self, key):
-        self.order.append('-{}'.format(key))
+        self._order.append('-{}'.format(key))
         return self
 
     # TODO: GEO query
@@ -197,5 +197,5 @@ class AVQuery(object):
     def include(self, *keys):
         if len(keys) == 1 and isinstance(keys[0], [list, tuple]):
             keys = keys[0]
-        self.include = keys
+        self._include = keys
         return self
