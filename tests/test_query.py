@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from pprint import pprint
-
 from nose.tools import eq_
 from nose.tools import with_setup
 
