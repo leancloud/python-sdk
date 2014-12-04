@@ -4,7 +4,7 @@ import copy
 
 from leancloud import rest
 from leancloud.fields import AnyField
-from leancloud import operation
+from leancloud import baseoperation
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -141,6 +141,18 @@ class AVObject(object):
         obj['className'] = self.__class__.__name__
         return obj
 
+    def save(self):
+        pass
+        self._refresh_cache()
+        unsaved_children = []
+        unsaved_files = []
+        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
+        if len(unsaved_children) + len(unsaved_files) > 0:
+            self._deep_save(self.attributes)
+
+        self._start_save()
+        self._saving = getattr(self, '_saving', 0) + 1
+
     def _refresh_cache(self):
         # TODO
         if hasattr(self, '_refreshing_cache'):
@@ -151,7 +163,7 @@ class AVObject(object):
                 v._refresh_cache()
             elif isinstance(v, dict):
                 if self._refresh_cache_for_key(k):
-                    self.set(k, operation.Set(v), silent=True)
+                    self.set(k, baseoperation.Set(v), silent=True)
         del self._refreshing_cache
 
     def dirty(self, attr=None):
@@ -194,6 +206,10 @@ class AVObject(object):
     def _cancel_save(self):
         failed_changes = self._op_set_queue.pop(0)
         next_changes = self._op_set_queue[0]
+        for key, op in failed_changes.iteritems():
+            op1 = failed_changes[key]
+            op2 = next_changes[key]
+            # TODO
 
     def set(self, key, value):
         pass
@@ -202,7 +218,7 @@ class AVObject(object):
         pass
 
     def increment(self, attr, amount=1):
-        return self.set(attr, operation.Increment(amount))
+        return self.set(attr, baseoperation.Increment(amount))
 
     def add(self, attr, item):
         pass
@@ -220,9 +236,6 @@ class AVObject(object):
         pass
 
     def fetch(self):
-        pass
-
-    def save(self):
         pass
 
     def destroy(self):
