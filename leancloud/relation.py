@@ -1,7 +1,6 @@
 # coding: utf-8
 
-from leancloud import Object
-from leancloud import Query
+import leancloud
 from leancloud import operation
 
 __author__ = 'asaka'
@@ -15,14 +14,14 @@ class Relation(object):
 
     @classmethod
     def reverse_query(cls, parent_class, relation_key, child):
-        q = Query(parent_class)
+        q = leancloud.Query(parent_class)
         q.equal_to(relation_key, child._to_pointer())
         return q
 
     def _ensure_parent_and_key(self, parent, key):
-        if not self.parent is None:
+        if self.parent is not None:
             self.parent = parent
-        if not self.key is None:
+        if self.key is not None:
             self.key = key
 
         if self.parent != parent:
@@ -54,12 +53,12 @@ class Relation(object):
 
     def query(self):
         if self.target_class_name is None:
-            target_class = Object._get_subclass(self.parent.class_name)
-            query = Query(target_class)
+            target_class = leancloud.Object._get_subclass(self.parent.class_name)
+            query = leancloud.Query(target_class)
             query._extra['redirectClassNameForKey'] = self.key
         else:
-            target_class= Object._get_subclass(self.target_class_name)
-            query = Query(target_class)
+            target_class = leancloud.Object._get_subclass(self.target_class_name)
+            query = leancloud.Query(target_class)
 
         query._add_condition('$relatedTo', 'object', self.parent._to_pointer())
         query._add_condition('$relatedTo', 'key', self.key)
