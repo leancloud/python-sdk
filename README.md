@@ -7,8 +7,8 @@ LeanCloud Python SDK (under development)
 pip install https://github.com/leancloud/python-sdk.git
 
 
-## CopyRight
+## License
 
-License: GNU LGPL.
+License: [GNU LGPL](https://www.gnu.org/licenses/lgpl.html).
 
 Author: asaka (lan@leancloud.rocks)
