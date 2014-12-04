@@ -4,7 +4,7 @@ from nose.tools import with_setup
 from nose.tools import ok_
 
 import leancloud
-from leancloud import Object
+from leancloud.object_ import Object
 from leancloud.fields import AnyField
 
 __author__ = 'asaka <lan@leancloud.rocks>'

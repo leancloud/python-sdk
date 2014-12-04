@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from leancloud import Object
+import leancloud
 
 __author__ = 'asaka'
 
@@ -99,7 +99,7 @@ class Relation(BaseOperation):
         self.relations_to_removes = list({self._pointer_to_id(x) for x in removes})
 
     def _pointer_to_id(self, obj):
-        if isinstance(obj, Object):
+        if isinstance(obj, leancloud.Object):
             if not hasattr(obj, 'id'):   # TODO: how to decide an object is unsaved ?
                 raise TypeError('cant add an unsaved Object to a relation')
             if self._target_class_name is None:

@@ -2,6 +2,10 @@
 
 LeanCloud Python SDK (under development)
 
+## Install
+
+pip install https://github.com/leancloud/python-sdk.git
+
 
 ## CopyRight
 

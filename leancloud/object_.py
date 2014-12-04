@@ -4,7 +4,7 @@ import copy
 
 from leancloud import rest
 from leancloud.fields import AnyField
-from leancloud import baseoperation
+from leancloud import operation
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -163,7 +163,7 @@ class AVObject(object):
                 v._refresh_cache()
             elif isinstance(v, dict):
                 if self._refresh_cache_for_key(k):
-                    self.set(k, baseoperation.Set(v), silent=True)
+                    self.set(k, operation.Set(v), silent=True)
         del self._refreshing_cache
 
     def dirty(self, attr=None):
@@ -218,7 +218,7 @@ class AVObject(object):
         pass
 
     def increment(self, attr, amount=1):
-        return self.set(attr, baseoperation.Increment(amount))
+        return self.set(attr, operation.Increment(amount))
 
     def add(self, attr, item):
         pass
