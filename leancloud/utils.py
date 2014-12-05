@@ -43,3 +43,11 @@ def encode(value, seen_objects=False, disallow_objects=False):
         return {k: encode(v, seen_objects, disallow_objects) for k, v in value.iteritems()}
 
     return value
+
+
+def decode(key, value):
+    if not isinstance(value, dict):
+        return value
+    if isinstance(value,(tuple, list)):
+        return [decode(x) for x in value]
+    # TODO

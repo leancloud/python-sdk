@@ -135,8 +135,12 @@ class Object(object):
             op2 = next_changes[key]
             # TODO
 
-    def set(self, key, value):
-        pass
+    def set(self, key, value, unset=False, silent=True):
+        if unset:
+            value = op.Unset()
+        else:
+            value = utils.decode(key, value)
+        
 
     def unset(self, attr):
         pass
