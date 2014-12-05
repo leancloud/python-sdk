@@ -2,6 +2,7 @@
 
 import copy
 
+from leancloud import utils
 from leancloud import rest
 from leancloud.fields import AnyField
 from leancloud import op
@@ -10,84 +11,7 @@ from leancloud import op
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-class InvalidAVObject(Exception):
-    pass
-
-
-class ObjectMeta(type):
-    """Metaclass for build AVObject
-    """
-    def __new__(cls, name, bases, attrs):
-        super_new = super(ObjectMeta, cls).__new__
-
-        attrs['_class_name'] = name
-
-        if '_fields' in attrs:
-            if not isinstance(attrs['_fields'], dict):
-                raise InvalidAVObject
-        else:
-            attrs['_fields'] = {}
-
-        for key, attr in attrs.iteritems():
-            if isinstance(attr, AnyField):
-                attrs['_fields'][key] = attr
-
-        if 'meta' in attrs:
-            attrs['_meta'] = attrs.pop('meta')
-
-        def query(*args, **kwargs):
-            from leancloud import Query
-            return Query(*args, **kwargs)
-        if 'objects' in attrs:
-            raise RuntimeError('objects field can\'t override in sub class')
-        attrs['objects'] = query
-
-        return super_new(cls, name, bases, attrs)
-
-
 class Object(object):
-    __metaclass__ = ObjectMeta
-
-    def __init__(self, **kwargs):
-        self.id = None
-        self.created_at = None
-        self.updated_at = None
-
-        for k, v in kwargs.iteritems():
-            self.set(k, v)
-
-    def __repr__(self):
-        return '<{} id: {}>'.format(self._class_name, self.id)
-
-    @classmethod
-    def extend(cls, name):
-        return type(name, (cls,), {})
-
-    def save(self):
-        data = {k: getattr(self, k, None) for k in self._fields.keys()}
-        result = rest.post('/classes/%s' % self._class_name, data)
-        self.set('id', result['objectId'])
-
-    def delete(self):
-        if not self.id:
-            return False
-        result = rest.delete('/classes/{}/{}'.format(self._class_name, self.id))
-        # print result
-        # TODO: check the result
-        return True
-
-    def set(self, key, value):
-        if key not in self._fields:
-            self._fields[key] = AnyField
-        setattr(self, key, value)
-
-    def get(self, key):
-        if key not in self._fields:
-            raise AttributeError(key)
-        return getattr(self, key)
-
-
-class AVObject(object):
     def __init__(self, attributes=None):
         if not attributes:
             attributes = {}
@@ -121,7 +45,7 @@ class AVObject(object):
     def _dump(self, seen_objects=False):
         obj = copy.deepcopy(self.attributes)
         for k, v in obj:
-            obj[k] = encode(v, seen_objects)
+            obj[k] = utils.encode(v, seen_objects)
 
         for k, v in self._operations:
             obj[k] = v
@@ -159,7 +83,7 @@ class AVObject(object):
             return
         self._refreshing_cache = True
         for k, v in self.attributes:
-            if isinstance(v, AVObject):
+            if isinstance(v, Object):
                 v._refresh_cache()
             elif isinstance(v, dict):
                 if self._refresh_cache_for_key(k):
