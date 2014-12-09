@@ -11,7 +11,17 @@ from leancloud import op
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
+class ObjectMeta(type):
+    def __new__(cls, name, bases, attrs):
+        super_new = super(ObjectMeta, cls).__new__
+        attrs['_class_name'] = name
+        return super_new(cls, name, bases, attrs)
+
+
 class Object(object):
+
+    __metaclass__ = ObjectMeta
+
     def __init__(self, attributes=None):
         if not attributes:
             attributes = {}
@@ -20,18 +30,18 @@ class Object(object):
 
         self.id = None
 
-        self._server_data = {}
+        # self._server_data = {}
         self._op_set_queue = []
         self.attributes = {}
 
-        self._hashed_object = {}
-        self._escaped_attributes = {}
-        self.cid = ''  # TODO
-        self.changed = {}
-        self._silent = {}
-        self._pending = {}
+        # self._hashed_object = {}
+        # self._escaped_attributes = {}
+        # self.cid = ''  # TODO
+        # self.changed = {}
+        # self._silent = {}
+        # self._pending = {}
 
-        self._fetch_when_save = False
+        # self._fetch_when_save = False
 
     def fetch_when_save(self, enable):
         self._fetch_when_save = enable
@@ -78,17 +88,16 @@ class Object(object):
         self._saving = getattr(self, '_saving', 0) + 1
 
     def _refresh_cache(self):
-        # TODO
         if hasattr(self, '_refreshing_cache'):
             return
-        self._refreshing_cache = True
+        setattr(self, '_refreshing_cache', True)
         for k, v in self.attributes:
             if isinstance(v, Object):
                 v._refresh_cache()
             elif isinstance(v, dict):
-                if self._refresh_cache_for_key(k):
+                if self._reset_cache_for_key(k):
                     self.set(k, op.Set(v), silent=True)
-        del self._refreshing_cache
+        delattr(self, '_refreshing_cache')
 
     def dirty(self, attr=None):
         self._refresh_cache()
@@ -137,34 +146,57 @@ class Object(object):
 
     def set(self, key, value, unset=False, silent=True):
         if unset:
-            value = op.Unset()
+            attrs = {key: op.Unset()}
         else:
-            value = utils.decode(key, value)
-        
+            attrs = {key: utils.decode(key, value)}
+
+        data_to_validate = copy.deepcopy(attrs)
+        for k, v in data_to_validate.iteritems():
+            if isinstance(v, op.BaseOperation):
+                data_to_validate[key] = v._estimate(self.attributes[k], self, k)
+                if data_to_validate[key] == op._UNSET:
+                    del data_to_validate[key]
+
+        if not self._validate(attrs):
+            return False
+
+        self._merge_magic_field(attrs)
+
+        for k, v in attrs.iteritems():
+            # TODO: Relation
+
+            if not isinstance(v, op.BaseOperation):
+                v = op.Set(v)
+
+            is_real_change = True
+            if isinstance(v, op.Set) and self.attributes[k] == v:  # TODO: equal
+                is_real_change = False
 
     def unset(self, attr):
-        pass
+        return self.set(attr, None, unset=True)
 
     def increment(self, attr, amount=1):
         return self.set(attr, op.Increment(amount))
 
     def add(self, attr, item):
-        pass
+        return self.set(attr, op.Add([item]))
 
     def add_unique(self, attr, item):
-        pass
+        return self.set(attr, op.AddUnique([item]))
 
     def remove(self, attr, item):
-        pass
+        return self.set(attr, op.Remove([item]))
 
     def op(self, attr):
-        pass
+        return self._op_set_queue[attr][-1]
 
-    def clean(self):
+    def clear(self):
         pass
 
     def fetch(self):
-        pass
+        response = rest.get('/classes/{}/{}'.format(self._class_name, self.id))
+        result = self.parse(response)
+        self._finish_fetch(result)
 
     def destroy(self):
         if not self.id:  # TODO
@@ -172,8 +204,8 @@ class Object(object):
         rest.delete('/classes/{}/{}'.format(self._class_name, self.id))
         return True
 
-    def parse(self, response, status):
-        pass
+    def parse(self, response):
+        print response
 
     def clone(self):
         pass
