@@ -2,10 +2,11 @@
 
 from nose.tools import with_setup
 from nose.tools import ok_
+from nose.tools import eq_
 
 import leancloud
-from leancloud.object_ import Object
-from leancloud.fields import AnyField
+from leancloud import Object
+from leancloud import Query
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -26,10 +27,21 @@ def test_new():
     assert album._class_name == 'Album'
 
 
-# def test_extend():
-#     ok_(Object.extend('Album'))
-#
-#
+def test_set():
+    album = Album()
+    album.set('title', 'NightWish')
+
+
+def test_extend():
+    ok_(Object.extend('Album'))
+
+
+def test_finish_fetch():
+    album = Album()
+    album._finish_fetch({'title': 'Once', 'artist': 'nightwish'}, False)
+    eq_(album.attributes, {'title': 'Once', 'artist': 'nightwish'})
+
+
 # def test_class_extend():
 #     class Album(Object):
 #         title = AnyField()

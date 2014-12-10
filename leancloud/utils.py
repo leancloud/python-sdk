@@ -34,7 +34,7 @@ def encode(value, seen_objects=False, disallow_objects=False):
     if isinstance(value, leancloud.Relation):
         return value.dump()
 
-    if isinstance(value, op.BaseOperation):
+    if isinstance(value, op.BaseOp):
         return value.dump()
 
     # TODO: File
@@ -57,6 +57,6 @@ def decode(key, value):
 
     # TODO: File
 
-    if isinstance(value, op.BaseOperation):
+    if isinstance(value, op.BaseOp):
         return value
 

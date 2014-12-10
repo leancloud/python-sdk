@@ -1,27 +1,46 @@
 # coding: utf-8
 
+import copy
+
 import leancloud
+import leancloud.utils
 
 __author__ = 'asaka'
 
 
-class BaseOperation(object):
-    pass
+class BaseOp(object):
+    def dump(self):
+        raise NotImplementedError
+
+    def _merge_with_previous(self, previous):
+        raise NotImplementedError
+
+    def _estimate(self, old):
+        raise NotImplementedError
 
 
-class Set(BaseOperation):
+_UNSET = BaseOp()
+
+
+class Set(BaseOp):
     def __init__(self, value):
-        self.value = value
+        self._value = value
 
     @property
     def value(self):
-        return self.value
+        return self._value
 
     def dump(self):
-        return _encode(self.value)
+        return leancloud.utils.encode(self.value)
+
+    def _merge_with_previous(self, previous):
+        return self
+
+    def _estimate(self, old):
+        return self.value
 
 
-class Unset(BaseOperation):
+class Unset(BaseOp):
     def __init__(self):
         pass
 
@@ -30,14 +49,20 @@ class Unset(BaseOperation):
             '__op': 'Delete'
         }
 
+    def _merge_with_previous(self, previous):
+        return self
 
-class Increment(BaseOperation):
+    def _estimate(self, old):
+        return _UNSET
+
+
+class Increment(BaseOp):
     def __init__(self, amount):
-        self.amount = amount
+        self._amount = amount
 
     @property
     def amount(self):
-        return self.amount
+        return self._amount
 
     def dump(self):
         return {
@@ -45,53 +70,115 @@ class Increment(BaseOperation):
             'amount': self.amount,
         }
 
+    def _merge_with_previous(self, previous):
+        if not previous:
+            return self
+        elif isinstance(previous, Unset):
+            return Set(self.amount)
+        elif isinstance(previous, Set):
+            return Set(previous.value, self.amount)
+        elif isinstance(previous, Increment):
+            return Increment(self.amount + previous.amount)
+        else:
+            raise TypeError('invalid op')
 
-class Add(BaseOperation):
+    def _estimate(self, old):
+        if not old:
+            return self.amount
+        return old + self.amount
+
+
+class Add(BaseOp):
     def __init__(self, objects):
-        self.objects = objects
+        self._objects = objects
 
     @property
     def objects(self):
-        return self.objects
+        return self._objects
 
     def dump(self):
         return {
             '__op': 'Add',
-            'objects': _encode(self.objects),
+            'objects': leancloud.utils.encode(self.objects),
         }
 
+    def _merge_with_previous(self, previous):
+        if not previous:
+            return self
+        elif isinstance(previous, Unset):
+            return Set(self.objects)
+        elif isinstance(previous, Set):
+            return Set(self._estimate(previous.value))
+        elif isinstance(previous, Add):
+            return Add(previous.objects + self.objects)
+        else:
+            raise TypeError('invalid op')
 
-class AddUnique(BaseOperation):
+    def _estimate(self, old):
+        if not old:
+            return copy.deepcopy(self.objects)
+        else:
+            return old + self.objects
+
+
+class AddUnique(BaseOp):
     def __init__(self, objects):
-        self.objects = list(set(objects))
+        self._objects = list(set(objects))
 
     @property
     def objects(self):
-        return self.objects
+        return self._objects
 
     def dump(self):
         return {
             '__op': 'AddUnique',
-            'objects': _encode(self.objects),
+            'objects': leancloud.utils.encode(self.objects),
         }
 
+    def _merge_with_previous(self, previous):
+        if not previous:
+            return self
+        elif isinstance(previous, Unset):
+            return Set(self.objects)
+        elif isinstance(previous, Set):
+            return Set(self._estimate(previous.value))
+        elif isinstance(previous, AddUnique):
+            return AddUnique(self._estimate(previous.objects))
+        else:
+            raise TypeError('invalid op')
 
-class Remove(BaseOperation):
+    def _estimate(self, old):
+        if not old:
+            return copy.deepcopy(self.objects)
+        new = copy.deepcopy(old)
+        # TODO
+        raise NotImplementedError
+
+
+class Remove(BaseOp):
     def __init__(self, objects):
-        self.objects = list(set(objects))
+        self._objects = list(set(objects))
 
     @property
     def objects(self):
-        return self.objects
+        return self._objects
 
     def dump(self):
         return {
             '__op': 'Remove',
-            'objects': _encode(self.objects)
+            'objects': leancloud.utils.encode(self.objects)
         }
 
+    def _merge_with_previous(self, previous):
+        # TODO
+        raise NotImplementedError
 
-class Relation(BaseOperation):
+    def _estimate(self, old):
+        # TODO
+        raise NotImplementedError
+
+
+class Relation(BaseOp):
     def __init__(self, adds, removes):
         self._target_class_name = None
 
@@ -138,10 +225,18 @@ class Relation(BaseOperation):
                 'objects': [id_to_pointer(x) for x in self.relations_to_removes]
             }
 
-        if (adds and removes):
+        if adds and removes:
             return {
                 '__op': 'Batch',
                 'ops': [adds, removes]
             }
 
         return adds or removes or {}
+
+    def _merge_with_previous(self, previous):
+        # TODO
+        raise NotImplementedError
+
+    def _estimate(self, old):
+        # TODO
+        raise NotImplementedError

@@ -14,6 +14,10 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 class ObjectMeta(type):
     def __new__(cls, name, bases, attrs):
         super_new = super(ObjectMeta, cls).__new__
+
+        if name == 'User':
+            name = '_User'
+
         attrs['_class_name'] = name
         return super_new(cls, name, bases, attrs)
 
@@ -30,7 +34,7 @@ class Object(object):
 
         self.id = None
 
-        # self._server_data = {}
+        self._server_data = {}
         self._op_set_queue = []
         self.attributes = {}
 
@@ -42,6 +46,10 @@ class Object(object):
         # self._pending = {}
 
         # self._fetch_when_save = False
+
+    @classmethod
+    def extend(cls, name):
+        return type(name, (cls,), {})
 
     def fetch_when_save(self, enable):
         self._fetch_when_save = enable
@@ -75,6 +83,14 @@ class Object(object):
         obj['className'] = self.__class__.__name__
         return obj
 
+    def destroy(self):
+        if not self.id:
+            return False
+        result = rest.delete('/classes/{}/{}'.format(self._class_name, self.id))
+        # print result
+        # TODO: check the result
+        return True
+
     def save(self):
         pass
         self._refresh_cache()
@@ -91,7 +107,7 @@ class Object(object):
         if hasattr(self, '_refreshing_cache'):
             return
         setattr(self, '_refreshing_cache', True)
-        for k, v in self.attributes:
+        for k, v in self.attributes.iteritems():
             if isinstance(v, Object):
                 v._refresh_cache()
             elif isinstance(v, dict):
@@ -144,6 +160,10 @@ class Object(object):
             op2 = next_changes[key]
             # TODO
 
+    def _validate(self, attrs):
+        # TODO
+        return True
+
     def set(self, key, value, unset=False, silent=True):
         if unset:
             attrs = {key: op.Unset()}
@@ -152,7 +172,7 @@ class Object(object):
 
         data_to_validate = copy.deepcopy(attrs)
         for k, v in data_to_validate.iteritems():
-            if isinstance(v, op.BaseOperation):
+            if isinstance(v, op.BaseOp):
                 data_to_validate[key] = v._estimate(self.attributes[k], self, k)
                 if data_to_validate[key] == op._UNSET:
                     del data_to_validate[key]
@@ -165,7 +185,7 @@ class Object(object):
         for k, v in attrs.iteritems():
             # TODO: Relation
 
-            if not isinstance(v, op.BaseOperation):
+            if not isinstance(v, op.BaseOp):
                 v = op.Set(v)
 
             is_real_change = True
@@ -215,3 +235,41 @@ class Object(object):
 
     def change(self):
         pass
+
+    def _finish_fetch(self, server_data, has_data):
+        self._op_set_queue = [{}]
+
+        self._merge_magic_field(server_data)
+
+        for key, value in server_data.iteritems():
+            self._server_data[key] = utils.decode(key, value)
+
+        self._rebuild_all_estimated_data()  # TODO
+
+        self._refresh_cache()
+
+        self._op_set_queue = [{}]
+
+        self._has_data = has_data
+
+    def _rebuild_estimated_data_for_key(self, key):
+        pass
+
+    def _rebuild_all_estimated_data(self):
+        # TODO
+        previous_attributes = copy.deepcopy(self.attributes)
+        self.attributes = copy.deepcopy(self._server_data)
+
+        for op_set in self._op_set_queue:
+            # apply local changes
+            self._apply_op_set(op_set, self.attributes)
+            for key in op_set.iterkeys():
+                self._reset_cache_for_key(key)
+
+        # TODO: triger change event
+
+    def _apply_op_set(self, op_set, target):
+        for key, change in op_set.iteritems():
+            target[key] = change._estimate(target[key], self, key)
+            if target[key] == op._UNSET:
+                del target[key]

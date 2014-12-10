@@ -33,7 +33,8 @@ class Query(object):
         self._order = []
         self._select = []
 
-    def do_cloud_query(self, cql, *pvalues):
+    @classmethod
+    def do_cloud_query(cls, cql, *pvalues):
         params = {'cql': cql}
         if len(pvalues) == 1 and isinstance(pvalues[0], [tuple, list]):
             pvalues = pvalues[0]
@@ -82,9 +83,10 @@ class Query(object):
         results = []
         for result in raw['results']:
             obj = self._query_class()
-            for k, v in result.iteritems():
-                obj.set(k, v)
-            obj.id = obj.objectId
+            obj._finish_fetch(result, True)
+            # for k, v in result.iteritems():
+            #     obj.set(k, v)
+            # obj.id = obj.objectId
             results.append(obj)
 
         return results

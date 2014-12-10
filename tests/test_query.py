@@ -23,9 +23,9 @@ def setup_func():
         'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd',
     )
 
-    albums = Query(GameScore).find()
-    for album in albums:
-        album.delete()
+    olds = Query(GameScore).find()
+    for old in olds:
+        old.destroy()
 
     global game_scores
     game_scores = []
