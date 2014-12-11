@@ -33,6 +33,12 @@ def test_set():
     eq_(album.attributes, {'title': 'Nightwish'})
 
 
+def test_get():
+    album = Album()
+    album.set('foo', 'bar')
+    assert album.get('foo') == 'bar'
+
+
 def test_extend():
     ok_(Object.extend('Album'))
 
