@@ -28,7 +28,7 @@ def get(url, params):
     result = requests.get(BASE_URL + url, headers={
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
-    }, params=params).json()
+    }, params=params)
     return result
 
 
@@ -37,7 +37,7 @@ def post(url, params):
     result = requests.post(BASE_URL + url, headers={
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
-    }, json=params).json()
+    }, json=params)
     return result
 
 
@@ -48,10 +48,10 @@ def put(url, params):
 
 @need_sdk_init
 def delete(url, params=None):
-    if params == None:
+    if params is None:
         params = {}
     result = requests.delete(BASE_URL + url, headers={
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
-    }, json=params).json()
+    }, json=params)
     return result

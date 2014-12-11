@@ -29,7 +29,8 @@ def test_new():
 
 def test_set():
     album = Album()
-    album.set('title', 'NightWish')
+    album.set('title', 'Nightwish')
+    eq_(album.attributes, {'title': 'Nightwish'})
 
 
 def test_extend():

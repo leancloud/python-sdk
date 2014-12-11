@@ -15,7 +15,7 @@ class BaseOp(object):
     def _merge_with_previous(self, previous):
         raise NotImplementedError
 
-    def _estimate(self, old):
+    def _estimate(self, old, obj=None, key=None):
         raise NotImplementedError
 
 
@@ -36,7 +36,7 @@ class Set(BaseOp):
     def _merge_with_previous(self, previous):
         return self
 
-    def _estimate(self, old):
+    def _estimate(self, old, obj=None, key=None):
         return self.value
 
 
@@ -52,7 +52,7 @@ class Unset(BaseOp):
     def _merge_with_previous(self, previous):
         return self
 
-    def _estimate(self, old):
+    def _estimate(self, old, obj=None, key=None):
         return _UNSET
 
 
@@ -82,7 +82,7 @@ class Increment(BaseOp):
         else:
             raise TypeError('invalid op')
 
-    def _estimate(self, old):
+    def _estimate(self, old, obj=None, key=None):
         if not old:
             return self.amount
         return old + self.amount
@@ -114,7 +114,7 @@ class Add(BaseOp):
         else:
             raise TypeError('invalid op')
 
-    def _estimate(self, old):
+    def _estimate(self, old, obj=None, key=None):
         if not old:
             return copy.deepcopy(self.objects)
         else:
@@ -147,7 +147,7 @@ class AddUnique(BaseOp):
         else:
             raise TypeError('invalid op')
 
-    def _estimate(self, old):
+    def _estimate(self, old, obj=None, key=None):
         if not old:
             return copy.deepcopy(self.objects)
         new = copy.deepcopy(old)
@@ -181,7 +181,7 @@ class Remove(BaseOp):
         else:
             raise TypeError('invalid op')
 
-    def _estimate(self, old):
+    def _estimate(self, old, obj=None, key=None):
         if not old:
             return []
         new = old - self.objects
@@ -250,6 +250,6 @@ class Relation(BaseOp):
         # TODO
         raise NotImplementedError
 
-    def _estimate(self, old):
+    def _estimate(self, old, obj=None, key=None):
         # TODO
         raise NotImplementedError

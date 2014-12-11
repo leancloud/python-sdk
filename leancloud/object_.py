@@ -35,7 +35,7 @@ class Object(object):
         self.id = None
 
         self._server_data = {}
-        self._op_set_queue = []
+        self._op_set_queue = [{}]
         self.attributes = {}
 
         # self._hashed_object = {}
@@ -189,8 +189,15 @@ class Object(object):
                 v = op.Set(v)
 
             is_real_change = True
-            if isinstance(v, op.Set) and self.attributes[k] == v:  # TODO: equal
+            if isinstance(v, op.Set) and self.attributes.get(k) == v:  # TODO: equal
                 is_real_change = False
+
+            # TODO: merge preview
+            current_changes = self._op_set_queue[-1]
+            current_changes[k] = v._merge_with_previous(current_changes.get(k))
+            self._rebuild_estimated_data_for_key(k)
+
+        return self
 
     def unset(self, attr):
         return self.set(attr, None, unset=True)
@@ -225,7 +232,15 @@ class Object(object):
         return True
 
     def parse(self, response):
-        print response
+        content = response.json()
+        for key in ['createdAt', 'updatedAt']:
+            pass  # TODO: parse date params
+
+        self._existed = True
+        if response.status_code == 201:
+            self._existed = False
+
+        return content
 
     def clone(self):
         pass
@@ -244,16 +259,26 @@ class Object(object):
         for key, value in server_data.iteritems():
             self._server_data[key] = utils.decode(key, value)
 
-        self._rebuild_all_estimated_data()  # TODO
+        self._rebuild_all_estimated_data()
 
         self._refresh_cache()
-
         self._op_set_queue = [{}]
 
         self._has_data = has_data
 
     def _rebuild_estimated_data_for_key(self, key):
-        pass
+        if self.attributes.get(key):
+            del self.attributes[key]
+
+        for op_set in self._op_set_queue:
+            o = op_set.get(key)
+            if o is None:
+                continue
+            self.attributes[key] = o._estimate(self.attributes.get(key), self, key)
+            if self.attributes[key] is op._UNSET:
+                del self.attributes[key]
+            else:
+                self._reset_cache_for_key(key)
 
     def _rebuild_all_estimated_data(self):
         # TODO
@@ -273,3 +298,6 @@ class Object(object):
             target[key] = change._estimate(target[key], self, key)
             if target[key] == op._UNSET:
                 del target[key]
+
+    def _reset_cache_for_key(self, key):
+        pass
