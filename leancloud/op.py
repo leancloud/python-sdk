@@ -170,12 +170,25 @@ class Remove(BaseOp):
         }
 
     def _merge_with_previous(self, previous):
-        # TODO
-        raise NotImplementedError
+        if not previous:
+            return self
+        elif isinstance(previous, Unset):
+            return previous
+        elif isinstance(previous, Set):
+            return self._estimate(previous.value)
+        elif isinstance(previous, Remove):
+            return Remove(list(set(self.objects + previous.objects)))
+        else:
+            raise TypeError('invalid op')
 
     def _estimate(self, old):
-        # TODO
-        raise NotImplementedError
+        if not old:
+            return []
+        new = old - self.objects
+        for obj in self.objects:
+            if isinstance(obj, leancloud.Object and obj.id):
+                new = [x for x in new if not (isinstance(x, leancloud.Object) and x.id == obj.id)]
+        return new
 
 
 class Relation(BaseOp):
