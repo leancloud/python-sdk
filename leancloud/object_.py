@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import copy
+from datetime import datetime
 
 from leancloud import utils
 from leancloud import rest
@@ -63,22 +64,22 @@ class Object(object):
 
     def _dump(self, seen_objects=False):
         obj = copy.deepcopy(self.attributes)
-        for k, v in obj:
+        for k, v in obj.iteritems():
             obj[k] = utils.encode(v, seen_objects)
 
-        for k, v in self._operations:
-            obj[k] = v
+        # TODO
+        # for k, v in self._operations:
+        #     obj[k] = v
 
-        if hasattr(self, 'id'):
+        if self.id is not None:
             obj['objectId'] = self.id
 
-        if hasattr(self, 'createdAt'):
-            # TODO: parse date
-            obj['createdAt'] = self.createdAt
-
-        if hasattr(self, 'updatedAt'):
-            # TODO: parse date
-            obj['updatedAt'] = self.updatedAt
+        for key in ['createdAt', 'updatedAt']:
+            value = getattr(self, key, None)
+            if value is None:
+                continue
+            if isinstance(value, datetime):
+                setattr(self, key, value.isoformat())
 
         obj['__type'] = 'Object'
         obj['className'] = self.__class__.__name__
@@ -93,7 +94,6 @@ class Object(object):
         return True
 
     def save(self):
-        pass
         self._refresh_cache()
         unsaved_children = []
         unsaved_files = []

@@ -52,7 +52,7 @@ def test_finish_fetch():
 def test_dump():
     album = Album()
     album.set('foo', 'bar')
-    print album.dump()
+    eq_(album.dump(), {'foo': 'bar'})
 
 # def test_class_extend():
 #     class Album(Object):
