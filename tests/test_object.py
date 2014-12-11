@@ -49,6 +49,11 @@ def test_finish_fetch():
     eq_(album.attributes, {'title': 'Once', 'artist': 'nightwish'})
 
 
+def test_dump():
+    album = Album()
+    album.set('foo', 'bar')
+    print album.dump()
+
 # def test_class_extend():
 #     class Album(Object):
 #         title = AnyField()

@@ -45,6 +45,7 @@ class Object(object):
         # self._silent = {}
         # self._pending = {}
 
+        self._existed = False
         # self._fetch_when_save = False
 
     @classmethod
@@ -300,4 +301,6 @@ class Object(object):
                 del target[key]
 
     def _reset_cache_for_key(self, key):
-        pass
+        value = self.attributes[key]
+        # TODO
+        return False
