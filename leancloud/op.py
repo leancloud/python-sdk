@@ -151,8 +151,18 @@ class AddUnique(BaseOp):
         if not old:
             return copy.deepcopy(self.objects)
         new = copy.deepcopy(old)
-        # TODO
-        raise NotImplementedError
+        # XXX: more readable
+        for obj in self.objects:
+            if isinstance(obj, leancloud.Object) and obj.id is not None:
+                for index, another_obj in enumerate(new):
+                    if another_obj.id == obj.id:
+                        new[index] = obj
+                        continue
+                else:
+                    new.append(obj)
+            elif obj not in new:
+                new.append(obj)
+        return new
 
 
 class Remove(BaseOp):

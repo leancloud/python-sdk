@@ -63,6 +63,15 @@ def test_add():
     eq_(album.get('foo'), [1, 2])
 
 
+def test_add_unique():
+    album = Album()
+    album.add_unique('foo', 1)
+    album.add_unique('foo', 1)
+    eq_(album.get('foo'), [1])
+    album.add_unique('foo', 2)
+    eq_(album.get('foo'), [1, 2])
+
+
 def test_extend():
     ok_(Object.extend('Album'))
 
