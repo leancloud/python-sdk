@@ -54,6 +54,13 @@ def test_dump():
     album.set('foo', 'bar')
     eq_(album.dump(), {'foo': 'bar'})
 
+
+def test_has():
+    album = Album()
+    album.set('foo', 'bar')
+    assert album.has('foo') is True
+    assert album.has('bar') is False
+
 # def test_class_extend():
 #     class Album(Object):
 #         title = AnyField()
