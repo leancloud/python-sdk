@@ -185,7 +185,7 @@ class Remove(BaseOp):
         elif isinstance(previous, Unset):
             return previous
         elif isinstance(previous, Set):
-            return self._estimate(previous.value)
+            return Set(self._estimate(previous.value))
         elif isinstance(previous, Remove):
             return Remove(list(set(self.objects + previous.objects)))
         else:
@@ -194,9 +194,9 @@ class Remove(BaseOp):
     def _estimate(self, old, obj=None, key=None):
         if not old:
             return []
-        new = old - self.objects
+        new = list(set(old) - set(self.objects))
         for obj in self.objects:
-            if isinstance(obj, leancloud.Object and obj.id):
+            if isinstance(obj, leancloud.Object) and obj.id:
                 new = [x for x in new if not (isinstance(x, leancloud.Object) and x.id == obj.id)]
         return new
 

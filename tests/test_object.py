@@ -72,6 +72,13 @@ def test_add_unique():
     eq_(album.get('foo'), [1, 2])
 
 
+def test_remove():
+    album = Album()
+    album.set('foo', ['bar', 'baz'])
+    album.remove('foo', 'bar')
+    eq_(album.get('foo'), ['baz'])
+
+
 def test_extend():
     ok_(Object.extend('Album'))
 
