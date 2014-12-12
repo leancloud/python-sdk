@@ -138,7 +138,7 @@ class Object(object):
         }
 
     def get(self, attr):
-        return self.attributes[attr]
+        return self.attributes.get(attr)
 
     def relation(self, attr):
         # TODO
@@ -148,7 +148,18 @@ class Object(object):
         return attr in self.attributes
 
     def _merge_magic_field(self, attrs):
-        pass
+        for key in ['id', 'objectId', 'createdAt', 'updatedAt']:
+            if attrs.get(key) is None:
+                continue
+            if key == 'objectId':
+                self.id = attrs[key]
+            elif key == 'createdAt' or key == 'updatedAt':
+                if not isinstance(attrs[key], datetime):
+                    dt = datetime.strptime(attrs[key], "%Y-%m-%dT%H:%M:%S")
+                else:
+                    dt = attrs[key]
+                setattr(self, key, dt)
+            del attrs[key]
 
     def _start_save(self):
         self._op_set_queue.append({})
@@ -171,12 +182,13 @@ class Object(object):
         else:
             attrs = {key: utils.decode(key, value)}
 
-        data_to_validate = copy.deepcopy(attrs)
-        for k, v in data_to_validate.iteritems():
-            if isinstance(v, op.BaseOp):
-                data_to_validate[key] = v._estimate(self.attributes[k], self, k)
-                if data_to_validate[key] == op._UNSET:
-                    del data_to_validate[key]
+        # TODO
+        # data_to_validate = copy.deepcopy(attrs)
+        # for k, v in data_to_validate.iteritems():
+        #     if isinstance(v, op.BaseOp):
+        #         data_to_validate[key] = v._estimate(self.attributes[k], self, k)
+        #         if data_to_validate[key] == op._UNSET:
+        #             del data_to_validate[key]
 
         if not self._validate(attrs):
             return False
