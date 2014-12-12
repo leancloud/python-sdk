@@ -48,6 +48,13 @@ def test_unset():
     assert album.has('foo') is False
 
 
+def test_increment():
+    album = Album()
+    album.set('foo', 1)
+    album.increment('foo', 1)
+    assert album.get('foo') == 2
+
+
 def test_extend():
     ok_(Object.extend('Album'))
 

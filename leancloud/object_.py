@@ -137,16 +137,6 @@ class Object(object):
             'objectId': self.id,
         }
 
-    def get(self, attr):
-        return self.attributes.get(attr)
-
-    def relation(self, attr):
-        # TODO
-        pass
-
-    def has(self, attr):
-        return attr in self.attributes
-
     def _merge_magic_field(self, attrs):
         for key in ['id', 'objectId', 'createdAt', 'updatedAt']:
             if attrs.get(key) is None:
@@ -175,6 +165,16 @@ class Object(object):
     def _validate(self, attrs):
         # TODO
         return True
+
+    def get(self, attr):
+        return self.attributes.get(attr)
+
+    def relation(self, attr):
+        # TODO
+        pass
+
+    def has(self, attr):
+        return attr in self.attributes
 
     def set(self, key, value, unset=False, silent=True):
         if unset:

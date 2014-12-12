@@ -76,7 +76,7 @@ class Increment(BaseOp):
         elif isinstance(previous, Unset):
             return Set(self.amount)
         elif isinstance(previous, Set):
-            return Set(previous.value, self.amount)
+            return Set(previous.value + self.amount)
         elif isinstance(previous, Increment):
             return Increment(self.amount + previous.amount)
         else:
