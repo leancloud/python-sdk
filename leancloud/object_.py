@@ -268,8 +268,17 @@ class Object(object):
     def is_new(self):
         return True if self.id else False
 
+    def is_existed(self):
+        return self._existed
+
     def change(self):
         pass
+
+    def get_acl(self):
+        return self.get('ACL')
+
+    def set_acl(self, acl):
+        return self.set('ACL', acl)
 
     def _finish_fetch(self, server_data, has_data):
         self._op_set_queue = [{}]

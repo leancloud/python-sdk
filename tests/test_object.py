@@ -119,34 +119,7 @@ def test_has():
     assert album.has('foo') is True
     assert album.has('bar') is False
 
-# def test_class_extend():
-#     class Album(Object):
-#         title = AnyField()
-#
-#     assert 'title' in Album._fields
-#
-#
-# def test_set():
-#     Album = Object.extend('Album')
-#     album = Album()
-#     album.set('title', 'Once')
-#     assert album.title == 'Once'
-#     assert 'title' in Album._fields
-#
-#
-# def test_get():
-#     Album = Object.extend('Album')
-#     album = Album()
-#     album.set('title', 'Once')
-#
-#     assert album.get('title') == 'Once'
-#
-#
-# @with_setup(setup_func)
-# def test_save():
-#     Album = Object.extend('Album')
-#     album = Album()
-#     album.set('title', 'Once')
-#
-#     album.save()
-
+def test_get_set_acl():
+    album = Album()
+    album.set_acl('foo')
+    assert album.get_acl() == 'foo'
