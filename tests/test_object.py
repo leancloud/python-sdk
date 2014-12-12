@@ -55,6 +55,14 @@ def test_increment():
     assert album.get('foo') == 2
 
 
+def test_add():
+    album = Album()
+    album.add('foo', 1)
+    eq_(album.get('foo'), [1])
+    album.add('foo', 2)
+    eq_(album.get('foo'), [1, 2])
+
+
 def test_extend():
     ok_(Object.extend('Album'))
 
