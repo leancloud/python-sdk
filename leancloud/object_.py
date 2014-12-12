@@ -47,7 +47,7 @@ class Object(object):
         # self._pending = {}
 
         self._existed = False
-        # self._fetch_when_save = False
+        self._fetch_when_save = False
 
     @classmethod
     def extend(cls, name):

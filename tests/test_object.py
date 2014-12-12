@@ -55,6 +55,12 @@ def test_dump():
     eq_(album.dump(), {'foo': 'bar'})
 
 
+def test_to_pointer():
+    album = Album()
+    album.set('foo', 'bar')
+    album._to_pointer()
+
+
 def test_has():
     album = Album()
     album.set('foo', 'bar')
