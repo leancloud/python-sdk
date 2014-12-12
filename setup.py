@@ -33,6 +33,7 @@ setup(
 
     install_requires=[
         'requests',
+        'iso8601',
     ],
 
     extras_require={

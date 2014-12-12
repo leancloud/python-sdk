@@ -25,20 +25,20 @@ def get(url, params):
     for k, v in params.iteritems():
         if isinstance(v, dict):
             params[k] = json.dumps(v)
-    result = requests.get(BASE_URL + url, headers={
+    response = requests.get(BASE_URL + url, headers={
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
     }, params=params)
-    return result
+    return response
 
 
 @need_sdk_init
 def post(url, params):
-    result = requests.post(BASE_URL + url, headers={
+    response = requests.post(BASE_URL + url, headers={
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
     }, json=params)
-    return result
+    return response
 
 
 @need_sdk_init
@@ -50,8 +50,8 @@ def put(url, params):
 def delete(url, params=None):
     if params is None:
         params = {}
-    result = requests.delete(BASE_URL + url, headers={
+    response = requests.delete(BASE_URL + url, headers={
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
     }, json=params)
-    return result
+    return response

@@ -3,9 +3,10 @@
 import copy
 from datetime import datetime
 
+import iso8601
+
 from leancloud import utils
 from leancloud import rest
-from leancloud.fields import AnyField
 from leancloud import op
 
 
@@ -145,7 +146,7 @@ class Object(object):
                 self.id = attrs[key]
             elif key == 'createdAt' or key == 'updatedAt':
                 if not isinstance(attrs[key], datetime):
-                    dt = datetime.strptime(attrs[key], "%Y-%m-%dT%H:%M:%S")
+                    dt = iso8601.parse_date(attrs[key])
                 else:
                     dt = attrs[key]
                 setattr(self, key, dt)

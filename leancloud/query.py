@@ -65,49 +65,65 @@ class Query(object):
         params.update(self._extra)
         return params
 
-    def _parse_result(self, result):
-        if 'error' in result:
-            raise QueryError(result['code'], result['error'])
+    def _new_object(self):
+        return self._query_class()
 
-        obj = self._query_class
-        for k, v in result.iteritems():
-            obj.set(k, v)
-        obj.id = obj.objectId
+    # def _parse_result(self, result):
+    #     if 'error' in result:
+    #         raise QueryError(result['code'], result['error'])
+    #
+    #     obj = self._query_class
+    #     for k, v in result.iteritems():
+    #         obj.set(k, v)
+    #     obj.id = obj.objectId
+    #
+    #     return obj
+    #
+    # def _parse_list_result(self, raw):
+    #     if 'error' in raw:
+    #         raise QueryError(raw['code'], raw['error'])
+    #
+    #     results = []
+    #     for result in raw['results']:
+    #         obj = self._query_class()
+    #         obj._finish_fetch(result, True)
+    #         # for k, v in result.iteritems():
+    #         #     obj.set(k, v)
+    #         # obj.id = obj.objectId
+    #         results.append(obj)
+    #
+    #     return results
 
+    def _process_result(self, obj):
         return obj
-
-    def _parse_list_result(self, raw):
-        if 'error' in raw:
-            raise QueryError(raw['code'], raw['error'])
-
-        results = []
-        for result in raw['results']:
-            obj = self._query_class()
-            obj._finish_fetch(result, True)
-            # for k, v in result.iteritems():
-            #     obj.set(k, v)
-            # obj.id = obj.objectId
-            results.append(obj)
-
-        return results
 
     def first(self):
         params = self.dump()
         params['limit'] = 1
-        result = rest.get('/classes/{}'.format(self._query_class._class_name), params)
-        if not result:
+        content = rest.get('/classes/{}'.format(self._query_class._class_name), params).json()
+        if 'error' in content:
+            raise Query(content['code'], content['error'])
+        results = content['results']
+        if not results:
             raise NotExists
-        return self._parse_list_result(result)[0]
+        obj = self._new_object()
+        obj._finish_fetch(self._process_result(results[0]), True)
+        return obj
 
     def get(self, object_id):
         self.equal_to('objectId', object_id)
         return self.first()
 
     def find(self):
-        result = rest.get('/classes/{}'.format(self._query_class._class_name), self.dump())
-        return self._parse_list_result(result)
+        content = rest.get('/classes/{}'.format(self._query_class._class_name), self.dump()).json()
+        if 'error' in content:
+            raise QueryError(content['code'], content['error'])
+        for result in content['results']:
+            obj = self._new_object()
+            obj._finish_fetch(self._process_result(result), True)
+            yield obj
 
-    def destory_all(self):
+    def destroy_all(self):
         result = rest.delete('/classes/{}'.format(self._query_class._class_name), self.dump())
         return result
 
