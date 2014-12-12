@@ -79,6 +79,12 @@ def test_remove():
     eq_(album.get('foo'), ['baz'])
 
 
+def test_op():
+    album = Album()
+    album.set('foo', 'bar')
+    assert isinstance(album.op('foo'), op.Set)
+
+
 def test_extend():
     ok_(Object.extend('Album'))
 

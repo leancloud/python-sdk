@@ -228,7 +228,7 @@ class Object(object):
         return self.set(attr, op.Remove([item]))
 
     def op(self, attr):
-        return self._op_set_queue[attr][-1]
+        return self._op_set_queue[-1][attr]
 
     def clear(self):
         pass
