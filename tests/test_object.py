@@ -85,6 +85,12 @@ def test_op():
     assert isinstance(album.op('foo'), op.Set)
 
 
+def test_dump_save():
+    album = Album()
+    album.set('foo', 'bar')
+    eq_(album._dump_save(), {'foo': 'bar'})
+
+
 def test_extend():
     ok_(Object.extend('Album'))
 

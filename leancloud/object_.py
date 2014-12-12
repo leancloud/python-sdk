@@ -231,7 +231,14 @@ class Object(object):
         return self._op_set_queue[-1][attr]
 
     def clear(self):
+        # TODO
         pass
+
+    def _dump_save(self):
+        result = copy.deepcopy(self._op_set_queue[0])
+        for k, v in result.iteritems():
+            result[k] = v.dump()
+        return result
 
     def fetch(self):
         response = rest.get('/classes/{}/{}'.format(self._class_name, self.id))
