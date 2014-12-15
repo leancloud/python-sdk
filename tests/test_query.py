@@ -71,23 +71,23 @@ def test_basic_query():
 
     # descending
     q = Query(GameScore).descending('score')
-    eq_([x.score for x in q.find()], range(9, -1, -1))
+    eq_([x.get('score') for x in q.find()], range(9, -1, -1))
 
     # greater_than
     q = Query(GameScore).greater_than('score', 5).ascending('score')
-    eq_([x.score for x in q.find()], range(6, 10))
+    eq_([x.get('score') for x in q.find()], range(6, 10))
 
     q = Query(GameScore).greater_than_or_equal_to('score', 5).ascending('score')
-    eq_([x.score for x in q.find()], range(5, 10))
+    eq_([x.get('score') for x in q.find()], range(5, 10))
 
     q = Query(GameScore).less_than('score', 5).ascending('score')
-    eq_([x.score for x in q.find()], range(0, 5))
+    eq_([x.get('score') for x in q.find()], range(0, 5))
 
     q = Query(GameScore).less_than_or_equal_to('score', 5).ascending('score')
-    eq_([x.score for x in q.find()], range(0, 6))
+    eq_([x.get('score') for x in q.find()], range(0, 6))
 
     q = Query(GameScore).contained_in('score', [1, 2, 3]).ascending('score')
-    eq_([x.score for x in q.find()], range(1, 4))
+    eq_([x.get('score') for x in q.find()], range(1, 4))
 
     q = Query(GameScore).not_contained_in('score', [0, 1, 2, 3]).ascending('score')
-    eq_([x.score for x in q.find()], range(4, 10))
+    eq_([x.get('score') for x in q.find()], range(4, 10))
