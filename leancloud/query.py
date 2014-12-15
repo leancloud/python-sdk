@@ -135,8 +135,8 @@ class Query(object):
         params = self.dump()
         params['limit'] = 0
         params['count'] = 1
-        result = rest.get('/classes/{}'.format(self._query_class._class_name), params)
-        return result['count']
+        response = rest.get('/classes/{}'.format(self._query_class._class_name), params)
+        return response.json()['count']
 
     def skip(self, n):
         self._skip = n
