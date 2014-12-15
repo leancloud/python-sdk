@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import copy
+import logging
 from datetime import datetime
 
 import iso8601
@@ -11,6 +12,9 @@ from leancloud import op
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
+
+
+logging.getLogger('iso8601.iso8601').disabled = True
 
 
 class ObjectMeta(type):
@@ -96,14 +100,30 @@ class Object(object):
 
     def save(self):
         self._refresh_cache()
-        unsaved_children = []
-        unsaved_files = []
-        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
+
+        unsaved_children, unsaved_files = self._find_unsaved_children(self.attributes)
         if len(unsaved_children) + len(unsaved_files) > 0:
             self._deep_save(self.attributes)
 
         self._start_save()
         self._saving = getattr(self, '_saving', 0) + 1
+
+        # self._all_previous_saves = self._all_previous_saves
+
+        data = self._dump_save()
+
+        method = 'PUT' if self.id is not None else 'POST'
+
+        if method == 'PUT':
+            response = rest.put('/classes/{}/{}'.format(self._class_name, self.id), data)
+        else:
+            response = rest.post('/classes/{}'.format(self._class_name), data)
+
+        self._finish_save(self.parse(response))
+
+    def _find_unsaved_children(self, obj):
+        # TODO: traverse obj
+        return [], []
 
     def _refresh_cache(self):
         if hasattr(self, '_refreshing_cache'):
@@ -246,12 +266,6 @@ class Object(object):
         result = self.parse(response)
         self._finish_fetch(result)
 
-    def destroy(self):
-        if not self.id:  # TODO
-            return False
-        rest.delete('/classes/{}/{}'.format(self._class_name, self.id))
-        return True
-
     def parse(self, response):
         content = response.json()
         for key in ['createdAt', 'updatedAt']:
@@ -280,6 +294,21 @@ class Object(object):
 
     def set_acl(self, acl):
         return self.set('ACL', acl)
+
+    def _finish_save(self, server_data):
+        # TODO: traverse obj
+
+        saved_changes = self._op_set_queue[0]
+        self._op_set_queue = self._op_set_queue[1:]
+        self._apply_op_set(saved_changes, self._server_data)
+        self._merge_magic_field(server_data)
+        for key, value in server_data.iteritems():
+            self._server_data[key] = utils.decode(key, value)
+
+            # TODO:
+
+            self._rebuild_all_estimated_data()
+            self._saving = self.saving - 1
 
     def _finish_fetch(self, server_data, has_data):
         self._op_set_queue = [{}]
@@ -325,7 +354,7 @@ class Object(object):
 
     def _apply_op_set(self, op_set, target):
         for key, change in op_set.iteritems():
-            target[key] = change._estimate(target[key], self, key)
+            target[key] = change._estimate(target.get(key), self, key)
             if target[key] == op._UNSET:
                 del target[key]
 

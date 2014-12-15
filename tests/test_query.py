@@ -38,9 +38,14 @@ def setup_func():
 
 def destroy_func():
     pass
-    # albums = AVQuery(GameScore).find()
+    # albums = Query(GameScore).find()
     # for album in albums:
     #     album.delete()
+
+
+@with_setup(setup_func, destroy_func)
+def test_save():
+    assert game_scores[0].id
 
 
 @with_setup(setup_func, destroy_func)

@@ -118,10 +118,14 @@ class Query(object):
         content = rest.get('/classes/{}'.format(self._query_class._class_name), self.dump()).json()
         if 'error' in content:
             raise QueryError(content['code'], content['error'])
+
+        objs = []
         for result in content['results']:
             obj = self._new_object()
             obj._finish_fetch(self._process_result(result), True)
-            yield obj
+            objs.append(obj)
+
+        return objs
 
     def destroy_all(self):
         result = rest.delete('/classes/{}'.format(self._query_class._class_name), self.dump())

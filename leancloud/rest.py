@@ -43,7 +43,11 @@ def post(url, params):
 
 @need_sdk_init
 def put(url, params):
-    pass
+    response = requests.post(BASE_URL + url, headers={
+        'X-AVOSCloud-Application-Id': settings.APP_ID,
+        'X-AVOSCloud-Application-Key': settings.KEY,
+    }, json=params)
+    return response
 
 
 @need_sdk_init
