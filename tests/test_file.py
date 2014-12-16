@@ -12,7 +12,7 @@ def test_basic():
     s = StringIO('blah blah blah')
     f = File('blah', s)
     assert f.name == 'blah'
-    assert f._meta_data['size'] == 14
+    assert f._metadata['size'] == 14
     assert f._guessed_type == 'text/plain'
 
 

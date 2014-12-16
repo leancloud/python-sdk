@@ -6,6 +6,7 @@ import cStringIO
 import StringIO
 
 import leancloud
+from leancloud import rest
 from leancloud.mine_type import mine_types
 
 
@@ -19,11 +20,11 @@ class File(object):
         self._url = None
         self._acl = None
         self.current_user = None  # TODO
-        self._meta_data = {
+        self._metadata = {
             'owner': 'unknown'
         }
         if self.current_user and self.current_user is not None:
-            self._meta_data['owner'] = self.current_user.id
+            self._metadata['owner'] = self.current_user.id
 
         pattern = re.compile('\.([^.]*)$')
         extension = pattern.findall(name)
@@ -52,17 +53,17 @@ class File(object):
 
         if self._source:
             self._source.seek(0, os.SEEK_END)
-            self._meta_data['size'] = self._source.tell()
+            self._metadata['size'] = self._source.tell()
             self._source.seek(0, os.SEEK_SET)
 
     @classmethod
     def create_with_url(cls, name, url, meta_data=None, type_=None):
         f = File(name, None, type_)
         if meta_data:
-            f._meta_data.update(meta_data)
+            f._metadata.update(meta_data)
 
         f._url = url
-        f._meta_data['__source'] = 'external'
+        f._metadata['__source'] = 'external'
         return f
 
     @classmethod
@@ -86,3 +87,38 @@ class File(object):
     @property
     def url(self):
         return self._url
+
+    @property
+    def size(self):
+        return self._metadata['size']
+
+    @property
+    def owner_id(self):
+        return self._metadata['owner']
+
+    @property
+    def metadata(self):
+        return self._metadata
+
+    def get_thumbnail_url(self, width, height, quality=100, scale_to_fit=True, fmt='png'):
+        if not self._url:
+            raise ValueError('invalid url')
+
+        if width < 0 or height < 0:
+            raise ValueError('invalid height or width params')
+
+        if quality > 100 or quality <= 0:
+            raise ValueError('quality must between 0 and 100')
+
+        mode = 2 if scale_to_fit else 1
+
+        return self.url + '?imageView/{}/w/{}/h{}/q{}/format/{}'.format(mode, width, height, quality, fmt)
+
+    def destroy(self):
+        if not self.id:
+            return False
+        response = rest.delete('/files/{}'.format(self.id))
+        return response  # TODO: check result
+
+    def save(self):
+        pass
