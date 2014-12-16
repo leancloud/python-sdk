@@ -2,6 +2,7 @@
 
 import os
 import re
+import base64
 import cStringIO
 import StringIO
 
@@ -34,9 +35,9 @@ class File(object):
             extension = None
 
         if type_:
-            self._guessed_type = type_
+            self._type = type_
         else:
-            self._guessed_type = mine_types.get(extension, 'text/plain')
+            self._type = mine_types.get(extension, 'text/plain')
 
         if data is None:
             # self._source = cStringIO.StringIO()
@@ -121,4 +122,14 @@ class File(object):
         return response  # TODO: check result
 
     def save(self):
-        pass
+        output = cStringIO.StringIO()
+        self._source.seek(0)
+        base64.encode(self._source, output)
+        self._source.seek(0)
+        data = {
+            'base64': output.getvalue(),
+            '_ContentType': self._type,
+            'mine_type': self._type,
+            'minData': self._metadata,
+        }
+        response = rest.post('/files/{}'.format(self._name), data)
