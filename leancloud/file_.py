@@ -122,14 +122,26 @@ class File(object):
         return response  # TODO: check result
 
     def save(self):
-        output = cStringIO.StringIO()
-        self._source.seek(0)
-        base64.encode(self._source, output)
-        self._source.seek(0)
-        data = {
-            'base64': output.getvalue(),
-            '_ContentType': self._type,
-            'mine_type': self._type,
-            'minData': self._metadata,
-        }
+        if self._source:
+            output = cStringIO.StringIO()
+            self._source.seek(0)
+            base64.encode(self._source, output)
+            self._source.seek(0)
+            data = {
+                'base64': output.getvalue(),
+                '_ContentType': self._type,
+                'mine_type': self._type,
+                'minData': self._metadata,
+            }
+        elif self._url and self.metadata['__source'] == 'external':
+            data = {
+                'name': self._name,
+                'ACL': self._acl,
+                'metaData': self._metadata,
+                'mine_type': self._type,
+                'url': self._url,
+            }
+        else:
+            raise ValueError
+
         response = rest.post('/files/{}'.format(self._name), data)

@@ -1,11 +1,20 @@
 # coding: utf-8
 
 from StringIO import StringIO
+from nose.tools import with_setup
 
+import leancloud
 from leancloud import File
 from leancloud import ACL
 
 __author__ = 'asaka'
+
+
+def setup_func():
+    leancloud.init(
+        'pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb',
+        'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd',
+    )
 
 
 def test_basic():
@@ -13,7 +22,7 @@ def test_basic():
     f = File('blah', s)
     assert f.name == 'blah'
     assert f._metadata['size'] == 14
-    assert f._guessed_type == 'text/plain'
+    assert f._type == 'text/plain'
 
 
 def test_create_with_url():
@@ -31,3 +40,15 @@ def test_acl():
     f = File('blah', buffer('xxx'))
     f.set_acl(acl)
     assert f.get_acl() == acl
+
+
+@with_setup(setup_func)
+def test_save():
+    f = File('blah', buffer('xxx'))
+    f.save()
+
+
+@with_setup(setup_func)
+def test_save_external():
+    f = File.create_with_url('lenna.jpg', 'http://www.lenna.org/full/len_std.jpg')
+    f.save()
