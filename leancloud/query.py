@@ -6,15 +6,6 @@ from leancloud import rest
 from leancloud.object_ import Object
 
 
-class QueryError(Exception):
-    def __init__(self, code, error):
-        self.code = code
-        self.error = error
-
-    def __repr(self):
-        return '{} {}'.format(self.code, self.error)
-
-
 class NotExists(Exception):
     pass
 
@@ -117,7 +108,7 @@ class Query(object):
     def find(self):
         content = rest.get('/classes/{}'.format(self._query_class._class_name), self.dump()).json()
         if 'error' in content:
-            raise QueryError(content['code'], content['error'])
+            raise leancloud.LeanCloudError(content['code'], content['error'])
 
         objs = []
         for result in content['results']:

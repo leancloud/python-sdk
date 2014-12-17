@@ -10,6 +10,7 @@ from .relation import Relation
 from .query import Query
 from .geo_point import GeoPoint
 from .settings import init
+from .errors import LeanCloudError
 
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     'Relation',
     'GeoPoint',
     'File',
+    'LeanCloudError',
 ]

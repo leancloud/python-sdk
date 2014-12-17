@@ -113,7 +113,7 @@ class File(object):
 
         mode = 2 if scale_to_fit else 1
 
-        return self.url + '?imageView/{}/w/{}/h{}/q{}/format/{}'.format(mode, width, height, quality, fmt)
+        return self.url + '?imageView/{}/w/{}/h/{}/q/{}/format/{}'.format(mode, width, height, quality, fmt)
 
     def destroy(self):
         if not self.id:
@@ -145,3 +145,15 @@ class File(object):
             raise ValueError
 
         response = rest.post('/files/{}'.format(self._name), data)
+        content = response.json()
+
+        if 'error' in content:
+            raise leancloud.LeanCloudError(content['code'], content['error'])
+
+        self._name = content['name']
+        self._url = content['url']
+        self.id = content['objectId']
+        if 'size' in content:
+            self._metadata['size'] = content['size']
+
+        return self
