@@ -57,7 +57,7 @@ class Object(object):
     @classmethod
     def extend(cls, name):
         return type(name, (cls,), {})
-    #
+
     # def fetch_when_save(self, enable):
     #     self._fetch_when_save = enable
 
@@ -336,8 +336,8 @@ class Object(object):
             self.attributes[key] = o._estimate(self.attributes.get(key), self, key)
             if self.attributes[key] is op._UNSET:
                 del self.attributes[key]
-            else:
-                self._reset_cache_for_key(key)
+            # else:
+            #     self._reset_cache_for_key(key)
 
     def _rebuild_all_estimated_data(self):
         # TODO
@@ -347,8 +347,8 @@ class Object(object):
         for op_set in self._op_set_queue:
             # apply local changes
             self._apply_op_set(op_set, self.attributes)
-            for key in op_set.iterkeys():
-                self._reset_cache_for_key(key)
+            # for key in op_set.iterkeys():
+            #     self._reset_cache_for_key(key)
 
         # TODO: triger change event
 
@@ -358,7 +358,8 @@ class Object(object):
             if target[key] == op._UNSET:
                 del target[key]
 
-    def _reset_cache_for_key(self, key):
-        value = self.attributes[key]
-        # TODO
-        return False
+    # def _reset_cache_for_key(self, key):
+    #     value = self.attributes[key]
+    #     if isinstance(value, dict):
+    #         pass
+    #     return False
