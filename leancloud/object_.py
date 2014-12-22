@@ -42,7 +42,7 @@ class Object(object):
 
         self._server_data = {}
         self._op_set_queue = [{}]
-        self.attributes = {}
+        self.attributes = attributes
 
         # self._hashed_object = {}
         # self._escaped_attributes = {}
@@ -52,14 +52,14 @@ class Object(object):
         # self._pending = {}
 
         self._existed = False
-        self._fetch_when_save = False
+        # self._fetch_when_save = False
 
     @classmethod
     def extend(cls, name):
         return type(name, (cls,), {})
-
-    def fetch_when_save(self, enable):
-        self._fetch_when_save = enable
+    #
+    # def fetch_when_save(self, enable):
+    #     self._fetch_when_save = enable
 
     def dump(self):
         obj = self._dump()
