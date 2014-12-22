@@ -39,6 +39,6 @@ setup(
 
     extras_require={
         'dev': [],
-        'test': ['coverage'],
+        'test': ['nose', 'coverage'],
     },
 )
