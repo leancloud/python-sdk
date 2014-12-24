@@ -14,9 +14,11 @@ def encode(value, seen_objects=None, disallow_objects=False):
     if isinstance(value, leancloud.Object):
         if disallow_objects:
             raise TypeError('Object is now allowed')
-        if not seen_objects or value in seen_objects or not value._has_data:
+        if (not seen_objects) or (value in seen_objects) or (not value._has_data):
             return value._to_pointer()
-        # TODO
+        if not value.dirty:
+            seen_objects.append(value)
+            return encode(value._dump(seen_objects=seen_objects), seen_objects, disallow_objects)
 
     if isinstance(value, leancloud.ACL):
         return value.dump()
@@ -41,7 +43,15 @@ def encode(value, seen_objects=None, disallow_objects=False):
     if isinstance(value, op.BaseOp):
         return value.dump()
 
-    # TODO: File
+    if isinstance(value, leancloud.File):
+        if (value.url is None) and (value.id is None):
+            raise ValueError('tried to save an unsaved file')
+        return {
+            '__type': 'File',
+            'id': value.id,
+            'name': value.name,
+            'url': value.url,
+        }
 
     if isinstance(value, dict):
         return {k: encode(v, seen_objects, disallow_objects) for k, v in value.iteritems()}
