@@ -58,6 +58,11 @@ class Object(object):
     def extend(cls, name):
         return type(name, (cls,), {})
 
+    @classmethod
+    def create(cls, class_name, **attributes):
+        object_class = cls.extend(class_name)
+        object_class(attributes)
+
     # def fetch_when_save(self, enable):
     #     self._fetch_when_save = enable
 

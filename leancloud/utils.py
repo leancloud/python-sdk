@@ -2,8 +2,10 @@
 
 __author__ = 'asaka'
 
-from collections import Mapping, Set, Sequence
+import copy
 from datetime import datetime
+
+import iso8601
 
 import leancloud
 from leancloud import op
@@ -60,39 +62,82 @@ def encode(value, seen_objects=None, disallow_objects=False):
 
 
 def decode(key, value):
-    if not isinstance(value, dict):
+    if isinstance(value, (leancloud.Object, leancloud.File, leancloud.op.BaseOp)):
         return value
+
     if isinstance(value, (tuple, list)):
         return [decode(x) for x in value]
-    # TODO
 
-    if isinstance(value, leancloud.Object):
+    if not isinstance(value, dict):
         return value
 
-    # TODO: File
+    if '__type' not in value:
+        return {k: v for k,v in value.iteritems()}
 
-    if isinstance(value, op.BaseOp):
-        return value
+    _type = value['__type']
+
+    if _type == 'Pointer':
+        value = copy.deepcopy(value)
+        class_name = value['className']
+        pointer = leancloud.Object.create(class_name)
+        if 'createdAt' in value:
+            value.pop('__type')
+            value.pop('className')
+            pointer._finish_fetch(value, True)
+        else:
+            pointer._finish_fetch({'objectId': value['objectId']}, False)
+        return pointer
+
+    if _type == 'Object':
+        value = copy.deepcopy(value)
+        class_name = value['className']
+        value.pop('__type')
+        value.pop('class_name')
+        obj = leancloud.Object.create(class_name)
+        obj._finish_fetch(value, True)
+        return obj
+
+    if _type == 'Date':
+        return iso8601.parse_date(value['iso'])
+
+    if _type == 'GeoPoint':
+        return leancloud.GeoPoint(latitude=value['latitude'], longitude=value['longitude'])
+
+    if _type == 'ACL':
+        return leancloud.ACL(value)  # TODO
+
+    # TODO: Relation
+
+    if _type == 'File':
+        f = leancloud.File(value['name'])
+        meta_data = value.get('metaData')
+        if meta_data:
+            f._metadata = meta_data
+        f._url = value['url']
+        f.id = value['objectId']
+        return f
+
+    return {k: decode(k, v) for k, v in value.iteritems()}
 
 
-iteritems = lambda mapping: getattr(mapping, 'iteritems', mapping.items)()
-string_types = (str, unicode) if str is bytes else (str, bytes)
-
-
-def objwalk(obj, path=(), memo=None):
-    if memo is None:
-        memo = set()
-    iterator = None
-    if isinstance(obj, Mapping):
-        iterator = iteritems
-    elif isinstance(obj, (Sequence, Set)) and not isinstance(obj, string_types):
-        iterator = enumerate
-    if iterator:
-        if id(obj) not in memo:
-            memo.add(id(obj))
-            for path_component, value in iterator(obj):
-                for result in objwalk(value, path + (path_component,), memo):
-                    yield result
-            memo.remove(id(obj))
-    else:
-        yield path, obj
+# iteritems = lambda mapping: getattr(mapping, 'iteritems', mapping.items)()
+# string_types = (str, unicode) if str is bytes else (str, bytes)
+#
+#
+# def objwalk(obj, path=(), memo=None):
+#     if memo is None:
+#         memo = set()
+#     iterator = None
+#     if isinstance(obj, Mapping):
+#         iterator = iteritems
+#     elif isinstance(obj, (Sequence, Set)) and not isinstance(obj, string_types):
+#         iterator = enumerate
+#     if iterator:
+#         if id(obj) not in memo:
+#             memo.add(id(obj))
+#             for path_component, value in iterator(obj):
+#                 for result in objwalk(value, path + (path_component,), memo):
+#                     yield result
+#             memo.remove(id(obj))
+#     else:
+#         yield path, obj

@@ -9,8 +9,8 @@ PUBLIC_KEY = '*'
 
 
 class ACL(object):
-    def __init__(self):
-        self.permissions_by_id = {}
+    def __init__(self, permissions_by_id=None):
+        self.permissions_by_id = permissions_by_id or {}
 
     def dump(self):
         return self.permissions_by_id
