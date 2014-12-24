@@ -32,7 +32,7 @@ class Object(object):
 
     __metaclass__ = ObjectMeta
 
-    def __init__(self, attributes=None):
+    def __init__(self, **attributes):
         if not attributes:
             attributes = {}
 

@@ -33,6 +33,9 @@ def test_set():
     album.set('title', 'Nightwish')
     eq_(album.attributes, {'title': 'Nightwish'})
 
+    album = Album(title='Nightwish')
+    eq_(album.attributes, {'title': 'Nightwish'})
+
 
 def test_get():
     album = Album()
