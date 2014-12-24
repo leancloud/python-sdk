@@ -28,6 +28,15 @@ def test_new():
     assert album._class_name == 'Album'
 
 
+def test_dirty():
+    album = Album()
+    assert album.dirty is True
+    album.id = 123
+    assert album.dirty is False
+    album.set('foo', 'bar')
+    assert album.dirty is True
+
+
 def test_set():
     album = Album()
     album.set('title', 'Nightwish')

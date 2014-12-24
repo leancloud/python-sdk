@@ -138,16 +138,19 @@ class Object(object):
     #                 self.set(k, op.Set(v), silent=True)
     #     delattr(self, '_refreshing_cache')
 
+    @property
     def dirty(self, attr=None):
         # self._refresh_cache()
         current_changes = self._op_set_queue[-1]
+
         if attr is not None:
             return True if attr in current_changes else False
 
         if self.id is None:
             return True
 
-        # TODO: handle current changes
+        if current_changes:
+            return True
 
         return False
 
