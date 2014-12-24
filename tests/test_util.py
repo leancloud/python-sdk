@@ -53,3 +53,14 @@ def test_encode():
             'xxx': {'read': True}
         },
     }
+
+
+def test_decode():
+    p =utils.decode('', {
+        '__type': 'GeoPoint',
+        'longitude': 0,
+        'latitude': 0,
+    })
+    assert isinstance(p, GeoPoint)
+    assert p.latitude == 0
+    assert p.longitude == 0
