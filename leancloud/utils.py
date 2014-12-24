@@ -66,7 +66,7 @@ def decode(key, value):
         return value
 
     if isinstance(value, (tuple, list)):
-        return [decode(x) for x in value]
+        return [decode(x, idx) for x, idx in enumerate(value)]
 
     if not isinstance(value, dict):
         return value
