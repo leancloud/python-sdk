@@ -9,8 +9,9 @@ import leancloud
 from leancloud import op
 
 
-def encode(value, seen_objects=False, disallow_objects=False):
-    if type(value) == leancloud.Object:
+def encode(value, seen_objects=None, disallow_objects=False):
+    seen_objects = seen_objects or []
+    if isinstance(value, leancloud.Object):
         if disallow_objects:
             raise TypeError('Object is now allowed')
         if not seen_objects or value in seen_objects or not value._has_data:

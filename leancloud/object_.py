@@ -100,7 +100,7 @@ class Object(object):
         return True
 
     def save(self):
-        self._refresh_cache()
+        # self._refresh_cache()
 
         unsaved_children, unsaved_files = self._find_unsaved_children(self.attributes)
         if len(unsaved_children) + len(unsaved_files) > 0:
@@ -126,26 +126,25 @@ class Object(object):
         # TODO: traverse obj
         return [], []
 
-    def _refresh_cache(self):
-        if hasattr(self, '_refreshing_cache'):
-            return
-        setattr(self, '_refreshing_cache', True)
-        for k, v in self.attributes.iteritems():
-            if isinstance(v, Object):
-                v._refresh_cache()
-            elif isinstance(v, dict):
-                if self._reset_cache_for_key(k):
-                    self.set(k, op.Set(v), silent=True)
-        delattr(self, '_refreshing_cache')
+    # def _refresh_cache(self):
+    #     if hasattr(self, '_refreshing_cache'):
+    #         return
+    #     setattr(self, '_refreshing_cache', True)
+    #     for k, v in self.attributes.iteritems():
+    #         if isinstance(v, Object):
+    #             v._refresh_cache()
+    #         elif isinstance(v, dict):
+    #             if self._reset_cache_for_key(k):
+    #                 self.set(k, op.Set(v), silent=True)
+    #     delattr(self, '_refreshing_cache')
 
     def dirty(self, attr=None):
-        self._refresh_cache()
+        # self._refresh_cache()
         current_changes = self._op_set_queue[-1]
         if attr is not None:
-            #TODO
-            pass
+            return True if attr in current_changes else False
 
-        if not hasattr(self, 'id'):
+        if self.id is None:
             return True
 
         # TODO: handle current changes
@@ -325,7 +324,7 @@ class Object(object):
 
         self._rebuild_all_estimated_data()
 
-        self._refresh_cache()
+        # self._refresh_cache()
         self._op_set_queue = [{}]
 
         self._has_data = has_data
