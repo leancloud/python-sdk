@@ -67,7 +67,8 @@ class Object(object):
         obj.pop('className')
         return obj
 
-    def _dump(self, seen_objects=False):
+    def _dump(self, seen_objects=None):
+        seen_objects = seen_objects or []
         obj = copy.deepcopy(self.attributes)
         for k, v in obj.iteritems():
             obj[k] = utils.encode(v, seen_objects)
@@ -197,11 +198,15 @@ class Object(object):
     def has(self, attr):
         return attr in self.attributes
 
-    def set(self, key, value, unset=False, silent=True):
-        if unset:
-            attrs = {key: op.Unset()}
+    def set(self, key, value=None, unset=False, silent=True):
+        if isinstance(key, dict) and value is None:
+            attrs = key
         else:
             attrs = {key: utils.decode(key, value)}
+
+        if unset:
+            for k in attrs.keys():
+                attrs[k] = op.Unset()
 
         # TODO
         # data_to_validate = copy.deepcopy(attrs)
@@ -216,7 +221,9 @@ class Object(object):
 
         self._merge_magic_field(attrs)
 
-        for k, v in attrs.iteritems():
+        keys = attrs.keys()
+        for k in keys:
+            v = attrs[k]
             # TODO: Relation
 
             if not isinstance(v, op.BaseOp):
@@ -226,7 +233,6 @@ class Object(object):
             if isinstance(v, op.Set) and self.attributes.get(k) == v:  # TODO: equal
                 is_real_change = False
 
-            # TODO: merge preview
             current_changes = self._op_set_queue[-1]
             current_changes[k] = v._merge_with_previous(current_changes.get(k))
             self._rebuild_estimated_data_for_key(k)
@@ -252,8 +258,7 @@ class Object(object):
         return self._op_set_queue[-1][attr]
 
     def clear(self):
-        # TODO
-        pass
+        self.set(self.attributes, unset=True)
 
     def _dump_save(self):
         result = copy.deepcopy(self._op_set_queue[0])

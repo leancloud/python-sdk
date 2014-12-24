@@ -82,6 +82,14 @@ def test_remove():
     eq_(album.get('foo'), ['baz'])
 
 
+def test_clear():
+    album = Album(foo=1, bar=2, baz=3)
+    album.clear()
+    assert album.get('foo') is None
+    assert album.get('bar') is None
+    assert album.get('baz') is None
+
+
 def test_op():
     album = Album()
     album.set('foo', 'bar')
@@ -121,6 +129,7 @@ def test_has():
     album.set('foo', 'bar')
     assert album.has('foo') is True
     assert album.has('bar') is False
+
 
 def test_get_set_acl():
     album = Album()
