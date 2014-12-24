@@ -17,7 +17,8 @@ def encode(value, seen_objects=False, disallow_objects=False):
             return value._to_pointer()
         # TODO
 
-    # TODO: ACL
+    if isinstance(value, leancloud.ACL):
+        return value.dump()
 
     if isinstance(value, datetime):
         return {
@@ -25,7 +26,8 @@ def encode(value, seen_objects=False, disallow_objects=False):
             'iso': value.isoformat()
         }
 
-    # TODO: GEOPoint
+    if isinstance(value, leancloud.GeoPoint):
+        return value.dump()
 
     if isinstance(value, (tuple, list)):
         return [encode(x, seen_objects, disallow_objects) for x in value]
