@@ -6,6 +6,7 @@ from datetime import datetime
 
 import iso8601
 
+import leancloud
 from leancloud import utils
 from leancloud import rest
 from leancloud import op
@@ -107,7 +108,11 @@ class Object(object):
     def save(self):
         # self._refresh_cache()
 
-        unsaved_children, unsaved_files = self._find_unsaved_children(self.attributes)
+        unsaved_children = []
+        unsaved_files = []
+
+        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
+
         if len(unsaved_children) + len(unsaved_files) > 0:
             self._deep_save(self.attributes)
 
@@ -127,9 +132,20 @@ class Object(object):
 
         self._finish_save(self.parse(response))
 
-    def _find_unsaved_children(self, obj):
-        # TODO: traverse obj
-        return [], []
+    @classmethod
+    def _find_unsaved_children(cls, obj, children, files):
+        def callback(o):
+            if isinstance(o, Object):
+                if obj.dirty:
+                    children.append(obj)
+                return
+
+            if isinstance(o, leancloud.File):
+                if o.url is None and o.id is None:
+                    files.append(o)
+                return
+
+        utils.walk_object(obj, callback)
 
     # def _refresh_cache(self):
     #     if hasattr(self, '_refreshing_cache'):
