@@ -120,24 +120,31 @@ def decode(key, value):
     return {k: decode(k, v) for k, v in value.iteritems()}
 
 
-# iteritems = lambda mapping: getattr(mapping, 'iteritems', mapping.items)()
-# string_types = (str, unicode) if str is bytes else (str, bytes)
-#
-#
-# def objwalk(obj, path=(), memo=None):
-#     if memo is None:
-#         memo = set()
-#     iterator = None
-#     if isinstance(obj, Mapping):
-#         iterator = iteritems
-#     elif isinstance(obj, (Sequence, Set)) and not isinstance(obj, string_types):
-#         iterator = enumerate
-#     if iterator:
-#         if id(obj) not in memo:
-#             memo.add(id(obj))
-#             for path_component, value in iterator(obj):
-#                 for result in objwalk(value, path + (path_component,), memo):
-#                     yield result
-#             memo.remove(id(obj))
-#     else:
-#         yield path, obj
+def walk_object(obj, callback, seen=None):
+    seen = seen or set()
+
+    if isinstance(obj, leancloud.Object):
+        if obj in seen:
+            return
+        seen.add(obj)
+        walk_object(obj.attributes, callback, seen)
+        return callback(obj)
+
+    if isinstance(obj, (leancloud.Relation, leancloud.File)):
+        return callback(obj)
+
+    if isinstance(obj, (dict, tuple)):
+        for child, idx in enumerate(obj):
+            new_child = walk_object(child, callback, seen)
+            if new_child:
+                obj[idx] = new_child
+        return callback(obj)
+
+    if isinstance(obj, dict):
+        for key, child in obj.iteritems():
+            new_child = walk_object(child, callback, seen)
+            if new_child:
+                obj[key] = new_child
+        return callback(obj)
+
+    return callback(obj)

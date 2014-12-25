@@ -64,3 +64,20 @@ def test_decode():
     assert isinstance(p, GeoPoint)
     assert p.latitude == 0
     assert p.longitude == 0
+
+
+def test_util():
+    obj = Object.extend('Foo')()
+
+    def callback(o):
+        callback.count += 1
+        if callback.count == 1:
+            assert o == {}
+        elif callback.count == 2:
+            assert o == obj
+
+    callback.count = 0
+
+    utils.walk_object(obj, callback)
+
+    assert callback.count == 2
