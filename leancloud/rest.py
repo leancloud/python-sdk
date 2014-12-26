@@ -9,7 +9,8 @@ from leancloud import settings
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-BASE_URL = settings.CN_BASE_URL + '/1.1'
+SERVER_VERSION = '1.1'
+BASE_URL = settings.CN_BASE_URL + '/' + SERVER_VERSION
 
 
 def need_sdk_init(func):

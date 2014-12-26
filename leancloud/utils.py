@@ -1,6 +1,6 @@
 # coding: utf-8
 
-__author__ = 'asaka'
+__author__ = 'asaka <lan@leancloud.rocks>'
 
 import copy
 from datetime import datetime

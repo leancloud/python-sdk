@@ -49,6 +49,16 @@ def test_save():
 
 
 @with_setup(setup_func, destroy_func)
+def test_batch():
+    foo = Object.extend('Foo')()
+    bar = Object.extend('Bar')()
+    bar.set('baz', 'baz')
+    foo.set('bar', bar)
+    foo.save()
+    # TODO: check if relation is corrected
+
+
+@with_setup(setup_func, destroy_func)
 def test_basic_query():
     # find
     q = Query(GameScore)

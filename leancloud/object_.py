@@ -48,6 +48,7 @@ class Object(object):
         # TODO: get defaults
 
         self.id = None
+        self._class_name = self._class_name  # for IDE
 
         self._server_data = {}
         self._op_set_queue = [{}]
@@ -125,9 +126,7 @@ class Object(object):
             self._deep_save(self.attributes)
 
         self._start_save()
-        self._saving = getattr(self, '_saving', 0) + 1
-
-        # self._all_previous_saves = self._all_previous_saves
+        # self._saving = getattr(self, '_saving', 0) + 1
 
         data = self._dump_save()
 
@@ -138,7 +137,50 @@ class Object(object):
         else:
             response = rest.post('/classes/{}'.format(self._class_name), data)
 
-        self._finish_save(self.parse(response))
+        self._finish_save(self.parse(response.json(), response.status_code))
+
+    def _deep_save(self, exclude=None):
+        # TODO: chunk
+        unsaved_children = []
+        unsaved_files = []
+        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
+
+        if exclude:
+            unsaved_children = [x for x in unsaved_children if x != exclude]
+
+        for f in unsaved_files:
+            f.save()
+
+        dumped_objs = []
+        for obj in unsaved_children:
+            obj._start_save()
+            method = 'POST' if obj.id is None else 'PUT'
+            path = '/{}/classes/{}'.format(rest.SERVER_VERSION, obj._class_name)
+            body = obj._dump_save()
+            dumped_obj = {
+                'method': method,
+                'path': path,
+                'body': body,
+            }
+            dumped_objs.append(dumped_obj)
+
+        response = rest.post('/batch', params={'requests': dumped_objs}).json()
+
+        errors = []
+        for idx, obj in enumerate(unsaved_children):
+            content = response[idx]
+            if not content.get('success'):
+                errors.append(leancloud.LeanCloudError(content.get('code'), content.get('error')))
+                obj._cancel_save()
+            else:
+                result = obj.parse(content['success'])
+                obj._finish_save(result)
+
+            if errors:
+                # TODO: how to handle list of errors?
+                pass
+            print obj.id
+
 
     @classmethod
     def _find_unsaved_children(cls, obj, children, files):
@@ -310,13 +352,12 @@ class Object(object):
         result = self.parse(response)
         self._finish_fetch(result)
 
-    def parse(self, response):
-        content = response.json()
+    def parse(self, content, status_code=None):
         for key in ['createdAt', 'updatedAt']:
             pass  # TODO: parse date params
 
         self._existed = True
-        if response.status_code == 201:
+        if status_code == 201:
             self._existed = False
 
         return content
@@ -352,7 +393,7 @@ class Object(object):
             # TODO:
 
             self._rebuild_all_estimated_data()
-            self._saving = self.saving - 1
+            # self._saving = self.saving - 1
 
     def _finish_fetch(self, server_data, has_data):
         self._op_set_queue = [{}]
