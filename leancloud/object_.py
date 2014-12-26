@@ -134,10 +134,11 @@ class Object(object):
 
     @classmethod
     def _find_unsaved_children(cls, obj, children, files):
+
         def callback(o):
             if isinstance(o, Object):
-                if obj.dirty:
-                    children.append(obj)
+                if o.dirty:
+                    children.append(o)
                 return
 
             if isinstance(o, leancloud.File):

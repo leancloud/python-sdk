@@ -23,6 +23,10 @@ class Album(Object):
     pass
 
 
+class Band(Object):
+    pass
+
+
 def test_new():
     album = Album()
     assert album._class_name == 'Album'
@@ -35,6 +39,25 @@ def test_dirty():
     assert album.dirty is False
     album.set('foo', 'bar')
     assert album.dirty is True
+
+
+def test_find_unsaved_children():
+    album = Album()
+    unsaved_children = []
+    unsaved_files = []
+    Object._find_unsaved_children(album, unsaved_children, unsaved_files)
+    assert unsaved_children == [album]
+    assert unsaved_files == []
+
+
+def test_find_unsaved_children_2():
+    album = Album()
+    band = Band()
+    album.set('band', band)
+    unsaved_children = []
+    unsaved_files = []
+    Object._find_unsaved_children(album, unsaved_children, unsaved_files)
+    assert unsaved_children == [band, album]
 
 
 def test_set():

@@ -122,8 +122,10 @@ def decode(key, value):
 
 def walk_object(obj, callback, seen=None):
     seen = seen or set()
+    # print obj, '>',
 
     if isinstance(obj, leancloud.Object):
+        # print 'is Object'
         if obj in seen:
             return
         seen.add(obj)
@@ -131,9 +133,11 @@ def walk_object(obj, callback, seen=None):
         return callback(obj)
 
     if isinstance(obj, (leancloud.Relation, leancloud.File)):
+        # print 'is Relation or File'
         return callback(obj)
 
-    if isinstance(obj, (dict, tuple)):
+    if isinstance(obj, (list, tuple)):
+        # print 'is list or tuple'
         for child, idx in enumerate(obj):
             new_child = walk_object(child, callback, seen)
             if new_child:
@@ -141,10 +145,13 @@ def walk_object(obj, callback, seen=None):
         return callback(obj)
 
     if isinstance(obj, dict):
+        # print 'is dict'
         for key, child in obj.iteritems():
             new_child = walk_object(child, callback, seen)
             if new_child:
                 obj[key] = new_child
         return callback(obj)
+
+    # print 'is other'
 
     return callback(obj)
