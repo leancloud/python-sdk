@@ -18,15 +18,23 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 logging.getLogger('iso8601.iso8601').disabled = True
 
 
+object_class_map = {}
+
+
 class ObjectMeta(type):
     def __new__(cls, name, bases, attrs):
-        super_new = super(ObjectMeta, cls).__new__
-
         if name == 'User':
             name = '_User'
 
+        cached_class = object_class_map.get(name)
+        if cached_class:
+            return cached_class
+
+        super_new = super(ObjectMeta, cls).__new__
         attrs['_class_name'] = name
-        return super_new(cls, name, bases, attrs)
+        object_class = super_new(cls, name, bases, attrs)
+        object_class_map[name] = object_class
+        return object_class
 
 
 class Object(object):
@@ -218,8 +226,13 @@ class Object(object):
         return self.attributes.get(attr)
 
     def relation(self, attr):
-        # TODO
-        pass
+        value = self.get(attr)
+        if value is not None:
+            if not isinstance(value, leancloud.Relation):
+                raise TypeError('field %s is not Relation'.format(attr))
+            value._ensure_parent_and_key(self, attr)
+            return value
+        return leancloud.Relation(self, attr)
 
     def has(self, attr):
         return attr in self.attributes

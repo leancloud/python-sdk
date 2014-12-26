@@ -32,6 +32,13 @@ def test_new():
     assert album._class_name == 'Album'
 
 
+def test_class_equal():
+    AnotherAlbum = Object.extend('Album')
+    assert AnotherAlbum is Album
+    album = AnotherAlbum()
+    assert isinstance(album, AnotherAlbum)
+
+
 def test_dirty():
     album = Album()
     assert album.is_dirty() is True
