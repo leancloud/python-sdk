@@ -194,7 +194,10 @@ class Object(object):
                     dt = iso8601.parse_date(attrs[key])
                 else:
                     dt = attrs[key]
-                setattr(self, key, dt)
+                if key == 'createdAt':
+                    setattr(self, 'created_at', dt)
+                elif key == 'updatedAt':
+                    setattr(self, 'updated_at', dt)
             del attrs[key]
 
     def _start_save(self):

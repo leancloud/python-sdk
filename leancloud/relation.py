@@ -3,7 +3,7 @@
 import leancloud
 from leancloud import op
 
-__author__ = 'asaka'
+__author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class Relation(object):
