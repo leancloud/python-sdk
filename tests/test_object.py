@@ -34,11 +34,11 @@ def test_new():
 
 def test_dirty():
     album = Album()
-    assert album.dirty is True
+    assert album.is_dirty() is True
     album.id = 123
-    assert album.dirty is False
+    assert album.is_dirty() is False
     album.set('foo', 'bar')
-    assert album.dirty is True
+    assert album.is_dirty() is True
 
 
 def test_find_unsaved_children():

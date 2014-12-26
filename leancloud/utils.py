@@ -18,7 +18,7 @@ def encode(value, seen_objects=None, disallow_objects=False):
             raise TypeError('Object is now allowed')
         if (not seen_objects) or (value in seen_objects) or (not value._has_data):
             return value._to_pointer()
-        if not value.dirty:
+        if not value.is_dirty():
             seen_objects.append(value)
             return encode(value._dump(seen_objects=seen_objects), seen_objects, disallow_objects)
 

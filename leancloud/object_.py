@@ -137,7 +137,7 @@ class Object(object):
 
         def callback(o):
             if isinstance(o, Object):
-                if o.dirty:
+                if o.is_dirty():
                     children.append(o)
                 return
 
@@ -160,8 +160,7 @@ class Object(object):
     #                 self.set(k, op.Set(v), silent=True)
     #     delattr(self, '_refreshing_cache')
 
-    @property
-    def dirty(self, attr=None):
+    def is_dirty(self, attr=None):
         # self._refresh_cache()
         current_changes = self._op_set_queue[-1]
 
