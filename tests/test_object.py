@@ -128,6 +128,28 @@ def test_op():
     assert isinstance(album.op('foo'), op.Set)
 
 
+def test_full_dump():
+    album = Album()
+    album.set('title', 'Nightwish')
+    assert album._dump() == {
+        'className': 'Album',
+        '__type': 'Object',
+        'title': 'Nightwish',
+    }
+    band = Band()
+    album.set('band', band)
+    assert album._dump() == {
+        'className': 'Album',
+        'band': {
+            'className': 'Band',
+            '__type': 'Pointer',
+            'objectId': None,
+        },
+        '__type': 'Object',
+        'title': 'Nightwish'
+    }
+
+
 def test_dump_save():
     album = Album()
     album.set('foo', 'bar')
