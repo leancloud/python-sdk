@@ -2,6 +2,7 @@
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
+import leancloud
 from leancloud import rest
 from leancloud.object_ import Object
 

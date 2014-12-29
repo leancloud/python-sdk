@@ -242,8 +242,8 @@ class Relation(BaseOp):
         removes = None
         id_to_pointer = lambda id_: {
             '__type': 'Pointer',
-            'class_name': self._target_class_name,
-            'object_id': id_,
+            'className': self._target_class_name,
+            'objectId': id_,
         }
         if len(self.relations_to_add) > 0:
             adds = {

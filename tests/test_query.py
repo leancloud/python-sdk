@@ -67,6 +67,7 @@ def test_relation():
     bar.save()
     relation = foo.relation('list')
     relation.add(bar)
+    foo.save()
 
 
 @with_setup(setup_func, destroy_func)
