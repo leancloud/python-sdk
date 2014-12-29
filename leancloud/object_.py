@@ -198,18 +198,6 @@ class Object(object):
 
         utils.walk_object(obj, callback)
 
-    # def _refresh_cache(self):
-    #     if hasattr(self, '_refreshing_cache'):
-    #         return
-    #     setattr(self, '_refreshing_cache', True)
-    #     for k, v in self.attributes.iteritems():
-    #         if isinstance(v, Object):
-    #             v._refresh_cache()
-    #         elif isinstance(v, dict):
-    #             if self._reset_cache_for_key(k):
-    #                 self.set(k, op.Set(v), silent=True)
-    #     delattr(self, '_refreshing_cache')
-
     def is_dirty(self, attr=None):
         # self._refresh_cache()
         current_changes = self._op_set_queue[-1]
@@ -393,7 +381,6 @@ class Object(object):
             # TODO:
 
             self._rebuild_all_estimated_data()
-            # self._saving = self.saving - 1
 
     def _finish_fetch(self, server_data, has_data):
         self._op_set_queue = [{}]
@@ -405,7 +392,6 @@ class Object(object):
 
         self._rebuild_all_estimated_data()
 
-        # self._refresh_cache()
         self._op_set_queue = [{}]
 
         self._has_data = has_data
@@ -421,8 +407,6 @@ class Object(object):
             self.attributes[key] = o._estimate(self.attributes.get(key), self, key)
             if self.attributes[key] is op._UNSET:
                 del self.attributes[key]
-            # else:
-            #     self._reset_cache_for_key(key)
 
     def _rebuild_all_estimated_data(self):
         # TODO
@@ -432,19 +416,10 @@ class Object(object):
         for op_set in self._op_set_queue:
             # apply local changes
             self._apply_op_set(op_set, self.attributes)
-            # for key in op_set.iterkeys():
-            #     self._reset_cache_for_key(key)
 
-        # TODO: triger change event
 
     def _apply_op_set(self, op_set, target):
         for key, change in op_set.iteritems():
             target[key] = change._estimate(target.get(key), self, key)
             if target[key] == op._UNSET:
                 del target[key]
-
-    # def _reset_cache_for_key(self, key):
-    #     value = self.attributes[key]
-    #     if isinstance(value, dict):
-    #         pass
-    #     return False
