@@ -7,7 +7,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class Relation(object):
-    def __init__(self, parent, key):
+    def __init__(self, parent, key=None):
         self.parent = parent
         self.key = key
         self.target_class_name = None
