@@ -205,29 +205,37 @@ class Relation(BaseOp):
     def __init__(self, adds, removes):
         self._target_class_name = None
 
-        self.relations_to_add = list({self._pointer_to_id(x) for x in adds})
-        self.relations_to_removes = list({self._pointer_to_id(x) for x in removes})
+        self.relations_to_add = {self._pointer_to_id(x) for x in adds}
+        self.relations_to_remove = {self._pointer_to_id(x) for x in removes}
 
     def _pointer_to_id(self, obj):
         if isinstance(obj, leancloud.Object):
-            if not hasattr(obj, 'id'):   # TODO: how to decide an object is unsaved ?
+            if obj.id is not None:
                 raise TypeError('cant add an unsaved Object to a relation')
             if self._target_class_name is None:
-                self._target_class_name = obj.class_name
-            if self._target_class_name != obj.class_name:
+                self._target_class_name = obj._class_name
+            if self._target_class_name != obj._class_name:
                 raise TypeError('try to create a Relation with 2 different types')
             return obj.id
         return obj
 
     @property
     def added(self):
-        # TODO
-        pass
+        objs = []
+        for obj_id in self.relations_to_add:
+            obj = leancloud.Object.create(self._target_class_name)
+            obj.id = obj_id
+            objs.append(obj)
+        return objs
 
     @property
     def removed(self):
-        # TODO
-        pass
+        objs = []
+        for obj_id in self.relations_to_remove:
+            obj = leancloud.Object.create(self._target_class_name)
+            obj.id = obj_id
+            objs.append(obj)
+        return objs
 
     def dump(self):
         adds = None
@@ -242,10 +250,10 @@ class Relation(BaseOp):
                 '__op': 'AddRelation',
                 'objects': [id_to_pointer(x) for x in self.relations_to_add]
             }
-        if len(self.relations_to_removes) > 0:
+        if len(self.relations_to_remove) > 0:
             removes = {
                 '__op': 'RemoveRelation',
-                'objects': [id_to_pointer(x) for x in self.relations_to_removes]
+                'objects': [id_to_pointer(x) for x in self.relations_to_remove]
             }
 
         if adds and removes:
@@ -256,10 +264,34 @@ class Relation(BaseOp):
 
         return adds or removes or {}
 
-    def _merge_with_previous(self, previous):
-        # TODO
-        raise NotImplementedError
+    def _merge_with_previous(self, previous=None):
+        if previous is None:
+            return self
+        elif isinstance(previous, Unset):
+            raise ValueError('can\'t modify a relation after deleting it.')
+        elif isinstance(previous, Relation):
+            if (previous._target_class_name) and (previous._target_class_name != self._target_class_name):
+                raise TypeError('related object must be class of {}'.format(previous._target_class_name))
+            new_add = (previous.relations_to_add - self.relations_to_remove) | self.relations_to_add
+            new_remove = (previous.relations_to_remove - self.relations_to_add) | self.relations_to_remove
+
+            new_relation = Relation(new_add, new_remove)
+            new_relation._target_class_name = self._target_class_name
+            return new_relation
+        else:
+            raise TypeError('invalid op')
 
     def _estimate(self, old, obj=None, key=None):
-        # TODO
-        raise NotImplementedError
+        if obj is None:
+            relation = leancloud.Relation(obj, key)
+        elif isinstance(old, leancloud.Relation):
+            if self._target_class_name:
+                if old.target_class_name:
+                    if old.target_class_name != self._target_class_name:
+                        raise TypeError('related object must be class of {}'.format(old.target_class_name))
+                    else:
+                        old.target_class_name = self._target_class_name
+                return old
+            else:
+                raise TypeError('invalid op')
+

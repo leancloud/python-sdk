@@ -53,7 +53,7 @@ class Relation(object):
 
     def query(self):
         if self.target_class_name is None:
-            target_class = leancloud.Object._get_subclass(self.parent.class_name)
+            target_class = leancloud.Object._get_subclass(self.parent._class_name)
             query = leancloud.Query(target_class)
             query._extra['redirectClassNameForKey'] = self.key
         else:

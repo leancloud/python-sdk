@@ -196,3 +196,11 @@ def test_get_set_acl():
     album = Album()
     album.set_acl('foo')
     assert album.get_acl() == 'foo'
+
+
+def test_relation():
+    album = Album()
+    band = Band()
+    album.relation('band')
+    relation = album.relation('band')
+    relation.add(band)
