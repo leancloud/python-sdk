@@ -71,7 +71,7 @@ class Object(object):
     @classmethod
     def create(cls, class_name, **attributes):
         object_class = cls.extend(class_name)
-        object_class(attributes)
+        return object_class(**attributes)
 
     # def fetch_when_save(self, enable):
     #     self._fetch_when_save = enable
@@ -126,7 +126,6 @@ class Object(object):
             self._deep_save(self.attributes)
 
         self._start_save()
-        # self._saving = getattr(self, '_saving', 0) + 1
 
         data = self._dump_save()
 

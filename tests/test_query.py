@@ -48,7 +48,6 @@ def test_save():
     assert game_scores[0].id
 
 
-@with_setup(setup_func, destroy_func)
 def test_batch():
     foo = Object.extend('Foo')()
     bar = Object.extend('Bar')()
@@ -56,6 +55,16 @@ def test_batch():
     foo.set('bar', bar)
     foo.save()
     # TODO: check if relation is corrected
+
+
+@with_setup(setup_func, destroy_func)
+def test_relation():
+    foo = Object.extend('Foo')()
+    foo.set('a', 1)
+    bar = Object.extend('Bar')()
+    relation = foo.relation('list')
+    relation.add(bar)
+    print foo.save()
 
 
 @with_setup(setup_func, destroy_func)

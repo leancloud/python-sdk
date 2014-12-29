@@ -30,6 +30,7 @@ def get(url, params):
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
     }, params=params)
+    response.raise_for_status()
     return response
 
 
@@ -39,6 +40,7 @@ def post(url, params):
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
     }, json=params)
+    response.raise_for_status()
     return response
 
 
@@ -48,6 +50,7 @@ def put(url, params):
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
     }, json=params)
+    response.raise_for_status()
     return response
 
 
@@ -59,4 +62,5 @@ def delete(url, params=None):
         'X-AVOSCloud-Application-Id': settings.APP_ID,
         'X-AVOSCloud-Application-Key': settings.KEY,
     }, json=params)
+    response.raise_for_status()
     return response
