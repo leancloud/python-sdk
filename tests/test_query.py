@@ -49,10 +49,11 @@ def test_save():
 
 
 def test_batch():
-    foo = Object.extend('Foo')()
-    bar = Object.extend('Bar')()
+    foo = Object.create('Foo')
+    bar = Object.create('Bar')
     bar.set('baz', 'baz')
     foo.set('bar', bar)
+    bar.save()
     foo.save()
     # TODO: check if relation is corrected
 
@@ -62,9 +63,10 @@ def test_relation():
     foo = Object.extend('Foo')()
     foo.set('a', 1)
     bar = Object.extend('Bar')()
+    bar.set('baz', 'baz')
+    bar.save()
     relation = foo.relation('list')
     relation.add(bar)
-    print foo.save()
 
 
 @with_setup(setup_func, destroy_func)

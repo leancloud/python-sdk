@@ -210,7 +210,7 @@ class Relation(BaseOp):
 
     def _pointer_to_id(self, obj):
         if isinstance(obj, leancloud.Object):
-            if obj.id is not None:
+            if obj.id is None:
                 raise TypeError('cant add an unsaved Object to a relation')
             if self._target_class_name is None:
                 self._target_class_name = obj._class_name
