@@ -9,4 +9,4 @@ class LeanCloudError(Exception):
         self.error = error
 
     def __str__(self):
-        return '{} {}'.format(self.code, self.error)
+        return '[{}] {}'.format(self.code, self.error)

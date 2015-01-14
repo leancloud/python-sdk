@@ -3,7 +3,7 @@
 import math
 
 
-__author__ = 'asaka'
+__author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class GeoPoint(object):

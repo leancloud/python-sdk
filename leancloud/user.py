@@ -14,18 +14,18 @@ class User(Object):
 
     def _merge_magic_field(self, attrs):
         self._session_token = attrs.get('sessionToken')
-        attrs.pop('sessionToken')
+        attrs.pop('sessionToken', None)
 
         return super(User, self)._merge_magic_field(attrs)
 
-    def sign_up(self, username, password, attrs):
+    def sign_up(self):
+        username = self.get('username')
         if not username:
             raise TypeError('invalid username: {}'.format(username))
 
+        password = self.get('password')
         if not password:
             raise TypeError('invalid password')
-
-        self.set(attrs)
 
         return self.save()
 

@@ -11,6 +11,7 @@ from .query import Query
 from .geo_point import GeoPoint
 from .settings import init
 from .errors import LeanCloudError
+from .user import User
 
 
 __all__ = [
@@ -19,6 +20,7 @@ __all__ = [
     'rest',
     'Query'
     'Object',
+    'User',
     'Relation',
     'GeoPoint',
     'File',

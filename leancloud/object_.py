@@ -110,8 +110,10 @@ class Object(object):
         if not self.id:
             return False
         result = rest.delete('/classes/{}/{}'.format(self._class_name, self.id))
-        # print result
-        # TODO: check the result
+
+        content = result.json()
+        if 'error' in content:
+            raise leancloud.LeanCloudError(content['code'], content['error'])
         return True
 
     def save(self):
@@ -178,7 +180,6 @@ class Object(object):
             if errors:
                 # TODO: how to handle list of errors?
                 pass
-            print obj.id
 
 
     @classmethod
@@ -347,8 +348,8 @@ class Object(object):
         self._finish_fetch(result)
 
     def parse(self, content, status_code=None):
-        for key in ['createdAt', 'updatedAt']:
-            pass  # TODO: parse date params
+        if 'error' in content:
+            raise leancloud.LeanCloudError(content['code'], content['error'])
 
         self._existed = True
         if status_code == 201:

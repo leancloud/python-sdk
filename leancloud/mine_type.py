@@ -1,4 +1,6 @@
-__author__ = 'asaka'
+# coding: utf-8
+
+__author__ = 'asaka <lan@leancloud.rocks>'
 
 mine_types = {
     "ai": "application/postscript",
