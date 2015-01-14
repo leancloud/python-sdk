@@ -8,19 +8,28 @@ from leancloud import Query
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
+user = None
+
 
 def setup_func():
     leancloud.init(
         'pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb',
         master_key='azkuvukzlq3t38abdrgrwqqdcx9me6178ctulhd14wynfq1n',
     )
+    users = Query(User).find()
+    for u in users:
+        u.destroy()
+
+    global user
+    # user = User(username='example', password='example')
+    user = User()
+    user.set('username', 'example')
+    user.set('password', 'example')
+    user.sign_up()
 
 
 def destroy_func():
-    users = Query(User).find()
-    for user in users:
-        print user
-        user.destroy()
+    pass
 
 
 @with_setup(setup_func, destroy_func)
@@ -29,3 +38,8 @@ def test_sign_up():
     user.set('username', 'foo')
     user.set('password', 'bar')
     user.sign_up()
+
+
+@with_setup(setup_func, destroy_func)
+def test_login():
+    user.login()
