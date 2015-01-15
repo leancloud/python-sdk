@@ -41,7 +41,7 @@ class User(Object):
         for key in auth_data.keys():
             self._sync_auth_data(key)
 
-    def _sync_auth_data(self):
+    def _sync_auth_data(self, key):
         if not self.is_current:
             return
 
@@ -55,7 +55,7 @@ class User(Object):
 
     def save(self):
         super(User, self).save()
-        # self._handle_save_result(False)
+        self._handle_save_result(False)
 
     def sign_up(self):
         username = self.get('username')
@@ -70,7 +70,12 @@ class User(Object):
 
     def login(self):
         response = rest.get('/login', params=self.dump())
-        # print response.json()
+        content = response.json()
+        server_data = self.parse(content, response.status_code)
+        self._finish_fetch(server_data)
+        self._handle_save_result(True)
+        if 'smsCode' not in server_data:
+            self.attributes.pop('smsCode', None)
 
     def follow(self, target_id):
         if self.id is None:

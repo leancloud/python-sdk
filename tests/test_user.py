@@ -8,7 +8,7 @@ from leancloud import Query
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
-user = None
+# user = None
 
 
 def setup_func():
@@ -20,7 +20,7 @@ def setup_func():
     for u in users:
         u.destroy()
 
-    global user
+    # global user
     # user = User(username='example', password='example')
     user = User()
     user.set('username', 'example')
@@ -43,4 +43,7 @@ def test_sign_up():
 
 @with_setup(setup_func, destroy_func)
 def test_login():
+    user = User()
+    user.set('username', 'example')
+    user.set('password', 'example')
     user.login()
