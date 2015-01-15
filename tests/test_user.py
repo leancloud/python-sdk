@@ -38,6 +38,7 @@ def test_sign_up():
     user.set('username', 'foo')
     user.set('password', 'bar')
     user.sign_up()
+    assert user._session_token
 
 
 @with_setup(setup_func, destroy_func)

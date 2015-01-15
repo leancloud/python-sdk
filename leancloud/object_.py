@@ -41,9 +41,9 @@ class Object(object):
 
     __metaclass__ = ObjectMeta
 
-    def __init__(self, **attributes):
-        if not attributes:
-            attributes = {}
+    def __init__(self, **attrs):
+        if not attrs:
+            attrs = {}
 
         # TODO: get defaults
 
@@ -52,7 +52,7 @@ class Object(object):
 
         self._server_data = {}
         self._op_set_queue = [{}]
-        self.attributes = attributes
+        self.attributes = attrs
 
         # self._hashed_object = {}
         # self._escaped_attributes = {}
@@ -117,8 +117,6 @@ class Object(object):
         return True
 
     def save(self):
-        # self._refresh_cache()
-
         unsaved_children = []
         unsaved_files = []
 
@@ -423,7 +421,6 @@ class Object(object):
         for op_set in self._op_set_queue:
             # apply local changes
             self._apply_op_set(op_set, self.attributes)
-
 
     def _apply_op_set(self, op_set, target):
         for key, change in op_set.iteritems():

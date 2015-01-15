@@ -19,6 +19,44 @@ class User(Object):
 
         return super(User, self)._merge_magic_field(attrs)
 
+    @property
+    def is_current(self):
+        return self._is_current_user
+
+    def _cleanup_auth_data(self):
+        if not self.is_current:
+            return
+        auth_data = self.get('authData')
+        if not auth_data:
+            return
+        keys = auth_data.keys()
+        for key in keys:
+            if not auth_data[key]:
+                del auth_data[key]
+
+    def _sync_all_auth_data(self):
+        auth_data = self.get('authData')
+        if not auth_data:
+            return
+        for key in auth_data.keys():
+            self._sync_auth_data(key)
+
+    def _sync_auth_data(self):
+        if not self.is_current:
+            return
+
+    def _handle_save_result(self, make_current=False):
+        if make_current:
+            self._is_current_user = True
+        self._cleanup_auth_data()
+        self._sync_all_auth_data()
+        self._server_data.pop('password', None)
+        self._rebuild_estimated_data_for_key('password')
+
+    def save(self):
+        super(User, self).save()
+        # self._handle_save_result(False)
+
     def sign_up(self):
         username = self.get('username')
         if not username:
@@ -28,11 +66,11 @@ class User(Object):
         if not password:
             raise TypeError('invalid password')
 
-        return self.save()
+        self.save()
 
     def login(self):
         response = rest.get('/login', params=self.dump())
-        print response.json()
+        # print response.json()
 
     def follow(self, target_id):
         if self.id is None:
