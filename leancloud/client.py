@@ -4,6 +4,7 @@ import json
 
 import requests
 
+import leancloud
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -27,6 +28,7 @@ def init(app_id, app_key=None, master_key=None):
         raise RuntimeError('app_key or master_key must be specified')
     if app_key and master_key:
         raise RuntimeError('app_key and master_key can\'t be specified both')
+
     global APP_ID, APP_KEY, MASTER_KEY
     APP_ID = app_id
     APP_KEY = app_key
@@ -42,6 +44,7 @@ def need_sdk_init(func):
         if not headers:
             headers = {}
         headers['X-AVOSCloud-Application-Id'] = APP_ID
+        headers['User-Agent'] = 'AVOS Cloud python-{} SDK'.format(leancloud.__version__)
         if APP_KEY:
             headers['X-AVOSCloud-Application-Key'] = APP_KEY
         else:
