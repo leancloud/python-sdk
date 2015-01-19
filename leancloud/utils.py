@@ -11,54 +11,86 @@ import leancloud
 from leancloud import op
 
 
-def encode(value, seen_objects=None, disallow_objects=False):
-    seen_objects = seen_objects or []
-    if isinstance(value, leancloud.Object):
-        if disallow_objects:
-            raise TypeError('Object is now allowed')
-        if (not seen_objects) or (value in seen_objects) or (not value._has_data):
-            return value._to_pointer()
-        if not value.is_dirty():
-            seen_objects.append(value)
-            return encode(value._dump(seen_objects=seen_objects), seen_objects, disallow_objects)
-
-    if isinstance(value, leancloud.ACL):
-        return value.dump()
+def encode(value, disallow_objects=False):
+    dumpable_types = (
+        leancloud.ACL,
+        leancloud.File,
+        leancloud.GeoPoint,
+        leancloud.Relation,
+        op.BaseOp,
+    )
 
     if isinstance(value, datetime):
         return {
             '__type': 'Date',
-            'iso': value.isoformat()
+            'iso': value.isoformat(),
         }
 
-    if isinstance(value, leancloud.GeoPoint):
+    if isinstance(value, leancloud.Object):
+        if disallow_objects:
+            raise ValueError('leancloud.Object not allowed')
+        return value._to_pointer()
+
+    if isinstance(value, dumpable_types):
         return value.dump()
 
     if isinstance(value, (tuple, list)):
-        return [encode(x, seen_objects, disallow_objects) for x in value]
-
-    # TODO: regexp
-
-    if isinstance(value, leancloud.Relation):
-        return value.dump()
-
-    if isinstance(value, op.BaseOp):
-        return value.dump()
-
-    if isinstance(value, leancloud.File):
-        if (value.url is None) and (value.id is None):
-            raise ValueError('tried to save an unsaved file')
-        return {
-            '__type': 'File',
-            'id': value.id,
-            'name': value.name,
-            'url': value.url,
-        }
+        return [encode(x, disallow_objects) for x in value]
 
     if isinstance(value, dict):
-        return {k: encode(v, seen_objects, disallow_objects) for k, v in value.iteritems()}
+        return {k: encode(v, disallow_objects) for k, v in value.iteritems()}
 
     return value
+
+
+# def _encode(value, seen_objects=None, disallow_objects=False):
+#     seen_objects = seen_objects or []
+#     if isinstance(value, leancloud.Object):
+#         if disallow_objects:
+#             raise TypeError('Object is now allowed')
+#         if (not seen_objects) or (value in seen_objects) or (not value._has_data):
+#             return value._to_pointer()
+#         if not value.is_dirty():
+#             seen_objects.append(value)
+#             return encode(value._dump(seen_objects=seen_objects), seen_objects, disallow_objects)
+#
+#     if isinstance(value, leancloud.ACL):
+#         return value.dump()
+#
+#     if isinstance(value, datetime):
+#         return {
+#             '__type': 'Date',
+#             'iso': value.isoformat()
+#         }
+#
+#     if isinstance(value, leancloud.GeoPoint):
+#         return value.dump()
+#
+#     if isinstance(value, (tuple, list)):
+#         return [encode(x, seen_objects, disallow_objects) for x in value]
+#
+#     # TODO: regexp
+#
+#     if isinstance(value, leancloud.Relation):
+#         return value.dump()
+#
+#     if isinstance(value, op.BaseOp):
+#         return value.dump()
+#
+#     if isinstance(value, leancloud.File):
+#         if (value.url is None) and (value.id is None):
+#             raise ValueError('tried to save an unsaved file')
+#         return {
+#             '__type': 'File',
+#             'id': value.id,
+#             'name': value.name,
+#             'url': value.url,
+#         }
+#
+#     if isinstance(value, dict):
+#         return {k: encode(v, seen_objects, disallow_objects) for k, v in value.iteritems()}
+#
+#     return value
 
 
 def decode(key, value):
