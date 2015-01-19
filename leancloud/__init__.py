@@ -8,6 +8,7 @@ from .object_ import Object
 from .file_ import File
 from .relation import Relation
 from .query import Query
+from .query import FriendShipQuery
 from .geo_point import GeoPoint
 from .settings import init
 from .errors import LeanCloudError
@@ -19,6 +20,7 @@ __all__ = [
     'init',
     'rest',
     'Query'
+    'FriendShipQuery',
     'Object',
     'User',
     'Relation',

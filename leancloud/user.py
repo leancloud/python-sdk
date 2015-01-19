@@ -3,6 +3,7 @@
 __author__ = 'asaka'
 
 import leancloud
+from leancloud import FriendShipQuery
 from leancloud import rest
 from leancloud import Object
 
@@ -18,6 +19,20 @@ class User(Object):
         attrs.pop('sessionToken', None)
 
         return super(User, self)._merge_magic_field(attrs)
+
+    @classmethod
+    def create_follower_query(cls, user_id):
+        if not user_id or not isinstance(user_id, basestring):
+            raise TypeError('invalid user_id: {}'.format(user_id))
+        query = FriendShipQuery('_Follower')
+        query._friendship_tag = 'follower'
+        query.equal_to('user', Object.create('User', id=user_id))
+
+    @classmethod
+    def create_followee_query(cls, user_id):
+        if not user_id or not isinstance(user_id, basestring):
+            raise TypeError('invalid user_id: {}'.format(user_id))
+
 
     @property
     def is_current(self):
@@ -72,7 +87,7 @@ class User(Object):
         response = rest.get('/login', params=self.dump())
         content = response.json()
         server_data = self.parse(content, response.status_code)
-        self._finish_fetch(server_data)
+        self._finish_fetch(server_data, False)
         self._handle_save_result(True)
         if 'smsCode' not in server_data:
             self.attributes.pop('smsCode', None)
@@ -80,7 +95,7 @@ class User(Object):
     def follow(self, target_id):
         if self.id is None:
             raise ValueError('Please sign in')
-        response = rest.post('/users/{}/friendship/{}'.format(self.id, target_id))
+        response = rest.post('/users/{}/friendship/{}'.format(self.id, target_id), None)
         content = response.json()
         if 'error' in content:
             raise leancloud.LeanCloudError(content['code'], content['error'])
@@ -88,7 +103,7 @@ class User(Object):
     def unfollow(self, target_id):
         if self.id is None:
             raise ValueError('Please sign in')
-        response = rest.delete('/users/{}/friendship/{}'.format(self.id, target_id))
+        response = rest.delete('/users/{}/friendship/{}'.format(self.id, target_id), None)
         content = response.json()
         if 'error' in content:
             raise leancloud.LeanCloudError(content['code'], content['error'])

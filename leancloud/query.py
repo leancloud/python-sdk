@@ -94,7 +94,7 @@ class Query(object):
         params['limit'] = 1
         content = rest.get('/classes/{}'.format(self._query_class._class_name), params).json()
         if 'error' in content:
-            raise Query(content['code'], content['error'])
+            raise leancloud.LeanCloudError(content['code'], content['error'])
         results = content['results']
         if not results:
             raise NotExists
@@ -213,3 +213,19 @@ class Query(object):
             keys = keys[0]
         self._include = keys
         return self
+
+
+class FriendShipQuery(Query):
+    def __init__(self, query_class):
+        self._friendship_tag = None
+        super(FriendShipQuery, self).__init__(leancloud.User)
+
+    def _new_object(self):
+        return leancloud.User()
+
+    def _process_result(self, obj):
+        content = obj[self._friendship_tag]
+        if content['__type'] == 'Pointer' and content['className'] == '_User':
+            del content['__type']
+            del content['className']
+        return content

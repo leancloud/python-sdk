@@ -8,8 +8,6 @@ from leancloud import Query
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
-# user = None
-
 
 def setup_func():
     leancloud.init(
@@ -20,12 +18,15 @@ def setup_func():
     for u in users:
         u.destroy()
 
-    # global user
-    # user = User(username='example', password='example')
-    user = User()
-    user.set('username', 'example')
-    user.set('password', 'example')
-    user.sign_up()
+    user1 = User()
+    user1.set('username', 'user1')
+    user1.set('password', 'password')
+    user1.sign_up()
+
+    user2 = User()
+    user2.set('username', 'user2')
+    user2.set('password', 'password')
+    user2.sign_up()
 
 
 def destroy_func():
@@ -44,6 +45,21 @@ def test_sign_up():
 @with_setup(setup_func, destroy_func)
 def test_login():
     user = User()
-    user.set('username', 'example')
-    user.set('password', 'example')
+    user.set('username', 'user1')
+    user.set('password', 'password')
     user.login()
+
+
+@with_setup(setup_func)
+def test_follow():
+    user1 = User()
+    user1.set('username', 'user1')
+    user1.set('password', 'password')
+    user1.login()
+
+    user2 = User()
+    user2.set('username', 'user2')
+    user2.set('password', 'password')
+    user2.login()
+
+    user1.follow(user2.id)
