@@ -7,10 +7,6 @@ from leancloud import client
 from leancloud.object_ import Object
 
 
-class NotExists(Exception):
-    pass
-
-
 class Query(object):
     def __init__(self, query_class):
         if isinstance(query_class, basestring):
@@ -60,32 +56,6 @@ class Query(object):
     def _new_object(self):
         return self._query_class()
 
-    # def _parse_result(self, result):
-    #     if 'error' in result:
-    #         raise QueryError(result['code'], result['error'])
-    #
-    #     obj = self._query_class
-    #     for k, v in result.iteritems():
-    #         obj.set(k, v)
-    #     obj.id = obj.objectId
-    #
-    #     return obj
-    #
-    # def _parse_list_result(self, raw):
-    #     if 'error' in raw:
-    #         raise QueryError(raw['code'], raw['error'])
-    #
-    #     results = []
-    #     for result in raw['results']:
-    #         obj = self._query_class()
-    #         obj._finish_fetch(result, True)
-    #         # for k, v in result.iteritems():
-    #         #     obj.set(k, v)
-    #         # obj.id = obj.objectId
-    #         results.append(obj)
-    #
-    #     return results
-
     def _process_result(self, obj):
         return obj
 
@@ -97,7 +67,7 @@ class Query(object):
             raise leancloud.LeanCloudError(content['code'], content['error'])
         results = content['results']
         if not results:
-            raise NotExists
+            raise leancloud.LeanCloudError(101, 'Object not found')
         obj = self._new_object()
         obj._finish_fetch(self._process_result(results[0]), True)
         return obj
