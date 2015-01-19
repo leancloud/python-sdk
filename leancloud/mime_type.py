@@ -2,7 +2,7 @@
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
-mine_types = {
+mime_types = {
     "ai": "application/postscript",
     "aif": "audio/x-aiff",
     "aifc": "audio/x-aiff",

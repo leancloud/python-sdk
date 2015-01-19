@@ -8,7 +8,7 @@ import StringIO
 
 import leancloud
 from leancloud import rest
-from leancloud.mine_type import mine_types
+from leancloud.mime_type import mime_types
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -37,7 +37,7 @@ class File(object):
         if type_:
             self._type = type_
         else:
-            self._type = mine_types.get(extension, 'text/plain')
+            self._type = mime_types.get(extension, 'text/plain')
 
         if data is None:
             # self._source = cStringIO.StringIO()
@@ -119,6 +119,9 @@ class File(object):
         if not self.id:
             return False
         response = rest.delete('/files/{}'.format(self.id))
+        content = response.json()
+        if 'error' in content:
+            raise leancloud.LeanCloudError(content['code'], content['error'])
         return response  # TODO: check result
 
     def save(self):
@@ -130,7 +133,7 @@ class File(object):
             data = {
                 'base64': output.getvalue(),
                 '_ContentType': self._type,
-                'mine_type': self._type,
+                'mime_type': self._type,
                 'minData': self._metadata,
             }
         elif self._url and self.metadata['__source'] == 'external':
@@ -138,7 +141,7 @@ class File(object):
                 'name': self._name,
                 'ACL': self._acl,
                 'metaData': self._metadata,
-                'mine_type': self._type,
+                'mime_type': self._type,
                 'url': self._url,
             }
         else:
