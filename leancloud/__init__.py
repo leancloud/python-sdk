@@ -10,7 +10,7 @@ from .relation import Relation
 from .query import Query
 from .query import FriendShipQuery
 from .geo_point import GeoPoint
-from .settings import init
+from .client import init
 from .errors import LeanCloudError
 from .user import User
 
