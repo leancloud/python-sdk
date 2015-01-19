@@ -5,7 +5,7 @@ import copy
 import leancloud
 import leancloud.utils
 
-__author__ = 'asaka'
+__author__ = 'asaka <lan@leanclour.rocks>'
 
 
 class BaseOp(object):
@@ -57,7 +57,7 @@ class Unset(BaseOp):
 
 
 class Increment(BaseOp):
-    def __init__(self, amount):
+    def __init__(self, amount=1):
         self._amount = amount
 
     @property
@@ -79,8 +79,7 @@ class Increment(BaseOp):
             return Set(previous.value + self.amount)
         elif isinstance(previous, Increment):
             return Increment(self.amount + previous.amount)
-        else:
-            raise TypeError('invalid op')
+        raise TypeError('invalid op')
 
     def _apply(self, old, obj=None, key=None):
         if not old:
@@ -90,6 +89,8 @@ class Increment(BaseOp):
 
 class Add(BaseOp):
     def __init__(self, objects):
+        if not isinstance(objects, (list, tuple)):
+            raise TypeError('Add op requires list or tuple as parameters')
         self._objects = objects
 
     @property
@@ -111,18 +112,18 @@ class Add(BaseOp):
             return Set(self._apply(previous.value))
         elif isinstance(previous, Add):
             return Add(previous.objects + self.objects)
-        else:
-            raise TypeError('invalid op')
+        raise TypeError('invalid op')
 
     def _apply(self, old, obj=None, key=None):
         if not old:
-            return copy.deepcopy(self.objects)
-        else:
-            return old + self.objects
+            return self.objects
+        return old + self.objects
 
 
 class AddUnique(BaseOp):
     def __init__(self, objects):
+        if not isinstance(objects, (list, tuple)):
+            raise TypeError('op.AddUnique requires list or tuple as parameters')
         self._objects = list(set(objects))
 
     @property
@@ -144,14 +145,13 @@ class AddUnique(BaseOp):
             return Set(self._apply(previous.value))
         elif isinstance(previous, AddUnique):
             return AddUnique(self._apply(previous.objects))
-        else:
-            raise TypeError('invalid op')
+        raise TypeError('invalid op')
 
     def _apply(self, old, obj=None, key=None):
         if not old:
             return copy.deepcopy(self.objects)
         new = copy.deepcopy(old)
-        # XXX: more readable
+        # TODO: more readable
         for obj in self.objects:
             if isinstance(obj, leancloud.Object) and obj.id is not None:
                 for index, another_obj in enumerate(new):
@@ -167,6 +167,8 @@ class AddUnique(BaseOp):
 
 class Remove(BaseOp):
     def __init__(self, objects):
+        if not isinstance(objects, (list, tuple)):
+            raise TypeError('op.Remove requires list or tuple as parameters')
         self._objects = list(set(objects))
 
     @property
@@ -188,8 +190,7 @@ class Remove(BaseOp):
             return Set(self._apply(previous.value))
         elif isinstance(previous, Remove):
             return Remove(list(set(self.objects + previous.objects)))
-        else:
-            raise TypeError('invalid op')
+        raise TypeError('invalid op')
 
     def _apply(self, old, obj=None, key=None):
         if not old:
