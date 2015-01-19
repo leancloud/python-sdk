@@ -8,7 +8,7 @@ import iso8601
 
 import leancloud
 from leancloud import utils
-from leancloud import rest
+from leancloud import client
 from leancloud import op
 
 
@@ -109,7 +109,7 @@ class Object(object):
     def destroy(self):
         if not self.id:
             return False
-        result = rest.delete('/classes/{}/{}'.format(self._class_name, self.id))
+        result = client.delete('/classes/{}/{}'.format(self._class_name, self.id))
 
         content = result.json()
         if 'error' in content:
@@ -132,9 +132,9 @@ class Object(object):
         method = 'PUT' if self.id is not None else 'POST'
 
         if method == 'PUT':
-            response = rest.put('/classes/{}/{}'.format(self._class_name, self.id), data)
+            response = client.put('/classes/{}/{}'.format(self._class_name, self.id), data)
         else:
-            response = rest.post('/classes/{}'.format(self._class_name), data)
+            response = client.post('/classes/{}'.format(self._class_name), data)
 
         self._finish_save(self.parse(response.json(), response.status_code))
 
@@ -154,7 +154,7 @@ class Object(object):
         for obj in unsaved_children:
             obj._start_save()
             method = 'POST' if obj.id is None else 'PUT'
-            path = '/{}/classes/{}'.format(rest.SERVER_VERSION, obj._class_name)
+            path = '/{}/classes/{}'.format(client.SERVER_VERSION, obj._class_name)
             body = obj._dump_save()
             dumped_obj = {
                 'method': method,
@@ -163,7 +163,7 @@ class Object(object):
             }
             dumped_objs.append(dumped_obj)
 
-        response = rest.post('/batch', params={'requests': dumped_objs}).json()
+        response = client.post('/batch', params={'requests': dumped_objs}).json()
 
         errors = []
         for idx, obj in enumerate(unsaved_children):
@@ -341,7 +341,7 @@ class Object(object):
         return result
 
     def fetch(self):
-        response = rest.get('/classes/{}/{}'.format(self._class_name, self.id))
+        response = client.get('/classes/{}/{}'.format(self._class_name, self.id))
         result = self.parse(response)
         self._finish_fetch(result)
 

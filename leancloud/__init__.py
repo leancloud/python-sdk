@@ -2,7 +2,7 @@
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
-import rest
+import client
 from .acl import ACL
 from .object_ import Object
 from .file_ import File
@@ -18,7 +18,7 @@ from .user import User
 __all__ = [
     'ACL',
     'init',
-    'rest',
+    'client.py',
     'Query'
     'FriendShipQuery',
     'Object',

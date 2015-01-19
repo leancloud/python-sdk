@@ -4,7 +4,7 @@ __author__ = 'asaka'
 
 import leancloud
 from leancloud import FriendShipQuery
-from leancloud import rest
+from leancloud import client
 from leancloud import Object
 
 
@@ -84,7 +84,7 @@ class User(Object):
         self.save()
 
     def login(self):
-        response = rest.get('/login', params=self.dump())
+        response = client.get('/login', params=self.dump())
         content = response.json()
         server_data = self.parse(content, response.status_code)
         self._finish_fetch(server_data, False)
@@ -95,7 +95,7 @@ class User(Object):
     def follow(self, target_id):
         if self.id is None:
             raise ValueError('Please sign in')
-        response = rest.post('/users/{}/friendship/{}'.format(self.id, target_id), None)
+        response = client.post('/users/{}/friendship/{}'.format(self.id, target_id), None)
         content = response.json()
         if 'error' in content:
             raise leancloud.LeanCloudError(content['code'], content['error'])
@@ -103,7 +103,7 @@ class User(Object):
     def unfollow(self, target_id):
         if self.id is None:
             raise ValueError('Please sign in')
-        response = rest.delete('/users/{}/friendship/{}'.format(self.id, target_id), None)
+        response = client.delete('/users/{}/friendship/{}'.format(self.id, target_id), None)
         content = response.json()
         if 'error' in content:
             raise leancloud.LeanCloudError(content['code'], content['error'])

@@ -7,7 +7,7 @@ import cStringIO
 import StringIO
 
 import leancloud
-from leancloud import rest
+from leancloud import client
 from leancloud.mime_type import mime_types
 
 
@@ -118,7 +118,7 @@ class File(object):
     def destroy(self):
         if not self.id:
             return False
-        response = rest.delete('/files/{}'.format(self.id))
+        response = client.delete('/files/{}'.format(self.id))
         content = response.json()
         if 'error' in content:
             raise leancloud.LeanCloudError(content['code'], content['error'])
@@ -147,7 +147,7 @@ class File(object):
         else:
             raise ValueError
 
-        response = rest.post('/files/{}'.format(self._name), data)
+        response = client.post('/files/{}'.format(self._name), data)
         content = response.json()
 
         if 'error' in content:

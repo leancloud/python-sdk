@@ -3,7 +3,7 @@
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 import leancloud
-from leancloud import rest
+from leancloud import client
 from leancloud.object_ import Object
 
 
@@ -33,7 +33,7 @@ class Query(object):
         if len(pvalues) > 0:
             params['pvalues'] = pvalues
 
-        result = rest.get('/cloudQuery', params)
+        result = client.get('/cloudQuery', params)
         return result
 
     def dump(self):
@@ -92,7 +92,7 @@ class Query(object):
     def first(self):
         params = self.dump()
         params['limit'] = 1
-        content = rest.get('/classes/{}'.format(self._query_class._class_name), params).json()
+        content = client.get('/classes/{}'.format(self._query_class._class_name), params).json()
         if 'error' in content:
             raise leancloud.LeanCloudError(content['code'], content['error'])
         results = content['results']
@@ -107,7 +107,7 @@ class Query(object):
         return self.first()
 
     def find(self):
-        content = rest.get('/classes/{}'.format(self._query_class._class_name), self.dump()).json()
+        content = client.get('/classes/{}'.format(self._query_class._class_name), self.dump()).json()
         if 'error' in content:
             raise leancloud.LeanCloudError(content['code'], content['error'])
 
@@ -120,14 +120,14 @@ class Query(object):
         return objs
 
     def destroy_all(self):
-        result = rest.delete('/classes/{}'.format(self._query_class._class_name), self.dump())
+        result = client.delete('/classes/{}'.format(self._query_class._class_name), self.dump())
         return result
 
     def count(self):
         params = self.dump()
         params['limit'] = 0
         params['count'] = 1
-        response = rest.get('/classes/{}'.format(self._query_class._class_name), params)
+        response = client.get('/classes/{}'.format(self._query_class._class_name), params)
         return response.json()['count']
 
     def skip(self, n):
