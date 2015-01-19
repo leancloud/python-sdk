@@ -56,7 +56,7 @@ def test_encode():
 
 
 def test_decode():
-    p =utils.decode('', {
+    p = utils.decode({
         '__type': 'GeoPoint',
         'longitude': 0,
         'latitude': 0,

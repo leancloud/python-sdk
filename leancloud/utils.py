@@ -11,8 +11,8 @@ import leancloud
 from leancloud import op
 
 
-def encode(value, disallow_objects=False):
-    dumpable_types = (
+def get_dumpable_types():
+    return (
         leancloud.ACL,
         leancloud.File,
         leancloud.GeoPoint,
@@ -20,6 +20,7 @@ def encode(value, disallow_objects=False):
         op.BaseOp,
     )
 
+def encode(value, disallow_objects=False):
     if isinstance(value, datetime):
         return {
             '__type': 'Date',
@@ -31,7 +32,7 @@ def encode(value, disallow_objects=False):
             raise ValueError('leancloud.Object not allowed')
         return value._to_pointer()
 
-    if isinstance(value, dumpable_types):
+    if isinstance(value, get_dumpable_types()):
         return value.dump()
 
     if isinstance(value, (tuple, list)):
@@ -43,7 +44,7 @@ def encode(value, disallow_objects=False):
     return value
 
 
-# def _encode(value, seen_objects=None, disallow_objects=False):
+# def encode(value, seen_objects=None, disallow_objects=False):
 #     seen_objects = seen_objects or []
 #     if isinstance(value, leancloud.Object):
 #         if disallow_objects:
@@ -93,18 +94,18 @@ def encode(value, disallow_objects=False):
 #     return value
 
 
-def decode(key, value):
-    if isinstance(value, (leancloud.Object, leancloud.File, leancloud.op.BaseOp)):
+def decode(value):
+    if isinstance(value, get_dumpable_types()):
         return value
 
     if isinstance(value, (tuple, list)):
-        return [decode(x, idx) for x, idx in enumerate(value)]
+        return [decode(x) for x in value]
 
     if not isinstance(value, dict):
         return value
 
     if '__type' not in value:
-        return {k: v for k,v in value.iteritems()}
+        return {k: decode(v) for k, v in value.iteritems()}
 
     _type = value['__type']
 
@@ -148,8 +149,6 @@ def decode(key, value):
         f._url = value['url']
         f.id = value['objectId']
         return f
-
-    return {k: decode(k, v) for k, v in value.iteritems()}
 
 
 def walk_object(obj, callback, seen=None):

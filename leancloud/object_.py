@@ -277,7 +277,7 @@ class Object(object):
         if isinstance(key, dict) and value is None:
             attrs = key
         else:
-            attrs = {key: utils.decode(key, value)}
+            attrs = {key: utils.decode(value)}
 
         if unset:
             for k in attrs.keys():
@@ -381,7 +381,7 @@ class Object(object):
         self._apply_op_set(saved_changes, self._server_data)
         self._merge_magic_field(server_data)
         for key, value in server_data.iteritems():
-            self._server_data[key] = utils.decode(key, value)
+            self._server_data[key] = utils.decode(value)
 
             # TODO:
 
@@ -393,7 +393,7 @@ class Object(object):
         self._merge_magic_field(server_data)
 
         for key, value in server_data.iteritems():
-            self._server_data[key] = utils.decode(key, value)
+            self._server_data[key] = utils.decode(value)
 
         self._rebuild_all_estimated_data()
 
