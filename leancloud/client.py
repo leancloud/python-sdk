@@ -35,7 +35,7 @@ def init(app_id, app_key=None, master_key=None):
     MASTER_KEY = master_key
 
 
-def need_sdk_init(func):
+def need_init(func):
     def new_func(*args, **kwargs):
         if APP_ID is None:
             raise RuntimeError('LeanCloud SDK must be initialized')
@@ -54,7 +54,7 @@ def need_sdk_init(func):
     return new_func
 
 
-@need_sdk_init
+@need_init
 def get(url, params):
     for k, v in params.iteritems():
         if isinstance(v, dict):
@@ -63,19 +63,19 @@ def get(url, params):
     return response
 
 
-@need_sdk_init
+@need_init
 def post(url, params):
     response = requests.post(BASE_URL + url, headers=headers, json=params)
     return response
 
 
-@need_sdk_init
+@need_init
 def put(url, params):
     response = requests.post(BASE_URL + url, headers=headers, json=params)
     return response
 
 
-@need_sdk_init
+@need_init
 def delete(url, params=None):
     response = requests.delete(BASE_URL + url, headers=headers, json=params)
     return response
