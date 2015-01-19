@@ -20,6 +20,7 @@ def get_dumpable_types():
         op.BaseOp,
     )
 
+
 def encode(value, disallow_objects=False):
     if isinstance(value, datetime):
         return {

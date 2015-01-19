@@ -12,13 +12,13 @@ def test_set():
 
 def test_unset():
     s = op.Unset()
-    assert s._estimate(op.Set(10)) == op._UNSET
+    assert s._apply(op.Set(10)) == op._UNSET
 
 
 def test_increment():
     s = op.Increment(1)
     assert s.amount == 1
     previous = op.Increment(2)
-    new = s._merge_with_previous(previous)
+    new = s._merge(previous)
     assert isinstance(new, op.Increment)
     assert new.amount == 3

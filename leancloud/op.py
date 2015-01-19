@@ -12,10 +12,10 @@ class BaseOp(object):
     def dump(self):
         raise NotImplementedError
 
-    def _merge_with_previous(self, previous):
+    def _merge(self, previous):
         raise NotImplementedError
 
-    def _estimate(self, old, obj=None, key=None):
+    def _apply(self, old, obj=None, key=None):
         raise NotImplementedError
 
 
@@ -33,10 +33,10 @@ class Set(BaseOp):
     def dump(self):
         return leancloud.utils.encode(self.value)
 
-    def _merge_with_previous(self, previous):
+    def _merge(self, previous):
         return self
 
-    def _estimate(self, old, obj=None, key=None):
+    def _apply(self, old, obj=None, key=None):
         return self.value
 
 
@@ -49,10 +49,10 @@ class Unset(BaseOp):
             '__op': 'Delete'
         }
 
-    def _merge_with_previous(self, previous):
+    def _merge(self, previous):
         return self
 
-    def _estimate(self, old, obj=None, key=None):
+    def _apply(self, old, obj=None, key=None):
         return _UNSET
 
 
@@ -70,7 +70,7 @@ class Increment(BaseOp):
             'amount': self.amount,
         }
 
-    def _merge_with_previous(self, previous):
+    def _merge(self, previous):
         if not previous:
             return self
         elif isinstance(previous, Unset):
@@ -82,7 +82,7 @@ class Increment(BaseOp):
         else:
             raise TypeError('invalid op')
 
-    def _estimate(self, old, obj=None, key=None):
+    def _apply(self, old, obj=None, key=None):
         if not old:
             return self.amount
         return old + self.amount
@@ -102,19 +102,19 @@ class Add(BaseOp):
             'objects': leancloud.utils.encode(self.objects),
         }
 
-    def _merge_with_previous(self, previous):
+    def _merge(self, previous):
         if not previous:
             return self
         elif isinstance(previous, Unset):
             return Set(self.objects)
         elif isinstance(previous, Set):
-            return Set(self._estimate(previous.value))
+            return Set(self._apply(previous.value))
         elif isinstance(previous, Add):
             return Add(previous.objects + self.objects)
         else:
             raise TypeError('invalid op')
 
-    def _estimate(self, old, obj=None, key=None):
+    def _apply(self, old, obj=None, key=None):
         if not old:
             return copy.deepcopy(self.objects)
         else:
@@ -135,19 +135,19 @@ class AddUnique(BaseOp):
             'objects': leancloud.utils.encode(self.objects),
         }
 
-    def _merge_with_previous(self, previous):
+    def _merge(self, previous):
         if not previous:
             return self
         elif isinstance(previous, Unset):
             return Set(self.objects)
         elif isinstance(previous, Set):
-            return Set(self._estimate(previous.value))
+            return Set(self._apply(previous.value))
         elif isinstance(previous, AddUnique):
-            return AddUnique(self._estimate(previous.objects))
+            return AddUnique(self._apply(previous.objects))
         else:
             raise TypeError('invalid op')
 
-    def _estimate(self, old, obj=None, key=None):
+    def _apply(self, old, obj=None, key=None):
         if not old:
             return copy.deepcopy(self.objects)
         new = copy.deepcopy(old)
@@ -179,19 +179,19 @@ class Remove(BaseOp):
             'objects': leancloud.utils.encode(self.objects)
         }
 
-    def _merge_with_previous(self, previous):
+    def _merge(self, previous):
         if not previous:
             return self
         elif isinstance(previous, Unset):
             return previous
         elif isinstance(previous, Set):
-            return Set(self._estimate(previous.value))
+            return Set(self._apply(previous.value))
         elif isinstance(previous, Remove):
             return Remove(list(set(self.objects + previous.objects)))
         else:
             raise TypeError('invalid op')
 
-    def _estimate(self, old, obj=None, key=None):
+    def _apply(self, old, obj=None, key=None):
         if not old:
             return []
         new = list(set(old) - set(self.objects))
@@ -264,7 +264,7 @@ class Relation(BaseOp):
 
         return adds or removes or {}
 
-    def _merge_with_previous(self, previous=None):
+    def _merge(self, previous=None):
         if previous is None:
             return self
         elif isinstance(previous, Unset):
@@ -281,7 +281,7 @@ class Relation(BaseOp):
         else:
             raise TypeError('invalid op')
 
-    def _estimate(self, old, obj=None, key=None):
+    def _apply(self, old, obj=None, key=None):
         if obj is None:
             relation = leancloud.Relation(obj, key)
         elif isinstance(old, leancloud.Relation):

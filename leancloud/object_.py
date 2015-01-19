@@ -308,7 +308,7 @@ class Object(object):
                 is_real_change = False
 
             current_changes = self._op_set_queue[-1]
-            current_changes[k] = v._merge_with_previous(current_changes.get(k))
+            current_changes[k] = v._merge(current_changes.get(k))
             self._rebuild_estimated_data_for_key(k)
 
         return self
@@ -409,7 +409,7 @@ class Object(object):
             o = op_set.get(key)
             if o is None:
                 continue
-            self.attributes[key] = o._estimate(self.attributes.get(key), self, key)
+            self.attributes[key] = o._apply(self.attributes.get(key), self, key)
             if self.attributes[key] is op._UNSET:
                 del self.attributes[key]
 
@@ -424,6 +424,6 @@ class Object(object):
 
     def _apply_op_set(self, op_set, target):
         for key, change in op_set.iteritems():
-            target[key] = change._estimate(target.get(key), self, key)
+            target[key] = change._apply(target.get(key), self, key)
             if target[key] == op._UNSET:
                 del target[key]
