@@ -1,12 +1,21 @@
 # coding: utf-8
+
 import copy
+import logging
+from datetime import datetime
+
+import iso8601
 
 import leancloud
 from leancloud import utils
 from leancloud import client
 from leancloud import operation
 
+
 __author__ = 'asaka <lan@leancloud.rocks>'
+
+
+logging.getLogger('iso8601.iso8601').disabled = True
 
 
 object_class_map = {}
@@ -29,225 +38,392 @@ class ObjectMeta(type):
 
 
 class Object(object):
+
     __metaclass__ = ObjectMeta
 
-    def __init__(self, object_id=None, is_pointer=False):
+    def __init__(self, **attrs):
+        if not attrs:
+            attrs = {}
+
+        # TODO: get defaults
+
+        self.id = None
+        self._class_name = self._class_name  # for IDE
+
         self._server_data = {}
-        self._op_set = {}
-        self._attrs = {}
-        self._data_availability = {}
-        self._class_name = self._class_name    # for IDE
-        self._id = None
-        self._created_at = None
-        self._updated_at = None
-        if object_id and is_pointer:
-            self._id = object_id
-            self._has_been_fetched = False
-        else:
-            self._has_been_fetched = True
+        self._op_set_queue = [{}]
+        self.attributes = attrs
 
-    def get(self, key):
-        if not self._is_data_available(key):
-            raise ValueError('leancloud.Object has no data for this key, call fetch() to get the data')
-        return self._attrs.get(key, None)
+        # self._hashed_object = {}
+        # self._escaped_attributes = {}
+        # self.cid = ''  # TODO
+        # self.changed = {}
+        # self._silent = {}
+        # self._pending = {}
 
-    def has(self, key):
-        return key in self._attrs
-
-    def increment(self, key, value=1):
-        self._perform_op(key, operation.Increment(value))
-
-    def add(self, key, value):
-        self._perform_op(key, operation.Add(value))
-
-    def add_unique(self, key, value):
-        self._perform_op(key, operation.AddUnique(value))
-
-    def unset(self, key):
-        self._perform_op(key, operation.Unset())
-
-    def is_key_dirty(self, key):
-        return key in self._op_set
-
-    def is_data_available(self):
-        return self._has_been_fetched
-
-    def _is_data_available(self, key):
-        return (self.is_data_available()) or (key in self._data_availability)
-
-    def _is_dirty(self, consider_children):
-        if self._op_set:
-            return True
-        if self.id is None:
-            return True
-        if consider_children and self.has_dirty_children():
-            return True
-        return False
-
-    def is_dirty(self):
-        return self._is_dirty(True)
-
-    def has_dirty_children(self):
-        result = False
-        # TODO
-        return result
-
-    def set(self, key, value):
-        self._perform_op(key, operation.Set(value))
-
-    def remove(self, key, *values):
-        self._perform_op(key, operation.Remove(values))
-
-    def revert(self):
-        self._op_set = {}
-        self._rebuild_estimate_date()
-
-    def clear(self):
-        for key in self._attrs:
-            self.delete(key)
-
-    def _perform_op(self, key, op):
-        old_value = self.attrs.get(key)
-        new_value = op._apply(old_value, self, key)
-        if new_value is operation._UNSET:
-            self._attrs.pop(key, None)
-        else:
-            self._attrs[key] = new_value
-
-        if key in self._op_set:
-            old_op = self._op_set[key]
-            new_op = op._merge(old_op)
-            self._op_set[key] = new_op
-        else:
-            self._op_set[key] = op
-        self._data_availability[key] = True
-
-    @property
-    def class_name(self):
-        return self._class_name
-
-    @property
-    def id(self):
-        return self._id
-
-    @property
-    def created_at(self):
-        return self._created_at
-
-    @property
-    def updated_at(self):
-        return self._updated_at
+        self._existed = False
+        # self._fetch_when_save = False
 
     @classmethod
     def extend(cls, name):
         return type(name, (cls,), {})
 
     @classmethod
-    def create(cls, class_name, obect_id=None, is_pointer=False):
-        if isinstance(class_name, basestring):
-            class_type = cls.extend(class_name)
-        elif issubclass(class_name, cls):
-            class_type = class_name
-        else:
-            raise TypeError('first parameter must be a basestring or leancloud.Object sub class')
-        return class_type(obect_id, is_pointer)
+    def create(cls, class_name, **attributes):
+        object_class = cls.extend(class_name)
+        return object_class(**attributes)
 
-    def fetch(self):
-        response = client.get('/classes/{}/{}'.format(self._class_name, self._id))
-        self._merge_after_fetch(response.json())
-
-    def _merge_after_fetch(self, result, complete_data=True):
-        for key in result:
-            self._op_set.pop(key, None)
-
-        self._server_data = {}
-        self._data_availability = {}
-        self.merge_from_server(result, complete_data)
-        self._rebuild_estimated_data()
-
-    def _merge_after_fetch_with_selected_keys(self, result, selected_keys):
-        self._merge_after_fetch(result, selected_keys)
-        for key in selected_keys:
-            self._data_availability[key] = True
-
-    def _merge_from_server(self, data, complete_data=True):
-        if self._has_been_fetched or complete_data:
-            self._has_been_fetched = True
-        else:
-            self._has_been_fetched = False
-
-        self._merge_magic_field(data)
-
-        for key, value in data.iteritems():
-            if key == '__type' and value == 'className':
-                continue
-            value = utils.decode(value)
-
-            if isinstance(value, dict):
-                if ('__type' in value) and (value['__type'] == 'Relation'):
-                    class_name = value['className']
-                    value = leancloud.Relation(self, key, class_name)  # TODO
-
-                if key == 'ACL':
-                    value = leancloud.ACL(value)  # TODO
-
-            self._server_data[key] = value
-            self._data_availability[key] = True
-
-        if (not self._updated_at) and self._created_at:
-            self._updated_at = copy.copy(self._created_at)
-
-    def _merge_magic_field(self, data):
-        if 'objectId' in data:
-            self._id = data['objectId']
-            del data['objectId']
-
-        if 'createdAt' in data:
-            self._created_at = data['createdAt']
-            del data['createdAt']
-
-        if 'updatedAt' in data:
-            self._updated_at = data['updatedAt']
-            del data['updatedAt']
-
-        if 'ACL' in data:
-            acl = leancloud.ACL(data)  # TODO
-            self._server_data['ACL'] = acl
-            del data['ACL']
-
-    def _rebuild_estimated_data(self):
-        self._attrs = {}
-        for key, value in self._server_data.iteritems():
-            self._attrs[key] = value
-        self._apply_op(self._op_set, self._attrs)
-
-    def _apply_op(self, op_set, target):
-        for key, op in op_set.iteritems():
-            old_value = target.get(key)
-            new_value = op._apply(old_value, self, key)
-            if new_value is operation._UNSET:
-                target.pop(key, None)
-                self._data_availability.pop(key, None)
-
-    def destroy(self):
-        if not self._id:
-            return
-        client.delete('/classes/{}/{}'.format(self.class_name, self.id))
-
-    # def destroy_all(self):
-    #     # TODO
+    # def fetch_when_save(self, enable):
+    #     self._fetch_when_save = enable
 
     def dump(self):
-        result = {}
-        if self.id:
-            result['objectId'] = self.id
-        if self.created_at:
-            result['createdAt'] = self.created_at
-        if self.updated_at:
-            result['updatedAt'] = self.updated_at
+        obj = self._dump()
+        obj.pop('__type')
+        obj.pop('className')
+        return obj
 
-        for key, value in self._server_data:
-            result[key] = value
+    def _dump(self, seen_objects=None):
+        seen_objects = seen_objects or []
+        obj = copy.deepcopy(self.attributes)
+        for k, v in obj.iteritems():
+            obj[k] = utils.encode(v, seen_objects)
 
-        for key, value in self._attrs:
-            result[key] = value
+        # TODO
+        # for k, v in self._operations:
+        #     obj[k] = v
+
+        if self.id is not None:
+            obj['objectId'] = self.id
+
+        for key in ['createdAt', 'updatedAt']:
+            value = getattr(self, key, None)
+            if value is None:
+                continue
+            if isinstance(value, datetime):
+                setattr(self, key, value.isoformat())
+
+        obj['__type'] = 'Object'
+        obj['className'] = self.__class__.__name__
+        return obj
+
+    def destroy(self):
+        if not self.id:
+            return False
+        result = client.delete('/classes/{}/{}'.format(self._class_name, self.id))
+
+        content = result.json()
+        if 'error' in content:
+            raise leancloud.LeanCloudError(content['code'], content['error'])
+        return True
+
+    def save(self):
+        unsaved_children = []
+        unsaved_files = []
+
+        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
+
+        if len(unsaved_children) + len(unsaved_files) > 0:
+            self._deep_save(self.attributes)
+
+        self._start_save()
+
+        data = self._dump_save()
+
+        method = 'PUT' if self.id is not None else 'POST'
+
+        if method == 'PUT':
+            response = client.put('/classes/{}/{}'.format(self._class_name, self.id), data)
+        else:
+            response = client.post('/classes/{}'.format(self._class_name), data)
+
+        self._finish_save(self.parse(response.json(), response.status_code))
+
+    def _deep_save(self, exclude=None):
+        # TODO: chunk
+        unsaved_children = []
+        unsaved_files = []
+        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
+
+        if exclude:
+            unsaved_children = [x for x in unsaved_children if x != exclude]
+
+        for f in unsaved_files:
+            f.save()
+
+        dumped_objs = []
+        for obj in unsaved_children:
+            obj._start_save()
+            method = 'POST' if obj.id is None else 'PUT'
+            path = '/{}/classes/{}'.format(client.SERVER_VERSION, obj._class_name)
+            body = obj._dump_save()
+            dumped_obj = {
+                'method': method,
+                'path': path,
+                'body': body,
+            }
+            dumped_objs.append(dumped_obj)
+
+        response = client.post('/batch', params={'requests': dumped_objs}).json()
+
+        errors = []
+        for idx, obj in enumerate(unsaved_children):
+            content = response[idx]
+            if not content.get('success'):
+                errors.append(leancloud.LeanCloudError(content.get('code'), content.get('error')))
+                obj._cancel_save()
+            else:
+                result = obj.parse(content['success'])
+                obj._finish_save(result)
+
+            if errors:
+                # TODO: how to handle list of errors?
+                pass
+
+
+    @classmethod
+    def _find_unsaved_children(cls, obj, children, files):
+
+        def callback(o):
+            if isinstance(o, Object):
+                if o.is_dirty():
+                    children.append(o)
+                return
+
+            if isinstance(o, leancloud.File):
+                if o.url is None and o.id is None:
+                    files.append(o)
+                return
+
+        utils.traverse_object(obj, callback)
+
+    def is_dirty(self, attr=None):
+        # self._refresh_cache()
+        current_changes = self._op_set_queue[-1]
+
+        if attr is not None:
+            return True if attr in current_changes else False
+
+        if self.id is None:
+            return True
+
+        if current_changes:
+            return True
+
+        return False
+
+    def _to_pointer(self):
+        return {
+            '__type': 'Pointer',
+            'className': self.__class__.__name__,
+            'objectId': self.id,
+        }
+
+    def _merge_magic_field(self, attrs):
+        for key in ['id', 'objectId', 'createdAt', 'updatedAt']:
+            if attrs.get(key) is None:
+                continue
+            if key == 'objectId':
+                self.id = attrs[key]
+            elif key == 'createdAt' or key == 'updatedAt':
+                if not isinstance(attrs[key], datetime):
+                    dt = iso8601.parse_date(attrs[key])
+                else:
+                    dt = attrs[key]
+                if key == 'createdAt':
+                    setattr(self, 'created_at', dt)
+                elif key == 'updatedAt':
+                    setattr(self, 'updated_at', dt)
+            del attrs[key]
+
+    def _start_save(self):
+        self._op_set_queue.append({})
+
+    def _cancel_save(self):
+        failed_changes = self._op_set_queue.pop(0)
+        next_changes = self._op_set_queue[0]
+        for key, op in failed_changes.iteritems():
+            op1 = failed_changes[key]
+            op2 = next_changes[key]
+            # TODO
+
+    def validate(self, attrs):
+        if 'ACL' in attrs and not isinstance(attrs['ACL'], leancloud.ACL):
+            raise TypeError('acl must be a ACL')
+        return False
+
+    def _validate(self, attrs, silent=True):
+        # TODO
+        if silent or not self.validate:
+            return True
+
+        return True
+
+    def get(self, attr):
+        return self.attributes.get(attr)
+
+    def relation(self, attr):
+        value = self.get(attr)
+        if value is not None:
+            if not isinstance(value, leancloud.Relation):
+                raise TypeError('field %s is not Relation'.format(attr))
+            value._ensure_parent_and_key(self, attr)
+            return value
+        return leancloud.Relation(self, attr)
+
+    def has(self, attr):
+        return attr in self.attributes
+
+    def set(self, key, value=None, unset=False, silent=True):
+        if isinstance(key, dict) and value is None:
+            attrs = key
+        else:
+            attrs = {key: utils.decode(value)}
+
+        if unset:
+            for k in attrs.keys():
+                attrs[k] = operation.Unset()
+
+        # data_to_validate = copy.deepcopy(attrs)
+        # for k, v in data_to_validate.iteritems():
+        #     if isinstance(v, op.BaseOp):
+        #         data_to_validate[key] = v._estimate(self.attributes[k], self, k)
+        #         if data_to_validate[key] == op._UNSET:
+        #             del data_to_validate[key]
+
+        if not self._validate(attrs):
+            return False
+
+        self._merge_magic_field(attrs)
+
+        keys = attrs.keys()
+        for k in keys:
+            v = attrs[k]
+            # TODO: Relation
+
+            if not isinstance(v, operation.BaseOp):
+                v = operation.Set(v)
+
+            is_real_change = True
+            if isinstance(v, operation.Set) and self.attributes.get(k) == v:  # TODO: equal
+                is_real_change = False
+
+            current_changes = self._op_set_queue[-1]
+            current_changes[k] = v._merge(current_changes.get(k))
+            self._rebuild_estimated_data_for_key(k)
+
+        return self
+
+    def unset(self, attr):
+        return self.set(attr, None, unset=True)
+
+    def increment(self, attr, amount=1):
+        return self.set(attr, operation.Increment(amount))
+
+    def add(self, attr, item):
+        return self.set(attr, operation.Add([item]))
+
+    def add_unique(self, attr, item):
+        return self.set(attr, operation.AddUnique([item]))
+
+    def remove(self, attr, item):
+        return self.set(attr, operation.Remove([item]))
+
+    def op(self, attr):
+        return self._op_set_queue[-1][attr]
+
+    def clear(self):
+        self.set(self.attributes, unset=True)
+
+    def _dump_save(self):
+        result = copy.deepcopy(self._op_set_queue[0])
+        for k, v in result.iteritems():
+            result[k] = v.dump()
+        return result
+
+    def fetch(self):
+        response = client.get('/classes/{}/{}'.format(self._class_name, self.id))
+        result = self.parse(response)
+        self._finish_fetch(result)
+
+    def parse(self, content, status_code=None):
+        if 'error' in content:
+            raise leancloud.LeanCloudError(content['code'], content['error'])
+
+        self._existed = True
+        if status_code == 201:
+            self._existed = False
+
+        return content
+
+    def clone(self):
+        pass
+
+    def is_new(self):
+        return True if self.id else False
+
+    def is_existed(self):
+        return self._existed
+
+    def change(self):
+        pass
+
+    def get_acl(self):
+        return self.get('ACL')
+
+    def set_acl(self, acl):
+        return self.set('ACL', acl)
+
+    def _finish_save(self, server_data):
+        # TODO: traverse obj
+
+        saved_changes = self._op_set_queue[0]
+        self._op_set_queue = self._op_set_queue[1:]
+        self._apply_op_set(saved_changes, self._server_data)
+        self._merge_magic_field(server_data)
+        for key, value in server_data.iteritems():
+            self._server_data[key] = utils.decode(value)
+
+            # TODO:
+
+            self._rebuild_all_estimated_data()
+
+    def _finish_fetch(self, server_data, has_data):
+        self._op_set_queue = [{}]
+
+        self._merge_magic_field(server_data)
+
+        for key, value in server_data.iteritems():
+            self._server_data[key] = utils.decode(value)
+
+        self._rebuild_all_estimated_data()
+
+        self._op_set_queue = [{}]
+
+        self._has_data = has_data
+
+    def _rebuild_estimated_data_for_key(self, key):
+        if self.attributes.get(key):
+            del self.attributes[key]
+
+        for op_set in self._op_set_queue:
+            o = op_set.get(key)
+            if o is None:
+                continue
+            self.attributes[key] = o._apply(self.attributes.get(key), self, key)
+            if self.attributes[key] is operation._UNSET:
+                del self.attributes[key]
+
+    def _rebuild_all_estimated_data(self):
+        # TODO
+        previous_attributes = copy.deepcopy(self.attributes)
+        self.attributes = copy.deepcopy(self._server_data)
+
+        for op_set in self._op_set_queue:
+            # apply local changes
+            self._apply_op_set(op_set, self.attributes)
+
+    def _apply_op_set(self, op_set, target):
+        for key, change in op_set.iteritems():
+            target[key] = change._apply(target.get(key), self, key)
+            if target[key] == operation._UNSET:
+                del target[key]

@@ -161,7 +161,7 @@ def traverse_object(obj, callback, seen=None):
         if obj in seen:
             return
         seen.add(obj)
-        traverse_object(obj.attrs, callback, seen)
+        traverse_object(obj.attributes, callback, seen)
         return callback(obj)
 
     if isinstance(obj, (leancloud.Relation, leancloud.File)):
