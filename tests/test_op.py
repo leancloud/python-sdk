@@ -1,24 +1,24 @@
 # coding: utf-8
 
-from leancloud import op
+from leancloud import operation
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 def test_set():
-    s = op.Set(10)
+    s = operation.Set(10)
     assert s.value == 10
 
 
 def test_unset():
-    s = op.Unset()
-    assert s._apply(op.Set(10)) == op._UNSET
+    s = operation.Unset()
+    assert s._apply(operation.Set(10)) == operation._UNSET
 
 
 def test_increment():
-    s = op.Increment(1)
+    s = operation.Increment(1)
     assert s.amount == 1
-    previous = op.Increment(2)
+    previous = operation.Increment(2)
     new = s._merge(previous)
-    assert isinstance(new, op.Increment)
+    assert isinstance(new, operation.Increment)
     assert new.amount == 3

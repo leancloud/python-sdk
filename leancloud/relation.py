@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import leancloud
-from leancloud import op
+from leancloud import operation
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -33,7 +33,7 @@ class Relation(object):
         objs = obj_or_objs
         if not isinstance(obj_or_objs, (list, tuple)):
             objs = (obj_or_objs, )
-        change = op.Relation(objs, ())
+        change = operation.Relation(objs, ())
         self.parent.set(self.key, change)
         self.target_class_name = change._target_class_name
 
@@ -41,7 +41,7 @@ class Relation(object):
         objs = obj_or_objs
         if not isinstance(obj_or_objs, (list, tuple)):
             objs = (obj_or_objs, )
-        change = op.Relation((), objs)
+        change = operation.Relation((), objs)
         self.parent.set(self.key, change)
         self.target_class_name = change._target_class_name
 

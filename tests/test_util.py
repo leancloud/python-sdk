@@ -78,6 +78,6 @@ def test_util():
 
     callback.count = 0
 
-    utils.walk_object(obj, callback)
+    utils.traverse_object(obj, callback)
 
     assert callback.count == 2

@@ -54,7 +54,21 @@ def need_init(func):
     return new_func
 
 
+def check_error(func):
+    def new_func(*args, **kwargs):
+        response = func(*args, **kwargs)
+        assert isinstance(response, requests.Response)
+        if response.headers['Content-Type'] == 'text/html':
+            raise leancloud.LeanCloudError(-1, 'Bad Request')
+        content = response.json()
+        if 'error' in content:
+            raise leancloud.LeanCloudError(content['code'], content['error'])
+        return response
+    return new_func
+
+
 @need_init
+@check_error
 def get(url, params):
     for k, v in params.iteritems():
         if isinstance(v, dict):
@@ -64,18 +78,21 @@ def get(url, params):
 
 
 @need_init
+@check_error
 def post(url, params):
     response = requests.post(BASE_URL + url, headers=headers, json=params)
     return response
 
 
 @need_init
+@check_error
 def put(url, params):
     response = requests.post(BASE_URL + url, headers=headers, json=params)
     return response
 
 
 @need_init
+@check_error
 def delete(url, params=None):
     response = requests.delete(BASE_URL + url, headers=headers, json=params)
     return response

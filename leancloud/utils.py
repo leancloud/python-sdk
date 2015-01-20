@@ -8,7 +8,7 @@ from datetime import datetime
 import iso8601
 
 import leancloud
-from leancloud import op
+from leancloud import operation
 
 
 def get_dumpable_types():
@@ -17,7 +17,7 @@ def get_dumpable_types():
         leancloud.File,
         leancloud.GeoPoint,
         leancloud.Relation,
-        op.BaseOp,
+        operation.BaseOp,
     )
 
 
@@ -152,7 +152,7 @@ def decode(value):
         return f
 
 
-def walk_object(obj, callback, seen=None):
+def traverse_object(obj, callback, seen=None):
     seen = seen or set()
     # print obj, '>',
 
@@ -161,7 +161,7 @@ def walk_object(obj, callback, seen=None):
         if obj in seen:
             return
         seen.add(obj)
-        walk_object(obj.attributes, callback, seen)
+        traverse_object(obj.attrs, callback, seen)
         return callback(obj)
 
     if isinstance(obj, (leancloud.Relation, leancloud.File)):
@@ -171,7 +171,7 @@ def walk_object(obj, callback, seen=None):
     if isinstance(obj, (list, tuple)):
         # print 'is list or tuple'
         for child, idx in enumerate(obj):
-            new_child = walk_object(child, callback, seen)
+            new_child = traverse_object(child, callback, seen)
             if new_child:
                 obj[idx] = new_child
         return callback(obj)
@@ -179,7 +179,7 @@ def walk_object(obj, callback, seen=None):
     if isinstance(obj, dict):
         # print 'is dict'
         for key, child in obj.iteritems():
-            new_child = walk_object(child, callback, seen)
+            new_child = traverse_object(child, callback, seen)
             if new_child:
                 obj[key] = new_child
         return callback(obj)

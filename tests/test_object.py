@@ -5,7 +5,7 @@ from nose.tools import ok_
 from nose.tools import eq_
 
 import leancloud
-from leancloud import op
+from leancloud import operation
 from leancloud import Object
 from leancloud import Query
 
@@ -132,7 +132,7 @@ def test_clear():
 def test_op():
     album = Album()
     album.set('foo', 'bar')
-    assert isinstance(album.op('foo'), op.Set)
+    assert isinstance(album.op('foo'), operation.Set)
 
 
 def test_full_dump():
