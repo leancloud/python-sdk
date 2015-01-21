@@ -106,10 +106,6 @@ class Object(object):
         if not self.id:
             return False
         result = client.delete('/classes/{}/{}'.format(self._class_name, self.id))
-
-        content = result.json()
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])
         return True
 
     def save(self):
@@ -342,9 +338,6 @@ class Object(object):
         self._finish_fetch(result)
 
     def parse(self, content, status_code=None):
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])
-
         self._existed = True
         if status_code == 201:
             self._existed = False

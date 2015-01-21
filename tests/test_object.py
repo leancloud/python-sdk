@@ -7,7 +7,6 @@ from nose.tools import eq_
 import leancloud
 from leancloud import operation
 from leancloud import Object
-from leancloud import Query
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -206,3 +205,4 @@ def test_relation():
     album.relation('band')
     relation = album.relation('band')
     relation.add(band)
+    album.save()
