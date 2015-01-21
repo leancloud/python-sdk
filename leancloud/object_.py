@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import copy
-import logging
 from datetime import datetime
 
 import iso8601
@@ -13,9 +12,6 @@ from leancloud import operation
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
-
-
-logging.getLogger('iso8601.iso8601').disabled = True
 
 
 object_class_map = {}
