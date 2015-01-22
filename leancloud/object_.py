@@ -34,14 +34,11 @@ class ObjectMeta(type):
 
 
 class Object(object):
-
     __metaclass__ = ObjectMeta
 
     def __init__(self, **attrs):
         if not attrs:
             attrs = {}
-
-        # TODO: get defaults
 
         self.id = None
         self._class_name = self._class_name  # for IDE
@@ -50,15 +47,7 @@ class Object(object):
         self._op_set_queue = [{}]
         self.attributes = attrs
 
-        # self._hashed_object = {}
-        # self._escaped_attributes = {}
-        # self.cid = ''  # TODO
-        # self.changed = {}
-        # self._silent = {}
-        # self._pending = {}
-
         self._existed = False
-        # self._fetch_when_save = False
 
     @classmethod
     def extend(cls, name):
@@ -68,9 +57,6 @@ class Object(object):
     def create(cls, class_name, **attributes):
         object_class = cls.extend(class_name)
         return object_class(**attributes)
-
-    # def fetch_when_save(self, enable):
-    #     self._fetch_when_save = enable
 
     def dump(self):
         obj = self._dump()
@@ -84,19 +70,8 @@ class Object(object):
         for k, v in obj.iteritems():
             obj[k] = utils.encode(v, seen_objects)
 
-        # TODO
-        # for k, v in self._operations:
-        #     obj[k] = v
-
         if self.id is not None:
             obj['objectId'] = self.id
-
-        for key in ['createdAt', 'updatedAt']:
-            value = getattr(self, key, None)
-            if value is None:
-                continue
-            if isinstance(value, datetime):
-                setattr(self, key, value.isoformat())
 
         obj['__type'] = 'Object'
         obj['className'] = self.__class__.__name__
@@ -105,8 +80,7 @@ class Object(object):
     def destroy(self):
         if not self.id:
             return False
-        result = client.delete('/classes/{}/{}'.format(self._class_name, self.id))
-        return True
+        client.delete('/classes/{}/{}'.format(self._class_name, self.id))
 
     def save(self):
         unsaved_children = []
@@ -171,7 +145,6 @@ class Object(object):
                 # TODO: how to handle list of errors?
                 pass
 
-
     @classmethod
     def _find_unsaved_children(cls, obj, children, files):
 
@@ -189,7 +162,6 @@ class Object(object):
         utils.traverse_object(obj, callback)
 
     def is_dirty(self, attr=None):
-        # self._refresh_cache()
         current_changes = self._op_set_queue[-1]
 
         if attr is not None:
