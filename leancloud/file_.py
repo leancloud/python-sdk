@@ -134,7 +134,7 @@ class File(object):
                 'base64': output.getvalue(),
                 '_ContentType': self._type,
                 'mime_type': self._type,
-                'minData': self._metadata,
+                'metaData': self._metadata,
             }
         elif self._url and self.metadata['__source'] == 'external':
             data = {
