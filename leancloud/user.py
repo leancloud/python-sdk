@@ -1,11 +1,11 @@
 # coding: utf-8
 
-__author__ = 'asaka'
-
 import leancloud
 from leancloud import FriendShipQuery
 from leancloud import client
 from leancloud import Object
+
+__author__ = 'asaka'
 
 
 class User(Object):
@@ -32,7 +32,6 @@ class User(Object):
     def create_followee_query(cls, user_id):
         if not user_id or not isinstance(user_id, basestring):
             raise TypeError('invalid user_id: {}'.format(user_id))
-
 
     @property
     def is_current(self):
