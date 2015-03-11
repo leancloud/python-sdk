@@ -145,8 +145,8 @@ class Object(object):
                 obj._finish_save(result)
 
             if errors:
-                # TODO: how to handle list of errors?
-                pass
+                # TODO: how to raise list of errors?
+                raise errors[0]
 
     @classmethod
     def _find_unsaved_children(cls, obj, children, files):
