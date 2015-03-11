@@ -49,6 +49,9 @@ class Object(object):
 
         self._existed = False
 
+        self.created_at = None
+        self.updated_at = None
+
         for k, v in attrs.iteritems():
             self.set(k, v)
 
