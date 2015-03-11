@@ -3,6 +3,7 @@
 from nose.tools import with_setup
 from nose.tools import ok_
 from nose.tools import eq_
+from nose.tools import assert_raises
 
 import leancloud
 from leancloud import operation
@@ -202,9 +203,16 @@ def test_has():
 
 
 def test_get_set_acl():
+    acl = leancloud.ACL()
     album = Album()
-    album.set_acl('foo')
-    assert album.get_acl() == 'foo'
+    album.set_acl(acl)
+    assert album.get_acl() == acl
+
+
+def test_invalid_acl():
+    album = Album()
+    assert_raises(TypeError, album.set, 'ACL', 1)
+    assert_raises(TypeError, album.set_acl, 1)
 
 
 @with_setup(setup_func)

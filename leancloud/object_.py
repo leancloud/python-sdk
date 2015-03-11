@@ -216,13 +216,6 @@ class Object(object):
     def validate(self, attrs):
         if 'ACL' in attrs and not isinstance(attrs['ACL'], leancloud.ACL):
             raise TypeError('acl must be a ACL')
-        return False
-
-    def _validate(self, attrs, silent=True):
-        # TODO
-        if silent or not self.validate:
-            return True
-
         return True
 
     def get(self, attr):
@@ -250,15 +243,7 @@ class Object(object):
             for k in attrs.keys():
                 attrs[k] = operation.Unset()
 
-        # data_to_validate = copy.deepcopy(attrs)
-        # for k, v in data_to_validate.iteritems():
-        #     if isinstance(v, op.BaseOp):
-        #         data_to_validate[key] = v._estimate(self.attributes[k], self, k)
-        #         if data_to_validate[key] == op._UNSET:
-        #             del data_to_validate[key]
-
-        if not self._validate(attrs):
-            return False
+        self.validate(attrs)
 
         self._merge_magic_field(attrs)
 
