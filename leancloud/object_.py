@@ -37,9 +37,6 @@ class Object(object):
     __metaclass__ = ObjectMeta
 
     def __init__(self, **attrs):
-        # if not attrs:
-        #     attrs = {}
-
         self.id = None
         self._class_name = self._class_name  # for IDE
 
