@@ -96,6 +96,16 @@ def test_increment():
     assert album.get('foo') == 2
 
 
+def test_increment_atfer_save():
+    album = Album()
+    album.set('foo', 1)
+    album.save()
+    album.increment('foo', 234)
+    assert album.get('foo') == 235
+    album.save()
+    assert album.get('foo') == 235
+
+
 def test_add():
     album = Album()
     album.add('foo', 1)
