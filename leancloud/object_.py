@@ -37,17 +37,20 @@ class Object(object):
     __metaclass__ = ObjectMeta
 
     def __init__(self, **attrs):
-        if not attrs:
-            attrs = {}
+        # if not attrs:
+        #     attrs = {}
 
         self.id = None
         self._class_name = self._class_name  # for IDE
 
         self._server_data = {}
         self._op_set_queue = [{}]
-        self.attributes = attrs
+        self.attributes = {}
 
         self._existed = False
+
+        for k, v in attrs.iteritems():
+            self.set(k, v)
 
     @classmethod
     def extend(cls, name):
