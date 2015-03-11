@@ -369,8 +369,8 @@ class Object(object):
         self._has_data = has_data
 
     def _rebuild_estimated_data_for_key(self, key):
-        if self.attributes.get(key):
-            del self.attributes[key]
+        # if self.attributes.get(key):
+        #     del self.attributes[key]
 
         for op_set in self._op_set_queue:
             o = op_set.get(key)
