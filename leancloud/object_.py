@@ -338,18 +338,11 @@ class Object(object):
         return self.set('ACL', acl)
 
     def _finish_save(self, server_data):
-        # TODO: traverse obj
-
         saved_changes = self._op_set_queue[0]
         self._op_set_queue = self._op_set_queue[1:]
         self._apply_op_set(saved_changes, self._server_data)
         self._merge_magic_field(server_data)
-        for key, value in server_data.iteritems():
-            self._server_data[key] = utils.decode(value)
-
-            # TODO:
-
-            self._rebuild_all_estimated_data()
+        self._rebuild_all_estimated_data()
 
     def _finish_fetch(self, server_data, has_data):
         self._op_set_queue = [{}]
@@ -381,13 +374,7 @@ class Object(object):
                 del self.attributes[key]
 
     def _rebuild_all_estimated_data(self):
-        # TODO
-        previous_attributes = copy.deepcopy(self.attributes)
         self.attributes = copy.deepcopy(self._server_data)
-
-        for op_set in self._op_set_queue:
-            # apply local changes
-            self._apply_op_set(op_set, self.attributes)
 
     def _apply_op_set(self, op_set, target):
         for key, change in op_set.iteritems():
