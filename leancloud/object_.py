@@ -211,7 +211,10 @@ class Object(object):
         for key, op in failed_changes.iteritems():
             op1 = failed_changes[key]
             op2 = next_changes[key]
-            # TODO
+            if op1 and op2:
+                next_changes[key] = op2._merge(op1)
+            elif op1:
+                next_changes[key] = op1
 
     def validate(self, attrs):
         if 'ACL' in attrs and not isinstance(attrs['ACL'], leancloud.ACL):
@@ -254,10 +257,6 @@ class Object(object):
 
             if not isinstance(v, operation.BaseOp):
                 v = operation.Set(v)
-
-            is_real_change = True
-            if isinstance(v, operation.Set) and self.attributes.get(k) == v:  # TODO: equal
-                is_real_change = False
 
             current_changes = self._op_set_queue[-1]
             current_changes[k] = v._merge(current_changes.get(k))
