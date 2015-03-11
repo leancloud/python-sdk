@@ -87,7 +87,7 @@ def post(url, params):
 @need_init
 @check_error
 def put(url, params):
-    response = requests.post(BASE_URL + url, headers=headers, json=params)
+    response = requests.put(BASE_URL + url, headers=headers, json=params)
     return response
 
 
