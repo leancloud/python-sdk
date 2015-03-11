@@ -372,6 +372,9 @@ class Object(object):
         if self.attributes.get(key):
             del self.attributes[key]
 
+        if key in self._server_data:
+            self.attributes[key] = self._server_data[key]
+
         for op_set in self._op_set_queue:
             o = op_set.get(key)
             if o is None:
