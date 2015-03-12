@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import leancloud
-from leancloud import FriendShipQuery
+from leancloud import FriendshipQuery
 from leancloud import client
 from leancloud import Object
 
@@ -24,7 +24,7 @@ class User(Object):
     def create_follower_query(cls, user_id):
         if not user_id or not isinstance(user_id, basestring):
             raise TypeError('invalid user_id: {}'.format(user_id))
-        query = FriendShipQuery('_Follower')
+        query = FriendshipQuery('_Follower')
         query._friendship_tag = 'follower'
         query.equal_to('user', Object.create('User', id=user_id))
 

@@ -1,10 +1,10 @@
 # coding: utf-8
 
-__author__ = 'asaka <lan@leancloud.rocks>'
-
 import leancloud
 from leancloud import client
 from leancloud.object_ import Object
+
+__author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class Query(object):
@@ -185,10 +185,10 @@ class Query(object):
         return self
 
 
-class FriendShipQuery(Query):
+class FriendshipQuery(Query):
     def __init__(self, query_class):
         self._friendship_tag = None
-        super(FriendShipQuery, self).__init__(leancloud.User)
+        super(FriendshipQuery, self).__init__(leancloud.User)
 
     def _new_object(self):
         return leancloud.User()
