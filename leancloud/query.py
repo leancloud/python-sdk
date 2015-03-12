@@ -154,7 +154,7 @@ class Query(object):
         self._add_condition(key, '$exists', True)
         return self
 
-    def dose_not_exists(self, key):
+    def does_not_exists(self, key):
         self._add_condition(key, '$exists', False)
         return self
 
