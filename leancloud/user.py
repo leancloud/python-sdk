@@ -25,13 +25,16 @@ class User(Object):
         if not user_id or not isinstance(user_id, basestring):
             raise TypeError('invalid user_id: {}'.format(user_id))
         query = FriendshipQuery('_Follower')
-        query._friendship_tag = 'follower'
-        query.equal_to('user', Object.create('User', id=user_id))
+        query.equal_to('user', Object.create('_User', id=user_id))
+        return query
 
     @classmethod
     def create_followee_query(cls, user_id):
         if not user_id or not isinstance(user_id, basestring):
             raise TypeError('invalid user_id: {}'.format(user_id))
+        query = FriendshipQuery('_Followee')
+        query.equal_to('user', Object.create('_User', id=user_id))
+        return query
 
     @property
     def is_current(self):

@@ -63,3 +63,35 @@ def test_follow():
     user2.login()
 
     user1.follow(user2.id)
+
+
+def test_follower_query():
+    query = User.create_follower_query('1')
+    assert query._friendship_tag == 'follower'
+    # TODO: fix invalid dump data
+    # print query.dump()
+    # assert query.dump() == {
+    #     'where': {
+    #         'user': {
+    #             '__type': 'Pointer',
+    #             'className': '_User',
+    #             'objectId': '1',
+    #         },
+    #     },
+    # }
+
+
+def test_followee_query():
+    query = User.create_followee_query('1')
+    assert query._friendship_tag == 'followee'
+    # TODO: fix invalid dump data
+    # print query.dump()
+    # assert query.dump() == {
+    #     'where': {
+    #         'user': {
+    #             '__type': 'Pointer',
+    #             'className': '_User',
+    #             'objectId': '1',
+    #             },
+    #         },
+    #     }

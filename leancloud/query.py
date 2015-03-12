@@ -187,7 +187,10 @@ class Query(object):
 
 class FriendshipQuery(Query):
     def __init__(self, query_class):
-        self._friendship_tag = None
+        if query_class in ('_Follower', 'Follower'):
+            self._friendship_tag = 'follower'
+        elif query_class in ('_Followee', 'Followee'):
+            self._friendship_tag = 'followee'
         super(FriendshipQuery, self).__init__(leancloud.User)
 
     def _new_object(self):
