@@ -11,6 +11,7 @@ from .query import FriendshipQuery
 from .query import Query
 from .relation import Relation
 from .user import User
+from .role import Role
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 __version__ = '0.0.1'
@@ -28,4 +29,5 @@ __all__ = [
     'User',
     'client',
     'init',
+    'Role',
 ]
