@@ -5,7 +5,7 @@ import copy
 import leancloud
 import leancloud.utils
 
-__author__ = 'asaka <lan@leanclour.rocks>'
+__author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class BaseOp(object):
@@ -241,11 +241,13 @@ class Relation(BaseOp):
     def dump(self):
         adds = None
         removes = None
-        id_to_pointer = lambda id_: {
-            '__type': 'Pointer',
-            'className': self._target_class_name,
-            'objectId': id_,
-        }
+
+        def id_to_pointer(id_):
+            return {
+                '__type': 'Pointer',
+                'className': self._target_class_name,
+                'objectId': id_,
+            }
         if len(self.relations_to_add) > 0:
             adds = {
                 '__op': 'AddRelation',
@@ -295,4 +297,3 @@ class Relation(BaseOp):
                 return old
             else:
                 raise TypeError('invalid op')
-
