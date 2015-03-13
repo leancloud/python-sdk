@@ -158,7 +158,66 @@ class Query(object):
         self._add_condition(key, '$exists', False)
         return self
 
-    # TODO: regex condition
+    def matched(self, key, regex, ignore_case=False, multi_line=False):
+        if not isinstance(regex, basestring):
+            raise TypeError('matched only accept str or unicode')
+        self._add_condition(key, '$regex', regex)
+        modifiers = ''
+        if ignore_case:
+            modifiers += 'i'
+        if multi_line:
+            modifiers += 'm'
+        if modifiers:
+            self._add_condition(key, '$options', modifiers)
+        return self
+
+    def matches_query(self, key, query):
+        dumped = query.dump()
+        dumped['className'] = query['className']
+        self._add_condition(key, '$inQuery', dumped)
+        return self
+
+    def does_not_match_query(self, key, query):
+        dumped = query.dump()
+        dumped['className'] = query['className']
+        self._add_condition(key, '$notInQuery', dumped)
+        return self
+
+    def matched_key_in_query(self, key, query_key, query):
+        dumped = query.dump()
+        dumped['className'] = query['className']
+        self._add_condition(key, '$select', {'key': query_key, 'query': dumped})
+        return self
+
+    def does_not_match_key_in_query(self, key, query_key, query):
+        dumped = query.dump()
+        dumped['className'] = query['className']
+        self._add_condition(key, '$dontSelect', {'key': query_key, 'query': dumped})
+        return self
+
+    def _or_query(self, queries):
+        dumped = [q.dump()['where'] for q in queries]
+        self._where['$or'] = dumped
+        return self
+
+    def _and_query(self, queries):
+        dumped = [q.dump()['where'] for q in queries]
+        self._where['$and'] = dumped
+
+    def _quote(self, s):
+        # return "\\Q" + s.replace("\\E", "\\E\\\\E\\Q") + "\\E"
+        return s
+
+    def contains(self, key, value):
+        self._add_condition(key, '$regex', self._quote(value))
+
+    def startswith(self, key, value):
+        self._add_condition(key, '$regex', '^' + self._quote(value))
+        return self
+
+    def endswith(self, key, value):
+        self._add_condition(key, '$regex', self._quote(value) + '$')
+        return self
 
     def ascending(self, key):
         self._order = [key]
@@ -176,7 +235,24 @@ class Query(object):
         self._order.append('-{}'.format(key))
         return self
 
-    # TODO: GEO query
+    def near(self, key, point):
+        self._add_condition(key, '$nearShere', point)
+        return self
+
+    def within_radians(self, key, point, distance):
+        self.near(key, point)
+        self._add_condition(key, '$maxDistance', distance)
+        return self
+
+    def within_miles(self, key, point, distance):
+        return self.within_radians(key, point, distance / 3958.8)
+
+    def within_kilometers(self, key, point, distance):
+        return self.within_radians(key, point, distance / 6371.0)
+
+    def within_geo_box(self, key, southwest, northeast):
+        self._add_condition(key, '$within', {'$box': [southwest, northeast]})
+        return self
 
     def include(self, *keys):
         if len(keys) == 1 and isinstance(keys[0], [list, tuple]):
