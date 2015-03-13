@@ -137,8 +137,10 @@ def decode(key, value):
     if _type == 'GeoPoint':
         return leancloud.GeoPoint(latitude=value['latitude'], longitude=value['longitude'])
 
-    if _type == 'ACL':
-        return leancloud.ACL(value)  # TODO
+    if key == 'ACL':
+        if isinstance(value, leancloud.ACL):
+            return value
+        return leancloud.ACL(value)
 
     if _type == 'Relation':
         relation = leancloud.Relation(None, key)
