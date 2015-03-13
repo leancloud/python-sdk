@@ -209,6 +209,9 @@ def test_fetch():
     album.get('parent').fetch()
     assert album.get('parent').get('name') == 'Nightwish'
 
+    album.destroy()
+    band.destroy()
+
 
 def test_has():
     album = Album()
