@@ -195,6 +195,21 @@ def test_to_pointer():
     album._to_pointer()
 
 
+@with_setup(setup_func)
+def test_fetch():
+    album = Album(title='Once')
+    band = Band(name='Nightwish')
+    album.set('parent', band)
+    album.save()
+
+    query = leancloud.Query(Album)
+    album = query.get(album.id)
+    assert album.get('parent').get('name') is None
+
+    album.get('parent').fetch()
+    assert album.get('parent').get('name') == 'Nightwish'
+
+
 def test_has():
     album = Album()
     album.set('foo', 'bar')

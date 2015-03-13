@@ -302,9 +302,9 @@ class Object(object):
         return result
 
     def fetch(self):
-        response = client.get('/classes/{}/{}'.format(self._class_name, self.id))
-        result = self.parse(response)
-        self._finish_fetch(result)
+        response = client.get('/classes/{}/{}'.format(self._class_name, self.id), {})
+        result = self.parse(response.json(), response.status_code)
+        self._finish_fetch(result, True)
 
     def parse(self, content, status_code=None):
         self._existed = True
