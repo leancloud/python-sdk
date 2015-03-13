@@ -54,6 +54,8 @@ class Object(object):
 
     @classmethod
     def extend(cls, name):
+        if isinstance(name, unicode):
+            name = name.encode('utf-8')
         return type(name, (cls,), {})
 
     @classmethod
