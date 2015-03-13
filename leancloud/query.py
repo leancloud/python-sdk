@@ -14,7 +14,7 @@ class Query(object):
         self._query_class = query_class
 
         self._where = {}
-        self._include = {}
+        self._include = []
         self._limit = -1
         self._skip = 0
         self._extra = {}
@@ -181,7 +181,13 @@ class Query(object):
     def include(self, *keys):
         if len(keys) == 1 and isinstance(keys[0], [list, tuple]):
             keys = keys[0]
-        self._include = keys
+        self._include += keys
+        return self
+
+    def select(self, *keys):
+        if len(keys) == 1 and isinstance(keys[0], [list, tuple]):
+            keys = keys[0]
+        self._select += keys
         return self
 
 
