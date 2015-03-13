@@ -19,9 +19,9 @@ class Relation(object):
         return q
 
     def _ensure_parent_and_key(self, parent, key):
-        if self.parent is not None:
+        if self.parent is None:
             self.parent = parent
-        if self.key is not None:
+        if self.key is None:
             self.key = key
 
         if self.parent != parent:
@@ -53,11 +53,11 @@ class Relation(object):
 
     def query(self):
         if self.target_class_name is None:
-            target_class = leancloud.Object._get_subclass(self.parent._class_name)
+            target_class = leancloud.Object.extend(self.parent._class_name)
             query = leancloud.Query(target_class)
             query._extra['redirectClassNameForKey'] = self.key
         else:
-            target_class = leancloud.Object._get_subclass(self.target_class_name)
+            target_class = leancloud.Object.extend(self.target_class_name)
             query = leancloud.Query(target_class)
 
         query._add_condition('$relatedTo', 'object', self.parent._to_pointer())

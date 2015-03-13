@@ -1,7 +1,5 @@
 # coding: utf-8
 
-__author__ = 'asaka <lan@leancloud.rocks>'
-
 import copy
 from datetime import datetime
 
@@ -9,6 +7,8 @@ import iso8601
 
 import leancloud
 from leancloud import operation
+
+__author__ = 'asaka <lan@leancloud.rocks>'
 
 
 def get_dumpable_types():
@@ -95,18 +95,18 @@ def encode(value, disallow_objects=False):
 #     return value
 
 
-def decode(value):
+def decode(key, value):
     if isinstance(value, get_dumpable_types()):
         return value
 
     if isinstance(value, (tuple, list)):
-        return [decode(x) for x in value]
+        return [decode(key, x) for x in value]
 
     if not isinstance(value, dict):
         return value
 
     if '__type' not in value:
-        return {k: decode(v) for k, v in value.iteritems()}
+        return {k: decode(k, v) for k, v in value.iteritems()}
 
     _type = value['__type']
 
@@ -140,7 +140,10 @@ def decode(value):
     if _type == 'ACL':
         return leancloud.ACL(value)  # TODO
 
-    # TODO: Relation
+    if _type == 'Relation':
+        relation = leancloud.Relation(None, key)
+        relation.target_class_name = value['className']
+        return relation
 
     if _type == 'File':
         f = leancloud.File(value['name'])
