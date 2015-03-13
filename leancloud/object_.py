@@ -61,6 +61,14 @@ class Object(object):
         object_class = cls.extend(class_name)
         return object_class(**attributes)
 
+    @classmethod
+    def create_without_data(cls, id_):
+        if cls is Object:
+            raise RuntimeError('can not call create_without_data on leancloud.Object')
+        obj = cls()
+        obj.id = id_
+        return obj
+
     def dump(self):
         obj = self._dump()
         obj.pop('__type')
