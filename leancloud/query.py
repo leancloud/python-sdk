@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import json
+
 import leancloud
 from leancloud import client
 from leancloud.object_ import Object
@@ -51,10 +53,10 @@ class Query(object):
     @classmethod
     def do_cloud_query(cls, cql, *pvalues):
         params = {'cql': cql}
-        if len(pvalues) == 1 and isinstance(pvalues[0], [tuple, list]):
-            pvalues = pvalues[0]
+        if len(pvalues) == 1 and isinstance(pvalues[0], (tuple, list)):
+            pvalues = json.dumps(pvalues[0])
         if len(pvalues) > 0:
-            params['pvalues'] = pvalues
+            params['pvalues'] = json.dumps(pvalues)
 
         content = client.get('/cloudQuery', params).json()
         if 'error' in content:
