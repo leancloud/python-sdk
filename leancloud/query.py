@@ -22,6 +22,26 @@ class Query(object):
         self._select = []
 
     @classmethod
+    def or_(cls, *queries):
+        if len(queries) < 2:
+            raise ValueError('or_ need two queries at least')
+        if not reduce(lambda l, r: l['className'] == r['className'], queries):
+            raise TypeError('All queries must be for the same class')
+        query = Query(queries[0]['className'])
+        query._or_query(queries)
+        return query
+
+    @classmethod
+    def and_(cls, *queries):
+        if len(queries) < 2:
+            raise ValueError('or_ need two queries at least')
+        if not reduce(lambda l, r: l['className'] == r['className'], queries):
+            raise TypeError('All queries must be for the same class')
+        query = Query(queries[0]['className'])
+        query._and_query(queries)
+        return query
+
+    @classmethod
     def do_cloud_query(cls, cql, *pvalues):
         params = {'cql': cql}
         if len(pvalues) == 1 and isinstance(pvalues[0], [tuple, list]):
