@@ -7,6 +7,13 @@ from leancloud.object_ import Object
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
+class CQLResult(object):
+    def __init__(self, results, count, class_name):
+        self.results = results
+        self.count = count
+        self.class_name = class_name
+
+
 class Query(object):
     def __init__(self, query_class):
         if isinstance(query_class, basestring):
@@ -49,8 +56,18 @@ class Query(object):
         if len(pvalues) > 0:
             params['pvalues'] = pvalues
 
-        result = client.get('/cloudQuery', params)
-        return result
+        content = client.get('/cloudQuery', params).json()
+        if 'error' in content:
+            raise leancloud.LeanCloudError(content['code'], content['error'])
+
+        objs = []
+        query = Query(content['className'])
+        for result in content['results']:
+            obj = query._new_object()
+            obj._finish_fetch(query._process_result(result), True)
+            objs.append(obj)
+
+        return CQLResult(objs, len(content['results']), content['className'])
 
     def dump(self):
         """
