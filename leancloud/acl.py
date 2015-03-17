@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import leancloud
+
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
@@ -14,8 +16,10 @@ class ACL(object):
         return self.permissions_by_id
 
     def _set_access(self, access_type, user_id, allowed):
-        # TODO: User
-        # TODO: Role
+        if isinstance(user_id, leancloud.User):
+            user_id = user_id.id
+        elif isinstance(user_id, leancloud.Role):
+            user_id = 'role:' + user_id.get_name()
         permissions = self.permissions_by_id.get(user_id)
         if permissions is None:
             if not allowed:
@@ -31,8 +35,10 @@ class ACL(object):
                 del self.permissions_by_id[user_id]
 
     def _get_access(self, access_type, user_id):
-        # TODO: USer
-        # TODO: Role
+        if isinstance(user_id, leancloud.User):
+            user_id = user_id.id
+        elif isinstance(user_id, leancloud.Role):
+            user_id = 'role:' + user_id.get_name()
         permissions = self.permissions_by_id[user_id]
         if not permissions:
             return False
@@ -63,13 +69,29 @@ class ACL(object):
         return self.get_write_access(PUBLIC_KEY)
 
     def set_role_read_access(self, role, allowed):
-        pass  # TODO
+        if isinstance(role, leancloud.Role):
+            role = role.get_name()
+        if not isinstance(role, basestring):
+            raise TypeError('role must be a leancloud.Role or str')
+        self.set_read_access('role:{}'.format(role), allowed)
 
     def get_role_read_access(self, role):
-        pass  # TODO
+        if isinstance(role, leancloud.Role):
+            role = role.get_name()
+        if not isinstance(role, basestring):
+            raise TypeError('role must be a leancloud.Role or str')
+        self.get_read_access('role:{}'.format(role))
 
     def set_role_write_access(self, role, allowed):
-        pass  # TODO
+        if isinstance(role, leancloud.Role):
+            role = role.get_name()
+        if not isinstance(role, basestring):
+            raise TypeError('role must be a leancloud.Role or str')
+        self.set_write_access('role:{}'.format(role), allowed)
 
     def get_role_write_access(self, role):
-        pass  # TODO
+        if isinstance(role, leancloud.Role):
+            role = role.get_name()
+        if not isinstance(role, basestring):
+            raise TypeError('role must be a leancloud.Role or str')
+        self.get_write_access('role:{}'.format(role))
