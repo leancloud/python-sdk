@@ -85,4 +85,7 @@ class GeoPoint(object):
         return self.radians_to(other) * 3958.8
 
     def __eq__(self, other):
-        return self.latitude == other.latitude and self.longitude == other.longitude
+        return \
+            isinstance(other, GeoPoint) and \
+            self.latitude == other.latitude and \
+            self.longitude == other.longitude
