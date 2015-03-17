@@ -32,6 +32,7 @@ def setup_func():
     for i in xrange(10):
         game_score = GameScore()
         game_score.set('score', i)
+        game_score.set('playerName', '张三')
         game_score.save()
         game_scores.append(game_score)
 
