@@ -69,7 +69,7 @@ class Query(object):
             obj._finish_fetch(query._process_result(result), True)
             objs.append(obj)
 
-        return CQLResult(objs, len(content['results']), content['className'])
+        return CQLResult(objs, content.get('count'), content.get('className'))
 
     def dump(self):
         """
