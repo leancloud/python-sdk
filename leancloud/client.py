@@ -13,8 +13,8 @@ APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
 
-CN_BASE_URL = 'https://cn.avoscloud.com'
-US_BASE_URL = 'https://us.avoscloud.com'
+CN_BASE_URL = 'https://api.leancloud.cn'
+US_BASE_URL = 'https://avoscloud.us'
 
 SERVER_VERSION = '1.1'
 SDK_VERSION = '0.0.1'
