@@ -99,13 +99,9 @@ class User(Object):
             raise ValueError('Please sign in')
         response = client.post('/users/{}/friendship/{}'.format(self.id, target_id), None)
         content = response.json()
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])
 
     def unfollow(self, target_id):
         if self.id is None:
             raise ValueError('Please sign in')
         response = client.delete('/users/{}/friendship/{}'.format(self.id, target_id), None)
         content = response.json()
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])

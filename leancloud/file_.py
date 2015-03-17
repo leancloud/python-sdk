@@ -120,9 +120,7 @@ class File(object):
             return False
         response = client.delete('/files/{}'.format(self.id))
         content = response.json()
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])
-        return response  # TODO: check result
+        return response
 
     def save(self):
         if self._source:
@@ -149,9 +147,6 @@ class File(object):
 
         response = client.post('/files/{}'.format(self._name), data)
         content = response.json()
-
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])
 
         self._name = content['name']
         self._url = content['url']

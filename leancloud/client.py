@@ -57,12 +57,8 @@ def need_init(func):
 def check_error(func):
     def new_func(*args, **kwargs):
         response = func(*args, **kwargs)
-        assert isinstance(response, requests.Response)
         if response.headers['Content-Type'] == 'text/html':
             raise leancloud.LeanCloudError(-1, 'Bad Request')
-        content = response.json()
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])
         return response
     return new_func
 

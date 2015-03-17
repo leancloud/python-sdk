@@ -59,8 +59,6 @@ class Query(object):
             params['pvalues'] = json.dumps(pvalues)
 
         content = client.get('/cloudQuery', params).json()
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])
 
         objs = []
         query = Query(content['className'])
@@ -102,8 +100,6 @@ class Query(object):
         params = self.dump()
         params['limit'] = 1
         content = client.get('/classes/{}'.format(self._query_class._class_name), params).json()
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])
         results = content['results']
         if not results:
             raise leancloud.LeanCloudError(101, 'Object not found')
@@ -117,8 +113,6 @@ class Query(object):
 
     def find(self):
         content = client.get('/classes/{}'.format(self._query_class._class_name), self.dump()).json()
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content['code'], content['error'])
 
         objs = []
         for result in content['results']:
