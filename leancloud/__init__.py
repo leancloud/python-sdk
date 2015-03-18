@@ -1,5 +1,8 @@
 # coding: utf-8
 
+"""LeanCloud Python SDK
+"""
+
 import client
 from .acl import ACL
 from .client import init

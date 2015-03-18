@@ -71,7 +71,7 @@ class Query(object):
 
     def dump(self):
         """
-        :return: Returns a dict representation of this query.
+        :return: 当前对象的序列化结果
         :rtype: dict
         """
         params = {

@@ -24,11 +24,19 @@ headers = None
 
 
 def init(app_id, app_key=None, master_key=None):
+    """初始化 LeanCloud 的 AppId / AppKey / MasterKey
+
+    :type app_id: basestring
+    :param app_id: 应用的 Application ID
+    :type app_key: (None, basestring)
+    :param app_key: 应用的 Application Key
+    :type master_key: (None, basestring)
+    :param master_key: 应用的 Master Key
+    """
     if (not app_key) and (not master_key):
         raise RuntimeError('app_key or master_key must be specified')
     if app_key and master_key:
         raise RuntimeError('app_key and master_key can\'t be specified both')
-
     global APP_ID, APP_KEY, MASTER_KEY
     APP_ID = app_id
     APP_KEY = app_key
