@@ -19,15 +19,15 @@ object_class_map = {}
 
 class ObjectMeta(type):
     def __new__(cls, name, bases, attrs):
-        if name == 'User':
-            name = '_User'
-
         cached_class = object_class_map.get(name)
         if cached_class:
             return cached_class
 
         super_new = super(ObjectMeta, cls).__new__
-        attrs['_class_name'] = name
+        if name == 'User':
+            attrs['_class_name'] = '_User'
+        else:
+            attrs['_class_name'] = name
         object_class = super_new(cls, name, bases, attrs)
         object_class_map[name] = object_class
         return object_class
