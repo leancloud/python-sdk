@@ -274,9 +274,24 @@ class Object(object):
         return True
 
     def get(self, attr):
+        """
+        获取对象字段的值
+
+        :param attr: 字段名
+        :type attr: basestring
+        :return: 字段值
+        """
         return self.attributes.get(attr)
 
     def relation(self, attr):
+        """
+        返回对象上相应字段的 Relation
+
+        :param attr: 字段名
+        :type attr: basestring
+        :return: Relation
+        :rtype: leancloud.Relation
+        """
         value = self.get(attr)
         if value is not None:
             if not isinstance(value, leancloud.Relation):
@@ -286,12 +301,29 @@ class Object(object):
         return leancloud.Relation(self, attr)
 
     def has(self, attr):
+        """
+        判断此字段是否有值
+
+        :param attr: 字段名
+        :return: 当有值时返回 True， 否则返回 False
+        :rtype: bool
+        """
         return attr in self.attributes
 
-    def set(self, key, value=None, unset=False, silent=True):
-        if isinstance(key, dict) and value is None:
-            attrs = key
+    def set(self, key_or_attrs, value=None, unset=False):
+        """
+        在当前对象此字段上赋值
+
+        :param key_or_attrs: 字段名，或者一个包含 字段名 / 值的 dict
+        :type key_or_attrs: basestring or dict
+        :param value: 字段值
+        :param unset:
+        :return: 当前对象，供链式调用
+        """
+        if isinstance(key_or_attrs, dict) and value is None:
+            attrs = key_or_attrs
         else:
+            key = key_or_attrs
             attrs = {key: utils.decode(key, value)}
 
         if unset:
@@ -317,24 +349,63 @@ class Object(object):
         return self
 
     def unset(self, attr):
+        """
+        在对象上移除此字段。
+
+        :param attr: 字段名
+        :return: 当前对象
+        """
         return self.set(attr, None, unset=True)
 
     def increment(self, attr, amount=1):
+        """
+        在对象此字段上自增对应的数值，如果数值没有指定，默认为一。
+
+        :param attr: 字段名
+        :param amount: 自增量
+        :return: 当前对象
+        """
         return self.set(attr, operation.Increment(amount))
 
     def add(self, attr, item):
+        """
+        在对象此字段对应的数组末尾添加指定对象。
+
+        :param attr: 字段名
+        :param item: 要添加的对象
+        :return: 当前对象
+        """
         return self.set(attr, operation.Add([item]))
 
     def add_unique(self, attr, item):
+        """
+        在对象此字段对应的数组末尾添加指定对象，如果此对象并没有包含在字段中。
+
+        :param attr: 字段名
+        :param item: 要添加的对象
+        :return: 当前对象
+        """
         return self.set(attr, operation.AddUnique([item]))
 
     def remove(self, attr, item):
+        """
+        在对象此字段对应的数组中，将指定对象全部移除。
+
+        :param attr: 字段名
+        :param item: 要移除的对象
+        :return: 当前对象
+        """
         return self.set(attr, operation.Remove([item]))
 
     def op(self, attr):
         return self._op_set_queue[-1][attr]
 
     def clear(self):
+        """
+        将当前对象所有字段全部移除。
+
+        :return: 当前对象
+        """
         self.set(self.attributes, unset=True)
 
     def _dump_save(self):
@@ -344,6 +415,11 @@ class Object(object):
         return result
 
     def fetch(self):
+        """
+        从服务器获取当前对象所有的值，如果与本地值不同，将会覆盖本地的值。
+
+        :return: 当前对象
+        """
         response = client.get('/classes/{}/{}'.format(self._class_name, self.id), {})
         result = self.parse(response.json(), response.status_code)
         self._finish_fetch(result, True)
@@ -355,22 +431,34 @@ class Object(object):
 
         return content
 
-    def clone(self):
-        pass
-
     def is_new(self):
+        """
+        判断当前对象是否已经保存至服务器。
+
+        :rtype: bool
+        """
         return True if self.id else False
 
     def is_existed(self):
         return self._existed
 
-    def change(self):
-        pass
-
     def get_acl(self):
+        """
+        返回当前对象的 ACL。
+
+        :return: 当前对象的 ACL
+        :rtype: leancloud.ACL
+        """
         return self.get('ACL')
 
     def set_acl(self, acl):
+        """
+        为当前对象设置 ACL
+
+        :type acl: leancloud.ACL
+        :return: 当前对象
+        """
+
         return self.set('ACL', acl)
 
     def _finish_save(self, server_data):

@@ -8,6 +8,14 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 class GeoPoint(object):
     def __init__(self, latitude=0, longitude=0):
+        """
+
+        :param latitude: 纬度
+        :type latitude: int or float
+        :param longitude: 经度
+        :type longitude: int or float
+        :return: GeoPoint
+        """
         self._validate(latitude, longitude)
         self._latitude = latitude
         self._longitude = longitude
@@ -28,6 +36,9 @@ class GeoPoint(object):
 
     @property
     def latitude(self):
+        """
+        当前对象的纬度
+        """
         return self._latitude
 
     @latitude.setter
@@ -37,6 +48,9 @@ class GeoPoint(object):
 
     @property
     def longitude(self):
+        """
+        当前对象的经度
+        """
         return self._longitude
 
     @longitude.setter
@@ -55,6 +69,7 @@ class GeoPoint(object):
     def radians_to(self, other):
         """
         Returns the distance from this GeoPoint to another in radians.
+
         :param other: point the other GeoPoint
         :type other: GeoPoint
         :rtype: float
@@ -79,9 +94,23 @@ class GeoPoint(object):
         return 2 * math.asin(math.sqrt(a))
 
     def kilometers_to(self, other):
+        """
+        Returns the distance from this GeoPoint to another in kilometers.
+
+        :param other: point the other GeoPoint
+        :type other: GeoPoint
+        :rtype: float
+        """
         return self.radians_to(other) * 6371.0
 
     def miles_to(self, other):
+        """
+        Returns the distance from this GeoPoint to another in miles.
+
+        :param other: point the other GeoPoint
+        :type other: GeoPoint
+        :rtype: float
+        """
         return self.radians_to(other) * 3958.8
 
     def __eq__(self, other):

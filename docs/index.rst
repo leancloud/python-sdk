@@ -3,13 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to LeanCloud-Python-SDK's documentation!
+LeanCloud-Python-SDK API 文档
 ================================================
 
-Contents:
 
 .. toctree::
    :maxdepth: 2
+
+   leancloud
 
 
 
