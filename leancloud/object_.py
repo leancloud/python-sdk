@@ -37,6 +37,12 @@ class Object(object):
     __metaclass__ = ObjectMeta
 
     def __init__(self, **attrs):
+        """
+        创建一个新的 leancloud.Object
+
+        :param attrs: 对象属性
+        :return:
+        """
         self.id = None
         self._class_name = self._class_name  # for IDE
 
@@ -54,17 +60,42 @@ class Object(object):
 
     @classmethod
     def extend(cls, name):
+        """
+        派生一个新的 leancloud.Object 子类
+
+        :param name: 子类名称
+        :type name: basestring
+        :return: 派生的子类
+        :rtype: ObjectMeta
+        """
         if isinstance(name, unicode):
             name = name.encode('utf-8')
         return type(name, (cls,), {})
 
     @classmethod
     def create(cls, class_name, **attributes):
+        """
+        根据参数创建一个 leancloud.Object 的子类的实例化对象
+
+        :param class_name: 子类名称
+        :type class_name: basestring
+        :param attributes: 对象属性
+        :return: 派生子类的实例
+        :rtype: Object
+        """
         object_class = cls.extend(class_name)
         return object_class(**attributes)
 
     @classmethod
     def create_without_data(cls, id_):
+        """
+        根据 objectId 创建一个 leancloud.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据
+
+        :param id_: 对象的 objectId
+        :type id_: basestring
+        :return: 没有数据的对象
+        :rtype: Object
+        """
         if cls is Object:
             raise RuntimeError('can not call create_without_data on leancloud.Object')
         obj = cls()
@@ -91,11 +122,22 @@ class Object(object):
         return obj
 
     def destroy(self):
+        """
+        从服务器上删除这个对象
+
+        :rtype: None
+        """
         if not self.id:
             return False
         client.delete('/classes/{}/{}'.format(self._class_name, self.id))
 
     def save(self):
+        """
+        将对象数据保存至服务器
+
+        :return: None
+        :rtype: None
+        """
         unsaved_children = []
         unsaved_files = []
 
