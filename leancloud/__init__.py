@@ -24,7 +24,7 @@ __all__ = [
     'GeoPoint',
     'LeanCloudError',
     'Object',
-    'Query'
+    'Query',
     'Relation',
     'User',
     'client',
