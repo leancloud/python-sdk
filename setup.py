@@ -38,7 +38,7 @@ setup(
     ],
 
     extras_require={
-        'dev': [],
+        'dev': ['sphinx'],
         'test': ['nose', 'coverage'],
     },
 )

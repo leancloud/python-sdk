@@ -4,7 +4,17 @@ LeanCloud Python SDK (under development)
 
 ## Install
 
+```bash
 pip install git+https://github.com/leancloud/python-sdk.git
+```
+
+## Generate API document
+
+```bash
+cd docs
+make html
+```
+
 
 ## License
 
