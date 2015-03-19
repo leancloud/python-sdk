@@ -26,6 +26,10 @@ class ObjectMeta(type):
         super_new = super(ObjectMeta, cls).__new__
         if name == 'User':
             attrs['_class_name'] = '_User'
+        elif name == 'Installation':
+            attrs['_class_name'] = '_Installation'
+        elif name == 'Notification':
+            attrs['_class_name'] = '_Notification'
         else:
             attrs['_class_name'] = name
         object_class = super_new(cls, name, bases, attrs)

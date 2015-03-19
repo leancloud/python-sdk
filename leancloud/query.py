@@ -291,34 +291,37 @@ class Query(object):
         self._add_condition(key, '$gte', value)
         return self
 
-    def contained_in(self, key, *values):
+    def contained_in(self, key, values):
         """
         增加查询条件，限制查询结果指定字段的值在查询值列表中
 
         :param key: 查询条件字段名
         :param values: 查询条件值
+        :type values: list or tuple
         :rtype: Query
         """
         self._add_condition(key, '$in', values)
         return self
 
-    def not_contained_in(self, key, *values):
+    def not_contained_in(self, key, values):
         """
         增加查询条件，限制查询结果指定字段的值不在查询值列表中
 
         :param key: 查询条件字段名
         :param values: 查询条件值
+        :type values: list or tuple
         :rtype: Query
         """
         self._add_condition(key, '$nin', values)
         return self
 
-    def contains_all(self, key, *values):
+    def contains_all(self, key, values):
         """
         增加查询条件，限制查询结果指定字段的值全部包含与查询值列表中
 
         :param key: 查询条件字段名
-        :param value: 查询条件值
+        :param values: 查询条件值
+        :type values: list or tuple
         :rtype: Query
         """
         self._add_condition(key, '$all', values)

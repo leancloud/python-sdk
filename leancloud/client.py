@@ -28,9 +28,9 @@ def init(app_id, app_key=None, master_key=None):
 
     :type app_id: basestring
     :param app_id: 应用的 Application ID
-    :type app_key: (None, basestring)
+    :type app_key: None or basestring
     :param app_key: 应用的 Application Key
-    :type master_key: (None, basestring)
+    :type master_key: None or basestring
     :param master_key: 应用的 Master Key
     """
     if (not app_key) and (not master_key):

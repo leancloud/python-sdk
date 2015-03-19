@@ -74,6 +74,10 @@ class User(Object):
         self._handle_save_result(False)
 
     def sign_up(self):
+        """
+        创建一个新用户。新创建的 User 对象，应该使用此方法来将数据保存至服务器，而不是使用 save 方法。
+        用户对象上必须包含 username 和 password 两个字段
+        """
         username = self.get('username')
         if not username:
             raise TypeError('invalid username: {}'.format(username))
@@ -85,6 +89,9 @@ class User(Object):
         self.save()
 
     def login(self):
+        """
+        登陆用户。如果用户名和密码正确，服务器会返回用户的 sessionToken 。
+        """
         response = client.get('/login', params=self.dump())
         content = response.json()
         server_data = self.parse(content, response.status_code)
@@ -94,12 +101,23 @@ class User(Object):
             self.attributes.pop('smsCode', None)
 
     def follow(self, target_id):
+        """
+        关注一个用户。
+
+        :param target_id: 需要关注的用户的 id
+        """
         if self.id is None:
             raise ValueError('Please sign in')
         response = client.post('/users/{}/friendship/{}'.format(self.id, target_id), None)
         assert response.ok
 
     def unfollow(self, target_id):
+        """
+        取消关注一个用户。
+
+        :param target_id: 需要关注的用户的 id
+        :return:
+        """
         if self.id is None:
             raise ValueError('Please sign in')
         response = client.delete('/users/{}/friendship/{}'.format(self.id, target_id), None)

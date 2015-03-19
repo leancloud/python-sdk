@@ -4,6 +4,8 @@
 """
 
 import client
+import push
+from .push import Installation
 from .acl import ACL
 from .client import init
 from .errors import LeanCloudError
@@ -32,5 +34,7 @@ __all__ = [
     'User',
     'client',
     'init',
+    'push',
     'Role',
+    'Installation',
 ]
