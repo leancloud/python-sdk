@@ -19,7 +19,7 @@ US_BASE_URL = 'https://avoscloud.us'
 SERVER_VERSION = '1.1'
 SDK_VERSION = '1.0.0'
 BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
-TIMEOUT = 15
+TIMEOUT_SECONDS = 15
 
 headers = None
 
@@ -82,26 +82,26 @@ def get(url, params):
     for k, v in params.iteritems():
         if isinstance(v, dict):
             params[k] = json.dumps(v)
-    response = requests.get(BASE_URL + url, headers=headers, params=params, timeout=TIMEOUT)
+    response = requests.get(BASE_URL + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def post(url, params):
-    response = requests.post(BASE_URL + url, headers=headers, json=params, timeout=TIMEOUT)
+    response = requests.post(BASE_URL + url, headers=headers, json=params, timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def put(url, params):
-    response = requests.put(BASE_URL + url, headers=headers, json=params, timeout=TIMEOUT)
+    response = requests.put(BASE_URL + url, headers=headers, json=params, timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def delete(url, params=None):
-    response = requests.delete(BASE_URL + url, headers=headers, json=params, timeout=TIMEOUT)
+    response = requests.delete(BASE_URL + url, headers=headers, json=params, timeout=TIMEOUT_SECONDS)
     return response
