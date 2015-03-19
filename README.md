@@ -5,8 +5,16 @@ LeanCloud Python SDK (under development)
 ## Install
 
 ```bash
-pip install git+https://github.com/leancloud/python-sdk.git
+pip install leancloud-sdk
 ```
+
+or
+
+```
+easy_install leancloud-sdk
+```
+
+Maybe you need the `sudo` prefix depends on you OS environment.
 
 ## Generate API document
 
