@@ -5,8 +5,8 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='leancloud-sdk',
-    version='1.0.0',
-    description='Leancloud Python SDK',
+    version='1.0.1',
+    description='LeanCloud Python SDK',
 
     url='https://leancloud.cn/',
 

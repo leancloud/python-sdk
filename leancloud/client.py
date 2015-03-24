@@ -36,8 +36,8 @@ def init(app_id, app_key=None, master_key=None):
     """
     if (not app_key) and (not master_key):
         raise RuntimeError('app_key or master_key must be specified')
-    if app_key and master_key:
-        raise RuntimeError('app_key and master_key can\'t be specified both')
+    # if app_key and master_key:
+    #     raise RuntimeError('app_key and master_key can\'t be specified both')
     global APP_ID, APP_KEY, MASTER_KEY
     APP_ID = app_id
     APP_KEY = app_key
@@ -54,10 +54,10 @@ def need_init(func):
             headers = {}
         headers['X-AVOSCloud-Application-Id'] = APP_ID
         headers['User-Agent'] = 'AVOS Cloud python-{} SDK'.format(leancloud.__version__)
-        if APP_KEY:
-            headers['X-AVOSCloud-Application-Key'] = APP_KEY
-        else:
+        if MASTER_KEY:
             headers['X-AVOSCloud-Master-Key'] = MASTER_KEY
+        else:
+            headers['X-AVOSCloud-Application-Key'] = APP_KEY
 
         return func(*args, **kwargs)
     return new_func
