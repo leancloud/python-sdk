@@ -5,7 +5,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='leancloud-sdk',
-    version='1.0.1',
+    version='1.0.2',
     description='LeanCloud Python SDK',
 
     url='https://leancloud.cn/',
@@ -33,7 +33,7 @@ setup(
 
     install_requires=[
         'qiniu',
-        'requests',
+        'requests>2.4.0',
         'iso8601',
     ],
 
