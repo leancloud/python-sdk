@@ -49,6 +49,9 @@ def test_login():
     user.set('password', 'password')
     user.login()
 
+    user = User()
+    user.login('user1', 'password')
+
 
 @with_setup(setup_func)
 def test_follow():

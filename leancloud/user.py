@@ -88,10 +88,14 @@ class User(Object):
 
         self.save()
 
-    def login(self):
+    def login(self, username=None, password=None):
         """
         登陆用户。如果用户名和密码正确，服务器会返回用户的 sessionToken 。
         """
+        if username:
+            self.set('username', username)
+        if password:
+            self.set('password', password)
         response = client.get('/login', params=self.dump())
         content = response.json()
         server_data = self.parse(content, response.status_code)
