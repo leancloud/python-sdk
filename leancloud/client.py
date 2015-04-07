@@ -52,7 +52,7 @@ def need_init(func):
         global headers
         if not headers:
             headers = {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json;charset=utf-8',
             }
         headers['X-AVOSCloud-Application-Id'] = APP_ID
         headers['User-Agent'] = 'AVOS Cloud python-{} SDK'.format(leancloud.__version__)
