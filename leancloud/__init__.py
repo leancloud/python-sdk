@@ -19,7 +19,7 @@ from .user import User
 from .role import Role
 
 __author__ = 'asaka <lan@leancloud.rocks>'
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 
 
 __all__ = [
