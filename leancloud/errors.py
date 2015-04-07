@@ -8,4 +8,6 @@ class LeanCloudError(Exception):
         self.code = code
         self.error = error
 
-        self.args = (u'[{}] {}'.format(self.code, self.error), )
+    def __str__(self):
+        error = self.error if isinstance(self.error, str) else self.error.encode('utf-8', 'ignore')
+        return '[{}] {}'.format(self.code, error)
