@@ -33,6 +33,16 @@ def encode(value, disallow_objects=False):
             raise ValueError('leancloud.Object not allowed')
         return value._to_pointer()
 
+    if isinstance(value, leancloud.File):
+        if not value.url and not value.id:
+            raise ValueError('Tried to save an object containing an unsaved file.')
+        return {
+            '__type': 'File',
+            'id': value.id,
+            'name': value.name,
+            'url': value.url,
+        }
+
     if isinstance(value, get_dumpable_types()):
         return value.dump()
 

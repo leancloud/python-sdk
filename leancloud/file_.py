@@ -42,13 +42,15 @@ class File(object):
         if data is None:
             # self._source = cStringIO.StringIO()
             self._source = None
-        elif isinstance(data, (cStringIO.OutputType, StringIO.StringIO)):
+        elif isinstance(data, cStringIO.OutputType):
+            self._source = StringIO.StringIO(data.getvalue())
+        elif isinstance(data, StringIO.StringIO):
             self._source = data
         elif isinstance(data, file):
             data.seek(0, os.SEEK_SET)
-            self._source = cStringIO.StringIO(data.read())
+            self._source = StringIO.StringIO(data.read())
         elif isinstance(data, buffer):
-            self._source = cStringIO.StringIO(data)
+            self._source = StringIO.StringIO(data)
         else:
             raise TypeError('data must be a StringIO / buffer / file instance')
 

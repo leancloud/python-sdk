@@ -5,6 +5,7 @@ from nose.tools import with_setup
 import leancloud
 from leancloud import User
 from leancloud import Query
+from leancloud import File
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -51,6 +52,15 @@ def test_login():
 
     user = User()
     user.login('user1', 'password')
+
+
+@with_setup(setup_func, destroy_func)
+def test_file_field():
+    user = User()
+    user.login('user1', 'password')
+    print user.id
+    user.set('xxxxx', File('xxx.txt', buffer('qqqqq')))
+    user.save()
 
 
 @with_setup(setup_func)
