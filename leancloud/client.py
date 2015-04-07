@@ -51,7 +51,9 @@ def need_init(func):
 
         global headers
         if not headers:
-            headers = {}
+            headers = {
+                'Content-Type': 'application/json',
+            }
         headers['X-AVOSCloud-Application-Id'] = APP_ID
         headers['User-Agent'] = 'AVOS Cloud python-{} SDK'.format(leancloud.__version__)
         if MASTER_KEY:
@@ -89,19 +91,19 @@ def get(url, params):
 @need_init
 @check_error
 def post(url, params):
-    response = requests.post(BASE_URL + url, headers=headers, json=params, timeout=TIMEOUT_SECONDS)
+    response = requests.post(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def put(url, params):
-    response = requests.put(BASE_URL + url, headers=headers, json=params, timeout=TIMEOUT_SECONDS)
+    response = requests.put(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def delete(url, params=None):
-    response = requests.delete(BASE_URL + url, headers=headers, json=params, timeout=TIMEOUT_SECONDS)
+    response = requests.delete(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS)
     return response
