@@ -33,7 +33,7 @@ setup(
 
     install_requires=[
         'qiniu',
-        'requests>2.4.0',
+        'requests',
         'iso8601',
     ],
 
