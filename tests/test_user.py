@@ -58,9 +58,13 @@ def test_login():
 def test_file_field():
     user = User()
     user.login('user1', 'password')
-    print user.id
     user.set('xxxxx', File('xxx.txt', buffer('qqqqq')))
     user.save()
+
+    q = Query(User)
+    saved_user = q.get(user.id)
+    assert isinstance(saved_user.get('xxxxx'), File)
+    assert saved_user.get('xxxxx').name == 'xxx.txt'
 
 
 @with_setup(setup_func)
