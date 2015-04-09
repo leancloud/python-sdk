@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from datetime import datetime
+
 from nose.tools import eq_
 from nose.tools import with_setup
 
@@ -47,6 +49,17 @@ def destroy_func():
 @with_setup(setup_func, destroy_func)
 def test_save():
     assert game_scores[0].id
+
+
+@with_setup(setup_func, destroy_func)
+def test_save_date():
+    DateObject = Object.extend('DateObject')
+    now = datetime.now()
+
+    d = DateObject(date=now)
+    d.save()
+    server_date = Query(DateObject).get(d.id).get('date')
+    assert now.isoformat().split('.')[0] == server_date.isoformat().split('.')[0]
 
 
 def test_batch():

@@ -147,7 +147,7 @@ def decode(key, value):
         return obj
 
     if _type == 'Date':
-        return iso8601.parse_date(value['iso'])
+        return arrow.get(iso8601.parse_date(value['iso'])).to('local').datetime
 
     if _type == 'GeoPoint':
         return leancloud.GeoPoint(latitude=value['latitude'], longitude=value['longitude'])
