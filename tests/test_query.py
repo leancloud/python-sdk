@@ -127,3 +127,6 @@ def test_basic_query():
 
     q = Query(GameScore).not_contained_in('score', [0, 1, 2, 3]).ascending('score')
     eq_([x.get('score') for x in q.find()], range(4, 10))
+
+    q = Query(GameScore).select('score')
+    assert not q.find()[0].has('playerName')
