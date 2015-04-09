@@ -577,7 +577,7 @@ class Query(object):
         :param keys: 关联子表字段名
         :rtype: Query
         """
-        if len(keys) == 1 and isinstance(keys[0], [list, tuple]):
+        if len(keys) == 1 and isinstance(keys[0], (list, tuple)):
             keys = keys[0]
         self._include += keys
         return self
@@ -589,7 +589,7 @@ class Query(object):
         :param keys: 包含字段名
         :rtype: Query
         """
-        if len(keys) == 1 and isinstance(keys[0], [list, tuple]):
+        if len(keys) == 1 and isinstance(keys[0], (list, tuple)):
             keys = keys[0]
         self._select += keys
         return self
