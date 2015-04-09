@@ -32,6 +32,7 @@ setup(
     test_suite='nose.collector',
 
     install_requires=[
+        'arrow',
         'qiniu',
         'requests',
         'iso8601',
