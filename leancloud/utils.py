@@ -3,7 +3,9 @@
 import copy
 from datetime import datetime
 
+import arrow
 import iso8601
+from dateutil import tz
 
 import leancloud
 from leancloud import operation
@@ -23,9 +25,12 @@ def get_dumpable_types():
 
 def encode(value, disallow_objects=False):
     if isinstance(value, datetime):
+        tzinfo = value.tzinfo
+        if tzinfo is None:
+            tzinfo = tz.tzlocal()
         return {
             '__type': 'Date',
-            'iso': value.isoformat(),
+            'iso': arrow.get(value, tzinfo).to('utc').format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z',
         }
 
     if isinstance(value, leancloud.Object):
@@ -142,7 +147,7 @@ def decode(key, value):
         return obj
 
     if _type == 'Date':
-        return iso8601.parse_date(value['iso'])
+        return arrow.get(iso8601.parse_date(value['iso'])).to('local').datetime
 
     if _type == 'GeoPoint':
         return leancloud.GeoPoint(latitude=value['latitude'], longitude=value['longitude'])
