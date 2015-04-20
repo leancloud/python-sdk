@@ -130,3 +130,15 @@ def test_basic_query():
 
     q = Query(GameScore).select('score')
     assert not q.find()[0].has('playerName')
+
+
+@with_setup(setup_func)
+def test_pointer_query():
+    foo = Object.create('Foo')
+    bar = Object.create('Bar')
+    bar.save()
+    foo.set('bar', bar)
+    foo.save()
+
+    q = Query('Foo').equal_to('bar', bar)
+    assert len(q.find()) == 1
