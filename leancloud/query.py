@@ -4,6 +4,7 @@ import json
 
 import leancloud
 from leancloud import client
+from leancloud import utils
 from leancloud.object_ import Object
 from leancloud.errors import LeanCloudError
 
@@ -227,13 +228,13 @@ class Query(object):
         :param value: 查询条件的值
         :rtype: Query
         """
-        self._where[key] = value
+        self._where[key] = utils.encode(value)
         return self
 
     def _add_condition(self, key, condition, value):
         if not self._where.get(key):
             self._where[key] = {}
-        self._where[key][condition] = value
+        self._where[key][condition] = utils.encode(value)
         return self
 
     def not_equal_to(self, key, value):
