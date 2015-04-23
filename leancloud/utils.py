@@ -2,7 +2,9 @@
 
 import copy
 import json
+import gzip
 from datetime import datetime
+from cStringIO import StringIO
 
 import arrow
 import iso8601
@@ -218,10 +220,7 @@ def response_to_json(response):
     content = response.content
     # hack for requests in python 2.6
     if 'application/json' in response.headers['Content-Type']:
-        if content[:2] == '\x1f\x8b':
-            print 'got!'
-            import gzip
-            from cStringIO import StringIO
+        if content[:2] == '\x1f\x8b':  # gzip file magic header
             f = StringIO(content)
             g = gzip.GzipFile(fileobj=f)
             content = g.read()
