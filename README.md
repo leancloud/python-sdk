@@ -1,5 +1,7 @@
 # Python-SDK
 
+[![Build Status](https://travis-ci.org/leancloud/python-sdk.svg?branch=master)](https://travis-ci.org/leancloud/python-sdk)
+
 LeanCloud Python SDK (under development)
 
 ## Install
