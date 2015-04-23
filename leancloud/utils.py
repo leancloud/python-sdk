@@ -224,4 +224,6 @@ def response_to_json(response):
             f = StringIO(content)
             g = gzip.GzipFile(fileobj=f)
             content = g.read()
+            g.close()
+            f.close()
     return json.loads(content)
