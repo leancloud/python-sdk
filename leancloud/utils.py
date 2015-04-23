@@ -1,7 +1,10 @@
 # coding: utf-8
 
 import copy
+import json
+import gzip
 from datetime import datetime
+from cStringIO import StringIO
 
 import arrow
 import iso8601
@@ -55,7 +58,7 @@ def encode(value, disallow_objects=False):
         return [encode(x, disallow_objects) for x in value]
 
     if isinstance(value, dict):
-        return {k: encode(v, disallow_objects) for k, v in value.iteritems()}
+        return dict([(k, encode(v, disallow_objects)) for k, v in value.iteritems()])
 
     return value
 
@@ -121,7 +124,7 @@ def decode(key, value):
         return value
 
     if '__type' not in value:
-        return {k: decode(k, v) for k, v in value.iteritems()}
+        return dict([(k, decode(k, v)) for k, v in value.iteritems()])
 
     _type = value['__type']
 
@@ -207,3 +210,20 @@ def traverse_object(obj, callback, seen=None):
     # print 'is other'
 
     return callback(obj)
+
+
+def response_to_json(response):
+    """
+    hack for requests in python 2.6
+    """
+
+    content = response.content
+    # hack for requests in python 2.6
+    if 'application/json' in response.headers['Content-Type']:
+        if content[:2] == '\x1f\x8b':  # gzip file magic header
+            f = StringIO(content)
+            g = gzip.GzipFile(fileobj=f)
+            content = g.read()
+            g.close()
+            f.close()
+    return json.loads(content)

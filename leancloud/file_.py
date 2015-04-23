@@ -8,6 +8,7 @@ import StringIO
 
 import leancloud
 from leancloud import client
+from leancloud import utils
 from leancloud.mime_type import mime_types
 
 
@@ -115,13 +116,13 @@ class File(object):
 
         mode = 2 if scale_to_fit else 1
 
-        return self.url + '?imageView/{}/w/{}/h/{}/q/{}/format/{}'.format(mode, width, height, quality, fmt)
+        return self.url + '?imageView/{0}/w/{1}/h/{2}/q/{3}/format/{4}'.format(mode, width, height, quality, fmt)
 
     def destroy(self):
         if not self.id:
             return False
-        response = client.delete('/files/{}'.format(self.id))
-        content = response.json()
+        response = client.delete('/files/{0}'.format(self.id))
+        content = utils.response_to_json(response)
         return response
 
     def save(self):
@@ -147,8 +148,8 @@ class File(object):
         else:
             raise ValueError
 
-        response = client.post('/files/{}'.format(self._name), data)
-        content = response.json()
+        response = client.post('/files/{0}'.format(self._name), data)
+        content = utils.response_to_json(response)
 
         self._name = content['name']
         self._url = content['url']

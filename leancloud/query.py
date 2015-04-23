@@ -94,7 +94,7 @@ class Query(object):
         if len(pvalues) > 0:
             params['pvalues'] = json.dumps(pvalues)
 
-        content = client.get('/cloudQuery', params).json()
+        content = utils.response_to_json(client.get('/cloudQuery', params))
 
         objs = []
         query = Query(content['className'])
@@ -142,7 +142,7 @@ class Query(object):
         """
         params = self.dump()
         params['limit'] = 1
-        content = client.get('/classes/{}'.format(self._query_class._class_name), params).json()
+        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), params))
         results = content['results']
         if not results:
             raise LeanCloudError(101, 'Object not found')
@@ -167,7 +167,7 @@ class Query(object):
 
         :rtype: list
         """
-        content = client.get('/classes/{}'.format(self._query_class._class_name), self.dump()).json()
+        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()))
 
         objs = []
         for result in content['results']:
@@ -183,7 +183,7 @@ class Query(object):
 
         :raise: LeanCLoudError
         """
-        result = client.delete('/classes/{}'.format(self._query_class._class_name), self.dump())
+        result = client.delete('/classes/{0}'.format(self._query_class._class_name), self.dump())
         return result
 
     def count(self):
@@ -195,8 +195,8 @@ class Query(object):
         params = self.dump()
         params['limit'] = 0
         params['count'] = 1
-        response = client.get('/classes/{}'.format(self._query_class._class_name), params)
-        return response.json()['count']
+        response = client.get('/classes/{0}'.format(self._query_class._class_name), params)
+        return utils.response_to_json(response)['count']
 
     def skip(self, n):
         """
@@ -500,7 +500,7 @@ class Query(object):
         :param key: 排序字段名
         :rtype: Query
         """
-        self._order = ['-{}'.format(key)]
+        self._order = ['-{0}'.format(key)]
         return self
 
     def add_descending(self, key):
@@ -510,7 +510,7 @@ class Query(object):
         :param key: 排序字段名
         :rtype: Query
         """
-        self._order.append('-{}'.format(key))
+        self._order.append('-{0}'.format(key))
         return self
 
     def near(self, key, point):

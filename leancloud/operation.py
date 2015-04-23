@@ -206,8 +206,8 @@ class Relation(BaseOp):
     def __init__(self, adds, removes):
         self._target_class_name = None
 
-        self.relations_to_add = {self._pointer_to_id(x) for x in adds}
-        self.relations_to_remove = {self._pointer_to_id(x) for x in removes}
+        self.relations_to_add = set([self._pointer_to_id(x) for x in adds])
+        self.relations_to_remove = set([self._pointer_to_id(x) for x in removes])
 
     def _pointer_to_id(self, obj):
         if isinstance(obj, leancloud.Object):
@@ -274,7 +274,7 @@ class Relation(BaseOp):
             raise ValueError('can\'t modify a relation after deleting it.')
         elif isinstance(previous, Relation):
             if (previous._target_class_name) and (previous._target_class_name != self._target_class_name):
-                raise TypeError('related object must be class of {}'.format(previous._target_class_name))
+                raise TypeError('related object must be class of {0}'.format(previous._target_class_name))
             new_add = (previous.relations_to_add - self.relations_to_remove) | self.relations_to_add
             new_remove = (previous.relations_to_remove - self.relations_to_add) | self.relations_to_remove
 
@@ -291,7 +291,7 @@ class Relation(BaseOp):
             if self._target_class_name:
                 if old.target_class_name:
                     if old.target_class_name != self._target_class_name:
-                        raise TypeError('related object must be class of {}'.format(old.target_class_name))
+                        raise TypeError('related object must be class of {0}'.format(old.target_class_name))
                     else:
                         old.target_class_name = self._target_class_name
                 return old
