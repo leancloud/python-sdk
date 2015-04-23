@@ -23,16 +23,16 @@ class GeoPoint(object):
     @classmethod
     def _validate(cls, latitude, longitude):
         if latitude < -90.0:
-            raise ValueError('GeoPoint latitude {} < -90.0'.format(latitude))
+            raise ValueError('GeoPoint latitude {0} < -90.0'.format(latitude))
 
         if latitude > 90.0:
-            raise ValueError('GeoPoint latitude {} > 90.0'.format(latitude))
+            raise ValueError('GeoPoint latitude {0} > 90.0'.format(latitude))
 
         if longitude < -180.0:
-            raise ValueError('GeoPoint longitude {} < -180.0'.format(longitude))
+            raise ValueError('GeoPoint longitude {0} < -180.0'.format(longitude))
 
         if longitude > 180.0:
-            raise ValueError('GeoPoint longitude {} > 180.0'.format(longitude))
+            raise ValueError('GeoPoint longitude {0} > 180.0'.format(longitude))
 
     @property
     def latitude(self):

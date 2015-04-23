@@ -3,6 +3,7 @@
 from leancloud import FriendshipQuery
 from leancloud import client
 from leancloud import Object
+from leancloud import utils
 
 __author__ = 'asaka'
 
@@ -22,7 +23,7 @@ class User(Object):
     @classmethod
     def create_follower_query(cls, user_id):
         if not user_id or not isinstance(user_id, basestring):
-            raise TypeError('invalid user_id: {}'.format(user_id))
+            raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Follower')
         query.equal_to('user', Object.create('_User', id=user_id))
         return query
@@ -30,7 +31,7 @@ class User(Object):
     @classmethod
     def create_followee_query(cls, user_id):
         if not user_id or not isinstance(user_id, basestring):
-            raise TypeError('invalid user_id: {}'.format(user_id))
+            raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Followee')
         query.equal_to('user', Object.create('_User', id=user_id))
         return query
@@ -80,7 +81,7 @@ class User(Object):
         """
         username = self.get('username')
         if not username:
-            raise TypeError('invalid username: {}'.format(username))
+            raise TypeError('invalid username: {0}'.format(username))
 
         password = self.get('password')
         if not password:
@@ -97,7 +98,7 @@ class User(Object):
         if password:
             self.set('password', password)
         response = client.get('/login', params=self.dump())
-        content = response.json()
+        content = utils.response_to_json(response)
         server_data = self.parse(content, response.status_code)
         self._finish_fetch(server_data, False)
         self._handle_save_result(True)
@@ -112,7 +113,7 @@ class User(Object):
         """
         if self.id is None:
             raise ValueError('Please sign in')
-        response = client.post('/users/{}/friendship/{}'.format(self.id, target_id), None)
+        response = client.post('/users/{0}/friendship/{1}'.format(self.id, target_id), None)
         assert response.ok
 
     def unfollow(self, target_id):
@@ -124,5 +125,5 @@ class User(Object):
         """
         if self.id is None:
             raise ValueError('Please sign in')
-        response = client.delete('/users/{}/friendship/{}'.format(self.id, target_id), None)
+        response = client.delete('/users/{0}/friendship/{1}'.format(self.id, target_id), None)
         assert response.ok

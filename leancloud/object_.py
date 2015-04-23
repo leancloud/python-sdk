@@ -133,7 +133,7 @@ class Object(object):
         """
         if not self.id:
             return False
-        client.delete('/classes/{}/{}'.format(self._class_name, self.id))
+        client.delete('/classes/{0}/{1}'.format(self._class_name, self.id))
 
     def save(self):
         """
@@ -157,11 +157,11 @@ class Object(object):
         method = 'PUT' if self.id is not None else 'POST'
 
         if method == 'PUT':
-            response = client.put('/classes/{}/{}'.format(self._class_name, self.id), data)
+            response = client.put('/classes/{0}/{1}'.format(self._class_name, self.id), data)
         else:
-            response = client.post('/classes/{}'.format(self._class_name), data)
+            response = client.post('/classes/{0}'.format(self._class_name), data)
 
-        self._finish_save(self.parse(response.json(), response.status_code))
+        self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
 
     def _deep_save(self, exclude=None):
         # TODO: chunk
@@ -179,7 +179,7 @@ class Object(object):
         for obj in unsaved_children:
             obj._start_save()
             method = 'POST' if obj.id is None else 'PUT'
-            path = '/{}/classes/{}'.format(client.SERVER_VERSION, obj._class_name)
+            path = '/{0}/classes/{1}'.format(client.SERVER_VERSION, obj._class_name)
             body = obj._dump_save()
             dumped_obj = {
                 'method': method,
@@ -188,7 +188,7 @@ class Object(object):
             }
             dumped_objs.append(dumped_obj)
 
-        response = client.post('/batch', params={'requests': dumped_objs}).json()
+        response = utils.response_to_json(client.post('/batch', params={'requests': dumped_objs}))
 
         errors = []
         for idx, obj in enumerate(unsaved_children):
@@ -424,8 +424,8 @@ class Object(object):
 
         :return: 当前对象
         """
-        response = client.get('/classes/{}/{}'.format(self._class_name, self.id), {})
-        result = self.parse(response.json(), response.status_code)
+        response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), {})
+        result = self.parse(utils.response_to_json(response), response.status_code)
         self._finish_fetch(result, True)
 
     def parse(self, content, status_code=None):
