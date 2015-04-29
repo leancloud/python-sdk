@@ -142,3 +142,11 @@ def test_pointer_query():
 
     q = Query('Foo').equal_to('bar', bar)
     assert len(q.find()) == 1
+
+
+def test_matches_query():
+    inner_query = leancloud.Query('Post')
+    inner_query.exists("image")
+    query = leancloud.Query('Comment')
+    query.matches_query("post", inner_query)
+    assert query.dump() == {'where': {'post': {'$inQuery': {'className': 'Post', 'where': {'image': {'$exists': True}}}}}}
