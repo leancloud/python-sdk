@@ -41,6 +41,6 @@ setup(
 
     extras_require={
         'dev': ['sphinx'],
-        'test': ['nose', 'coverage'],
+        'test': ['nose', 'coverage', 'wsgi_intercept'],
     },
 )
