@@ -5,25 +5,25 @@ from werkzeug.serving import run_simple
 
 import context
 from .authorization import AuthorizationMiddleware
-from .cloudcode import CloudCodeApplication
-from .cloudcode import CloudCodeError
-from .cloudcode import register_cloud_func
-from .cloudcode import register_cloud_hook
-from .cloudcode import register_on_verified
-from .cloudcode import before_save
-from .cloudcode import after_save
-from .cloudcode import after_update
-from .cloudcode import before_delete
-from .cloudcode import after_delete
-from .cloudcode import user
+from .leanengine import LeanEngineApplication
+from .leanengine import LeanEngineError
+from .leanengine import register_cloud_func
+from .leanengine import register_cloud_hook
+from .leanengine import register_on_verified
+from .leanengine import before_save
+from .leanengine import after_save
+from .leanengine import after_update
+from .leanengine import before_delete
+from .leanengine import after_delete
+from .leanengine import user
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-class CloudCode(object):
+class LeanEngine(object):
     def __init__(self, wsgi_app):
         self.origin_app = wsgi_app
-        self.cloud_app = context.local_manager.make_middleware(AuthorizationMiddleware(CloudCodeApplication()))
+        self.cloud_app = context.local_manager.make_middleware(AuthorizationMiddleware(LeanEngineApplication()))
 
     def __call__(self, environ, start_response):
         request = Request(environ)
@@ -36,7 +36,7 @@ class CloudCode(object):
 
 
 def init(app):
-    return CloudCode(app)
+    return LeanEngine(app)
 
 
 cloud_func = register_cloud_func
@@ -60,5 +60,5 @@ __all__ = [
     'after_update',
     'before_delete',
     'after_delete',
-    'CloudCodeError'
+    'LeanEngineError'
 ]

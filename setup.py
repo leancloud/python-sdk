@@ -36,6 +36,7 @@ setup(
         'qiniu',
         'requests',
         'iso8601',
+        'werkzeug',
     ],
 
     extras_require={

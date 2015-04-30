@@ -24,11 +24,11 @@ logger = logging.getLogger('leancloud.cloudcode.cloudcode')
 user = context.local('user')
 
 
-class CloudCodeError(Exception):
+class LeanEngineError(Exception):
     pass
 
 
-class CloudCodeApplication(object):
+class LeanEngineApplication(object):
     def __init__(self):
         self.url_map = Map([
             Rule('/1/functions/<func_name>', endpoint='cloud_function'),
