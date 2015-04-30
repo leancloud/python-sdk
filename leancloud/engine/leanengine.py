@@ -185,8 +185,20 @@ def dispatch_on_verified(verify_type, user):
     return func(user)
 
 
-def register_on_login():
-    pass
+def register_on_login(func):
+    func_name = '__on_login'
+
+    if func_name in _cloud_codes:
+        raise RuntimeError('on login is already registered')
+    _cloud_codes[func_name] = func
+
+
+def dispatch_on_login(user):
+    func = _cloud_codes.get('__on_login')
+    if not func:
+        return
+
+    return func(user)
 
 
 def dispatch_ops_meta_data():
