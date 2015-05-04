@@ -20,7 +20,7 @@ from .leanengine import user
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-class LeanEngine(object):
+class Engine(object):
     def __init__(self, wsgi_app):
         self.origin_app = wsgi_app
         self.cloud_app = context.local_manager.make_middleware(AuthorizationMiddleware(LeanEngineApplication()))
@@ -33,10 +33,6 @@ class LeanEngine(object):
         if request.path.startswith('/1/functions') or request.path.startswith('/1.1/functions'):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
-
-
-def init(app):
-    return LeanEngine(app)
 
 
 cloud_func = register_cloud_func
