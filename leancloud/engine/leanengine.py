@@ -79,7 +79,7 @@ class LeanEngineApplication(object):
             elif endpoint == 'on_verified':
                 result = dispatch_on_verified(**values)
             elif endpoint == 'on_login':
-                result = dispach_on_login(**values)
+                result = dispatch_on_login(**values)
             elif endpoint == 'ops_meta_data':
                 result = dispatch_ops_meta_data()
             else:
