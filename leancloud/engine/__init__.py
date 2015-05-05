@@ -34,27 +34,19 @@ class Engine(object):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 
-
-cloud_func = register_cloud_func
-cloud_hook = register_cloud_hook
-on_verified = register_on_verified
-run = run_simple
+    cloud_func = staticmethod(register_cloud_func)
+    cloud_hook = staticmethod(register_cloud_hook)
+    on_verified = staticmethod(register_on_verified)
+    before_save = staticmethod(before_save)
+    after_save = staticmethod(after_save)
+    after_update = staticmethod(after_update)
+    before_delete = staticmethod(before_delete)
+    after_delete = staticmethod(after_delete)
+    run = staticmethod(run_simple)
 
 
 __all__ = [
-    'wrap',
     'user',
-    'register_cloud_func',
-    'register_cloud_hook',
-    'register_on_verified',
-    'on_verified',
-    'cloud_func',
-    'cloud_hook',
-    'run',
-    'before_save',
-    'after_save',
-    'after_update',
-    'before_delete',
-    'after_delete',
+    'Engine',
     'LeanEngineError'
 ]

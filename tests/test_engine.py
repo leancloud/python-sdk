@@ -4,9 +4,8 @@ import requests
 from wsgi_intercept import requests_intercept, add_wsgi_intercept
 
 
-from leancloud import engine
+from leancloud import Engine
 from leancloud.engine import authorization
-from leancloud.engine import LeanEngine
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -28,8 +27,11 @@ def app(environ, start_response):
     return ['Hello LeanCloud']
 
 
+engine = Engine(app)
+
+
 def make_app():
-    return engine.init(app)
+    return engine
 
 
 host, port = 'localhost', 80
@@ -45,7 +47,7 @@ def setup():
     requests_intercept.install()
     add_wsgi_intercept(host, port, make_app)
 
-    @engine.register_cloud_func
+    @engine.cloud_func
     def hello(**params):
         return 'hello'
 
@@ -120,7 +122,7 @@ def test_authorization_3():
 
 
 def test_register_cloud_func():
-    @engine.register_cloud_func
+    @engine.cloud_func
     def ping(**params):
         assert params == {"foo": ["bar", "baz"]}
         return 'pong'
