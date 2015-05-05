@@ -58,7 +58,6 @@ class LeanEngineApplication(object):
 
         session_token = environ['_app_params']['session_token']
         user = leancloud.Object.create('_User', session_token=session_token)
-        # TODO: fetch user
         context.local.user = user
 
     def dispatch_request(self, request):
@@ -87,7 +86,6 @@ class LeanEngineApplication(object):
             return Response(json.dumps({'result': result}), mimetype='application/json')
         except Exception:
             traceback.print_exc()
-            # TODO: output the error message in debug mode
             return Response(
                 json.dumps({'code': 141, 'error': 'Cloud Code script had an error.'}),
                 status=500,
@@ -177,7 +175,6 @@ def register_on_verified(verify_type):
 
 
 def dispatch_on_verified(verify_type, user):
-    # TODO: parse user
     func = _cloud_codes.get(verify_type)
     if not func:
         return
