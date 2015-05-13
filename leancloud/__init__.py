@@ -17,6 +17,7 @@ from .query import Query
 from .relation import Relation
 from .user import User
 from .role import Role
+from .engine import Engine
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 __version__ = '1.0.9'
@@ -37,4 +38,5 @@ __all__ = [
     'push',
     'Role',
     'Installation',
+    'Engine',
 ]

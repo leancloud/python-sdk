@@ -36,10 +36,11 @@ setup(
         'qiniu',
         'requests',
         'iso8601',
+        'werkzeug',
     ],
 
     extras_require={
         'dev': ['sphinx'],
-        'test': ['nose', 'coverage'],
+        'test': ['nose', 'coverage', 'wsgi_intercept'],
     },
 )
