@@ -16,7 +16,6 @@ from .leanengine import after_update
 from .leanengine import before_delete
 from .leanengine import after_delete
 from .leanengine import user
-from .client import run
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -50,6 +49,5 @@ class Engine(object):
 __all__ = [
     'user',
     'Engine',
-    'run',
     'LeanEngineError'
 ]

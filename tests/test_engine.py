@@ -1,10 +1,13 @@
 # coding: utf-8
 
 import requests
+
 from wsgi_intercept import requests_intercept, add_wsgi_intercept
 
 
+import leancloud
 from leancloud import Engine
+from leancloud import cloudcode
 from leancloud.engine import authorization
 
 
@@ -39,6 +42,7 @@ url = 'http://{0}:{1}/'.format(host, port)
 
 
 def setup():
+    leancloud.init(TEST_APP_ID, TEST_APP_KEY)
     authorization._ENABLE_TEST = True
     authorization.APP_ID = TEST_APP_ID
     authorization.APP_KEY = TEST_APP_KEY
@@ -133,3 +137,8 @@ def test_register_cloud_func():
     }, json={'foo': ['bar', 'baz']})
     assert response.ok
     print response.json() == {u'result': u'pong'}
+
+
+def test_client():
+    leancloud.init('pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb', 'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd')
+    assert cloudcode.run('add', a=1, b=2) == 3
