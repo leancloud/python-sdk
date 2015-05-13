@@ -16,12 +16,14 @@ from .leanengine import after_update
 from .leanengine import before_delete
 from .leanengine import after_delete
 from .leanengine import user
+from .client import run
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class Engine(object):
     def __init__(self, wsgi_app):
+        self.current_user = user
         self.origin_app = wsgi_app
         self.cloud_app = context.local_manager.make_middleware(AuthorizationMiddleware(LeanEngineApplication()))
 
@@ -48,5 +50,6 @@ class Engine(object):
 __all__ = [
     'user',
     'Engine',
+    'run',
     'LeanEngineError'
 ]
