@@ -25,7 +25,9 @@ user = context.local('user')
 
 
 class LeanEngineError(Exception):
-    pass
+    def __init__(self, code, message):
+        self.code = code
+        self.message = message
 
 
 class LeanEngineApplication(object):
@@ -84,6 +86,12 @@ class LeanEngineApplication(object):
             else:
                 raise ValueError    # impossible
             return Response(json.dumps({'result': result}), mimetype='application/json')
+        except LeanEngineError, e:
+            return Response(
+                json.dumps({'code': e.code, 'error': e.message}),
+                status=400,
+                mimetype='application/json'
+            )
         except Exception:
             traceback.print_exc()
             return Response(
