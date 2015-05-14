@@ -18,7 +18,7 @@ from .relation import Relation
 from .user import User
 from .role import Role
 from .engine import Engine
-from .engine import cloudcode
+from .engine import cloudfunc
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 __version__ = '1.0.10'
@@ -37,7 +37,7 @@ __all__ = [
     'client',
     'init',
     'push',
-    'cloudcode',
+    'cloudfunc',
     'Role',
     'Installation',
     'Engine',

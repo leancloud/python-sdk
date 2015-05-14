@@ -7,7 +7,7 @@ from wsgi_intercept import requests_intercept, add_wsgi_intercept
 
 import leancloud
 from leancloud import Engine
-from leancloud import cloudcode
+from leancloud import cloudfunc
 from leancloud.engine import authorization
 
 
@@ -141,4 +141,4 @@ def test_register_cloud_func():
 
 def test_client():
     leancloud.init('pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb', 'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd')
-    assert cloudcode.run('add', a=1, b=2) == 3
+    assert cloudfunc.run('add', a=1, b=2) == 3
