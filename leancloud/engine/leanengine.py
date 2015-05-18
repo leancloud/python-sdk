@@ -25,7 +25,7 @@ user = context.local('user')
 
 
 class LeanEngineError(Exception):
-    def __init__(self, code, message):
+    def __init__(self, code=1, message='error'):
         self.code = code
         self.message = message
 
