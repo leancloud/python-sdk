@@ -133,7 +133,7 @@ def register_cloud_hook(class_name, hook_name):
     # hack the hook name
     hook_name = hook_name_mapping[hook_name] + class_name
 
-    if hook_name not in _cloud_codes:
+    if hook_name in _cloud_codes:
         raise RuntimeError('cloud hook {} on class {} is already registered'.format(hook_name, class_name))
 
     def new_func(func):
@@ -142,15 +142,15 @@ def register_cloud_hook(class_name, hook_name):
     return new_func
 
 
-before_save = functools.partial(register_cloud_func, hook_name='__before_save_for')
+before_save = functools.partial(register_cloud_func, hook_name='beforeSave')
 
-after_save = functools.partial(register_cloud_func, hook_name='__after_save_for')
+after_save = functools.partial(register_cloud_hook, hook_name='afterSave')
 
-after_update = functools.partial(register_cloud_func, hook_name='__after_update_for')
+after_update = functools.partial(register_cloud_hook, hook_name='afterUpdate')
 
-before_delete = functools.partial(register_cloud_func, hook_name='__before_delete_for')
+before_delete = functools.partial(register_cloud_hook, hook_name='beforeDelete')
 
-after_delete = functools.partial(register_cloud_func, hook_name='__after_delete_for')
+after_delete = functools.partial(register_cloud_hook, hook_name='afterDelete')
 
 
 def dispatch_cloud_hook(class_name, hook_name, params):
