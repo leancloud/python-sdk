@@ -19,6 +19,8 @@ from .user import User
 from .role import Role
 from .engine import Engine
 from .engine import cloudfunc
+from .engine import LeanEngineError
+
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 __version__ = '1.0.10'
@@ -30,6 +32,7 @@ __all__ = [
     'FriendshipQuery',
     'GeoPoint',
     'LeanCloudError',
+    'LeanEngineError',
     'Object',
     'Query',
     'Relation',
