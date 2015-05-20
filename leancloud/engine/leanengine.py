@@ -159,8 +159,7 @@ def dispatch_cloud_hook(class_name, hook_name, params):
         raise NotAcceptable
 
     obj = leancloud.Object.create(class_name)
-    print 'params: ', params
-    obj._finish_fetch(params, True)
+    obj._finish_fetch(params['object'], True)
 
     logger.info("{}:{} is called!".format(class_name, hook_name))
 
