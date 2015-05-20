@@ -87,13 +87,14 @@ class LeanEngineApplication(object):
                 raise ValueError    # impossible
             return Response(json.dumps({'result': result}), mimetype='application/json')
         except LeanEngineError, e:
+            print e
             return Response(
                 json.dumps({'code': e.code, 'error': e.message}),
                 status=400,
                 mimetype='application/json'
             )
         except Exception:
-            traceback.print_exc()
+            print traceback.format_exc()
             return Response(
                 json.dumps({'code': 141, 'error': 'Cloud Code script had an error.'}),
                 status=500,
