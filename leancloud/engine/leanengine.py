@@ -87,7 +87,7 @@ class LeanEngineApplication(object):
                 raise ValueError    # impossible
             return Response(json.dumps({'result': result}), mimetype='application/json')
         except LeanEngineError, e:
-            print e
+            print 'e:', str(e)
             return Response(
                 json.dumps({'code': e.code, 'error': e.message}),
                 status=400,
