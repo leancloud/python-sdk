@@ -87,8 +87,6 @@ class LeanEngineApplication(object):
                 raise ValueError    # impossible
             return Response(json.dumps({'result': result}), mimetype='application/json')
         except LeanEngineError, e:
-            print 'e:', str(e), e.code, e.message
-            print traceback.format_exc()
             return Response(
                 json.dumps({'code': e.code, 'error': e.message}),
                 status=400,
@@ -144,7 +142,7 @@ def register_cloud_hook(class_name, hook_name):
     return new_func
 
 
-before_save = functools.partial(register_cloud_func, hook_name='beforeSave')
+before_save = functools.partial(register_cloud_hook, hook_name='beforeSave')
 
 after_save = functools.partial(register_cloud_hook, hook_name='afterSave')
 
