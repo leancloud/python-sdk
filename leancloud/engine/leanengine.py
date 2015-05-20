@@ -123,7 +123,7 @@ def register_cloud_func(func):
 def dispatch_cloud_func(func_name, params):
     func = _cloud_codes.get(func_name)
     if not func:
-        raise NotFound("Cloud code not find function named '{}'".format(func_name))
+        raise LeanEngineError(code=404, message='cloud func named "{}" not found.'.format(func_name))
 
     logger.info("{} is called!".format(func_name))
 
@@ -166,7 +166,7 @@ def dispatch_cloud_hook(class_name, hook_name, params):
 
     func = _cloud_codes[hook_name]
     if not func:
-        raise NotFound
+        raise leancloud.LeanEngineError(code=404, message='cloud hook named "{}" not found.'.format(hook_name))
 
     return func(obj)
 
