@@ -171,7 +171,7 @@ def dispatch_cloud_hook(class_name, hook_name, params):
 
 
 def register_on_verified(verify_type):
-    if verify_type not in {'sms', 'email'}:
+    if verify_type not in set(['sms', 'email']):
         raise RuntimeError('verify_type must be sms or email')
 
     func_name = '__on_verified_{}'.format(verify_type)
