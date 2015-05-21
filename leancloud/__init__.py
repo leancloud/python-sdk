@@ -20,7 +20,7 @@ from .role import Role
 from .engine import Engine
 from .engine import cloudfunc
 from .engine import LeanEngineError
-from .engine.https_redirect import HttpsRedirectMiddleware
+from .engine.https_redirect_middleware import HttpsRedirectMiddleware
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
