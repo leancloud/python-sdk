@@ -12,7 +12,7 @@ class HttpsRedirectMiddleware(object):
 
     def __call__(self, environ, start_response):
         request = Request(environ)
-        if request.headers.get('X-Forwarded-Proto') != 'http':
+        if request.headers.get('X-Forwarded-Proto') == 'http':
             url = 'https://{0}{1}'.format(request.host, request.path)
             if request.query_string:
                 url += '?{}'.format(request.query_string)
