@@ -51,7 +51,7 @@ def setup():
     requests_intercept.install()
     add_wsgi_intercept(host, port, make_app)
 
-    @engine.cloud_func
+    @engine.define
     def hello(**params):
         return 'hello'
 
@@ -126,7 +126,7 @@ def test_authorization_3():
 
 
 def test_register_cloud_func():
-    @engine.cloud_func
+    @engine.define
     def ping(**params):
         assert params == {"foo": ["bar", "baz"]}
         return 'pong'
