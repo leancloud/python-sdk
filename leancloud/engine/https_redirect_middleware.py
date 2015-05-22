@@ -20,7 +20,7 @@ class HttpsRedirectMiddleware(object):
         if is_prod and request.headers.get('X-Forwarded-Proto') != 'https':
             url = 'https://{0}{1}'.format(request.host, request.path)
             if request.query_string:
-                url += '?{}'.format(request.query_string)
+                url += '?{0}'.format(request.query_string)
             return redirect(url)(environ, start_response)
 
         return self.origin_app(environ, start_response)

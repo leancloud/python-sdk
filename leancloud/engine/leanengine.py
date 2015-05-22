@@ -115,16 +115,16 @@ _cloud_codes = {}
 def register_cloud_func(func):
     func_name = func.__name__
     if func_name in _cloud_codes:
-        raise RuntimeError('cloud function: {} is already registered'.format(func_name))
+        raise RuntimeError('cloud function: {0} is already registered'.format(func_name))
     _cloud_codes[func_name] = func
 
 
 def dispatch_cloud_func(func_name, params):
     func = _cloud_codes.get(func_name)
     if not func:
-        raise LeanEngineError(code=404, message="cloud func named '{}' not found.".format(func_name))
+        raise LeanEngineError(code=404, message="cloud func named '{0}' not found.".format(func_name))
 
-    logger.info("{} is called!".format(func_name))
+    logger.info("{0} is called!".format(func_name))
 
     return func(**params)
 
@@ -134,7 +134,7 @@ def register_cloud_hook(class_name, hook_name):
     hook_name = hook_name_mapping[hook_name] + class_name
 
     if hook_name in _cloud_codes:
-        raise RuntimeError('cloud hook {} on class {} is already registered'.format(hook_name, class_name))
+        raise RuntimeError('cloud hook {0} on class {1} is already registered'.format(hook_name, class_name))
 
     def new_func(func):
         _cloud_codes[hook_name] = func
@@ -161,11 +161,11 @@ def dispatch_cloud_hook(class_name, hook_name, params):
     obj = leancloud.Object.create(class_name)
     obj._finish_fetch(params['object'], True)
 
-    logger.info("{}:{} is called!".format(class_name, hook_name))
+    logger.info("{0}:{1} is called!".format(class_name, hook_name))
 
     func = _cloud_codes[hook_name]
     if not func:
-        raise leancloud.LeanEngineError(code=404, message="cloud hook named '{}' not found.".format(hook_name))
+        raise leancloud.LeanEngineError(code=404, message="cloud hook named '{0}' not found.".format(hook_name))
 
     return func(obj)
 
@@ -174,7 +174,7 @@ def register_on_verified(verify_type):
     if verify_type not in set(['sms', 'email']):
         raise RuntimeError('verify_type must be sms or email')
 
-    func_name = '__on_verified_{}'.format(verify_type)
+    func_name = '__on_verified_{0}'.format(verify_type)
 
     def new_func(func):
         if func_name in _cloud_codes:
