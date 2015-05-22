@@ -237,7 +237,7 @@ class Object(object):
     def _to_pointer(self):
         return {
             '__type': 'Pointer',
-            'className': self.__class__.__name__,
+            'className': self._class_name,
             'objectId': self.id,
         }
 
