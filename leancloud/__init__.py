@@ -20,7 +20,7 @@ from .role import Role
 from .engine import Engine
 
 __author__ = 'asaka <lan@leancloud.rocks>'
-__version__ = '1.0.9'
+__version__ = '1.0.10'
 
 
 __all__ = [
