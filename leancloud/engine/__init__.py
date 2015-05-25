@@ -32,14 +32,14 @@ class Engine(object):
 
     def __call__(self, environ, start_response):
         request = Request(environ)
-        if request.path in ('/1/__engine/ping', '/1.1/__engine/ping/'):
+        if request.path in ('/__engine/1/ping', '/__engine/1.1/ping/'):
             start_response('200 OK', [('Content-Type', 'application/json')])
             version = sys.version_info
             return [json.dumps({
                 'version': leancloud.__version__,
                 'runtime': 'cpython-{0}.{1}.{2}'.format(version.major, version.minor, version.micro)
             })]
-        if request.path.startswith('/1/__engine/functions') or request.path.startswith('/1.1/__engine/functions'):
+        if request.path.startswith('/__engine/'):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 

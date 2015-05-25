@@ -67,12 +67,12 @@ def test_origin_response():
 
 
 def test_app_params_1():
-    requests.get(url + '/1/__engine/functions/hello')
+    requests.get(url + '/__engine/1/functions/hello')
     assert '_app_params' in authorization.current_environ
 
 
 def test_app_params_2():
-    resp = requests.get(url + '/1/__engine/functions/hello', headers={
+    resp = requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': 'foo',
         'x-avoscloud-application-key': 'bar',
         'x-avoscloud-session-token': 'baz',
@@ -84,7 +84,7 @@ def test_app_params_2():
 
 
 def test_app_params_3():
-    requests.get(url + '/1/__engine/functions/hello', headers={
+    requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-request-sign': '28ad0513f8788d58bb0f7caa0af23400,1389085779854'
     })
     env = authorization.current_environ
@@ -92,7 +92,7 @@ def test_app_params_3():
 
 
 def test_app_params_4():
-    requests.get(url + '/1/__engine/functions/hello', headers={
+    requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-request-sign': 'c884fe684c17c972eb4e33bc8b29cb5b,1389085779854,master'
     })
     env = authorization.current_environ
@@ -100,7 +100,7 @@ def test_app_params_4():
 
 
 def test_authorization_1():
-    response = requests.get(url + '/1/__engine/functions/hello', headers={
+    response = requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
     })
@@ -109,7 +109,7 @@ def test_authorization_1():
 
 
 def test_authorization_2():
-    response = requests.get(url + '/1/__engine/functions/hello', headers={
+    response = requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_MASTER_KEY,
     })
@@ -118,7 +118,7 @@ def test_authorization_2():
 
 
 def test_authorization_3():
-    response = requests.get(url + '/1/__engine/functions/hello', headers={
+    response = requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': 'foo',
         'x-avoscloud-application-key': 'bar',
     })
@@ -131,7 +131,7 @@ def test_register_cloud_func():
         assert params == {"foo": ["bar", "baz"]}
         return 'pong'
 
-    response = requests.post(url + '/1.1/__engine/functions/ping', headers={
+    response = requests.post(url + '/__engine/1/functions/ping', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
     }, json={'foo': ['bar', 'baz']})
