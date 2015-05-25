@@ -66,6 +66,14 @@ def test_origin_response():
     assert resp.content == 'Hello LeanCloud'
 
 
+def test_compatibility():
+    requests.get(url + '/1/functions/hello')
+    assert '_app_params' in authorization.current_environ
+
+    requests.get(url + '/1.1/functions/hello')
+    assert '_app_params' in authorization.current_environ
+
+
 def test_app_params_1():
     requests.get(url + '/__engine/1/functions/hello')
     assert '_app_params' in authorization.current_environ

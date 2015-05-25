@@ -41,6 +41,8 @@ class Engine(object):
             })]
         if request.path.startswith('/__engine/'):
             return self.cloud_app(environ, start_response)
+        if request.path.startswith('/1/functions') or request.path.startswith('/1.1/functions'):
+            return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 
     define = staticmethod(register_cloud_func)
