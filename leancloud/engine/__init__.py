@@ -1,9 +1,13 @@
 # coding: utf-8
 
+import sys
+import json
+
 from werkzeug.wrappers import Request
 from werkzeug.serving import run_simple
 
 import context
+import leancloud
 from .authorization import AuthorizationMiddleware
 from .leanengine import LeanEngineApplication
 from .leanengine import LeanEngineError
@@ -28,9 +32,15 @@ class Engine(object):
 
     def __call__(self, environ, start_response):
         request = Request(environ)
-        if request.path in ('/1/ping', '/1/ping/'):
-            start_response('200 OK', [('Content-Type', 'text/plain')])
-            return ['pong']
+        if request.path in ('/__engine/1/ping', '/__engine/1.1/ping/'):
+            start_response('200 OK', [('Content-Type', 'application/json')])
+            version = sys.version_info
+            return [json.dumps({
+                'version': leancloud.__version__,
+                'runtime': 'cpython-{0}.{1}.{2}'.format(version.major, version.minor, version.micro)
+            })]
+        if request.path.startswith('/__engine/'):
+            return self.cloud_app(environ, start_response)
         if request.path.startswith('/1/functions') or request.path.startswith('/1.1/functions'):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)

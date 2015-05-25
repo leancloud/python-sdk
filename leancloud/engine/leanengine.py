@@ -33,6 +33,16 @@ class LeanEngineError(Exception):
 class LeanEngineApplication(object):
     def __init__(self):
         self.url_map = Map([
+            Rule('/__engine/1/functions/<func_name>', endpoint='cloud_function'),
+            Rule('/__engine/1.1/functions/<func_name>', endpoint='cloud_function'),
+            Rule('/__engine/1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
+            Rule('/__engine/1.1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
+            Rule('/__engine/1/onVerified/<verify_type>', endpoint='on_verified'),
+            Rule('/__engine/1.1/onVerified/<verify_type>', endpoint='on_verified'),
+            Rule('/__engine/1.1/functions/_User/onLogin', endpoint='on_login'),
+            Rule('/__engine/1/functions/_ops/metadatas', endpoint='ops_meta_data'),
+            Rule('/__engine/1.1/functions/_ops/metadatas', endpoint='ops_meta_data'),
+
             Rule('/1/functions/<func_name>', endpoint='cloud_function'),
             Rule('/1.1/functions/<func_name>', endpoint='cloud_function'),
             Rule('/1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
