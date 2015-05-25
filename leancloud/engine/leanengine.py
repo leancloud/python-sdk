@@ -25,7 +25,9 @@ user = context.local('user')
 
 
 class LeanEngineError(Exception):
-    pass
+    def __init__(self, code=1, message='error'):
+        self.code = code
+        self.message = message
 
 
 class LeanEngineApplication(object):
@@ -84,8 +86,14 @@ class LeanEngineApplication(object):
             else:
                 raise ValueError    # impossible
             return Response(json.dumps({'result': result}), mimetype='application/json')
+        except LeanEngineError, e:
+            return Response(
+                json.dumps({'code': e.code, 'error': e.message}),
+                status=400,
+                mimetype='application/json'
+            )
         except Exception:
-            traceback.print_exc()
+            print traceback.format_exc()
             return Response(
                 json.dumps({'code': 141, 'error': 'Cloud Code script had an error.'}),
                 status=500,
@@ -107,16 +115,16 @@ _cloud_codes = {}
 def register_cloud_func(func):
     func_name = func.__name__
     if func_name in _cloud_codes:
-        raise RuntimeError('cloud function: {} is already registered'.format(func_name))
+        raise RuntimeError('cloud function: {0} is already registered'.format(func_name))
     _cloud_codes[func_name] = func
 
 
 def dispatch_cloud_func(func_name, params):
     func = _cloud_codes.get(func_name)
     if not func:
-        raise NotFound("Cloud code not find function named '{}'".format(func_name))
+        raise LeanEngineError(code=404, message="cloud func named '{0}' not found.".format(func_name))
 
-    logger.info("{} is called!".format(func_name))
+    logger.info("{0} is called!".format(func_name))
 
     return func(**params)
 
@@ -125,8 +133,8 @@ def register_cloud_hook(class_name, hook_name):
     # hack the hook name
     hook_name = hook_name_mapping[hook_name] + class_name
 
-    if hook_name not in _cloud_codes:
-        raise RuntimeError('cloud hook {} on class {} is already registered'.format(hook_name, class_name))
+    if hook_name in _cloud_codes:
+        raise RuntimeError('cloud hook {0} on class {1} is already registered'.format(hook_name, class_name))
 
     def new_func(func):
         _cloud_codes[hook_name] = func
@@ -134,15 +142,15 @@ def register_cloud_hook(class_name, hook_name):
     return new_func
 
 
-before_save = functools.partial(register_cloud_func, hook_name='__before_save_for')
+before_save = functools.partial(register_cloud_hook, hook_name='beforeSave')
 
-after_save = functools.partial(register_cloud_func, hook_name='__after_save_for')
+after_save = functools.partial(register_cloud_hook, hook_name='afterSave')
 
-after_update = functools.partial(register_cloud_func, hook_name='__after_update_for')
+after_update = functools.partial(register_cloud_hook, hook_name='afterUpdate')
 
-before_delete = functools.partial(register_cloud_func, hook_name='__before_delete_for')
+before_delete = functools.partial(register_cloud_hook, hook_name='beforeDelete')
 
-after_delete = functools.partial(register_cloud_func, hook_name='__after_delete_for')
+after_delete = functools.partial(register_cloud_hook, hook_name='afterDelete')
 
 
 def dispatch_cloud_hook(class_name, hook_name, params):
@@ -151,21 +159,22 @@ def dispatch_cloud_hook(class_name, hook_name, params):
         raise NotAcceptable
 
     obj = leancloud.Object.create(class_name)
+    obj._finish_fetch(params['object'], True)
 
-    logger.info("{}:{} is called!".format(class_name, hook_name))
+    logger.info("{0}:{1} is called!".format(class_name, hook_name))
 
     func = _cloud_codes[hook_name]
     if not func:
-        raise NotFound
+        raise leancloud.LeanEngineError(code=404, message="cloud hook named '{0}' not found.".format(hook_name))
 
     return func(obj)
 
 
 def register_on_verified(verify_type):
-    if verify_type not in {'sms', 'email'}:
+    if verify_type not in set(['sms', 'email']):
         raise RuntimeError('verify_type must be sms or email')
 
-    func_name = '__on_verified_{}'.format(verify_type)
+    func_name = '__on_verified_{0}'.format(verify_type)
 
     def new_func(func):
         if func_name in _cloud_codes:

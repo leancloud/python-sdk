@@ -31,8 +31,8 @@ def test_dump():
 
 
 def test_radians_to():
-    eq_(GeoPoint(0, 0).radians_to(GeoPoint(10, 10)), 0.24619691677893205)
-    eq_(GeoPoint(10, 10).radians_to(GeoPoint(14.5, 24.5)), 0.25938444522905957)
+    assert GeoPoint(0, 0).radians_to(GeoPoint(10, 10)) - 0.24619691677893205 < 0.00001
+    assert GeoPoint(10, 10).radians_to(GeoPoint(14.5, 24.5)) - 0.25938444522905957 < 0.00001
 
 
 def test_eq():

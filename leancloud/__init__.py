@@ -18,17 +18,23 @@ from .relation import Relation
 from .user import User
 from .role import Role
 from .engine import Engine
+from .engine import cloudfunc
+from .engine import LeanEngineError
+from .engine.https_redirect_middleware import HttpsRedirectMiddleware
+
 
 __author__ = 'asaka <lan@leancloud.rocks>'
-__version__ = '1.0.10'
+__version__ = '1.0.11'
 
 
 __all__ = [
     'ACL',
     'File',
+    'HttpsRedirectMiddleware',
     'FriendshipQuery',
     'GeoPoint',
     'LeanCloudError',
+    'LeanEngineError',
     'Object',
     'Query',
     'Relation',
@@ -36,6 +42,7 @@ __all__ = [
     'client',
     'init',
     'push',
+    'cloudfunc',
     'Role',
     'Installation',
     'Engine',

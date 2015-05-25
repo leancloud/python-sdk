@@ -3,9 +3,11 @@ python:
   - "2.6"
   - "2.7"
 
+sudo: false
+
 # command to install dependencies
 install:
-   - "pip install ."
+  - "pip install -e .[test]"
 
 # command to run tests
 script: nosetests
