@@ -150,3 +150,8 @@ def test_register_cloud_func():
 def test_client():
     leancloud.init('pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb', 'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd')
     assert cloudfunc.run('add', a=1, b=2) == 3
+
+
+def test_request_sms_code():
+    leancloud.init('pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb', master_key='azkuvukzlq3t38abdrgrwqqdcx9me6178ctulhd14wynfq1n')
+    cloudfunc.request_sms_code('13111111111')

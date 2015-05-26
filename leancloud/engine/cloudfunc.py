@@ -19,3 +19,33 @@ def run(name, **params):
     response = leancloud.client.post('/functions/{0}'.format(name), params=params)
     content = utils.response_to_json(response)
     return utils.decode(None, content)['result']
+
+
+def request_sms_code(phone_number):
+    """
+    请求发送手机验证码
+
+    :param phone_number: 需要验证的手机号码
+    :return: None
+    """
+    if not isinstance(phone_number, basestring):
+        raise TypeError('phone_number must be a string')
+    params = {
+        'mobilePhoneNumber': phone_number
+    }
+    leancloud.client.post('/requestSmsCode', params=params)
+
+
+def verify_sms_code(phone_number, code):
+    """
+    获取到手机验证码之后，验证验证码是否正确。如果验证失败，抛出异常。
+
+    :param phone_number: 需要验证的手机号码
+    :param code: 接受到的验证码
+    :return: None
+    """
+    params = {
+        'mobilePhoneNumber': phone_number,
+    }
+    leancloud.client.post('/verifySmsCode/{0}'.format(code), params=params)
+    return True
