@@ -21,11 +21,13 @@ def run(name, **params):
     return utils.decode(None, content)['result']
 
 
-def request_sms_code(phone_number, idd='+86', type='sms', template=None, params=None):
+def request_sms_code(phone_number, idd='+86', sms_type='sms', template=None, params=None):
     """
     请求发送手机验证码
 
     :param phone_number: 需要验证的手机号码
+    :param idd: 号码的所在地国家代码，默认为中国（+86）
+    :param sms_type: 验证码发送方式，'voice' 为语音，'sms' 为短信
     :return: None
     """
     if not isinstance(phone_number, basestring):
@@ -33,6 +35,7 @@ def request_sms_code(phone_number, idd='+86', type='sms', template=None, params=
 
     data = {
         'mobilePhoneNumber': phone_number,
+        'smsType': sms_type,
         'IDD': idd,
     }
 
