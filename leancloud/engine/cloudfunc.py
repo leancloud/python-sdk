@@ -21,7 +21,7 @@ def run(name, **params):
     return utils.decode(None, content)['result']
 
 
-def request_sms_code(phone_number):
+def request_sms_code(phone_number, idd='+86', type='sms', template=None, params=None):
     """
     请求发送手机验证码
 
@@ -30,10 +30,19 @@ def request_sms_code(phone_number):
     """
     if not isinstance(phone_number, basestring):
         raise TypeError('phone_number must be a string')
-    params = {
-        'mobilePhoneNumber': phone_number
+
+    data = {
+        'mobilePhoneNumber': phone_number,
+        'IDD': idd,
     }
-    leancloud.client.post('/requestSmsCode', params=params)
+
+    if template is not None:
+        params['template'] = template
+
+    if params is not None:
+        data.update(params)
+
+    leancloud.client.post('/requestSmsCode', params=data)
 
 
 def verify_sms_code(phone_number, code):
