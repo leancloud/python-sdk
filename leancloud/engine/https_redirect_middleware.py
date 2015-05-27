@@ -8,7 +8,7 @@ from werkzeug.utils import redirect
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-is_prod = int(os.environ.get('LC_APP_PROD', '0'))
+is_prod = True if os.environ.get('LC_APP_ENV') == 'production' else False
 
 
 class HttpsRedirectMiddleware(object):
