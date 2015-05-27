@@ -22,8 +22,6 @@ SDK_VERSION = '1.0.0'
 BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
 TIMEOUT_SECONDS = 15
 
-headers = None
-
 
 def init(app_id, app_key=None, master_key=None):
     """初始化 LeanCloud 的 AppId / AppKey / MasterKey
@@ -50,17 +48,18 @@ def need_init(func):
         if APP_ID is None:
             raise RuntimeError('LeanCloud SDK must be initialized')
 
-        global headers
-        if not headers:
-            headers = {
-                'Content-Type': 'application/json;charset=utf-8',
-            }
-        headers['X-AVOSCloud-Application-Id'] = APP_ID
-        headers['User-Agent'] = 'AVOS Cloud python-{0} SDK'.format(leancloud.__version__)
+        headers = {
+            'Content-Type': 'application/json;charset=utf-8',
+            'X-AVOSCloud-Application-Id': APP_ID,
+            'User-Agent': 'AVOS Cloud python-{0} SDK'.format(leancloud.__version__),
+        }
+
         if MASTER_KEY:
             headers['X-AVOSCloud-Master-Key'] = MASTER_KEY
         else:
             headers['X-AVOSCloud-Application-Key'] = APP_KEY
+
+        kwargs['headers'] = headers
 
         return func(*args, **kwargs)
     return new_func
@@ -83,7 +82,7 @@ def check_error(func):
 
 @need_init
 @check_error
-def get(url, params):
+def get(url, params, headers=None):
     for k, v in params.iteritems():
         if isinstance(v, dict):
             params[k] = json.dumps(v)
@@ -93,20 +92,20 @@ def get(url, params):
 
 @need_init
 @check_error
-def post(url, params):
+def post(url, params, headers=None):
     response = requests.post(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
-def put(url, params):
+def put(url, params, headers=None):
     response = requests.put(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
-def delete(url, params=None):
+def delete(url, params=None, headers=None):
     response = requests.delete(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS)
     return response
