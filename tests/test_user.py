@@ -105,6 +105,14 @@ def test_followee_query():
                 '__type': 'Pointer',
                 'className': '_User',
                 'objectId': '1',
-                },
             },
-        }
+        },
+    }
+
+
+@with_setup(setup_func)
+def test_current_user():
+    user = User()
+    user.login('user1', 'password')
+    assert user.is_current
+    assert User.get_current().id == user.id
