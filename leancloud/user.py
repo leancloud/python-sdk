@@ -9,8 +9,9 @@ __author__ = 'asaka'
 
 
 class User(Object):
+    current_user = None
+
     def __init__(self, **attrs):
-        self._is_current_user = False
         self._session_token = None
         super(User, self).__init__(**attrs)
 
@@ -36,9 +37,15 @@ class User(Object):
         query.equal_to('user', Object.create('_User', id=user_id))
         return query
 
+    @classmethod
+    def get_current(cls):
+        return cls.current_user
+
     @property
     def is_current(self):
-        return self._is_current_user
+        if not self.__class__.current_user:
+            return False
+        return self.id == self.__class__.current_user.id
 
     def _cleanup_auth_data(self):
         if not self.is_current:
@@ -64,7 +71,7 @@ class User(Object):
 
     def _handle_save_result(self, make_current=False):
         if make_current:
-            self._is_current_user = True
+            self.__class__.current_user = self
         self._cleanup_auth_data()
         self._sync_all_auth_data()
         self._server_data.pop('password', None)

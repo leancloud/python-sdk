@@ -59,6 +59,10 @@ def need_init(func):
         else:
             headers['X-AVOSCloud-Application-Key'] = APP_KEY
 
+        user = leancloud.User.get_current()
+        if user:
+            headers['X-AVOSCloud-Session-Token'] = user._session_token
+
         kwargs['headers'] = headers
 
         return func(*args, **kwargs)
