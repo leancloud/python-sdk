@@ -30,7 +30,7 @@ class User(Object):
         if not user_id or not isinstance(user_id, basestring):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Follower')
-        query.equal_to('user', Object.create('_User', id=user_id))
+        query.equal_to('user', User.create_without_data(user_id))
         return query
 
     @classmethod
@@ -38,7 +38,7 @@ class User(Object):
         if not user_id or not isinstance(user_id, basestring):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Followee')
-        query.equal_to('user', Object.create('_User', id=user_id))
+        query.equal_to('user', User.create_without_data(user_id))
         return query
 
     @classmethod
