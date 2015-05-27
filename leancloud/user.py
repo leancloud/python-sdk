@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import threading
+
 from leancloud import FriendshipQuery
 from leancloud import client
 from leancloud import Object
@@ -8,9 +10,11 @@ from leancloud import utils
 __author__ = 'asaka'
 
 
-class User(Object):
-    current_user = None
+thread_locals = threading.local()
+thread_locals.current_user = None
 
+
+class User(Object):
     def __init__(self, **attrs):
         self._session_token = None
         super(User, self).__init__(**attrs)
@@ -39,13 +43,13 @@ class User(Object):
 
     @classmethod
     def get_current(cls):
-        return cls.current_user
+        return thread_locals.current_user
 
     @property
     def is_current(self):
-        if not self.__class__.current_user:
+        if not thread_locals.current_user:
             return False
-        return self.id == self.__class__.current_user.id
+        return self.id == thread_locals.current_user.id
 
     def _cleanup_auth_data(self):
         if not self.is_current:
@@ -71,7 +75,7 @@ class User(Object):
 
     def _handle_save_result(self, make_current=False):
         if make_current:
-            self.__class__.current_user = self
+            thread_locals.current_user = self
         self._cleanup_auth_data()
         self._sync_all_auth_data()
         self._server_data.pop('password', None)
