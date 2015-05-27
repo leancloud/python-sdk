@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import threading
+
 from leancloud import FriendshipQuery
 from leancloud import client
 from leancloud import Object
@@ -8,9 +10,12 @@ from leancloud import utils
 __author__ = 'asaka'
 
 
+thread_locals = threading.local()
+thread_locals.current_user = None
+
+
 class User(Object):
     def __init__(self, **attrs):
-        self._is_current_user = False
         self._session_token = None
         super(User, self).__init__(**attrs)
 
@@ -25,7 +30,7 @@ class User(Object):
         if not user_id or not isinstance(user_id, basestring):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Follower')
-        query.equal_to('user', Object.create('_User', id=user_id))
+        query.equal_to('user', User.create_without_data(user_id))
         return query
 
     @classmethod
@@ -33,12 +38,18 @@ class User(Object):
         if not user_id or not isinstance(user_id, basestring):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Followee')
-        query.equal_to('user', Object.create('_User', id=user_id))
+        query.equal_to('user', User.create_without_data(user_id))
         return query
+
+    @classmethod
+    def get_current(cls):
+        return thread_locals.current_user
 
     @property
     def is_current(self):
-        return self._is_current_user
+        if not thread_locals.current_user:
+            return False
+        return self.id == thread_locals.current_user.id
 
     def _cleanup_auth_data(self):
         if not self.is_current:
@@ -64,7 +75,7 @@ class User(Object):
 
     def _handle_save_result(self, make_current=False):
         if make_current:
-            self._is_current_user = True
+            thread_locals.current_user = self
         self._cleanup_auth_data()
         self._sync_all_auth_data()
         self._server_data.pop('password', None)

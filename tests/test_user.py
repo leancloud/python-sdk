@@ -85,30 +85,34 @@ def test_follow():
 def test_follower_query():
     query = User.create_follower_query('1')
     assert query._friendship_tag == 'follower'
-    # TODO: fix invalid dump data
-    # print query.dump()
-    # assert query.dump() == {
-    #     'where': {
-    #         'user': {
-    #             '__type': 'Pointer',
-    #             'className': '_User',
-    #             'objectId': '1',
-    #         },
-    #     },
-    # }
+    assert query.dump() == {
+        'where': {
+            'user': {
+                '__type': 'Pointer',
+                'className': '_User',
+                'objectId': '1',
+            },
+        },
+    }
 
 
 def test_followee_query():
     query = User.create_followee_query('1')
     assert query._friendship_tag == 'followee'
-    # TODO: fix invalid dump data
-    # print query.dump()
-    # assert query.dump() == {
-    #     'where': {
-    #         'user': {
-    #             '__type': 'Pointer',
-    #             'className': '_User',
-    #             'objectId': '1',
-    #             },
-    #         },
-    #     }
+    assert query.dump() == {
+        'where': {
+            'user': {
+                '__type': 'Pointer',
+                'className': '_User',
+                'objectId': '1',
+            },
+        },
+    }
+
+
+@with_setup(setup_func)
+def test_current_user():
+    user = User()
+    user.login('user1', 'password')
+    assert user.is_current
+    assert User.get_current().id == user.id
