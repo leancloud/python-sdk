@@ -43,11 +43,11 @@ class User(Object):
 
     @classmethod
     def get_current(cls):
-        return thread_locals.current_user
+        return getattr(thread_locals, 'current_user', None)
 
     @property
     def is_current(self):
-        if not thread_locals.current_user:
+        if not getattr(thread_locals, 'current_user', None):
             return False
         return self.id == thread_locals.current_user.id
 
