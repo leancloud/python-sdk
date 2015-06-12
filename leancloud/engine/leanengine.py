@@ -35,6 +35,8 @@ class LeanEngineApplication(object):
         self.url_map = Map([
             Rule('/__engine/1/functions/<func_name>', endpoint='cloud_function'),
             Rule('/__engine/1.1/functions/<func_name>', endpoint='cloud_function'),
+            Rule('/__engine/1/functions/BigQuery/<event>', endpoint='on_bigquery'),
+            Rule('/__engine/1.1/functions/BigQuery/<event>', endpoint='on_bigquery'),
             Rule('/__engine/1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/__engine/1.1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/__engine/1/onVerified/<verify_type>', endpoint='on_verified'),
@@ -45,6 +47,8 @@ class LeanEngineApplication(object):
 
             Rule('/1/functions/<func_name>', endpoint='cloud_function'),
             Rule('/1.1/functions/<func_name>', endpoint='cloud_function'),
+            Rule('/1/functions/BigQuery/<event>', endpoint='on_bigquery'),
+            Rule('/1.1/functions/BigQuery/<event>', endpoint='on_bigquery'),
             Rule('/1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/1.1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/1/onVerified/<verify_type>', endpoint='on_verified'),
@@ -93,6 +97,8 @@ class LeanEngineApplication(object):
                 result = dispatch_on_login(**values)
             elif endpoint == 'ops_meta_data':
                 result = dispatch_ops_meta_data()
+            elif endpoint == 'on_bigquery':
+                result = dispatch_on_bigquery(**values)
             else:
                 raise ValueError    # impossible
             return Response(json.dumps({'result': result}), mimetype='application/json')
@@ -219,3 +225,30 @@ def dispatch_on_login(user):
 
 def dispatch_ops_meta_data():
     return _cloud_codes.keys()
+
+
+def register_on_bigquery(event):
+    if event == 'end':
+        func_name = '__on_complete_bigquery_job'
+    else:
+        raise RuntimeError('event not support')
+
+    def inner_func(func):
+        if func_name in _cloud_codes:
+            raise RuntimeError('on bigquery is already registered')
+        _cloud_codes[func_name] = func
+    return inner_func
+
+
+def dispatch_on_bigquery(event, params):
+    if event == 'onComplete':
+        func_name = '__on_complete_bigquery_job'
+    else:
+        return
+
+    func = _cloud_codes.get(func_name)
+    if not func:
+        return
+
+    ok = True if params['status'] == 'OK' else False
+    return func(ok, params)
