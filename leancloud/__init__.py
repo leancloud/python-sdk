@@ -8,6 +8,7 @@ import push
 from .push import Installation
 from .acl import ACL
 from .client import init
+from .client import use_production
 from .errors import LeanCloudError
 from .file_ import File
 from .geo_point import GeoPoint
@@ -40,6 +41,7 @@ __all__ = [
     'Relation',
     'User',
     'client',
+    'use_production',
     'init',
     'push',
     'cloudfunc',

@@ -116,3 +116,11 @@ def test_current_user():
     user.login('user1', 'password')
     assert user.is_current
     assert User.get_current().id == user.id
+
+
+@with_setup(setup_func)
+def test_update_user():
+    user = User()
+    user.login('user1', 'password')
+    user.set('nickname', 'test_name')
+    user.save()
