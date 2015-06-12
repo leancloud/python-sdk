@@ -13,6 +13,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
+USE_PRODUCTION = 1
 
 CN_BASE_URL = 'https://api.leancloud.cn'
 US_BASE_URL = 'https://avoscloud.us'
@@ -51,6 +52,7 @@ def need_init(func):
         headers = {
             'Content-Type': 'application/json;charset=utf-8',
             'X-AVOSCloud-Application-Id': APP_ID,
+            'X-AVOSCloud-Application-Production': USE_PRODUCTION,
             'User-Agent': 'AVOS Cloud python-{0} SDK'.format(leancloud.__version__),
         }
 
@@ -67,6 +69,11 @@ def need_init(func):
 
         return func(*args, **kwargs)
     return new_func
+
+
+def use_production(flag):
+    global USE_PRODUCTION
+    USE_PRODUCTION = 1 if flag else 0
 
 
 def check_error(func):
