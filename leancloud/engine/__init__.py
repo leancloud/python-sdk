@@ -20,6 +20,7 @@ from .leanengine import after_update
 from .leanengine import before_delete
 from .leanengine import after_delete
 from .leanengine import user
+from .leanengine import register_on_bigquery
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -52,6 +53,7 @@ class Engine(object):
     after_update = staticmethod(after_update)
     before_delete = staticmethod(before_delete)
     after_delete = staticmethod(after_delete)
+    on_bigquery = staticmethod(register_on_bigquery)
 
     run = staticmethod(run_simple)
 

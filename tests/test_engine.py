@@ -147,6 +147,27 @@ def test_register_cloud_func():
     print response.json() == {u'result': u'pong'}
 
 
+def test_bigquery():
+    @engine.on_bigquery('end')
+    def on_bigquery_end(ok, data):
+        assert ok is False
+        assert data == {
+            "id": u"job id",
+            "status": u"OK/ERROR",
+            "message": u"当  status 为 ERROR 时的错误消息"
+        }
+
+    response = requests.post(url + '/__engine/1/functions/BigQuery/onComplete', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    }, json={
+        "id": u"job id",
+        "status": u"OK/ERROR",
+        "message": u"当  status 为 ERROR 时的错误消息"
+    })
+    assert response.ok
+
+
 def test_client():
     leancloud.init('pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb', 'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd')
     assert cloudfunc.run('add', a=1, b=2) == 3
