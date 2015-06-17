@@ -57,7 +57,7 @@ def need_init(func):
             'User-Agent': 'AVOS Cloud python-{0} SDK'.format(leancloud.__version__),
         }
         md5sum = hashlib.md5()
-        current_time = str(int(time.time()*1000))
+        current_time = str(int(time.time() * 1000))
         if MASTER_KEY:
             md5sum.update(current_time + MASTER_KEY)
             headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
