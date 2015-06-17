@@ -1,7 +1,8 @@
 # coding: utf-8
 
 import json
-
+import time
+import hashlib
 import requests
 
 import leancloud
@@ -55,19 +56,20 @@ def need_init(func):
             'X-AVOSCloud-Application-Production': USE_PRODUCTION,
             'User-Agent': 'AVOS Cloud python-{0} SDK'.format(leancloud.__version__),
         }
-
+        md5sum = hashlib.md5()
+        current_time = str(int(time.time() * 1000))
         if MASTER_KEY:
-            headers['X-AVOSCloud-Master-Key'] = MASTER_KEY
+            md5sum.update(current_time + MASTER_KEY)
+            headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
         else:
-            headers['X-AVOSCloud-Application-Key'] = APP_KEY
+            md5sum.update(current_time+APP_KEY)
+            headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time
 
         user = leancloud.User.get_current()
         if user:
             headers['X-AVOSCloud-Session-Token'] = user._session_token
 
-        kwargs['headers'] = headers
-
-        return func(*args, **kwargs)
+        return func(headers=headers, *args, **kwargs)
     return new_func
 
 
