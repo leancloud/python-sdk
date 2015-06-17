@@ -60,10 +60,10 @@ def need_init(func):
         current_time = str(int(time.time()*1000))
         if MASTER_KEY:
             md5sum.update(current_time+MASTER_KEY)
-            headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest()+',' + current_time +',master'
+            headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
         else:
             md5sum.update(current_time+APP_KEY)
-            headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest()+',' + current_time
+            headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time
 
         user = leancloud.User.get_current()
         if user:
