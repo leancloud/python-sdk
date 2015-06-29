@@ -21,7 +21,6 @@ def setup_func():
 
 def test_basic():
     s = StringIO('blah blah blah')
-    
     f = File('Blah', s) 
     assert f.name == 'Blah'
     assert f._metadata['size'] == 14

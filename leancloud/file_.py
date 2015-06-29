@@ -1,5 +1,4 @@
 # coding: utf-8
-
 import os
 import re
 import base64
@@ -34,14 +33,14 @@ class File(object):
         pattern = re.compile('\.([^.]*)$')
         extension = pattern.findall(name)
         if extension:
-            extension = extension[0].lower()
+            self.extension = extension[0].lower()
         else:
-            extension = None
+            self.extension = ''
 
         if type_:
             self._type = type_
         else:
-            self._type = mime_types.get(extension, 'text/plain')
+            self._type = mime_types.get(self.extension, 'text/plain')
 
         if data is None:
             self._source = None
@@ -125,7 +124,7 @@ class File(object):
             return False
         response = client.delete('/files/{0}'.format(self.id))
         content = utils.response_to_json(response)
-        return response
+        return content
 
     def save(self):
         if self._source:
@@ -134,27 +133,21 @@ class File(object):
             base64.encode(self._source, output)
             self._source.seek(0)
             output.seek(0)
-
-            pattern = re.compile('\.([^.]*)$')
-            extension = pattern.findall(self._name)
-            if extension:
-                extension = extension[0].lower()
-            else:
-                extension = ''
-
-            hexOctet = hex(int(1 + random.random() * 0x10000))[1:]
-            qiniuKey = hexOctet * 4 + extension
+            hex_octet = hex(int(1 + random.random() * 0x10000))[1:]
+            qiniu_UUID = hex_octet * 4 + self.extension
             data = {
                 'name': self._name,
-                'key': qiniuKey,
+                'key': qiniu_UUID,
                 'ACL': self._acl,
                 'mime_type': self._type,
                 'metaData': self._metadata,
             }
-            response = client.post('/qiniu',data)
+            response = client.post('/qiniu', data)
             content = utils.response_to_json(response)
             uptoken = content['token']
-            ret, info = qiniu.put_data(uptoken, self._name, output, mime_type=self._type) 
+            ret, info = qiniu.put_data(uptoken, self._name, output, mime_type=self._type)
+            if info.status_code != 200:
+                raise LeanCloudError('the file {0} not saved'.format(ret['key']))
         elif self._url and self.metadata['__source'] == 'external':
             data = {
                 'name': self._name,
