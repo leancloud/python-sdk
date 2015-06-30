@@ -21,8 +21,8 @@ def setup_func():
 
 def test_basic():
     s = StringIO('blah blah blah')
-    f = File('blah', s)
-    assert f.name == 'blah'
+    f = File('Blah', s) 
+    assert f.name == 'Blah'
     assert f._metadata['size'] == 14
     assert f._type == 'text/plain'
 
@@ -39,14 +39,14 @@ def test_create_without_data():
 
 def test_acl():
     acl = ACL()
-    f = File('blah', buffer('xxx'))
+    f = File('Blah', buffer('xxx'))
     f.set_acl(acl)
     assert f.get_acl() == acl
 
 
 @with_setup(setup_func)
 def test_save():
-    f = File('blah', buffer('xxx'))
+    f = File('Blah', buffer('xxx'))
     f.save()
     assert f.id
 
@@ -61,8 +61,9 @@ def test_save():
 @with_setup(setup_func)
 def test_thumbnail():
     r = requests.get('http://www.lenna.org/full/len_std.jpg')
+    print(r)
     b = buffer(r.content)
-    f = File('lenna.jpg', b)
+    f = File('Lenna.jpg', b)
     f.save()
     assert f.id
 
