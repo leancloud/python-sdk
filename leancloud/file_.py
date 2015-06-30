@@ -147,7 +147,7 @@ class File(object):
             uptoken = content['token']
             ret, info = qiniu.put_data(uptoken, self._name, output, mime_type=self._type)
             if info.status_code != 200:
-                raise LeanCloudError('the file {0} not saved'.format(ret['key']))
+                raise LeanCloudError(1, 'the file {0} not saved'.format(ret['key']))
         elif self._url and self.metadata['__source'] == 'external':
             data = {
                 'name': self._name,
