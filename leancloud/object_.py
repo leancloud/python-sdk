@@ -148,7 +148,7 @@ class Object(object):
         self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
 
         if len(unsaved_children) + len(unsaved_files) > 0:
-            self._deep_save(self.attributes)
+            self._deep_save(unsaved_children, unsaved_files, exclude=self.attributes)
 
         self._start_save()
 
@@ -163,12 +163,7 @@ class Object(object):
 
         self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
 
-    def _deep_save(self, exclude=None):
-        # TODO: chunk
-        unsaved_children = []
-        unsaved_files = []
-        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
-
+    def _deep_save(self, unsaved_children, unsaved_files, exclude=None):
         if exclude:
             unsaved_children = [x for x in unsaved_children if x != exclude]
 

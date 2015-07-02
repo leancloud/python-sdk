@@ -13,6 +13,7 @@ from dateutil import tz
 import leancloud
 from leancloud import operation
 
+
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
@@ -193,7 +194,7 @@ def traverse_object(obj, callback, seen=None):
 
     if isinstance(obj, (list, tuple)):
         # print 'is list or tuple'
-        for child, idx in enumerate(obj):
+        for idx, child in enumerate(obj):
             new_child = traverse_object(child, callback, seen)
             if new_child:
                 obj[idx] = new_child
