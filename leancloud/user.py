@@ -108,7 +108,7 @@ class User(Object):
             self.set('username', username)
         if password:
             self.set('password', password)
-        response = client.get('/login', params=self.dump())
+        response = client.post('/login', params=self.dump())
         content = utils.response_to_json(response)
         server_data = self.parse(content, response.status_code)
         self._finish_fetch(server_data, False)
