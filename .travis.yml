@@ -2,9 +2,13 @@ language: python
 matrix:
   include:
     - python: "2.7"
-      env: TEST_SUITE=test_2_7
+      env: appid=pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb
+           appkey=hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd
+           masterKey=azkuvukzlq3t38abdrgrwqqdcx9me6178ctulhd14wynfq1n
     - python:"2.6"
-      env: TEST_SUITE=test_2_6
+      env: appid=6mnpbdqufkybpfwev1jww7ynrqtzv38vadgzlx37rinn9fwk
+           appkey=ur7kqm0qyukk2lgzzi5iqd3pym53dfdj8h3t2fksbkbdptt8
+           masterKey=ywytewi632vunyolpkytb2f13m6im9hmyckerk1koy6ut9y5 
    
 sudo: false
 
@@ -13,4 +17,4 @@ install:
   - "pip install -e .[test]"
 
 # command to run tests
-script: nosetests tests/$TEST_SUITE
+script: nosetests 
