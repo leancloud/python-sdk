@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import requests
 
 from wsgi_intercept import requests_intercept, add_wsgi_intercept

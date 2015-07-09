@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import os
+
 from StringIO import StringIO
 from nose.tools import with_setup
 
@@ -14,14 +16,14 @@ __author__ = 'asaka'
 
 def setup_func():
     leancloud.init(
-        '6mnpbdqufkybpfwev1jww7ynrqtzv38vadgzlx37rinn9fwk',
-        'ur7kqm0qyukk2lgzzi5iqd3pym53dfdj8h3t2fksbkbdptt8',
+        os.environ['appid'],
+        os.environ['appkey']
     )
 
 
 def test_basic():
     s = StringIO('blah blah blah')
-    f = File('Blah', s) 
+    f = File('Blah', s)
     assert f.name == 'Blah'
     assert f._metadata['size'] == 14
     assert f._type == 'text/plain'
