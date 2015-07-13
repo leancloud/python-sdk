@@ -12,7 +12,7 @@ import leancloud
 from leancloud import client
 from leancloud import utils
 from leancloud.mime_type import mime_types
-
+from leancloud.errors import *
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
