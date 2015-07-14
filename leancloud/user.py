@@ -19,6 +19,9 @@ class User(Object):
         self._session_token = None
         super(User, self).__init__(**attrs)
 
+    def get_session_token(self):
+        return self._session_token
+
     def _merge_magic_field(self, attrs):
         self._session_token = attrs.get('sessionToken')
         attrs.pop('sessionToken', None)
@@ -44,6 +47,18 @@ class User(Object):
     @classmethod
     def get_current(cls):
         return getattr(thread_locals, 'current_user', None)
+
+    @classmethod
+    def become(cls, session_token):
+        response = client.get('/users/me', params={'session_token': session_token})
+        content = utils.response_to_json(response)
+        user = cls()
+        server_data = user.parse(content, response.status_code)
+        user._finish_fetch(server_data, False)
+        user._handle_save_result(True)
+        if 'smsCode' not in server_data:
+            user.attributes.pop('smsCode', None)
+        return user
 
     @property
     def is_current(self):
