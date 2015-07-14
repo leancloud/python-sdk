@@ -1,3 +1,14 @@
+## [1.2.0] - 2015-07-14
+### Updated
+- add User#become method
+
+## [1.1.1] - 2015-07-14
+### Updated
+- upload files to qiniu server directly
+- use request sigh instead of app key
+### Fixed
+- fix Role class don't have underscore bug
+
 ## [1.1.0] - 2015-06-12
 ### Added
 - LeanEngine: support bigquery hook

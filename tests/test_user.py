@@ -126,3 +126,12 @@ def test_update_user():
     user.login('user1', 'password')
     user.set('nickname', 'test_name')
     user.save()
+
+
+@with_setup(setup_func)
+def test_user_become():
+    existed_user = User()
+    existed_user.login('user1', 'password')
+    session_token = existed_user.get_session_token()
+    user = User.become(session_token)
+    assert user.get('username') == existed_user.get('username')
