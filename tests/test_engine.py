@@ -10,7 +10,7 @@ import leancloud
 from leancloud import Engine
 from leancloud import cloudfunc
 from leancloud.engine import authorization
-from request_generator import *
+from request_generator import generate_request
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
