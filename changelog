@@ -1,3 +1,7 @@
+## [1.2.0] - 2015-07-14
+### Updated
+- add User#become method
+
 ## [1.1.1] - 2015-07-14
 ### Updated
 - upload files to qiniu server directly
