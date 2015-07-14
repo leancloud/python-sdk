@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import os
+
 from nose.tools import with_setup
 
 import leancloud
@@ -12,8 +14,8 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 def setup_func():
     leancloud.init(
-        'pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb',
-        master_key='azkuvukzlq3t38abdrgrwqqdcx9me6178ctulhd14wynfq1n',
+        os.environ['appid'],
+        master_key=os.environ['masterKey']
     )
     users = Query(User).find()
     for u in users:

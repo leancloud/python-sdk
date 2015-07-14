@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import requests
 
 from wsgi_intercept import requests_intercept, add_wsgi_intercept
@@ -9,15 +10,18 @@ import leancloud
 from leancloud import Engine
 from leancloud import cloudfunc
 from leancloud.engine import authorization
+from request_generator import generate_request
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 env = None
 
-TEST_APP_ID = 'mdx1l0uh1p08tdpsk8ffn4uxjh2bbhl86rebrk3muph08qx7'
-TEST_APP_KEY = 'n35a5fdhawz56y24pjn3u9d5zp9r1nhpebrxyyu359cq0ddo'
-TEST_MASTER_KEY = 'h2ln3ffyfzysxmkl4p3ja7ih0y6sq5knsa2j0qnm1blk2rn2'
+TEST_APP_ID = os.environ['appid']
+TEST_APP_KEY = os.environ['appkey']
+TEST_MASTER_KEY = os.environ['masterKey']
+param_3_request = generate_request(TEST_APP_KEY)
+param_4_request = generate_request(TEST_MASTER_KEY, True)
 
 NORMAL_HEADERS = {
     'x-avoscloud-application-id': TEST_APP_ID,
@@ -93,18 +97,18 @@ def test_app_params_2():
 
 def test_app_params_3():
     requests.get(url + '/__engine/1/functions/hello', headers={
-        'x-avoscloud-request-sign': '28ad0513f8788d58bb0f7caa0af23400,1389085779854'
+        'x-avoscloud-request-sign': param_3_request
     })
     env = authorization.current_environ
-    assert env['_app_params']['key'] == 'n35a5fdhawz56y24pjn3u9d5zp9r1nhpebrxyyu359cq0ddo'
+    assert env['_app_params']['key'] == TEST_APP_KEY
 
 
 def test_app_params_4():
     requests.get(url + '/__engine/1/functions/hello', headers={
-        'x-avoscloud-request-sign': 'c884fe684c17c972eb4e33bc8b29cb5b,1389085779854,master'
+        'x-avoscloud-request-sign': param_4_request
     })
     env = authorization.current_environ
-    assert env['_app_params']['key'] == 'h2ln3ffyfzysxmkl4p3ja7ih0y6sq5knsa2j0qnm1blk2rn2'
+    assert env['_app_params']['key'] == TEST_MASTER_KEY
 
 
 def test_authorization_1():
@@ -169,10 +173,10 @@ def test_bigquery():
 
 
 def test_client():
-    leancloud.init('pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb', 'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd')
+    leancloud.init(os.environ['appid'], os.environ['appkey'])
     assert cloudfunc.run('add', a=1, b=2) == 3
 
 
 def test_request_sms_code():
-    leancloud.init('pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb', master_key='azkuvukzlq3t38abdrgrwqqdcx9me6178ctulhd14wynfq1n')
+    leancloud.init(os.environ['appid'], master_key=os.environ['masterKey'])
     cloudfunc.request_sms_code('13111111111')

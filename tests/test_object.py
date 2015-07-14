@@ -1,5 +1,7 @@
 # coding: utf-8
 
+import os
+
 from nose.tools import with_setup
 from nose.tools import ok_
 from nose.tools import eq_
@@ -14,8 +16,8 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 def setup_func():
     leancloud.init(
-        'pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb',
-        'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd',
+        os.environ['appid'],
+        os.environ['appkey']
     )
 
 
