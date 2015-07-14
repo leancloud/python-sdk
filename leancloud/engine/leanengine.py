@@ -73,7 +73,7 @@ class LeanEngineApplication(object):
             return
 
         session_token = environ['_app_params']['session_token']
-        user = leancloud.Object.create('_User', session_token=session_token)
+        user = leancloud.User.become(session_token)
         context.local.user = user
 
     def dispatch_request(self, request):
