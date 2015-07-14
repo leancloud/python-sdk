@@ -9,7 +9,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 def run(name, **params):
     """
-    调用 LeanEngine 上的原生代码
+    调用 LeanEngine 上的远程代码
 
     :param name: 需要调用的远程 Cloud Code 的名称
     :type name: basestring
