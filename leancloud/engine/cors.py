@@ -28,11 +28,18 @@ class CORSMiddleware(object):
     def __call__(self, environ, start_response):
         if environ['REQUEST_METHOD'] == 'OPTIONS':
             start_response('200 OK', [
-                ('Access-Control-Allow-Origin', self.ALLOW_ORIGIN),
+                ('Access-Control-Allow-Origin', environ.get('HTTP_ORIGIN', self.ALLOW_ORIGIN)),
                 ('Access-Control-Allow-Headers', self.ALLOW_HEADERS),
                 ('Access-Control-Allow-Methods', self.ALLOW_METHODS),
                 ('Access-Control-Max-Age', self.MAX_AGE)
             ])
             return ['']
         else:
-            return self.app(environ, start_response)
+            def cors_start_response(status, headers, exc_info=None):
+                headers.append(('Access-Control-Allow-Origin', self.ALLOW_ORIGIN))
+                headers.append(('Access-Control-Allow-Headers', self.ALLOW_HEADERS))
+                headers.append(('Access-Control-Allow-Methods', self.ALLOW_METHODS))
+                headers.append(('Access-Control-Max-Age', self.MAX_AGE))
+                return start_response(status, headers, exc_info)
+
+            return self.app(environ, cors_start_response)
