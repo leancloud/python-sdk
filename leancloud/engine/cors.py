@@ -35,4 +35,11 @@ class CORSMiddleware(object):
             ])
             return ['']
         else:
-            return self.app(environ, start_response)
+            def cors_start_response(status, headers, exc_info=None):
+                headers.append(('Access-Control-Allow-Origin', self.ALLOW_ORIGIN))
+                headers.append(('Access-Control-Allow-Headers', self.ALLOW_HEADERS))
+                headers.append(('Access-Control-Allow-Methods', self.ALLOW_METHODS))
+                headers.append(('Access-Control-Max-Age', self.MAX_AGE))
+                return start_response(status, headers, exc_info)
+
+            return self.app(environ, cors_start_response)
