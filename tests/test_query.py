@@ -133,6 +133,17 @@ def test_basic_query():
     assert not q.find()[0].has('playerName')
 
 
+def test_or_and_query():
+    q1 = Query(GameScore).greater_than('score', 5)
+    q2 = Query(GameScore).less_than('score', 10)
+
+    q = Query.and_(q1, q2)
+    assert q.dump() == {'where': {'$and': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}]}}
+
+    q = Query.or_(q1, q2)
+    assert q.dump() == {'where': {'$or': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}]}}
+
+
 @with_setup(setup_func)
 def test_pointer_query():
     foo = Object.create('Foo')
