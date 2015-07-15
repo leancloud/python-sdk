@@ -93,14 +93,14 @@ def check_error(func):
     return new_func
 
 
-def nodes_country(country='US'):
+def use_region(country='US'):
     global BASE_URL
     if country == 'US':
         BASE_URL = US_BASE_URL + '/' + SERVER_VERSION
     if country == 'CN':
         BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
     else:
-        raise ValueError('currently no nodes in the country')
+        raise ValueError('currently no nodes in the region')
 
 
 @need_init
