@@ -11,15 +11,16 @@ from leancloud import Engine
 from leancloud import cloudfunc
 from leancloud.engine import authorization
 from request_generator import generate_request
+from leancloud import LeanCloudError
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 env = None
 
-TEST_APP_ID = os.environ['appid']
-TEST_APP_KEY = os.environ['appkey']
-TEST_MASTER_KEY = os.environ['masterKey']
+TEST_APP_ID = os.environ['APP_ID']
+TEST_APP_KEY = os.environ['APP_KEY']
+TEST_MASTER_KEY = os.environ['MASTER_KEY']
 param_3_request = generate_request(TEST_APP_KEY)
 param_4_request = generate_request(TEST_MASTER_KEY, True)
 
@@ -173,10 +174,17 @@ def test_bigquery():
 
 
 def test_client():
-    leancloud.init(os.environ['appid'], os.environ['appkey'])
+    leancloud.init(os.environ['APP_ID'], os.environ['APP_KEY'])
     assert cloudfunc.run('add', a=1, b=2) == 3
 
 
 def test_request_sms_code():
-    leancloud.init(os.environ['appid'], master_key=os.environ['masterKey'])
-    cloudfunc.request_sms_code('13111111111')
+    leancloud.init(os.environ['APP_ID'], master_key=os.environ['MASTER_KEY'])
+    try:
+        cloudfunc.request_sms_code('13111111111')
+    except LeanCloudError, e:
+        if not e.code == 160:
+            raise e
+        else:
+            pass
+

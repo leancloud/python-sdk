@@ -22,8 +22,8 @@ game_scores = []
 
 def setup_func():
     leancloud.init(
-        os.environ['appid'],
-        os.environ['appkey']
+        os.environ['APP_ID'],
+        os.environ['APP_KEY']
     )
 
     olds = Query(GameScore).find()
