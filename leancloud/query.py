@@ -57,7 +57,7 @@ class Query(object):
         """
         if len(queries) < 2:
             raise ValueError('or_ need two queries at least')
-        if not reduce(lambda l, r: l._query_class._class_name == r._query_class._class_name, queries):
+        if not all(x._query_class._class_name == queries[0]._query_class._class_name for x in queries):
             raise TypeError('All queries must be for the same class')
         query = Query(queries[0]._query_class._class_name)
         query._or_query(queries)
@@ -73,7 +73,7 @@ class Query(object):
         """
         if len(queries) < 2:
             raise ValueError('or_ need two queries at least')
-        if not reduce(lambda l, r: l._query_class._class_name == r._query_class._class_name, queries):
+        if not all(x._query_class._class_name == queries[0]._query_class._class_name for x in queries):
             raise TypeError('All queries must be for the same class')
         query = Query(queries[0]._query_class._class_name)
         query._and_query(queries)

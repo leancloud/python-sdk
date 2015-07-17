@@ -136,12 +136,13 @@ def test_basic_query():
 def test_or_and_query():
     q1 = Query(GameScore).greater_than('score', 5)
     q2 = Query(GameScore).less_than('score', 10)
+    q3 = Query(GameScore).equal_to('playerName', 'foobar')
 
-    q = Query.and_(q1, q2)
-    assert q.dump() == {'where': {'$and': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}]}}
+    q = Query.and_(q1, q2, q3)
+    assert q.dump() == {'where': {'$and': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}, {'playerName': 'foobar'}]}}
 
-    q = Query.or_(q1, q2)
-    assert q.dump() == {'where': {'$or': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}]}}
+    q = Query.or_(q1, q2, q3)
+    assert q.dump() == {'where': {'$or': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}, {'playerName': 'foobar'}]}}
 
 
 @with_setup(setup_func)
