@@ -151,7 +151,7 @@ class File(object):
             ret, info = qiniu.put_data(uptoken, key, self._source)
 
             if info.status_code != 200:
-                raise LeanCloudError(1, 'the file is not saved')
+                raise LeanCloudError(1, 'the file is not saved, qiniu status code: {0}'.format(info.status_code))
         elif self._url and self.metadata['__source'] == 'external':
             data = {
                 'name': self._name,
@@ -160,15 +160,15 @@ class File(object):
                 'mime_type': self._type,
                 'url': self._url,
             }
-        response = client.post('/files/{0}'.format(self._name), data)
-        content = utils.response_to_json(response)
+            response = client.post('/files/{0}'.format(self._name), data)
+            content = utils.response_to_json(response)
 
-        self._name = content['name']
-        self._url = content['url']
-        self.id = content['objectId']
-        if 'size' in content:
-            self._metadata['size'] = content['size']
-        else:
-            raise ValueError
+            self._name = content['name']
+            self._url = content['url']
+            self.id = content['objectId']
+            if 'size' in content:
+                self._metadata['size'] = content['size']
+            else:
+                raise ValueError
 
         return self
