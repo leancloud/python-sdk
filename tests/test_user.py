@@ -14,8 +14,8 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 def setup_func():
     leancloud.init(
-        os.environ['appid'],
-        master_key=os.environ['masterKey']
+        os.environ['APP_ID'],
+        master_key=os.environ['MASTER_KEY']
     )
     users = Query(User).find()
     for u in users:

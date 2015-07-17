@@ -133,21 +133,25 @@ class File(object):
             base64.encode(self._source, output)
             self._source.seek(0)
             output.seek(0)
-            hex_octet = hex(int(1 + random.random() * 0x10000))[1:]
-            qiniu_UUID = hex_octet * 4 + self.extension
+            hex_octet = lambda: hex(int(1 + random.random() * 0x10000))[2:]
+            key = ''.join(hex_octet() for _ in xrange(4))
+            key = '{0}.{1}'.format(key, self.extension)
             data = {
                 'name': self._name,
-                'key': qiniu_UUID,
+                'key': key,
                 'ACL': self._acl,
                 'mime_type': self._type,
                 'metaData': self._metadata,
             }
             response = client.post('/qiniu', data)
             content = utils.response_to_json(response)
+            self.id = content['objectId']
+            self._url = content['url']
             uptoken = content['token']
-            ret, info = qiniu.put_data(uptoken, self._name, output, mime_type=self._type)
+            ret, info = qiniu.put_data(uptoken, key, self._source)
+
             if info.status_code != 200:
-                raise LeanCloudError(1, 'the file {0} not saved'.format(ret['key']))
+                raise LeanCloudError(1, 'the file is not saved, qiniu status code: {0}'.format(info.status_code))
         elif self._url and self.metadata['__source'] == 'external':
             data = {
                 'name': self._name,
@@ -156,9 +160,6 @@ class File(object):
                 'mime_type': self._type,
                 'url': self._url,
             }
-        else:
-            raise ValueError
-
         response = client.post('/files/{0}'.format(self._name), data)
         content = utils.response_to_json(response)
 
@@ -167,5 +168,7 @@ class File(object):
         self.id = content['objectId']
         if 'size' in content:
             self._metadata['size'] = content['size']
+        else:
+            raise ValueError
 
         return self

@@ -62,7 +62,7 @@ def need_init(func):
             md5sum.update(current_time + MASTER_KEY)
             headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
         else:
-            md5sum.update(current_time+APP_KEY)
+            md5sum.update(current_time + APP_KEY)
             headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time
 
         user = leancloud.User.get_current()
@@ -91,6 +91,16 @@ def check_error(func):
 
         return response
     return new_func
+
+
+def use_region(country='US'):
+    global BASE_URL
+    if country == 'US':
+        BASE_URL = US_BASE_URL + '/' + SERVER_VERSION
+    if country == 'CN':
+        BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
+    else:
+        raise ValueError('currently no nodes in the region')
 
 
 @need_init
