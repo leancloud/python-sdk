@@ -53,19 +53,18 @@ def test_save():
     assert f.id
 
 
-# @with_setup(setup_func)
-# def test_save_external():
-#     f = File.create_with_url('lenna.jpg', 'http://www.lenna.org/full/len_std.jpg')
-#     f.save()
-#     assert f.id
+@with_setup(setup_func)
+def test_save_external():
+    f = File.create_with_url('lenna.jpg', 'http://www.lenna.org/full/len_std.jpg')
+    f.save()
+    assert f.id
 
 
 @with_setup(setup_func)
 def test_thumbnail():
     r = requests.get('http://www.lenna.org/full/len_std.jpg')
-    print(r)
     b = buffer(r.content)
-    f = File('Lenna.jpg', b)
+    f = File('Lenna2.jpg', b)
     f.save()
     assert f.id
 

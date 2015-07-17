@@ -1,5 +1,4 @@
 # coding: utf-8
-
 import os
 import requests
 
@@ -183,8 +182,8 @@ def test_request_sms_code():
     try:
         cloudfunc.request_sms_code('13111111111')
     except LeanCloudError, e:
-        if not e.code == 160:
+        if not e.code == (160 or 601):
+            print e.code, type(e.code)
             raise e
         else:
             pass
-
