@@ -245,10 +245,13 @@ class Object(object):
             if key == 'objectId':
                 self.id = attrs[key]
             elif key == 'createdAt' or key == 'updatedAt':
-                if not isinstance(attrs[key], datetime):
+                if isinstance(attrs[key], dict) and attrs[key].get('__type') == 'Date':
+                    dt = iso8601.parse_date(attrs[key]['iso'])
+                elif not isinstance(attrs[key], datetime):
                     dt = iso8601.parse_date(attrs[key])
                 else:
                     dt = attrs[key]
+
                 if key == 'createdAt':
                     setattr(self, 'created_at', dt)
                 elif key == 'updatedAt':
