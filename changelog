@@ -1,3 +1,12 @@
+## [1.2.2] - 2015-07-17
+### Updated
+- bugfix for save file to qiniu
+
+## [1.2.1] - 2015-07-15
+### Updated
+- fixed Object._merge_magic_field bug
+- add CORS support in cloud func
+
 ## [1.2.0] - 2015-07-14
 ### Updated
 - add User#become method

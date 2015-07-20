@@ -124,7 +124,7 @@ class File(object):
             return False
         response = client.delete('/files/{0}'.format(self.id))
         if response.status_code != 200:
-            raise LeanCloudError(1, "the file is not saved")
+            raise LeanCloudError(1, "the file is not sucessfully destroyed")
 
     def save(self):
         if self._source:

@@ -9,6 +9,7 @@ from werkzeug.serving import run_simple
 import context
 import leancloud
 from .authorization import AuthorizationMiddleware
+from .cors import CORSMiddleware
 from .leanengine import LeanEngineApplication
 from .leanengine import LeanEngineError
 from .leanengine import register_cloud_func
@@ -29,7 +30,7 @@ class Engine(object):
     def __init__(self, wsgi_app):
         self.current_user = user
         self.origin_app = wsgi_app
-        self.cloud_app = context.local_manager.make_middleware(AuthorizationMiddleware(LeanEngineApplication()))
+        self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(LeanEngineApplication())))
 
     def __call__(self, environ, start_response):
         request = Request(environ)

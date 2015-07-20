@@ -15,6 +15,7 @@ Submodules
    leancloud.mime_type
    leancloud.object_
    leancloud.operation
+   leancloud.push
    leancloud.query
    leancloud.relation
    leancloud.role
