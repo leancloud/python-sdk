@@ -123,8 +123,8 @@ class File(object):
         if not self.id:
             return False
         response = client.delete('/files/{0}'.format(self.id))
-        content = utils.response_to_json(response)
-        return content
+        if response.status_code != 200:
+            raise LeanCloudError(1, "the file is not saved")
 
     def save(self):
         if self._source:
