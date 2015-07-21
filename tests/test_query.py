@@ -132,6 +132,67 @@ def test_basic_query():
     q = Query(GameScore).select('score')
     assert not q.find()[0].has('playerName')
 
+@with_setup(setup_func)
+def test_skip():
+    q = Query(GameScore)
+    q.skip(5)
+    assert q._skip == 5
+    q.skip(100)
+    assert q._skip == 10
+
+def test_limit()
+    q = Query(GameScore)
+    q.limit(121)
+    assert q._limit == 121
+    test_raise
+
+
+
+@with_setup(setup_func)
+def test_or_query()
+
+def test_and_query()
+
+def test_cloud_query()
+
+def test_dump()
+
+
+
+def not_equal_to()
+
+def test_contains_all()
+
+def test_does_not_exist()
+
+def test_does_not_match_query()
+
+def test_match_key_in_query()
+
+def test_does_not_match_key_in_query() 
+
+def test_contains()
+
+def test_start_with()
+
+def test_end_with()
+
+def test_add_asending()
+
+def test_near()
+
+def test_within_radians()
+
+def test_within_miles()
+
+def test_within_geobox()
+
+def test_select()
+
+def test_FriendshipQuery()
+
+def test_process_result)()
+
 
 @with_setup(setup_func)
 def test_pointer_query():
@@ -144,10 +205,15 @@ def test_pointer_query():
     q = Query('Foo').equal_to('bar', bar)
     assert len(q.find()) == 1
 
-
+# add more tests
 def test_matches_query():
     inner_query = leancloud.Query('Post')
     inner_query.exists("image")
     query = leancloud.Query('Comment')
     query.matches_query("post", inner_query)
     assert query.dump() == {'where': {'post': {'$inQuery': {'className': 'Post', 'where': {'image': {'$exists': True}}}}}}
+
+def test_destroy_all():
+   q = query(GameScore) 
+   response = q.destroy_all()
+   assert response.status_code == 200
