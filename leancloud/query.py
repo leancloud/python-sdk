@@ -37,6 +37,9 @@ class Query(object):
         """
         if isinstance(query_class, basestring):
             query_class = Object.extend(query_class)
+        elif not isinstance(query_class, Object):
+            raise ValueError('Query takes string or LeanCloud Object')
+
         self._query_class = query_class
 
         self._where = {}
