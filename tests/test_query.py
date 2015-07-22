@@ -1,5 +1,4 @@
 # coding: utf-8
-
 from datetime import datetime
 import os
 
@@ -9,6 +8,7 @@ from nose.tools import with_setup
 import leancloud
 from leancloud import Query
 from leancloud import Object
+from leancloud import GeoPoint
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -16,6 +16,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 class GameScore(Object):
     pass
 
+number = Object.extend('number')
 
 game_scores = []
 
@@ -36,8 +37,14 @@ def setup_func():
         game_score = GameScore()
         game_score.set('score', i)
         game_score.set('playerName', '张三')
+        game_score.set('location', GeoPoint(latitude=i, longitude=-i))
         game_score.save()
         game_scores.append(game_score)
+
+    global n1
+    n1 = number()
+    n1.set('num', 1)
+    n1.save()
 
 
 def destroy_func():
@@ -146,6 +153,145 @@ def test_or_and_query():
 
 
 @with_setup(setup_func)
+def test_skip():
+    q = Query(GameScore)
+    q.skip(5)
+    assert q._skip == 5
+
+
+def test_limit():
+    q = Query(GameScore)
+    q.limit(121)
+    assert q._limit == 121
+
+
+@with_setup(setup_func)
+def test_cloud_query():
+    q = Query(GameScore)
+    result = q.do_cloud_query('select count(*), * from GameScore where score<11')
+#     results = result.results
+#     assert all(obj in game_scores for obj in results)
+#     assert all(obj in results for obj in game_scores)
+    assert result.count == 10
+    assert result.class_name == 'GameScore'
+
+
+@with_setup(setup_func)
+def test_or():
+    q1 = Query(GameScore).greater_than('score', -1)
+    q2 = Query(GameScore).equal_to('name', 'x')
+    result = Query.or_(q1, q2).ascending('score').find()
+    eq_([i.get('score') for i in result], range(10))
+
+
+@with_setup(setup_func)
+def test_and():
+    q1 = Query(GameScore).greater_than('score', 2)
+    q2 = Query(GameScore).greater_than('score', 3)
+    result = Query.and_(q1, q2).ascending('score').find()
+    eq_([i.get('score') for i in result], range(4, 10))
+
+
+# @with_setup(setup_func)
+# def test_dump():
+#     q = Query(GameScore)
+
+
+@with_setup(setup_func)
+def not_equal_to():
+    q = Query(GameScore)
+    assert q.not_equal_to('playerName', '李四')
+
+
+@with_setup(setup_func)
+def test_contains_all():
+    q = Query(GameScore).contains_all('score', [5])
+    result = q.find()
+    eq_([i.get('score') for i in result], [5])
+
+
+@with_setup(setup_func)
+def test_does_not_exists():
+    q = Query(GameScore).does_not_exists('oops')
+    assert q.find()
+
+
+# @with_setup(setup_func)
+# def test_does_not_match_query():
+#     q = Query(GameScore)
+
+
+# @with_setup(setup_func)
+# def test_match_key_in_query():
+#     q = Query(GameScore)
+#     number_query = Query(number)
+#     result = q.matched_key_in_query('score', 'number', number_query).find()
+#     eq_(result.get('score'), 1)
+#
+#
+# @with_setup(setup_func)
+# def test_does_not_match_key_in_query():
+#     q = Query(GameScore)
+#     number_query = Query(number)
+#     result = q.matched_key_in_query('score', 'number', number_query).find()
+#     eq_(len(result), 9)
+
+@with_setup(setup_func)
+def test_contains():
+    q = Query(GameScore).contains('playerName', '三')
+    eq_(len(q.find()), 10)
+
+
+@with_setup(setup_func)
+def test_startswith():
+    q = Query(GameScore).startswith('playerName', '张')
+    eq_(len(q.find()), 10)
+
+
+@with_setup(setup_func)
+def test_endswith():
+    q = Query(GameScore).endswith('playerName', '三')
+    eq_(len(q.find()), 10)
+
+
+@with_setup(setup_func)
+def test_add_ascending():
+    result = Query(GameScore).add_ascending('score').find()
+    eq_([i.get('score') for i in result], range(10))
+
+
+@with_setup(setup_func)
+def test_near():
+    result = Query(GameScore).near('location', GeoPoint(latitude=0, longitude=0)).find()
+    eq_([i.get('score') for i in result], range(10))
+
+
+@with_setup(setup_func)
+def test_within_radians():
+    result = Query(GameScore).within_radians('location', GeoPoint(latitude=0, longitude=0), 1).find()
+    eq_([i.get('score') for i in result], range(10))
+
+
+@with_setup(setup_func)
+def test_within_miles():
+    result = Query(GameScore).within_miles('location', GeoPoint(latitude=0, longitude=0), 4000).find()
+    eq_([i.get('score') for i in result], range(10))
+
+
+# to_check
+@with_setup(setup_func)
+def test_within_geobox():
+    result = Query(GameScore).within_geo_box('location', (0, 0), (11, 11)).find()
+    eq_([i.get('score') for i in result], [0])
+
+
+@with_setup(setup_func)
+def test_select():
+    result = Query(GameScore).select('score', 'playerName').find()
+    eq_(len(result), 10)
+
+
+@with_setup(setup_func)
 def test_pointer_query():
     foo = Object.create('Foo')
     bar = Object.create('Bar')
@@ -157,9 +303,18 @@ def test_pointer_query():
     assert len(q.find()) == 1
 
 
-def test_matches_query():
+# TODO add more tests
     inner_query = leancloud.Query('Post')
     inner_query.exists("image")
     query = leancloud.Query('Comment')
     query.matches_query("post", inner_query)
     assert query.dump() == {'where': {'post': {'$inQuery': {'className': 'Post', 'where': {'image': {'$exists': True}}}}}}
+
+
+# @with_setup(setup_func)
+# def test_destroy_all():
+#     result = Query(GameScore).destroy_all()
+#     eq_(result.status_code, 200)
+
+# TODO
+# def test_FriendshipQuery():
