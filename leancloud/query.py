@@ -37,7 +37,7 @@ class Query(object):
         """
         if isinstance(query_class, basestring):
             query_class = Object.extend(query_class)
-        elif isinstance(query_class, Object):
+        elif issubclass(query_class, Object):
             pass
         else:
             raise ValueError('Query takes string or LeanCloud Object')
@@ -62,9 +62,9 @@ class Query(object):
         """
         if len(queries) < 2:
             raise ValueError('or_ need two queries at least')
-        if not reduce(lambda l, r: l['className'] == r['className'], queries):
+        if not all(x._query_class._class_name == queries[0]._query_class._class_name for x in queries):
             raise TypeError('All queries must be for the same class')
-        query = Query(queries[0]['className'])
+        query = Query(queries[0]._query_class._class_name)
         query._or_query(queries)
         return query
 
@@ -77,10 +77,10 @@ class Query(object):
         :rtype: Query
         """
         if len(queries) < 2:
-            raise ValueError('or_ need two queries at least')
-        if not reduce(lambda l, r: l['className'] == r['className'], queries):
+            raise ValueError('and_ need two queries at least')
+        if not all(x._query_class._class_name == queries[0]._query_class._class_name for x in queries):
             raise TypeError('All queries must be for the same class')
-        query = Query(queries[0]['className'])
+        query = Query(queries[0]._query_class._class_name)
         query._and_query(queries)
         return query
 
@@ -182,14 +182,14 @@ class Query(object):
 
         return objs
 
-    def destroy_all(self):
-        """
-        在服务器上删除所有满足查询条件的对象。
+    # def destroy_all(self):
+    #     """
+    #     在服务器上删除所有满足查询条件的对象。
 
-        :raise: LeanCLoudError
-        """
-        result = client.delete('/classes/{0}'.format(self._query_class._class_name), self.dump())
-        return result
+    #     :raise: LeanCLoudError
+    #     """
+    #     result = client.delete('/classes/{0}'.format(self._query_class._class_name), self.dump())
+    #     return result
 
     def count(self):
         """
@@ -455,6 +455,7 @@ class Query(object):
         :rtype: Query
         """
         self._add_condition(key, '$regex', self._quote(value))
+        return self
 
     def startswith(self, key, value):
         """
