@@ -75,11 +75,7 @@ class Query(object):
         :rtype: Query
         """
         if len(queries) < 2:
-<<<<<<< HEAD
-            raise ValueError('or_ need two queries at least')
-=======
             raise ValueError('and_ need two queries at least')
->>>>>>> more_tests
         if not all(x._query_class._class_name == queries[0]._query_class._class_name for x in queries):
             raise TypeError('All queries must be for the same class')
         query = Query(queries[0]._query_class._class_name)
