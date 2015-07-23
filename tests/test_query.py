@@ -41,10 +41,10 @@ def setup_func():
         game_score.save()
         game_scores.append(game_score)
 
-    global n1
-    n1 = number()
-    n1.set('num', 1)
-    n1.save()
+#     global n1
+#     n1 = number()
+#     n1.set('num', 1)
+#     n1.save()
 
 
 def destroy_func():
