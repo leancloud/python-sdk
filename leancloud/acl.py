@@ -39,7 +39,7 @@ class ACL(object):
             user_id = user_id.id
         elif isinstance(user_id, leancloud.Role):
             user_id = 'role:' + user_id.get_name()
-        permissions = self.permissions_by_id[user_id]
+        permissions = self.permissions_by_id.get(user_id)
         if not permissions:
             return False
         return permissions.get(access_type, False)
@@ -80,7 +80,7 @@ class ACL(object):
             role = role.get_name()
         if not isinstance(role, basestring):
             raise TypeError('role must be a leancloud.Role or str')
-        self.get_read_access('role:{0}'.format(role))
+        return self.get_read_access('role:{0}'.format(role))
 
     def set_role_write_access(self, role, allowed):
         if isinstance(role, leancloud.Role):
@@ -94,4 +94,4 @@ class ACL(object):
             role = role.get_name()
         if not isinstance(role, basestring):
             raise TypeError('role must be a leancloud.Role or str')
-        self.get_write_access('role:{0}'.format(role))
+        return self.get_write_access('role:{0}'.format(role))

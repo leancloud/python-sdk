@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from datetime import datetime
-
 from leancloud.object_ import Object
 from leancloud import client
 from leancloud import utils
