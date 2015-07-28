@@ -237,6 +237,12 @@ def test_does_not_exists():
 #     eq_(len(result), 9)
 
 @with_setup(setup_func)
+def test_matched():
+    result = Query(GameScore).matched('playerName', '^张', ignore_case=True, multi_line=True).find()
+    assert len(result) == 10
+
+
+@with_setup(setup_func)
 def test_contains():
     q = Query(GameScore).contains('playerName', '三')
     eq_(len(q.find()), 10)

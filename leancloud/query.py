@@ -358,7 +358,7 @@ class Query(object):
         :param key: 查询条件字段名
         :param regex: 查询正则表达式
         :param ignore_case: 查询是否忽略大小写，默认不忽略
-        :param multi_line: 查询是否陪陪多行，默认不匹配
+        :param multi_line: 查询是否匹配多行，默认不匹配
         :rtype: Query
         """
         if not isinstance(regex, basestring):
