@@ -1,3 +1,9 @@
+## [1.2.3] - 2015-07-28
+### Updated
+- bugfix for ACL#get_role_write_access
+- bugfix for ACL#_get_access
+- more unit test
+
 ## [1.2.2] - 2015-07-17
 ### Updated
 - bugfix for save file to qiniu
