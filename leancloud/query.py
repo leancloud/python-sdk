@@ -412,7 +412,7 @@ class Query(object):
         :rtype: Query
         """
         dumped = query.dump()
-        dumped['classname'] = query._query_class._class_name
+        dumped['className'] = query._query_class._class_name
         self._add_condition(key, '$select', {'key': query_key, 'query': dumped})
         return self
 
@@ -427,7 +427,7 @@ class Query(object):
         :rtype: Query
         """
         dumped = query.dump()
-        dumped['classname'] = query._query_class._class_name
+        dumped['className'] = query._query_class._class_name
         self._add_condition(key, '$dontSelect', {'key': query_key, 'query': dumped})
         return self
 
