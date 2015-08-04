@@ -1,3 +1,7 @@
+## [1.2.4] - 2015-08-04
+### Updated
+- bugfix for Query#matched_key_in_query
+
 ## [1.2.3] - 2015-07-28
 ### Updated
 - bugfix for ACL#get_role_write_access
