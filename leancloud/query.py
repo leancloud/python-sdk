@@ -1,6 +1,8 @@
 # coding: utf-8
 
 import json
+import types
+import warnings
 
 import leancloud
 from leancloud import client
@@ -37,9 +39,8 @@ class Query(object):
         """
         if isinstance(query_class, basestring):
             query_class = Object.extend(query_class)
-        try:
-            issubclass(query_class, Object)
-        except TypeError:
+
+        if (not isinstance(query_class, (type, types.ClassType))) or (not issubclass(query_class, Object)):
             raise ValueError('Query takes string or LeanCloud Object')
 
         self._query_class = query_class
@@ -403,7 +404,10 @@ class Query(object):
         self._add_condition(key, '$notInQuery', dumped)
         return self
 
-    def match_key_in_query(self, key, query_key, query):
+    def matched_key_in_query(self, key, query_key, query):
+        warnings.warn(' the query is disabled, please use matches_key_in_query')
+
+    def matches_key_in_query(self, key, query_key, query):
         """
         增加查询条件，限制查询结果对象指定字段的值，与另外一个查询对象的返回结果指定的值相同。
 
