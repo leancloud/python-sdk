@@ -4,6 +4,7 @@ import json
 import time
 import hashlib
 import requests
+import os
 
 import leancloud
 from leancloud import utils
@@ -22,7 +23,11 @@ US_BASE_URL = 'https://avoscloud.us'
 SERVER_VERSION = '1.1'
 SDK_VERSION = '1.0.0'
 BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
-TIMEOUT_SECONDS = 15
+
+try:
+    TIMEOUT_SECONDS = os.environ['TRIVAS_TIMEOUT']
+except KeyError:
+    TIMEOUT_SECONDS = 15
 
 
 def init(app_id, app_key=None, master_key=None):
