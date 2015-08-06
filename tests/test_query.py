@@ -28,19 +28,16 @@ def setup_func():
         os.environ['APP_KEY']
     )
 
-    if Query(GameScore).count() == 10:
-        pass
-    else:
-        olds = Query(GameScore).find()
-        for old in olds:
-            old.destroy()
+    olds = Query(GameScore).find()
+    for old in olds:
+        old.destroy()
 
-        for i in xrange(10):
-            game_score = GameScore()
-            game_score.set('score', i)
-            game_score.set('playerName', '张三')
-            game_score.set('location', GeoPoint(latitude=i, longitude=-i))
-            game_score.save()
+    for i in range(10):
+        game_score = GameScore()
+        game_score.set('score', i)
+        game_score.set('playerName', '张三')
+        game_score.set('location', GeoPoint(latitude=i, longitude=-i))
+        game_score.save()
 
 
 def match_key_setup():
