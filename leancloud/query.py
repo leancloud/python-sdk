@@ -37,7 +37,9 @@ class Query(object):
         """
         if isinstance(query_class, basestring):
             query_class = Object.extend(query_class)
-        elif not issubclass(query_class, Object):
+        try:
+            issubclass(query_class, Object)
+        except TypeError:
             raise ValueError('Query takes string or LeanCloud Object')
 
         self._query_class = query_class
@@ -100,7 +102,7 @@ class Query(object):
         content = utils.response_to_json(client.get('/cloudQuery', params))
 
         objs = []
-        query = Query(content['className'])
+        query = cls(content['className'])
         for result in content['results']:
             obj = query._new_object()
             obj._finish_fetch(query._process_result(result), True)
@@ -401,7 +403,7 @@ class Query(object):
         self._add_condition(key, '$notInQuery', dumped)
         return self
 
-    def matched_key_in_query(self, key, query_key, query):
+    def match_key_in_query(self, key, query_key, query):
         """
         增加查询条件，限制查询结果对象指定字段的值，与另外一个查询对象的返回结果指定的值相同。
 
@@ -412,7 +414,7 @@ class Query(object):
         :rtype: Query
         """
         dumped = query.dump()
-        dumped['classname'] = query._query_class._class_name
+        dumped['className'] = query._query_class._class_name
         self._add_condition(key, '$select', {'key': query_key, 'query': dumped})
         return self
 
@@ -427,7 +429,7 @@ class Query(object):
         :rtype: Query
         """
         dumped = query.dump()
-        dumped['classname'] = query._query_class._class_name
+        dumped['className'] = query._query_class._class_name
         self._add_condition(key, '$dontSelect', {'key': query_key, 'query': dumped})
         return self
 
@@ -602,11 +604,13 @@ class Query(object):
 
 class FriendshipQuery(Query):
     def __init__(self, query_class):
+        super(FriendshipQuery, self).__init__(query_class)
         if query_class in ('_Follower', 'Follower'):
             self._friendship_tag = 'follower'
         elif query_class in ('_Followee', 'Followee'):
             self._friendship_tag = 'followee'
-        super(FriendshipQuery, self).__init__(leancloud.User)
+        else:
+            raise TypeError('FriendshipQuery takes only follower or followee')
 
     def _new_object(self):
         return leancloud.User()

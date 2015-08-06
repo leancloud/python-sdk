@@ -84,18 +84,15 @@ def test_follow():
     user1.follow(user2.id)
 
 
+@with_setup(setup_func)
 def test_follower_query():
-    query = User.create_follower_query('1')
-    assert query._friendship_tag == 'follower'
-    assert query.dump() == {
-        'where': {
-            'user': {
-                '__type': 'Pointer',
-                'className': '_User',
-                'objectId': '1',
-            },
-        },
-    }
+    user1 = User()
+    user1.login('user1', 'password')
+    user2 = User()
+    user2.login('user2', 'password')
+    user2.follow(user1.id)
+    query = User.create_follower_query(user1.id)
+    assert query.first().id == user2.id
 
 
 def test_followee_query():
