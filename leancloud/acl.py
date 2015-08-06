@@ -39,7 +39,7 @@ class ACL(object):
             user_id = user_id.id
         elif isinstance(user_id, leancloud.Role):
             user_id = 'role:' + user_id.get_name()
-        permissions = self.permissions_by_id.get(user_id, False)
+        permissions = self.permissions_by_id.get(user_id)
         if not permissions:
             return False
         return permissions.get(access_type, False)
