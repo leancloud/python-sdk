@@ -2,6 +2,7 @@
 
 import requests
 import os
+import leancloud
 
 requests.packages.urllib3.disable_warnings()
 
@@ -21,3 +22,7 @@ try:
     os.environ['MASTER_KEY']
 except KeyError:
     os.environ['MASTER_KEY'] = 'azkuvukzlq3t38abdrgrwqqdcx9me6178ctulhd14wynfq1n'
+try:
+    leancloud.client.IMEOUT_SECONDS = int(os.environ['TRAVIS_TIMEOUT'])
+except KeyError:
+    pass

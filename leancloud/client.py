@@ -24,10 +24,7 @@ SERVER_VERSION = '1.1'
 SDK_VERSION = '1.0.0'
 BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
 
-try:
-    TIMEOUT_SECONDS = int(os.environ['TRIVAS_TIMEOUT'])
-except KeyError:
-    TIMEOUT_SECONDS = 15
+TIMEOUT_SECONDS = 15
 
 
 def init(app_id, app_key=None, master_key=None):
