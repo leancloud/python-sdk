@@ -1,3 +1,8 @@
+## [1.2.5] - 2015-08-07
+### Updated
+- bugfix for FriendshipQuery
+- bugfix for use masterkey
+
 ## [1.2.4] - 2015-08-04
 ### Updated
 - bugfix for Query#matched_key_in_query
