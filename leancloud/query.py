@@ -406,10 +406,7 @@ class Query(object):
 
     def matched_key_in_query(self, key, query_key, query):
         warnings.warn(' the query is disabled, please use matches_key_in_query')
-        dumped = query.dump()
-        dumped['className'] = query._query_class._class_name
-        self._add_condition(key, '$select', {'key': query_key, 'query': dumped})
-        return self
+        matches_key_in_query(self, key, query_key, query)
 
     def matches_key_in_query(self, key, query_key, query):
         """
