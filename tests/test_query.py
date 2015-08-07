@@ -1,7 +1,6 @@
 # coding: utf-8
 from datetime import datetime
 import os
-import warnings
 
 from nose.tools import eq_
 from nose.tools import with_setup
@@ -23,11 +22,17 @@ A = Object.extend('A')
 B = Object.extend('B')
 
 
-# clean up the test data
-def test_data_init():
-    olds = Query(GameScore).find()
-    for old in olds:
-        old.destroy()
+# unmark the test to clean up the test data
+# def test_data_cleanup():
+#     olds = Query(GameScore).find()
+#     for old in olds:
+#         old.destroy()
+#     old1 = q_a.find()
+#     old2 = q_b.find()
+#     for i in old1:
+#         i.destroy()
+#     for k in old2:
+#            k.destroy()
 
 
 def setup_func():
