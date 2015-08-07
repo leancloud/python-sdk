@@ -22,6 +22,13 @@ A = Object.extend('A')
 B = Object.extend('B')
 
 
+# clean up the test data
+def test_data_init():
+    olds = Query(GameScore).find()
+    for old in olds:
+        old.destroy()
+
+
 def setup_func():
     leancloud.init(
         os.environ['APP_ID'],
@@ -29,15 +36,19 @@ def setup_func():
     )
 
     olds = Query(GameScore).find()
-    for old in olds:
-        old.destroy()
+    # make sure the test data does not change, else re-initialize it
+    if len(olds) == 10:
+        pass
+    else:
+        for old in olds:
+            old.destroy()
 
-    for i in range(10):
-        game_score = GameScore()
-        game_score.set('score', i)
-        game_score.set('playerName', '张三')
-        game_score.set('location', GeoPoint(latitude=i, longitude=-i))
-        game_score.save()
+        for i in range(10):
+            game_score = GameScore()
+            game_score.set('score', i)
+            game_score.set('playerName', '张三')
+            game_score.set('location', GeoPoint(latitude=i, longitude=-i))
+            game_score.save()
 
 
 def match_key_setup():
