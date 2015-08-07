@@ -25,7 +25,7 @@ SDK_VERSION = '1.0.0'
 BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
 
 try:
-    TIMEOUT_SECONDS = os.environ['TRIVAS_TIMEOUT']
+    TIMEOUT_SECONDS = int(os.environ['TRIVAS_TIMEOUT'])
 except KeyError:
     TIMEOUT_SECONDS = 15
 
@@ -106,6 +106,12 @@ def use_region(country='US'):
         BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
     else:
         raise ValueError('currently no nodes in the region')
+
+
+def get_server_time():
+    response = requests.get('https://leancloud.cn/1.1/date')
+    content = json.loads(response.content)
+    return utils.decode('iso', content)
 
 
 @need_init
