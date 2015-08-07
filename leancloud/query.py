@@ -405,8 +405,8 @@ class Query(object):
         return self
 
     def matched_key_in_query(self, key, query_key, query):
-        warnings.warn(' the query is disabled, please use matches_key_in_query')
-        matches_key_in_query(self, key, query_key, query)
+        warnings.warn(' the query is deprecated, please use matches_key_in_query', DeprecationWarning)
+        return self.matches_key_in_query(key, query_key, query)
 
     def matches_key_in_query(self, key, query_key, query):
         """
