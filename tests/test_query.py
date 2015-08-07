@@ -1,9 +1,11 @@
 # coding: utf-8
 from datetime import datetime
 import os
+import warnings
 
 from nose.tools import eq_
 from nose.tools import with_setup
+from nose.tools import raises
 
 import leancloud
 from leancloud import Query
@@ -17,8 +19,8 @@ class GameScore(Object):
     pass
 
 number = Object.extend('number')
-
-game_scores = []
+A = Object.extend('A')
+B = Object.extend('B')
 
 
 def setup_func():
@@ -31,20 +33,36 @@ def setup_func():
     for old in olds:
         old.destroy()
 
-    global game_scores
-    game_scores = []
-    for i in xrange(10):
+    for i in range(10):
         game_score = GameScore()
         game_score.set('score', i)
         game_score.set('playerName', '张三')
         game_score.set('location', GeoPoint(latitude=i, longitude=-i))
         game_score.save()
-        game_scores.append(game_score)
 
-#     global n1
-#     n1 = number()
-#     n1.set('num', 1)
-#     n1.save()
+
+def match_key_setup():
+    q_a = Query(A)
+    q_b = Query(B)
+
+    if q_a.count() == 50 and q_b.count() == 50:
+        pass
+    else:
+        old1 = q_a.find()
+        old2 = q_b.find()
+        for i in old1:
+            i.destroy()
+        for k in old2:
+            k.destroy()
+
+        for i in range(5):
+            for k in range(10):
+                a = A()
+                a.set('age', k)
+                a.save()
+                b = B()
+                b.set('work_year', k)
+                b.save()
 
 
 def destroy_func():
@@ -54,9 +72,14 @@ def destroy_func():
     #     album.delete()
 
 
-@with_setup(setup_func, destroy_func)
-def test_save():
-    assert game_scores[0].id
+@raises(ValueError)
+def test_query_error():
+    Query(123)
+
+
+# @with_setup(setup_func, destroy_func)
+# def test_save():
+#     assert game_scores[0].id
 
 
 @with_setup(setup_func, destroy_func)
@@ -106,15 +129,14 @@ def test_basic_query():
 
     # get
     q = Query(GameScore)
-    local_game_score = game_scores[0]
-    q.get(local_game_score.id)
+    q.get(game_score.id)
 
     # count
     q = Query(GameScore)
     eq_(q.count(), 10)
 
-    # descending
-    q = Query(GameScore).descending('score')
+    # descending and add_descending
+    q = Query(GameScore).add_descending('score').descending('score')
     eq_([x.get('score') for x in q.find()], range(9, -1, -1))
 
     # greater_than
@@ -152,6 +174,11 @@ def test_or_and_query():
     assert q.dump() == {'where': {'$or': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}, {'playerName': 'foobar'}]}}
 
 
+@raises(ValueError)
+def test_or_erorr():
+    Query(GameScore).or_('score')
+
+
 @with_setup(setup_func)
 def test_skip():
     q = Query(GameScore)
@@ -165,10 +192,15 @@ def test_limit():
     assert q._limit == 121
 
 
+@raises(ValueError)
+def test_limit_error():
+    Query(GameScore).limit(1001)
+
+
 @with_setup(setup_func)
 def test_cloud_query():
     q = Query(GameScore)
-    result = q.do_cloud_query('select count(*), * from GameScore where score<11')
+    result = q.do_cloud_query('select count(*), * from GameScore where score<11', ['score'])
 #     results = result.results
 #     assert all(obj in game_scores for obj in results)
 #     assert all(obj in results for obj in game_scores)
@@ -177,7 +209,7 @@ def test_cloud_query():
 
 
 @with_setup(setup_func)
-def test_or():
+def test_or_():
     q1 = Query(GameScore).greater_than('score', -1)
     q2 = Query(GameScore).equal_to('name', 'x')
     result = Query.or_(q1, q2).ascending('score').find()
@@ -185,22 +217,25 @@ def test_or():
 
 
 @with_setup(setup_func)
-def test_and():
+def test_and_():
     q1 = Query(GameScore).greater_than('score', 2)
     q2 = Query(GameScore).greater_than('score', 3)
     result = Query.and_(q1, q2).ascending('score').find()
     eq_([i.get('score') for i in result], range(4, 10))
 
 
+@raises(ValueError)
+def test_and_error():
+    Query(GameScore).and_('score')
 # @with_setup(setup_func)
 # def test_dump():
 #     q = Query(GameScore)
 
 
 @with_setup(setup_func)
-def not_equal_to():
-    q = Query(GameScore)
-    assert q.not_equal_to('playerName', '李四')
+def test_not_equal_to():
+    result = Query(GameScore).not_equal_to('playerName', '李四').find()
+    assert len(result) == 10
 
 
 @with_setup(setup_func)
@@ -211,30 +246,53 @@ def test_contains_all():
 
 
 @with_setup(setup_func)
-def test_does_not_exists():
-    q = Query(GameScore).does_not_exists('oops')
-    assert q.find()
+def test_exist_and_does_not_exists():
+    assert Query(GameScore).does_not_exists('oops').find()
+    result = Query(GameScore).exists('playerName').find()
+    assert len(result) == 10
 
 
-# @with_setup(setup_func)
-# def test_does_not_match_query():
-#     q = Query(GameScore)
+@raises(TypeError)
+def test_matched_error():
+    Query(GameScore).matched('score', 1)
 
 
-# @with_setup(setup_func)
-# def test_match_key_in_query():
-#     q = Query(GameScore)
-#     number_query = Query(number)
-#     result = q.matched_key_in_query('score', 'number', number_query).find()
-#     eq_(result.get('score'), 1)
-#
-#
-# @with_setup(setup_func)
-# def test_does_not_match_key_in_query():
-#     q = Query(GameScore)
-#     number_query = Query(number)
-#     result = q.matched_key_in_query('score', 'number', number_query).find()
-#     eq_(len(result), 9)
+@with_setup(setup_func)
+def test_matched():
+    result = Query(GameScore).matched('playerName', '^张', ignore_case=True, multi_line=True).find()
+    assert len(result) == 10
+
+
+@with_setup(setup_func)
+def test_does_not_match_query():
+    q = Query(GameScore).greater_than('score', -1)
+    result = Query(GameScore).does_not_match_query('playerName', q).find()
+    print result
+
+
+@with_setup(setup_func, match_key_setup)
+def test_matches_key_in_query():
+    q1 = Query(A).equal_to('age', 1)
+    q2 = Query(B)
+    result = q2.matches_key_in_query('work_year', 'age', q1).find()
+    assert len(result) == 5
+
+
+@with_setup(setup_func, match_key_setup)
+def test_matched_key_in_query():
+    q1 = Query(A).equal_to('age', 1)
+    q2 = Query(B)
+    result = q2.matched_key_in_query('work_year', 'age', q1).find()
+    assert len(result) == 5
+
+
+@with_setup(setup_func, match_key_setup)
+def test_does_not_match_key_in_query():
+    q1 = Query(A).equal_to('age', 1)
+    q2 = Query(B)
+    result = q2.does_not_match_key_in_query('work_year', 'age', q1).find()
+    assert len(result) == 45
+
 
 @with_setup(setup_func)
 def test_contains():
@@ -278,6 +336,12 @@ def test_within_miles():
     eq_([i.get('score') for i in result], range(10))
 
 
+@with_setup(setup_func)
+def test_within_kilometers():
+    result = Query(GameScore).within_kilometers('location', GeoPoint(latitude=0, longitude=0), 4000).find()
+    assert len(result) == 10
+
+
 # to_check
 @with_setup(setup_func)
 def test_within_geobox():
@@ -286,8 +350,14 @@ def test_within_geobox():
 
 
 @with_setup(setup_func)
+def test_include():
+    result = Query(GameScore).include(['score']).find()
+    assert len(result) == 10
+
+
+@with_setup(setup_func)
 def test_select():
-    result = Query(GameScore).select('score', 'playerName').find()
+    result = Query(GameScore).select(['score', 'playerName']).find()
     eq_(len(result), 10)
 
 
@@ -302,19 +372,8 @@ def test_pointer_query():
     q = Query('Foo').equal_to('bar', bar)
     assert len(q.find()) == 1
 
-
-# TODO add more tests
     inner_query = leancloud.Query('Post')
     inner_query.exists("image")
     query = leancloud.Query('Comment')
     query.matches_query("post", inner_query)
     assert query.dump() == {'where': {'post': {'$inQuery': {'className': 'Post', 'where': {'image': {'$exists': True}}}}}}
-
-
-# @with_setup(setup_func)
-# def test_destroy_all():
-#     result = Query(GameScore).destroy_all()
-#     eq_(result.status_code, 200)
-
-# TODO
-# def test_FriendshipQuery():

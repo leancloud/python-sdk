@@ -108,7 +108,7 @@ def use_region(country='US'):
 def get(url, params, headers=None):
     for k, v in params.iteritems():
         if isinstance(v, dict):
-            params[k] = json.dumps(v)
+            params[k] = json.dumps(v, separators=(',', ':'))
     response = requests.get(BASE_URL + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)
     return response
 
@@ -116,19 +116,19 @@ def get(url, params, headers=None):
 @need_init
 @check_error
 def post(url, params, headers=None):
-    response = requests.post(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS)
+    response = requests.post(BASE_URL + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def put(url, params, headers=None):
-    response = requests.put(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS)
+    response = requests.put(BASE_URL + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def delete(url, params=None, headers=None):
-    response = requests.delete(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS)
+    response = requests.delete(BASE_URL + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
     return response
