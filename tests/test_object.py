@@ -249,7 +249,7 @@ def test_relation():
 @with_setup(setup_func)
 def test_pointer():
     user = leancloud.User.create_without_data('555ed132e4b032867865884e')
-    GameScore = leancloud.Object.extend('GameScore')
-    g = GameScore()
-    g.set('user', user)
-    g.save()
+    score = leancloud.Object.extend('score')
+    s = score()
+    s.set('user', user)
+    s.save()

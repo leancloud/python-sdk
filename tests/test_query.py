@@ -1,7 +1,6 @@
 # coding: utf-8
 from datetime import datetime
 import os
-import warnings
 
 from nose.tools import eq_
 from nose.tools import with_setup
@@ -23,6 +22,19 @@ A = Object.extend('A')
 B = Object.extend('B')
 
 
+# unmark the test to clean up the test data
+# def test_data_cleanup():
+#     olds = Query(GameScore).find()
+#     for old in olds:
+#         old.destroy()
+#     old1 = q_a.find()
+#     old2 = q_b.find()
+#     for i in old1:
+#         i.destroy()
+#     for k in old2:
+#            k.destroy()
+
+
 def setup_func():
     leancloud.init(
         os.environ['APP_ID'],
@@ -30,15 +42,19 @@ def setup_func():
     )
 
     olds = Query(GameScore).find()
-    for old in olds:
-        old.destroy()
+    # make sure the test data does not change, else re-initialize it
+    if len(olds) == 10:
+        pass
+    else:
+        for old in olds:
+            old.destroy()
 
-    for i in range(10):
-        game_score = GameScore()
-        game_score.set('score', i)
-        game_score.set('playerName', '张三')
-        game_score.set('location', GeoPoint(latitude=i, longitude=-i))
-        game_score.save()
+        for i in range(10):
+            game_score = GameScore()
+            game_score.set('score', i)
+            game_score.set('playerName', '张三')
+            game_score.set('location', GeoPoint(latitude=i, longitude=-i))
+            game_score.save()
 
 
 def match_key_setup():
