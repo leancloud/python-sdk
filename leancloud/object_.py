@@ -124,7 +124,7 @@ class Object(object):
             obj['objectId'] = self.id
 
         obj['__type'] = 'Object'
-        obj['className'] = self.__class__.__name__
+        obj['className'] = self._class_name
         return obj
 
     def destroy(self):
