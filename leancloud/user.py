@@ -153,3 +153,31 @@ class User(Object):
             raise ValueError('Please sign in')
         response = client.delete('/users/{0}/friendship/{1}'.format(self.id, target_id), None)
         assert response.ok
+
+    def _log_in_with(self, provider, third_party_auth_data):
+        user = User()
+        return user._link_with(self, provider, third_party_auth_data)
+
+    def _link_with(self, provider, third_party_auth_data):
+        if type(provider) != str:
+            raise TypeError('input should be a string')
+        auth_data = self.get('auth_data')
+        if not auth_data:
+            auth_data = {}
+        auth_data[provider] = third_party_auth_data
+        self.set('auth_data', auth_data)
+        self.save()
+        self.handle_save_result(True)
+
+    def _unlink_from(self, provider):
+        if type(provider) != str:
+            raise TypeError('input should be a string')
+        self._link_with(provider, None)
+        self.sync_auth_data()
+
+    def _isLinked(self, provider):
+        try:
+            self.get('auth_data')[provider]
+        except KeyError:
+            return False
+        return True
