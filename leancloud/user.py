@@ -92,7 +92,7 @@ class User(Object):
         if make_current:
             thread_locals.current_user = self
         self._cleanup_auth_data()
-        self._sync_all_auth_data()
+        # self._sync_all_auth_data()
         self._server_data.pop('password', None)
         self._rebuild_estimated_data_for_key('password')
 
@@ -154,9 +154,14 @@ class User(Object):
         response = client.delete('/users/{0}/friendship/{1}'.format(self.id, target_id), None)
         assert response.ok
 
-    def _log_in_with(self, provider, third_party_auth_data):
+    def _log_in_with(self, platform, third_party_auth_data):
+        '''
+        把第三方平台号绑定到 User 上
+
+        ：param platform: 第三方平台名称 base string
+        '''
         user = User()
-        return user._link_with(self, provider, third_party_auth_data)
+        return user._link_with(self, platform, third_party_auth_data)
 
     def _link_with(self, provider, third_party_auth_data):
         if type(provider) != str:
@@ -170,6 +175,9 @@ class User(Object):
         self.handle_save_result(True)
 
     def _unlink_from(self, provider):
+        '''
+        解绑特定第三方平台
+        '''
         if type(provider) != str:
             raise TypeError('input should be a string')
         self._link_with(provider, None)
@@ -181,3 +189,4 @@ class User(Object):
         except KeyError:
             return False
         return True
+

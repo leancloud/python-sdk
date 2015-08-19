@@ -26,7 +26,7 @@ class Relation(object):
         q.equal_to(relation_key, child._to_pointer())
         return q
 
-    def _ensure_parent_and_key(self, parent, key):
+    def _ensure_parent_and_key(self, parent=None, key=None):
         if self.parent is None:
             self.parent = parent
         if self.key is None:
