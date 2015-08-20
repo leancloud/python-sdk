@@ -54,7 +54,7 @@ class User(Object):
         content = utils.response_to_json(response)
         user = cls()
         server_data = user.parse(content, response.status_code)
-        user._finish_fetch(server_data, False)
+        user._finish_fetch(server_data, True)
         user._handle_save_result(True)
         if 'smsCode' not in server_data:
             user.attributes.pop('smsCode', None)
@@ -192,3 +192,19 @@ class User(Object):
         except KeyError:
             return False
         return True
+
+    @classmethod
+    def signup_or_login_with_mobile_phone(cls, phone_number, sms_code):
+        data = {
+            'mobilePhoneNumber': phone_number,
+            'smsCode': sms_code
+        }
+        response = client.post('usersByMobilePhone', data)
+        content = utils.response_to_json(response)
+        user = cls()
+        server_data = user.parse(content, response.status_code)
+        user._finish_fetch(server_data, True)
+        user._handle_save_result(True)
+        if 'smsCode' not in server_data:
+            user.attributes.pop('smsCode', None)
+        return user
