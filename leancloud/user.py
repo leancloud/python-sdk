@@ -155,7 +155,7 @@ class User(Object):
         assert response.ok
 
     @classmethod
-    def log_in_with(cls, platform, third_party_auth_data):
+    def login_with(cls, platform, third_party_auth_data):
         '''
         把第三方平台号绑定到 User 上
 
