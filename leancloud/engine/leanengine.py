@@ -188,7 +188,7 @@ def dispatch_cloud_hook(class_name, hook_name, params):
     elif hook_name.startswith('__before_delete_for'):
         return {}
     else:
-        return obj
+        return obj.dump()
 
 
 def register_on_verified(verify_type):
