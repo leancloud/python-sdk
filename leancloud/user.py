@@ -162,7 +162,7 @@ class User(Object):
         ：param platform: 第三方平台名称 base string
         '''
         user = User()
-        return user._link_with(platform, third_party_auth_data)
+        return user.link_with(platform, third_party_auth_data)
 
     def link_with(self, provider, third_party_auth_data):
         if type(provider) != str:
@@ -182,7 +182,7 @@ class User(Object):
         '''
         if type(provider) != str:
             raise TypeError('input should be a string')
-        self._link_with(provider, None)
+        self.link_with(provider, None)
         self._sync_auth_data(provider)
         return self
 
