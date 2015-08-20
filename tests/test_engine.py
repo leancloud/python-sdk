@@ -166,9 +166,7 @@ def test_before_save_hook():
         'x-avoscloud-application-key': TEST_APP_KEY,
     })
     assert response.ok
-    assert response.json() == {
-        "result": {"beforeSaveHookInserted": True, "clientValue": "blah"}
-    }
+    assert response.json() == {"beforeSaveHookInserted": True, "clientValue": "blah"}
 
 
 def test_after_save_hook():
@@ -198,7 +196,7 @@ def test_before_delete_hook():
         'x-avoscloud-application-key': TEST_APP_KEY,
     })
     assert response.ok
-    assert response.json() == {'result': {}}
+    assert response.json() == {}
 
 
 def test_bigquery():
