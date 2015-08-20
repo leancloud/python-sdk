@@ -11,7 +11,6 @@ from werkzeug.wrappers import Response
 from werkzeug.routing import Map
 from werkzeug.routing import Rule
 from werkzeug.exceptions import HTTPException
-from werkzeug.exceptions import NotFound
 from werkzeug.exceptions import NotAcceptable
 
 from . import context
@@ -183,7 +182,13 @@ def dispatch_cloud_hook(class_name, hook_name, params):
     if not func:
         raise leancloud.LeanEngineError(code=404, message="cloud hook named '{0}' not found.".format(hook_name))
 
-    return func(obj)
+    func(obj)
+    if hook_name.startswith('__after'):
+        return 'ok'
+    elif hook_name.startswith('__before_delete_for'):
+        return {}
+    else:
+        return obj
 
 
 def register_on_verified(verify_type):
