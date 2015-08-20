@@ -199,6 +199,7 @@ class Object(object):
 
             if errors:
                 # TODO: how to raise list of errors?
+                # http://stackoverflow.com/questions/9875660/idiomatic-way-to-collect-report-multiple-exceptions-in-python
                 raise errors[0]
 
     @classmethod

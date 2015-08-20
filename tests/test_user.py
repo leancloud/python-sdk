@@ -132,3 +132,35 @@ def test_user_become():
     session_token = existed_user.get_session_token()
     user = User.become(session_token)
     assert user.get('username') == existed_user.get('username')
+
+
+@with_setup(setup_func)
+def test_login_with():
+    data = {
+        "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
+        "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
+        "expires_in": 1382686496
+    }
+    User.login_with('weixin', data)
+
+
+@with_setup(setup_func)
+def test_unlink_from():
+    data = {
+        "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
+        "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
+        "expires_in": 1382686496
+    }
+    user = User.login_with('weixin', data)
+    user.unlink_from('weixin')
+
+
+@with_setup(setup_func)
+def test_is_linked():
+    data = {
+        "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
+        "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
+        "expires_in": 1382686496
+    }
+    user = User.login_with('weixin', data)
+    assert user.is_linked('weixin')
