@@ -184,6 +184,6 @@ def test_request_sms_code():
     except LeanCloudError, e:
         # 短信发送过于频繁或者欠费
         if e.code in (106, 160):
-            raise e
-        else:
             pass
+        else:
+            raise e
