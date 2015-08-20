@@ -154,25 +154,27 @@ class User(Object):
         response = client.delete('/users/{0}/friendship/{1}'.format(self.id, target_id), None)
         assert response.ok
 
-    def _log_in_with(self, platform, third_party_auth_data):
+    @classmethod
+    def _log_in_with(cls, platform, third_party_auth_data):
         '''
         把第三方平台号绑定到 User 上
 
         ：param platform: 第三方平台名称 base string
         '''
         user = User()
-        return user._link_with(self, platform, third_party_auth_data)
+        return user._link_with(platform, third_party_auth_data)
 
     def _link_with(self, provider, third_party_auth_data):
         if type(provider) != str:
             raise TypeError('input should be a string')
-        auth_data = self.get('auth_data')
+        auth_data = self.get('authData')
         if not auth_data:
             auth_data = {}
         auth_data[provider] = third_party_auth_data
-        self.set('auth_data', auth_data)
+        self.set('authData', auth_data)
         self.save()
-        self.handle_save_result(True)
+        self._handle_save_result(True)
+        return self
 
     def _unlink_from(self, provider):
         '''
@@ -181,12 +183,12 @@ class User(Object):
         if type(provider) != str:
             raise TypeError('input should be a string')
         self._link_with(provider, None)
-        self.sync_auth_data()
+        self._sync_auth_data(provider)
+        return self
 
-    def _isLinked(self, provider):
+    def _is_linked(self, provider):
         try:
-            self.get('auth_data')[provider]
+            self.get('authData')[provider]
         except KeyError:
             return False
         return True
-
