@@ -164,3 +164,9 @@ def test_is_linked():
     }
     user = User._log_in_with('weixin', data)
     assert user._is_linked('weixin')
+
+
+@with_setup(setup_func)
+def test_signup_or_login_with_mobile_phone():
+    user = User.signup_or_login_with_mobile_phone(11111111111, 111111)
+    assert user.mobilePhoneNumber == 11111111111

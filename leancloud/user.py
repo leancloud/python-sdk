@@ -208,3 +208,15 @@ class User(Object):
         if 'smsCode' not in server_data:
             user.attributes.pop('smsCode', None)
         return user
+
+    def update_password(self, old_password, new_password):
+        route = 'users/' + self.id + '/updatePassword'
+        params = {
+            'old_password': old_password,
+            'new_password': new_password
+        }
+        response = client.put(route, params)
+        content = utils.response_to_json(response)
+        server_data = self.parse(content, response.status_code)
+        self._finish_fetch(server_data, True)
+        self._handle_save_result(True)
