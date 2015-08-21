@@ -195,11 +195,17 @@ class User(Object):
 
     @classmethod
     def signup_or_login_with_mobile_phone(cls, phone_number, sms_code):
+        '''
+        param phone_nubmer: basestring
+        param sms_code: basestring
+
+        在调用此方法前请先使用 request_sms_code 请求 sms code
+        '''
         data = {
             'mobilePhoneNumber': phone_number,
             'smsCode': sms_code
         }
-        response = client.post('usersByMobilePhone', data)
+        response = client.post('/usersByMobilePhone', data)
         content = utils.response_to_json(response)
         user = cls()
         server_data = user.parse(content, response.status_code)
@@ -210,7 +216,7 @@ class User(Object):
         return user
 
     def update_password(self, old_password, new_password):
-        route = 'users/' + self.id + '/updatePassword'
+        route = '/users/' + self.id + '/updatePassword'
         params = {
             'old_password': old_password,
             'new_password': new_password

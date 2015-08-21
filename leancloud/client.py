@@ -61,8 +61,8 @@ def need_init(func):
         md5sum = hashlib.md5()
         current_time = str(int(time.time() * 1000))
         if MASTER_KEY:
-            ## md5sum.update(current_time + MASTER_KEY)
-            ## headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
+            # md5sum.update(current_time + MASTER_KEY)
+            # headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
             headers['X-AVOSCloud-Master-Key'] = MASTER_KEY
         else:
             md5sum.update(current_time + APP_KEY)

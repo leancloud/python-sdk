@@ -8,6 +8,7 @@ import leancloud
 from leancloud import User
 from leancloud import Query
 from leancloud import File
+from leancloud.errors import LeanCloudError
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -168,5 +169,15 @@ def test_is_linked():
 
 @with_setup(setup_func)
 def test_signup_or_login_with_mobile_phone():
-    user = User.signup_or_login_with_mobile_phone(11111111111, 111111)
-    assert user.mobilePhoneNumber == 11111111111
+    try:
+         User.signup_or_login_with_mobile_phone('11111111111', '111111')
+    except LeanCloudError as e:
+        assert e.code == 603
+
+
+@with_setup(setup_func)
+def test_update_password():
+    user = User()
+    user.login('user1', 'password')
+    user.update_password('password', 'new_password')
+    user.login('user1', 'new_password')
