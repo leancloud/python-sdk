@@ -45,6 +45,9 @@ host, port = 'localhost', 80
 url = 'http://{0}:{1}/'.format(host, port)
 
 
+HookObject = leancloud.Object.extend('HookObject')
+
+
 def setup():
     leancloud.init(TEST_APP_ID, TEST_APP_KEY)
     authorization._ENABLE_TEST = True
@@ -84,7 +87,7 @@ def test_app_params_1():
 
 
 def test_app_params_2():
-    resp = requests.get(url + '/__engine/1/functions/hello', headers={
+    requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': 'foo',
         'x-avoscloud-application-key': 'bar',
         'x-avoscloud-session-token': 'baz',
@@ -151,6 +154,51 @@ def test_register_cloud_func():
     print response.json() == {u'result': u'pong'}
 
 
+def test_before_save_hook():
+    @engine.before_save('HookObject')
+    def before_hook_object_save(obj):
+        obj.set('beforeSaveHookInserted', True)
+
+    response = requests.post(url + '/__engine/1/functions/HookObject/beforeSave', json={
+        'object': {'clientValue': 'blah'}
+    }, headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    })
+    assert response.ok
+    assert response.json() == {"beforeSaveHookInserted": True, "clientValue": "blah"}
+
+
+def test_after_save_hook():
+    @engine.after_save('HookObject')
+    def after_hook_object_save(obj):
+        pass
+
+    response = requests.post(url + '/__engine/1/functions/HookObject/afterSave', json={
+        'object': {'clientValue': 'blah'}
+    }, headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    })
+    assert response.ok
+    assert response.json() == {'result': 'ok'}
+
+
+def test_before_delete_hook():
+    @engine.before_delete('HookObject')
+    def before_hook_object_delete(obj):
+        pass
+
+    response = requests.post(url + '/__engine/1/functions/HookObject/beforeDelete', json={
+        'object': {}
+    }, headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    })
+    assert response.ok
+    assert response.json() == {}
+
+
 def test_bigquery():
     @engine.on_bigquery('end')
     def on_bigquery_end(ok, data):
@@ -184,6 +232,6 @@ def test_request_sms_code():
     except LeanCloudError, e:
         # 短信发送过于频繁或者欠费
         if e.code in (106, 160):
-            raise e
-        else:
             pass
+        else:
+            raise e

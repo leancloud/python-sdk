@@ -155,16 +155,16 @@ class User(Object):
         assert response.ok
 
     @classmethod
-    def _log_in_with(cls, platform, third_party_auth_data):
+    def login_with(cls, platform, third_party_auth_data):
         '''
         把第三方平台号绑定到 User 上
 
         ：param platform: 第三方平台名称 base string
         '''
         user = User()
-        return user._link_with(platform, third_party_auth_data)
+        return user.link_with(platform, third_party_auth_data)
 
-    def _link_with(self, provider, third_party_auth_data):
+    def link_with(self, provider, third_party_auth_data):
         if type(provider) != str:
             raise TypeError('input should be a string')
         auth_data = self.get('authData')
@@ -176,17 +176,17 @@ class User(Object):
         self._handle_save_result(True)
         return self
 
-    def _unlink_from(self, provider):
+    def unlink_from(self, provider):
         '''
         解绑特定第三方平台
         '''
         if type(provider) != str:
             raise TypeError('input should be a string')
-        self._link_with(provider, None)
+        self.link_with(provider, None)
         self._sync_auth_data(provider)
         return self
 
-    def _is_linked(self, provider):
+    def is_linked(self, provider):
         try:
             self.get('authData')[provider]
         except KeyError:

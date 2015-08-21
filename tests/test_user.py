@@ -135,13 +135,13 @@ def test_user_become():
 
 
 @with_setup(setup_func)
-def test_log_in_with():
+def test_login_with():
     data = {
         "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
         "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
         "expires_in": 1382686496
     }
-    User._log_in_with('weixin', data)
+    User.login_with('weixin', data)
 
 
 @with_setup(setup_func)
@@ -151,8 +151,8 @@ def test_unlink_from():
         "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
         "expires_in": 1382686496
     }
-    user = User._log_in_with('weixin', data)
-    user._unlink_from('weixin')
+    user = User.login_with('weixin', data)
+    user.unlink_from('weixin')
 
 
 @with_setup(setup_func)
@@ -162,8 +162,8 @@ def test_is_linked():
         "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
         "expires_in": 1382686496
     }
-    user = User._log_in_with('weixin', data)
-    assert user._is_linked('weixin')
+    user = User.log_in_with('weixin', data)
+    assert user.is_linked('weixin')
 
 
 @with_setup(setup_func)

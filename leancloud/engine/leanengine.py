@@ -11,7 +11,6 @@ from werkzeug.wrappers import Response
 from werkzeug.routing import Map
 from werkzeug.routing import Rule
 from werkzeug.exceptions import HTTPException
-from werkzeug.exceptions import NotFound
 from werkzeug.exceptions import NotAcceptable
 
 from . import context
@@ -88,20 +87,20 @@ class LeanEngineApplication(object):
 
         try:
             if endpoint == 'cloud_function':
-                result = dispatch_cloud_func(**values)
+                result = {'result': dispatch_cloud_func(**values)}
             elif endpoint == 'cloud_hook':
                 result = dispatch_cloud_hook(**values)
             elif endpoint == 'on_verified':
-                result = dispatch_on_verified(**values)
+                result = {'result': dispatch_on_verified(**values)}
             elif endpoint == 'on_login':
-                result = dispatch_on_login(**values)
+                result = {'result': dispatch_on_login(**values)}
             elif endpoint == 'ops_meta_data':
-                result = dispatch_ops_meta_data()
+                result = {'result': dispatch_ops_meta_data()}
             elif endpoint == 'on_bigquery':
-                result = dispatch_on_bigquery(**values)
+                result = {'result': dispatch_on_bigquery(**values)}
             else:
                 raise ValueError    # impossible
-            return Response(json.dumps({'result': result}), mimetype='application/json')
+            return Response(json.dumps(result), mimetype='application/json')
         except LeanEngineError, e:
             return Response(
                 json.dumps({'code': e.code, 'error': e.message}),
@@ -121,7 +120,7 @@ hook_name_mapping = {
     'beforeSave': '__before_save_for_',
     'afterSave': '__after_save_for_',
     'afterUpdate': '__after_update_for_',
-    'beforeDelete': '__before_save_for_',
+    'beforeDelete': '__before_delete_for_',
     'afterDelete': '__after_delete_for_',
 }
 
@@ -183,7 +182,13 @@ def dispatch_cloud_hook(class_name, hook_name, params):
     if not func:
         raise leancloud.LeanEngineError(code=404, message="cloud hook named '{0}' not found.".format(hook_name))
 
-    return func(obj)
+    func(obj)
+    if hook_name.startswith('__after'):
+        return {'result': 'ok'}
+    elif hook_name.startswith('__before_delete_for'):
+        return {}
+    else:
+        return obj.dump()
 
 
 def register_on_verified(verify_type):
