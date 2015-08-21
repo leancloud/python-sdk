@@ -162,5 +162,11 @@ def test_is_linked():
         "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
         "expires_in": 1382686496
     }
-    user = User.login_with('weixin', data)
+    user = User.log_in_with('weixin', data)
     assert user.is_linked('weixin')
+
+
+@with_setup(setup_func)
+def test_signup_or_login_with_mobile_phone():
+    user = User.signup_or_login_with_mobile_phone(11111111111, 111111)
+    assert user.mobilePhoneNumber == 11111111111
