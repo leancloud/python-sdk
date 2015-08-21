@@ -131,6 +131,17 @@ class User(Object):
         if 'smsCode' not in server_data:
             self.attributes.pop('smsCode', None)
 
+    @classmethod
+    def login_with_mobile_phone(cls, phone_number, password):
+        user = User()
+        params = {
+            'mobilePhoneNumber': phone_number,
+            'password': password
+        }
+        user._finish_fetch(params, True)
+        user.login()
+        return user
+
     def follow(self, target_id):
         """
         关注一个用户。
@@ -226,3 +237,32 @@ class User(Object):
         server_data = self.parse(content, response.status_code)
         self._finish_fetch(server_data, True)
         self._handle_save_result(True)
+
+    def get_username(self):
+        return self.attributes.get('username')
+
+    def get_mobile_phone_number(self):
+        return self.attributes.get('mobilePhoneNumber')
+
+    def set_mobile_phone_number(self, phone_number):
+        return self.set('mobilePhoneNumber', phone_number)
+
+    def set_username(self, username):
+        return self.set('username', username)
+
+    def set_password(self, password):
+        return self.set('passWord', password)
+
+    def set_email(self, email):
+        return self.set('email', email)
+
+    def get_email(self):
+        return self.attributes.get('email')
+
+    def request_password_reset(self, email):
+        params = {'email': email}
+        client.post('/requestPasswordReset', params)
+
+    def request_email_verify(self, email):
+        params = {'email': email}
+        client.post('/requestEmailVerify', params)

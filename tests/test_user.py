@@ -25,6 +25,8 @@ def setup_func():
     user1 = User()
     user1.set('username', 'user1')
     user1.set('password', 'password')
+    user1.set_email('wow@leancloud.rocks')
+
     user1.sign_up()
 
     user2 = User()
@@ -181,3 +183,36 @@ def test_update_password():
     user.login('user1', 'password')
     user.update_password('password', 'new_password')
     user.login('user1', 'new_password')
+
+
+@with_setup(setup_func)
+def test_get_methods():
+    user = User()
+    user.login('user1', 'password')
+
+    user.set_username('new_user1')
+    assert user.get_username() == 'new_user1'
+
+    user.set_mobile_phone_number('11111111111')
+    assert user.get_mobile_phone_number() == '11111111111'
+
+    user.set_password('new_password')
+    assert user.attributes.get('passWord') == 'new_password'
+
+    user.set_email('wow@leancloud.rocks')
+    assert user.get_email() == 'wow@leancloud.rocks'
+
+
+@with_setup(setup_func)
+def test_request_password_reset():
+    user = User()
+    user.login('user1', 'password')
+    user.set_email('wow1@leancloud.rocks')
+    user.request_password_reset('wow1@leancloud.rocks')
+
+
+@with_setup(setup_func)
+def test_request_email_verify():
+    user = User()
+    user.login('user1', 'password')
+    user.request_email_verify('wow@leancloud.rocks')
