@@ -4,7 +4,6 @@ import json
 import time
 import hashlib
 import requests
-import os
 
 import leancloud
 from leancloud import utils
@@ -96,11 +95,11 @@ def check_error(func):
     return new_func
 
 
-def use_region(country='US'):
+def use_region(region):
     global BASE_URL
-    if country == 'US':
+    if region == 'US':
         BASE_URL = US_BASE_URL + '/' + SERVER_VERSION
-    if country == 'CN':
+    elif region == 'CN':
         BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
     else:
         raise ValueError('currently no nodes in the region')
