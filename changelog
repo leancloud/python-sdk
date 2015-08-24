@@ -1,3 +1,8 @@
+## [1.3.0] - 2015-08-24
+### Added
+- add third party login support
+- fix leanengine.client.use_region bug
+
 ## [1.2.7] - 2015-08-20
 ### Updated
 - fixed cloud hook bug
