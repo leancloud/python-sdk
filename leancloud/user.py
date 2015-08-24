@@ -1,5 +1,6 @@
 # coding: utf-8
 
+
 import threading
 
 from leancloud import FriendshipQuery
@@ -100,15 +101,19 @@ class User(Object):
         super(User, self).save()
         self._handle_save_result(False)
 
-    def sign_up(self):
+    def sign_up(self, username=None, password=None):
         """
         创建一个新用户。新创建的 User 对象，应该使用此方法来将数据保存至服务器，而不是使用 save 方法。
         用户对象上必须包含 username 和 password 两个字段
         """
+        if username:
+            self.set('username', username)
+        if password:
+            self.set('password', password)
+
         username = self.get('username')
         if not username:
             raise TypeError('invalid username: {0}'.format(username))
-
         password = self.get('password')
         if not password:
             raise TypeError('invalid password')
@@ -130,6 +135,13 @@ class User(Object):
         self._handle_save_result(True)
         if 'smsCode' not in server_data:
             self.attributes.pop('smsCode', None)
+
+    def logout(self):
+        if not self.is_current:
+            return
+        self._logout_with_all()
+        self._cleanup_auth_data()
+        thread_locals.current_user = None
 
     @classmethod
     def login_with_mobile_phone(cls, phone_number, password):
@@ -259,10 +271,31 @@ class User(Object):
     def get_email(self):
         return self.attributes.get('email')
 
+    @classmethod
     def request_password_reset(self, email):
         params = {'email': email}
         client.post('/requestPasswordReset', params)
 
+    @classmethod
     def request_email_verify(self, email):
         params = {'email': email}
         client.post('/requestEmailVerify', params)
+
+    @classmethod
+    def request_mobile_phone_verify(cls, phone_number):
+        params = {'mobilePhone': phone_number}
+        client.post('/requestMobilePhoneVerify', params)
+
+    @classmethod
+    def request_password_reset_by_sms_code(cls, phone_number):
+        params = {'mobilePhone': phone_number}
+        client.post('/requestPasswordResetBySmsCode', params)
+
+    @classmethod
+    def verify_mobile_phone_number(cls, sms_code):
+        client.post('/verfyMobilePhone/' + sms_code, {})
+
+    @classmethod
+    def request_login_sms_code(cls, phone_number):
+        params = {'mobilePhoneNumber': phone_number}
+        client.post('/requestLoginSmsCode', params)
