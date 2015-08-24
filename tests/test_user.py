@@ -8,8 +8,16 @@ import leancloud
 from leancloud import User
 from leancloud import Query
 from leancloud import File
+from leancloud.errors import LeanCloudError
 
 __author__ = 'asaka <lan@leancloud.rocks>'
+
+
+def only_init():
+    leancloud.init(
+        os.environ['APP_ID'],
+        master_key=os.environ['MASTER_KEY']
+    )
 
 
 def setup_func():
@@ -24,25 +32,37 @@ def setup_func():
     user1 = User()
     user1.set('username', 'user1')
     user1.set('password', 'password')
+    user1.set_email('wow@leancloud.rocks')
+    user1.set_mobile_phone_number('18611111111')
     user1.sign_up()
+    user1.logout()
 
     user2 = User()
     user2.set('username', 'user2')
     user2.set('password', 'password')
     user2.sign_up()
+    user2.logout()
 
 
 def destroy_func():
     pass
 
 
-@with_setup(setup_func, destroy_func)
+@with_setup(only_init)
 def test_sign_up():
     user = User()
     user.set('username', 'foo')
     user.set('password', 'bar')
     user.sign_up()
     assert user._session_token
+
+
+@with_setup(only_init)
+def test_sign_out():
+    user = User()
+    user.sign_up('Musen', 'password')
+    user.logout()
+    assert not user.is_current
 
 
 @with_setup(setup_func, destroy_func)
@@ -164,3 +184,79 @@ def test_is_linked():
     }
     user = User.login_with('weixin', data)
     assert user.is_linked('weixin')
+
+
+@with_setup(setup_func)
+def test_signup_or_login_with_mobile_phone():
+    try:
+        User.signup_or_login_with_mobile_phone('18611111111', '111111')
+    except LeanCloudError as e:
+        assert e.code == 603
+
+
+@with_setup(setup_func)
+def test_update_password():
+    user = User()
+    user.login('user1', 'password')
+    user.update_password('password', 'new_password')
+    user.login('user1', 'new_password')
+
+
+@with_setup(setup_func)
+def test_get_methods():
+    user = User()
+    user.login('user1', 'password')
+
+    user.set_username('new_user1')
+    assert user.get_username() == 'new_user1'
+
+    user.set_mobile_phone_number('18611111111x')
+    assert user.get_mobile_phone_number() == '18611111111x'
+
+    user.set_password('new_password')
+    assert user.attributes.get('passWord') == 'new_password'
+
+    user.set_email('wow1@leancloud.rocks')
+    assert user.get_email() == 'wow1@leancloud.rocks'
+
+
+@with_setup(setup_func)
+def test_request_password_reset():
+    User.request_password_reset('wow@leancloud.rocks')
+
+
+@with_setup(setup_func)
+def test_request_email_verify():
+    try:
+        User.request_email_verify('wow@leancloud.rocks')
+    except LeanCloudError as e:
+        assert '邮件验证功能' in str(e)
+
+
+@with_setup(setup_func)
+def test_request_mobile_phone_verify():
+    try:
+        User.request_mobile_phone_verify('18611111111')
+    except LeanCloudError as e:
+        assert e.code == 212
+
+
+@with_setup(setup_func)
+def test_request_password_reset_by_sms_code():
+    try:
+        User.request_password_reset_by_sms_code('111111')
+    except LeanCloudError as e:
+        assert e.code == 212
+
+# cannot be tested without sms code
+# @with_setup(setup_func)
+# def test_verify_mobile_phone_number():
+#     User.verify_mobile_phone_number('111111')
+
+
+@with_setup(setup_func)
+def test_request_login_sms_code():
+    try:
+        User.request_login_sms_code('18611111111')
+    except LeanCloudError as e:
+        assert e.code == 215
