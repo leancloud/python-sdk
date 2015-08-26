@@ -28,7 +28,7 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     :type expiration_time: datetime
     :param expiration_interval: 消息过期的相对时间，从调用 API 的时间开始算起，单位是秒
     :type expiration_interval: int
-    :param where: 一个查询 _Installation 表的查询条件 JSON 对象
+    :param where: 一个查询 _Installation 表的查询条件 leancloud.Query 对象
     :type where: leancloud.Query
     :param cql: 一个查询 _Installation 表的查询条件 CQL 语句
     :type cql: basestring
