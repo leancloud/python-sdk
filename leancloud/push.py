@@ -49,7 +49,7 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     if expiration_interval:
         params['expiration_interval'] = expiration_interval
     if where:
-        params['where'] = where.dump()
+        params['where'] = where.dump().get('where', {})
     if cql:
         params['cql'] = cql
 
