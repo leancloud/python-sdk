@@ -158,6 +158,20 @@ def test_short_app_params_4():
     assert env['_app_params']['master_key'] == TEST_MASTER_KEY
 
 
+def test_body_params():
+    requests.get(url + '/__engine/1/functions/hello', json={
+        '_ApplicationId': 'foo',
+        '_ApplicationKey': 'bar',
+        '_MasterKey': 'baz',
+        '_SessionToken': 'qux',
+    })
+    env = authorization.current_environ
+    assert env['_app_params']['id'] == 'foo'
+    assert env['_app_params']['key'] == 'bar'
+    assert env['_app_params']['master_key'] == 'baz'
+    assert env['_app_params']['session_token'] == 'qux'
+
+
 def test_authorization_1():
     response = requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
