@@ -13,7 +13,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 APP_ID = os.environ.get('LC_APP_ID')
 APP_KEY = os.environ.get('LC_APP_KEY')
-MASTER_KEY = os.environ.get('LC_MASTER_KEY')
+MASTER_KEY = os.environ.get('LC_APP_MASTER_KEY')
 
 
 _ENABLE_TEST = False
