@@ -30,9 +30,11 @@ class AuthorizationMiddleware(object):
             current_environ = environ
 
         self.parse_header(environ)
+        app_params = environ['_app_params']
+        if not any(app_params.values()):  # all app_params's value is None
+            self.parse_body(environ)
 
         unauth_response = Response(json.dumps({'code': 401, 'error': 'Unauthorized.'}), status=401, mimetype='application/json')
-        app_params = environ['_app_params']
         if app_params['id'] is None:
             return unauth_response(environ, start_response)
         if (APP_ID == app_params['id']) and (app_params['key'] in [MASTER_KEY, APP_KEY]):
@@ -83,4 +85,19 @@ class AuthorizationMiddleware(object):
             'key': app_key,
             'master_key': master_key,
             'session_token': session_token,
+        }
+
+    @classmethod
+    def parse_body(cls, environ):
+        request = Request(environ)
+        if (not request.content_type) or ('text/plain' not in request.content_type):
+            return
+
+        body = json.loads(request.data)
+
+        environ['_app_params'] = {
+            'id': body.get('_ApplicationId'),
+            'key': body.get('_ApplicationKey'),
+            'master_key': body.get('_MasterKey'),
+            'session_token': body.get('_SessionToken'),
         }
