@@ -8,9 +8,12 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class Role(leancloud.Object):
-    def __init__(self, name, acl):
+    def __init__(self, name, acl=None):
         super(Role, self).__init__()
         self.set_name(name)
+        if acl is None:
+            acl = leancloud.ACL()
+            acl.set_public_read_access(True)
         self.set_acl(acl)
 
     def get_name(self):
