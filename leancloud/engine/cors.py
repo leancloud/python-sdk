@@ -18,6 +18,11 @@ class CORSMiddleware(object):
         'X-Uluru-Application-Production',
         'X-Uluru-Client-Version',
         'X-Uluru-Session-Token',
+        'X-LC-Id',
+        'X-LC-Key',
+        'X-LC-Session',
+        'X-LC-Sign',
+        'X-LC-Prod',
     ])
     ALLOW_METHODS = ', '.join(['PUT', 'GET', 'POST', 'DELETE', 'OPTIONS'])
     MAX_AGE = '86400'

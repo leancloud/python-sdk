@@ -37,6 +37,8 @@ class AuthorizationMiddleware(object):
             return unauth_response(environ, start_response)
         if (APP_ID == app_params['id']) and (app_params['key'] in [MASTER_KEY, APP_KEY]):
             return self.app(environ, start_response)
+        if (APP_ID == app_params['id']) and (app_params['master_key'] == MASTER_KEY):
+            return self.app(environ, start_response)
 
         return unauth_response(environ, start_response)
 
@@ -44,22 +46,41 @@ class AuthorizationMiddleware(object):
     def parse_header(cls, environ):
         request = Request(environ)
 
-        app_id = request.headers.get('x-avoscloud-application-id') or request.headers.get('x-uluru-application-id')
-        app_key = request.headers.get('x-avoscloud-application-key') or request.headers.get('x-uluru-application-key')
-        session_token = request.headers.get('x-uluru-session-token') or request.headers.get('x-avoscloud-session-token')
+        master_key = None
+        app_id = request.headers.get('x-avoscloud-application-id')\
+                or request.headers.get('x-uluru-application-id')\
+                or request.headers.get('x-lc-id')
+        app_key = request.headers.get('x-avoscloud-application-key')\
+                or request.headers.get('x-uluru-application-key')\
+                or request.headers.get('x-lc-key')
+        session_token = request.headers.get('x-uluru-session-token')\
+                or request.headers.get('x-avoscloud-session-token')\
+                or request.headers.get('x-lc-session')
+
+        if app_key and ',master' in app_key:
+            master_key, _ = app_key.split(',')
+            app_key = None
 
         if app_key is None:
-            request_sign = request.headers.get('x-avoscloud-request-sign')
+            request_sign = request.headers.get('x-avoscloud-request-sign')\
+                    or request.headers.get('x-lc-sign')
             if request_sign:
                 request_sign = request_sign.split(',') if request_sign else []
                 sign = request_sign[0].lower()
                 timestamp = request_sign[1]
-                key = MASTER_KEY if len(request_sign) == 3 and request_sign[2] == 'master' else APP_KEY
-                if sign == utils.sign_by_key(timestamp, key):
-                    app_key = key
+                # key = MASTER_KEY if len(request_sign) == 3 and request_sign[2] == 'master' else APP_KEY
+                # if sign == utils.sign_by_key(timestamp, key):
+                #     app_key = key
+                if (len(request_sign) == 3)\
+                        and (request_sign[2] == 'master')\
+                        and (sign == utils.sign_by_key(timestamp, MASTER_KEY)):
+                    master_key = MASTER_KEY
+                elif sign == utils.sign_by_key(timestamp, APP_KEY):
+                    app_key = APP_KEY
 
         environ['_app_params'] = {
             'id': app_id,
             'key': app_key,
+            'master_key': master_key,
             'session_token': session_token,
         }

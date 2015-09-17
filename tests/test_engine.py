@@ -20,8 +20,8 @@ env = None
 TEST_APP_ID = os.environ['APP_ID']
 TEST_APP_KEY = os.environ['APP_KEY']
 TEST_MASTER_KEY = os.environ['MASTER_KEY']
-param_3_request = generate_request(TEST_APP_KEY)
-param_4_request = generate_request(TEST_MASTER_KEY, True)
+sign_by_app_key = generate_request(TEST_APP_KEY)
+sign_by_master_key = generate_request(TEST_MASTER_KEY, True)
 
 NORMAL_HEADERS = {
     'x-avoscloud-application-id': TEST_APP_ID,
@@ -100,7 +100,7 @@ def test_app_params_2():
 
 def test_app_params_3():
     requests.get(url + '/__engine/1/functions/hello', headers={
-        'x-avoscloud-request-sign': param_3_request
+        'x-avoscloud-request-sign': sign_by_app_key
     })
     env = authorization.current_environ
     assert env['_app_params']['key'] == TEST_APP_KEY
@@ -108,10 +108,54 @@ def test_app_params_3():
 
 def test_app_params_4():
     requests.get(url + '/__engine/1/functions/hello', headers={
-        'x-avoscloud-request-sign': param_4_request
+        'x-avoscloud-request-sign': sign_by_master_key
     })
     env = authorization.current_environ
-    assert env['_app_params']['key'] == TEST_MASTER_KEY
+    assert env['_app_params']['master_key'] == TEST_MASTER_KEY
+
+
+def test_short_app_params_1():
+    requests.get(url + '/__engine/1/functions/hello', headers={
+        'x-lc-id': 'foo',
+        'x-lc-key': 'bar',
+        'x-lc-session': 'baz',
+    })
+    env = authorization.current_environ
+    assert env['_app_params']['id'] == 'foo'
+    assert env['_app_params']['key'] == 'bar'
+    assert env['_app_params']['master_key'] == None
+    assert env['_app_params']['session_token'] == 'baz'
+
+
+def test_short_app_params_2():
+    requests.get(url + '/__engine/1/functions/hello', headers={
+        'x-lc-id': 'foo',
+        'x-lc-key': 'bar,master',
+        'x-lc-session': 'baz',
+    })
+    env = authorization.current_environ
+    assert env['_app_params']['id'] == 'foo'
+    assert env['_app_params']['key'] == None
+    assert env['_app_params']['master_key'] == 'bar'
+    assert env['_app_params']['session_token'] == 'baz'
+
+
+def test_short_app_params_3():
+    requests.get(url + '/__engine/1/functions/hello', headers={
+        'x-lc-sign': sign_by_app_key
+    })
+    env = authorization.current_environ
+    assert env['_app_params']['key'] == TEST_APP_KEY
+    assert env['_app_params']['master_key'] == None
+
+
+def test_short_app_params_4():
+    requests.get(url + '/__engine/1/functions/hello', headers={
+        'x-lc-sign': sign_by_master_key
+    })
+    env = authorization.current_environ
+    assert env['_app_params']['key'] == None
+    assert env['_app_params']['master_key'] == TEST_MASTER_KEY
 
 
 def test_authorization_1():
@@ -125,8 +169,8 @@ def test_authorization_1():
 
 def test_authorization_2():
     response = requests.get(url + '/__engine/1/functions/hello', headers={
-        'x-avoscloud-application-id': TEST_APP_ID,
-        'x-avoscloud-application-key': TEST_MASTER_KEY,
+        'x-lc-id': TEST_APP_ID,
+        'x-lc-key': TEST_MASTER_KEY,
     })
     assert response.ok
     assert response.json() == {u'result': u'hello'}
@@ -231,7 +275,7 @@ def test_request_sms_code():
         cloudfunc.request_sms_code('13111111111')
     except LeanCloudError, e:
         # 短信发送过于频繁或者欠费
-        if e.code in (106, 160):
+        if e.code in (601, 160):
             pass
         else:
             raise e
