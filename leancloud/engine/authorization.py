@@ -90,7 +90,7 @@ class AuthorizationMiddleware(object):
     @classmethod
     def parse_body(cls, environ):
         request = Request(environ)
-        if (not request.content_type) or ('application/json' not in request.content_type):
+        if (not request.content_type) or ('text/plain' not in request.content_type):
             return
 
         body = json.loads(request.data)

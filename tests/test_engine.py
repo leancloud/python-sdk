@@ -1,5 +1,6 @@
 # coding: utf-8
 import os
+import json
 import requests
 
 from wsgi_intercept import requests_intercept, add_wsgi_intercept
@@ -159,12 +160,14 @@ def test_short_app_params_4():
 
 
 def test_body_params():
-    requests.get(url + '/__engine/1/functions/hello', json={
+    requests.get(url + '/__engine/1/functions/hello', headers={
+        'Content-Type': 'text/plain',
+    }, data=json.dumps({
         '_ApplicationId': 'foo',
         '_ApplicationKey': 'bar',
         '_MasterKey': 'baz',
         '_SessionToken': 'qux',
-    })
+    }))
     env = authorization.current_environ
     assert env['_app_params']['id'] == 'foo'
     assert env['_app_params']['key'] == 'bar'
