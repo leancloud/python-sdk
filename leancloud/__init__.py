@@ -25,7 +25,7 @@ from .engine.https_redirect_middleware import HttpsRedirectMiddleware
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
-__version__ = '1.3.2'
+__version__ = '1.3.3'
 
 
 __all__ = [
