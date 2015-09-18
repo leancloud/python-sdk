@@ -96,9 +96,7 @@ class AuthorizationMiddleware(object):
 
         body = json.loads(request.data)
 
-        environ['_app_params'] = {
-            'id': body.get('_ApplicationId'),
-            'key': body.get('_ApplicationKey'),
-            'master_key': body.get('_MasterKey'),
-            'session_token': body.get('_SessionToken'),
-        }
+        environ['_app_params']['id'] = body.get('_ApplicationId'),
+        environ['_app_params']['key'] = body.get('_ApplicationKey'),
+        environ['_app_params']['master_key'] = body.get('_MasterKey'),
+        environ['_app_params']['session_token'] = body.get('_SessionToken'),
