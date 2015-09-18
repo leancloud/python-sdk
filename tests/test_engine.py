@@ -115,6 +115,16 @@ def test_app_params_4():
     assert env['_app_params']['master_key'] == TEST_MASTER_KEY
 
 
+def test_app_params_5():
+    requests.get(url + '/__engine/1/functions/hello', headers={
+        'x-avoscloud-application-id': 'foo',
+        'x-avoscloud-master-key': 'bar',
+    })
+    env = authorization.current_environ
+    assert env['_app_params']['id'] == 'foo'
+    assert env['_app_params']['master_key'] == 'bar'
+
+
 def test_short_app_params_1():
     requests.get(url + '/__engine/1/functions/hello', headers={
         'x-lc-id': 'foo',
