@@ -48,7 +48,6 @@ class AuthorizationMiddleware(object):
     def parse_header(cls, environ):
         request = Request(environ)
 
-        master_key = None
         app_id = request.headers.get('x-avoscloud-application-id')\
                 or request.headers.get('x-uluru-application-id')\
                 or request.headers.get('x-lc-id')
@@ -58,6 +57,8 @@ class AuthorizationMiddleware(object):
         session_token = request.headers.get('x-uluru-session-token')\
                 or request.headers.get('x-avoscloud-session-token')\
                 or request.headers.get('x-lc-session')
+        master_key = request.headers.get('x-uluru-master-key')\
+                or request.headers.get('x-avoscloud-master-key')
 
         if app_key and ',master' in app_key:
             master_key, _ = app_key.split(',')
