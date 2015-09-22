@@ -1,3 +1,7 @@
+## [1.3.5] - 2015-09-22
+## Updated
+- cache werkzeug's request object in environ
+
 ## [1.3.4] - 2015-09-18
 ## Updated
 - fixed LeanEngine authorize bug
