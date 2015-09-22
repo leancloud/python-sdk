@@ -13,7 +13,6 @@ from .cors import CORSMiddleware
 from .leanengine import LeanEngineApplication
 from .leanengine import LeanEngineError
 from .leanengine import register_cloud_func
-from .leanengine import register_cloud_hook
 from .leanengine import register_on_verified
 from .leanengine import before_save
 from .leanengine import after_save
@@ -34,6 +33,8 @@ class Engine(object):
 
     def __call__(self, environ, start_response):
         request = Request(environ)
+        environ['leanengine.request'] = request  # cache werkzeug request for other middlewares
+
         if request.path in ('/__engine/1/ping', '/__engine/1.1/ping/'):
             start_response('200 OK', [('Content-Type', 'application/json')])
             version = sys.version_info
