@@ -6,7 +6,6 @@ import traceback
 import functools
 
 import leancloud
-from werkzeug.wrappers import Request
 from werkzeug.wrappers import Response
 from werkzeug.routing import Map
 from werkzeug.routing import Rule
@@ -59,7 +58,7 @@ class LeanEngineApplication(object):
 
     def __call__(self, environ, start_response):
         self.process_session(environ)
-        request = Request(environ)
+        request = environ['leanengine.request']
 
         response = self.dispatch_request(request)
 

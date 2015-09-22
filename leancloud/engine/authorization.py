@@ -3,7 +3,6 @@
 import os
 import json
 
-from werkzeug.wrappers import Request
 from werkzeug.wrappers import Response
 
 import utils
@@ -34,7 +33,9 @@ class AuthorizationMiddleware(object):
         if not any(app_params.values()):  # all app_params's value is None
             self.parse_body(environ)
 
-        unauth_response = Response(json.dumps({'code': 401, 'error': 'Unauthorized.'}), status=401, mimetype='application/json')
+        unauth_response = Response(json.dumps({
+            'code': 401, 'error': 'Unauthorized.'
+        }), status=401, mimetype='application/json')
         if app_params['id'] is None:
             return unauth_response(environ, start_response)
         if (APP_ID == app_params['id']) and (app_params['key'] in [MASTER_KEY, APP_KEY]):
@@ -46,18 +47,19 @@ class AuthorizationMiddleware(object):
 
     @classmethod
     def parse_header(cls, environ):
-        request = Request(environ)
+        request = environ['leanengine.request']
 
-        master_key = None
         app_id = request.headers.get('x-avoscloud-application-id')\
-                or request.headers.get('x-uluru-application-id')\
-                or request.headers.get('x-lc-id')
+            or request.headers.get('x-uluru-application-id')\
+            or request.headers.get('x-lc-id')
         app_key = request.headers.get('x-avoscloud-application-key')\
-                or request.headers.get('x-uluru-application-key')\
-                or request.headers.get('x-lc-key')
+            or request.headers.get('x-uluru-application-key')\
+            or request.headers.get('x-lc-key')
         session_token = request.headers.get('x-uluru-session-token')\
-                or request.headers.get('x-avoscloud-session-token')\
-                or request.headers.get('x-lc-session')
+            or request.headers.get('x-avoscloud-session-token')\
+            or request.headers.get('x-lc-session')
+        master_key = request.headers.get('x-uluru-master-key')\
+            or request.headers.get('x-avoscloud-master-key')
 
         if app_key and ',master' in app_key:
             master_key, _ = app_key.split(',')
@@ -65,7 +67,7 @@ class AuthorizationMiddleware(object):
 
         if app_key is None:
             request_sign = request.headers.get('x-avoscloud-request-sign')\
-                    or request.headers.get('x-lc-sign')
+                or request.headers.get('x-lc-sign')
             if request_sign:
                 request_sign = request_sign.split(',') if request_sign else []
                 sign = request_sign[0].lower()
@@ -89,15 +91,13 @@ class AuthorizationMiddleware(object):
 
     @classmethod
     def parse_body(cls, environ):
-        request = Request(environ)
+        request = environ['leanengine.request']
         if (not request.content_type) or ('text/plain' not in request.content_type):
             return
 
         body = json.loads(request.data)
 
-        environ['_app_params'] = {
-            'id': body.get('_ApplicationId'),
-            'key': body.get('_ApplicationKey'),
-            'master_key': body.get('_MasterKey'),
-            'session_token': body.get('_SessionToken'),
-        }
+        environ['_app_params']['id'] = body.get('_ApplicationId')
+        environ['_app_params']['key'] = body.get('_ApplicationKey')
+        environ['_app_params']['master_key'] = body.get('_MasterKey')
+        environ['_app_params']['session_token'] = body.get('_SessionToken')
