@@ -285,8 +285,8 @@ class Relation(BaseOp):
             raise TypeError('invalid op')
 
     def _apply(self, old, obj=None, key=None):
-        if obj is None:
-            relation = leancloud.Relation(obj, key)
+        if old is None:
+            return leancloud.Relation(obj, key)
         elif isinstance(old, leancloud.Relation):
             if self._target_class_name:
                 if old.target_class_name:
