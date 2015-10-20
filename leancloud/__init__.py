@@ -3,11 +3,17 @@
 """LeanCloud Python SDK
 """
 
+import logging
+
+logger = logging.getLogger('iso8601.iso8601')
+logger.setLevel(logging.CRITICAL)
+
 import client
 import push
 from .push import Installation
 from .acl import ACL
 from .client import init
+from .client import use_master_key
 from .client import use_production
 from .errors import LeanCloudError
 from .file_ import File
@@ -30,22 +36,23 @@ __version__ = '1.3.5'
 
 __all__ = [
     'ACL',
+    'Engine',
     'File',
-    'HttpsRedirectMiddleware',
     'FriendshipQuery',
     'GeoPoint',
+    'HttpsRedirectMiddleware',
+    'Installation',
     'LeanCloudError',
     'LeanEngineError',
     'Object',
     'Query',
     'Relation',
+    'Role',
     'User',
     'client',
-    'use_production',
+    'cloudfunc',
     'init',
     'push',
-    'cloudfunc',
-    'Role',
-    'Installation',
-    'Engine',
+    'use_master_key',
+    'use_production',
 ]

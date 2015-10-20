@@ -14,14 +14,20 @@ except KeyError:
 else:
     import leancloud.client
     leancloud.client.TIMEOUT_SECONDS = 60
+
+
 try:
     os.environ['APP_KEY']
 except KeyError:
     os.environ['APP_KEY'] = 'hi4jsm62kok2qz2w2qphzryo564rzsrucl2czb0hn6ogwwnd'
+
+
 try:
     os.environ['MASTER_KEY']
 except KeyError:
     os.environ['MASTER_KEY'] = 'azkuvukzlq3t38abdrgrwqqdcx9me6178ctulhd14wynfq1n'
+
+
 try:
     leancloud.client.IMEOUT_SECONDS = int(os.environ['TRAVIS_TIMEOUT'])
 except KeyError:
