@@ -50,6 +50,10 @@ HookObject = leancloud.Object.extend('HookObject')
 
 
 def setup():
+    leancloud.client.USE_MASTER_KEY = None
+    leancloud.client.APP_ID = None
+    leancloud.client.APP_KEY = None
+    leancloud.client.MASTER_KEY = None
     leancloud.init(TEST_APP_ID, TEST_APP_KEY)
     authorization._ENABLE_TEST = True
     authorization.APP_ID = TEST_APP_ID

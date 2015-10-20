@@ -15,6 +15,9 @@ APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
 USE_PRODUCTION = 1
+# 兼容老版本，如果 USE_MASTER_KEY 为 None ，并且 MASTER_KEY 不为 None，则使用 MASTER_KEY
+# 否则依据 USE_MASTER_KEY 来决定是否使用 MASTER_KEY
+USE_MASTER_KEY = None
 
 CN_BASE_URL = 'https://api.leancloud.cn'
 US_BASE_URL = 'https://avoscloud.us'
@@ -38,8 +41,6 @@ def init(app_id, app_key=None, master_key=None):
     """
     if (not app_key) and (not master_key):
         raise RuntimeError('app_key or master_key must be specified')
-    # if app_key and master_key:
-    #     raise RuntimeError('app_key and master_key can\'t be specified both')
     global APP_ID, APP_KEY, MASTER_KEY
     APP_ID = app_id
     APP_KEY = app_key
@@ -59,7 +60,7 @@ def need_init(func):
         }
         md5sum = hashlib.md5()
         current_time = str(int(time.time() * 1000))
-        if MASTER_KEY:
+        if (USE_MASTER_KEY is None and MASTER_KEY) or USE_MASTER_KEY is True:
             # md5sum.update(current_time + MASTER_KEY)
             # headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
             headers['X-AVOSCloud-Master-Key'] = MASTER_KEY
@@ -76,8 +77,26 @@ def need_init(func):
 
 
 def use_production(flag):
+    """调用生产环境 / 开发环境的 cloud func / cloud hook
+    默认调用生产环境。
+    """
     global USE_PRODUCTION
     USE_PRODUCTION = 1 if flag else 0
+
+
+def use_master_key(flag=True):
+    """是否使用 master key 发送请求。
+    如果不调用此函数，会根据 leancloud.init 的参数来决定是否使用 master key。
+
+    :type flag: bool
+    """
+    global USE_MASTER_KEY
+    if not flag:
+        USE_MASTER_KEY = False
+        return
+    if not MASTER_KEY:
+        raise RuntimeError('LeanCloud SDK master key not specified')
+    USE_MASTER_KEY = True
 
 
 def check_error(func):

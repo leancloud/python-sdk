@@ -14,6 +14,10 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 def only_init():
+    leancloud.client.USE_MASTER_KEY = None
+    leancloud.client.APP_ID = None
+    leancloud.client.APP_KEY = None
+    leancloud.client.MASTER_KEY = None
     leancloud.init(
         os.environ['APP_ID'],
         master_key=os.environ['MASTER_KEY']
@@ -21,6 +25,10 @@ def only_init():
 
 
 def setup_func():
+    leancloud.client.USE_MASTER_KEY = None
+    leancloud.client.APP_ID = None
+    leancloud.client.APP_KEY = None
+    leancloud.client.MASTER_KEY = None
     leancloud.init(
         os.environ['APP_ID'],
         master_key=os.environ['MASTER_KEY']
@@ -222,7 +230,11 @@ def test_get_methods():
 
 @with_setup(setup_func)
 def test_request_password_reset():
-    User.request_password_reset('wow@leancloud.rocks')
+    try:
+        User.request_password_reset('wow@leancloud.rocks')
+    except LeanCloudError as e:
+        if u'请不要往同一个邮件地址发送太多邮件。' not in e.message:
+            raise e
 
 
 @with_setup(setup_func)

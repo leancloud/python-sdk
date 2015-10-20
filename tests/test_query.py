@@ -36,6 +36,10 @@ B = Object.extend('B')
 
 
 def setup_func():
+    leancloud.client.USE_MASTER_KEY = None
+    leancloud.client.APP_ID = None
+    leancloud.client.APP_KEY = None
+    leancloud.client.MASTER_KEY = None
     leancloud.init(
         os.environ['APP_ID'],
         os.environ['APP_KEY']
