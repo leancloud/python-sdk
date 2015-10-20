@@ -4,6 +4,7 @@ import copy
 from datetime import datetime
 
 import iso8601
+from werkzeug import LocalProxy
 
 import leancloud
 from leancloud import utils
@@ -327,8 +328,14 @@ class Object(object):
         """
         if isinstance(key_or_attrs, dict) and value is None:
             attrs = key_or_attrs
+            keys = attrs.keys()
+            for k in keys:
+                if isinstance(attrs[k], LocalProxy):
+                    attrs[k] = attrs[k]._get_current_object()
         else:
             key = key_or_attrs
+            if isinstance(value, LocalProxy):
+                value = value._get_current_object()
             attrs = {key: utils.decode(key, value)}
 
         if unset:
