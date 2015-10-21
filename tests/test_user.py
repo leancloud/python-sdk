@@ -233,7 +233,7 @@ def test_request_password_reset():
     try:
         User.request_password_reset('wow@leancloud.rocks')
     except LeanCloudError as e:
-        if u'请不要往同一个邮件地址发送太多邮件。' not in e.message:
+        if u'请不要往同一个邮件地址发送太多邮件。' not in e.error:
             raise e
 
 

@@ -97,9 +97,9 @@ class User(Object):
         self._server_data.pop('password', None)
         self._rebuild_estimated_data_for_key('password')
 
-    def save(self):
+    def save(self, make_current=False):
         super(User, self).save()
-        self._handle_save_result(False)
+        self._handle_save_result(make_current)
 
     def sign_up(self, username=None, password=None):
         """
@@ -118,7 +118,7 @@ class User(Object):
         if not password:
             raise TypeError('invalid password')
 
-        self.save()
+        self.save(make_current=True)
 
     def login(self, username=None, password=None):
         """
@@ -139,7 +139,6 @@ class User(Object):
     def logout(self):
         if not self.is_current:
             return
-        self._logout_with_all()
         self._cleanup_auth_data()
         thread_locals.current_user = None
 
