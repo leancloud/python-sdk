@@ -1,5 +1,6 @@
 # coding: utf-8
 import os
+import time
 import json
 import requests
 
@@ -138,7 +139,7 @@ def test_short_app_params_1():
     env = authorization.current_environ
     assert env['_app_params']['id'] == 'foo'
     assert env['_app_params']['key'] == 'bar'
-    assert env['_app_params']['master_key'] == None
+    assert env['_app_params']['master_key'] is None
     assert env['_app_params']['session_token'] == 'baz'
 
 
@@ -150,7 +151,7 @@ def test_short_app_params_2():
     })
     env = authorization.current_environ
     assert env['_app_params']['id'] == 'foo'
-    assert env['_app_params']['key'] == None
+    assert env['_app_params']['key'] is None
     assert env['_app_params']['master_key'] == 'bar'
     assert env['_app_params']['session_token'] == 'baz'
 
@@ -161,7 +162,7 @@ def test_short_app_params_3():
     })
     env = authorization.current_environ
     assert env['_app_params']['key'] == TEST_APP_KEY
-    assert env['_app_params']['master_key'] == None
+    assert env['_app_params']['master_key'] is None
 
 
 def test_short_app_params_4():
@@ -169,7 +170,7 @@ def test_short_app_params_4():
         'x-lc-sign': sign_by_master_key
     })
     env = authorization.current_environ
-    assert env['_app_params']['key'] == None
+    assert env['_app_params']['key'] is None
     assert env['_app_params']['master_key'] == TEST_MASTER_KEY
 
 
@@ -310,3 +311,29 @@ def test_request_sms_code():
             pass
         else:
             raise e
+
+
+def test_current_user():
+    leancloud.init(os.environ['APP_ID'], master_key=os.environ['MASTER_KEY'])
+    saved_user = leancloud.User()
+    saved_user.set('username', 'user{}'.format(int(time.time())))
+    saved_user.set('password', 'password')
+    saved_user.set_email('{}@leancloud.rocks'.format(int(time.time())))
+    saved_user.sign_up()
+    session_token = saved_user.get_session_token()
+
+    @engine.define
+    def current_user():
+        user = engine.current_user
+        o = leancloud.Object.extend('TestCurrentUser')()
+        o.set('user', user)
+        o.set({'yetAnotherUser': user})
+        o.save()
+        assert user.get('username') == saved_user.get('username')
+
+    response = requests.get(url + '/__engine/1/functions/current_user', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-avoscloud-session-token': session_token,
+    })
+    assert response.status_code == 200
