@@ -31,7 +31,7 @@ from .engine.https_redirect_middleware import HttpsRedirectMiddleware
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
-__version__ = '1.3.5'
+__version__ = '1.3.6'
 
 
 __all__ = [
