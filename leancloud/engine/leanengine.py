@@ -134,6 +134,13 @@ def register_cloud_func(func):
 
 
 def dispatch_cloud_func(func_name, params):
+    # delete all keys in params which starts with low dash.
+    # JS SDK may send it's app info with them.
+    keys = params.keys()
+    for key in keys:
+        if key.startswith('_'):
+            params.pop(key)
+
     func = _cloud_codes.get(func_name)
     if not func:
         raise LeanEngineError(code=404, message="cloud func named '{0}' not found.".format(func_name))
