@@ -1,5 +1,9 @@
+## [1.3.7] - 2015-10-23
+### Updated
+- revert last version's leancloud.File name generator modify
+
 ## [1.3.6] - 2015-10-21
-## Updated
+### Updated
 - bugfix on leancloud.Relation operations
 - bugfix on leancloud.File name generator
 - now leancloud.User.login set the user to current user
