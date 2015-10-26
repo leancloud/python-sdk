@@ -7,7 +7,7 @@ from leancloud import utils
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-def run(name, **params):
+def run(_cloud_func_name, **params):
     """
     调用 LeanEngine 上的远程代码
 
@@ -16,7 +16,7 @@ def run(name, **params):
     :param params: 调用参数
     :return: 调用结果
     """
-    response = leancloud.client.post('/functions/{0}'.format(name), params=params)
+    response = leancloud.client.post('/functions/{0}'.format(_cloud_func_name), params=params)
     content = utils.response_to_json(response)
     return utils.decode(None, content)['result']
 
