@@ -133,7 +133,7 @@ class File(object):
             base64.encode(self._source, output)
             self._source.seek(0)
             output.seek(0)
-            hex_octet = lambda: hex(int(0x10000 * (1 + random.random())))[2:]
+            hex_octet = lambda: hex(int(0x10000 * (1 + random.random())))[-4:]
             key = ''.join(hex_octet() for _ in xrange(4))
             key = '{0}.{1}'.format(key, self.extension)
             data = {
