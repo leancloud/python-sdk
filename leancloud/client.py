@@ -14,7 +14,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
-USE_PRODUCTION = 1
+USE_PRODUCTION = '1'
 # 兼容老版本，如果 USE_MASTER_KEY 为 None ，并且 MASTER_KEY 不为 None，则使用 MASTER_KEY
 # 否则依据 USE_MASTER_KEY 来决定是否使用 MASTER_KEY
 USE_MASTER_KEY = None
@@ -81,7 +81,7 @@ def use_production(flag):
     默认调用生产环境。
     """
     global USE_PRODUCTION
-    USE_PRODUCTION = 1 if flag else 0
+    USE_PRODUCTION = '1' if flag else '0'
 
 
 def use_master_key(flag=True):

@@ -11,11 +11,11 @@ __author__ = 'asaka'
 
 
 def test_use_production():
-    assert client.USE_PRODUCTION == 1
+    assert client.USE_PRODUCTION == '1'
     leancloud.use_production(False)
-    assert client.USE_PRODUCTION == 0
+    assert client.USE_PRODUCTION == '0'
     leancloud.use_production(True)
-    assert client.USE_PRODUCTION == 1
+    assert client.USE_PRODUCTION == '1'
 
 
 def test_use_master_key():
