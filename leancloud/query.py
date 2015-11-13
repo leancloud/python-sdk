@@ -128,7 +128,7 @@ class Query(object):
         if self._skip > 0:
             params['skip'] = self._skip
         if self._order:
-            params['order'] = self._order
+            params['order'] = ",".join(self._order)
         params.update(self._extra)
         return params
 
