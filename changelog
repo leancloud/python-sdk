@@ -1,3 +1,9 @@
+## [1.3.8] - 2015-11-13
+### Updated
+- allow use 'name' as parameter in leancloud.engine.cloudfunc
+- update leancloud.File name generator
+- bugfix for leancloud.Query.add_ascending and leancloud.Query.add_descending
+
 ## [1.3.7] - 2015-10-23
 ### Updated
 - revert last version's leancloud.File name generator modify
