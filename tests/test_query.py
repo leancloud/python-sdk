@@ -1,6 +1,7 @@
 # coding: utf-8
-from datetime import datetime
 import os
+import random
+from datetime import datetime
 
 from nose.tools import eq_
 from nose.tools import with_setup
@@ -58,6 +59,7 @@ def setup_func():
             game_score.set('score', i)
             game_score.set('playerName', '张三')
             game_score.set('location', GeoPoint(latitude=i, longitude=-i))
+            game_score.set('random', random.randrange(100))
             game_score.save()
 
 
@@ -192,6 +194,23 @@ def test_or_and_query():
 
     q = Query.or_(q1, q2, q3)
     assert q.dump() == {'where': {'$or': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}, {'playerName': 'foobar'}]}}
+
+
+@with_setup(setup_func)
+def test_multiple_order():
+    MultipleOrderObject = leancloud.Object.extend('MultipleOrderObject')
+    for obj in Query(MultipleOrderObject).find():
+        obj.destroy()
+    MultipleOrderObject(a=1, b=10).save()
+    MultipleOrderObject(a=10, b=20).save()
+    MultipleOrderObject(a=1, b=3).save()
+    q = Query(MultipleOrderObject)
+    q.add_descending('a')
+    q.add_descending('b')
+    r = q.find()
+    for i in range(1, len(r)):
+        assert r[i - 1].get('a') >= r[i].get('a')
+        assert r[i - 1].get('b') >= r[i].get('b')
 
 
 @raises(ValueError)
