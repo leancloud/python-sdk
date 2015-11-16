@@ -26,6 +26,14 @@ def get_dumpable_types():
         operation.BaseOp,
     )
 
+def get_datetime_str(value):
+    if isinstance(value, datetime):
+        tzinfo = value.tzinfo
+        if tzinfo is None:
+            tzinfo = tz.tzlocal()
+        return arrow.get(value, tzinfo).to('utc').format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z'
+    else:
+        raise(TypeError("value is not type of datetime"))
 
 def encode(value, disallow_objects=False):
     if isinstance(value, datetime):
@@ -45,12 +53,15 @@ def encode(value, disallow_objects=False):
     if isinstance(value, leancloud.File):
         if not value.url and not value.id:
             raise ValueError('Tried to save an object containing an unsaved file.')
-        return {
+        file_dump = {
             '__type': 'File',
             'id': value.id,
             'name': value.name,
             'url': value.url,
         }
+        if "_metadata" in value.__dict__:
+            file_dump["metaData"] = value.metadata
+        return file_dump
 
     if isinstance(value, get_dumpable_types()):
         return value.dump()

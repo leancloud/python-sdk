@@ -124,6 +124,12 @@ class Object(object):
         if self.id is not None:
             obj['objectId'] = self.id
 
+        if self.created_at:
+            obj['createdAt'] = utils.get_datetime_str(self.created_at)
+
+        if self.updated_at:
+            obj['updatedAt'] = utils.get_datetime_str(self.updated_at)
+
         obj['__type'] = 'Object'
         obj['className'] = self._class_name
         return obj
