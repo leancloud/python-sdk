@@ -227,7 +227,7 @@ def test_register_cloud_func():
         'x-avoscloud-application-key': TEST_APP_KEY,
     }, json={'foo': ['bar', 'baz']})
     assert response.ok
-    print response.json() == {u'result': u'pong'}
+    assert response.json() == {u'result': u'pong'}
 
 
 def test_before_save_hook():
@@ -273,6 +273,20 @@ def test_before_delete_hook():
     })
     assert response.ok
     assert response.json() == {}
+
+
+def test_on_login():
+    @engine.on_login
+    def on_login(user):
+        assert isinstance(user, leancloud.User)
+
+    response = requests.post(url + '/__engine/1.1/functions/_User/onLogin', json={
+        'object': {}
+    }, headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    })
+    assert response.ok
 
 
 def test_bigquery():
