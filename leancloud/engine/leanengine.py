@@ -35,11 +35,12 @@ class LeanEngineApplication(object):
             Rule('/__engine/1.1/functions/<func_name>', endpoint='cloud_function'),
             Rule('/__engine/1/functions/BigQuery/<event>', endpoint='on_bigquery'),
             Rule('/__engine/1.1/functions/BigQuery/<event>', endpoint='on_bigquery'),
+            Rule('/__engine/1.1/functions/_User/onLogin', endpoint='on_login'),
+            Rule('/__engine/1/functions/_User/onLogin', endpoint='on_login'),
             Rule('/__engine/1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/__engine/1.1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/__engine/1/onVerified/<verify_type>', endpoint='on_verified'),
             Rule('/__engine/1.1/onVerified/<verify_type>', endpoint='on_verified'),
-            Rule('/__engine/1.1/functions/_User/onLogin', endpoint='on_login'),
             Rule('/__engine/1/functions/_ops/metadatas', endpoint='ops_meta_data'),
             Rule('/__engine/1.1/functions/_ops/metadatas', endpoint='ops_meta_data'),
 
@@ -47,11 +48,12 @@ class LeanEngineApplication(object):
             Rule('/1.1/functions/<func_name>', endpoint='cloud_function'),
             Rule('/1/functions/BigQuery/<event>', endpoint='on_bigquery'),
             Rule('/1.1/functions/BigQuery/<event>', endpoint='on_bigquery'),
+            Rule('/1.1/functions/_User/onLogin', endpoint='on_login'),
+            Rule('/1/functions/_User/onLogin', endpoint='on_login'),
             Rule('/1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/1.1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/1/onVerified/<verify_type>', endpoint='on_verified'),
             Rule('/1.1/onVerified/<verify_type>', endpoint='on_verified'),
-            Rule('/1.1/functions/_User/onLogin', endpoint='on_login'),
             Rule('/1/functions/_ops/metadatas', endpoint='ops_meta_data'),
             Rule('/1.1/functions/_ops/metadatas', endpoint='ops_meta_data'),
         ])
@@ -219,17 +221,20 @@ def dispatch_on_verified(verify_type, user):
 
 
 def register_on_login(func):
-    func_name = '__on_login'
+    func_name = '__on_login__User'
 
     if func_name in _cloud_codes:
         raise RuntimeError('on login is already registered')
     _cloud_codes[func_name] = func
 
 
-def dispatch_on_login(user):
-    func = _cloud_codes.get('__on_login')
+def dispatch_on_login(params):
+    func = _cloud_codes.get('__on_login__User')
     if not func:
         return
+
+    user = leancloud.User()
+    user._finish_fetch(params['object'], True)
 
     return func(user)
 

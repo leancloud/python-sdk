@@ -14,6 +14,7 @@ from .leanengine import LeanEngineApplication
 from .leanengine import LeanEngineError
 from .leanengine import register_cloud_func
 from .leanengine import register_on_verified
+from .leanengine import register_on_login
 from .leanengine import before_save
 from .leanengine import after_save
 from .leanengine import after_update
@@ -50,6 +51,7 @@ class Engine(object):
 
     define = staticmethod(register_cloud_func)
     on_verified = staticmethod(register_on_verified)
+    on_login = staticmethod(register_on_login)
     before_save = staticmethod(before_save)
     after_save = staticmethod(after_save)
     after_update = staticmethod(after_update)
