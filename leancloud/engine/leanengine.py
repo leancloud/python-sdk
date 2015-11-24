@@ -39,8 +39,8 @@ class LeanEngineApplication(object):
             Rule('/__engine/1/functions/_User/onLogin', endpoint='on_login'),
             Rule('/__engine/1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/__engine/1.1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
-            Rule('/__engine/1/onVerified/<verify_type>', endpoint='on_verified'),
-            Rule('/__engine/1.1/onVerified/<verify_type>', endpoint='on_verified'),
+            Rule('/__engine/1/functions/onVerified/<verify_type>', endpoint='on_verified'),
+            Rule('/__engine/1.1/functions/onVerified/<verify_type>', endpoint='on_verified'),
             Rule('/__engine/1/functions/_ops/metadatas', endpoint='ops_meta_data'),
             Rule('/__engine/1.1/functions/_ops/metadatas', endpoint='ops_meta_data'),
 
@@ -52,8 +52,8 @@ class LeanEngineApplication(object):
             Rule('/1/functions/_User/onLogin', endpoint='on_login'),
             Rule('/1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
             Rule('/1.1/functions/<class_name>/<hook_name>', endpoint='cloud_hook'),
-            Rule('/1/onVerified/<verify_type>', endpoint='on_verified'),
-            Rule('/1.1/onVerified/<verify_type>', endpoint='on_verified'),
+            Rule('/1/functions/onVerified/<verify_type>', endpoint='on_verified'),
+            Rule('/1.1/functions/onVerified/<verify_type>', endpoint='on_verified'),
             Rule('/1/functions/_ops/metadatas', endpoint='ops_meta_data'),
             Rule('/1.1/functions/_ops/metadatas', endpoint='ops_meta_data'),
         ])
