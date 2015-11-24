@@ -535,40 +535,49 @@ class Query(object):
         self._add_condition(key, '$nearSphere', point)
         return self
 
-    def within_radians(self, key, point, distance):
+    def within_radians(self, key, point, max_distance, min_distance=None):
         """
         增加查询条件，限制返回结果指定字段值的位置在某点的一段距离之内。
 
         :param key: 查询条件字段名
         :param point: 查询地理位置
-        :param distance: 距离限定（弧度）
+        :param max_distance: 最大距离限定（弧度）
+        :param min_distance: 最小距离限定（弧度）
         :rtype: Query
         """
         self.near(key, point)
-        self._add_condition(key, '$maxDistance', distance)
+        self._add_condition(key, '$maxDistance', max_distance)
+        if min_distance is not None:
+            self._add_condition(key, '$minDistance', min_distance)
         return self
 
-    def within_miles(self, key, point, distance):
+    def within_miles(self, key, point, max_distance, min_distance=None):
         """
         增加查询条件，限制返回结果指定字段值的位置在某点的一段距离之内。
 
         :param key: 查询条件字段名
         :param point: 查询地理位置
-        :param distance: 距离限定（英里）
+        :param max_distance: 最大距离限定（英里）
+        :param min_distance: 最小距离限定（英里）
         :rtype: Query
         """
-        return self.within_radians(key, point, distance / 3958.8)
+        if min_distance is not None:
+            min_distance = min_distance / 3958.8
+        return self.within_radians(key, point, max_distance / 3958.8, min_distance)
 
-    def within_kilometers(self, key, point, distance):
+    def within_kilometers(self, key, point, max_distance, min_distance=None):
         """
         增加查询条件，限制返回结果指定字段值的位置在某点的一段距离之内。
 
         :param key: 查询条件字段名
         :param point: 查询地理位置
-        :param distance: 距离限定（千米）
+        :param max_distance: 最大距离限定（千米）
+        :param min_distance: 最小距离限定（千米）
         :rtype: Query
         """
-        return self.within_radians(key, point, distance / 6371.0)
+        if min_distance is not None:
+            min_distance = min_distance / 6371.0
+        return self.within_radians(key, point, max_distance / 6371.0, min_distance)
 
     def within_geo_box(self, key, southwest, northeast):
         """
