@@ -27,11 +27,11 @@ def test_use_master_key():
     assert client.USE_MASTER_KEY is False
 
 
-def test_get_base_url():
-    leancloud.use_https(False)
-    assert client.get_base_url().startswith('http://')
-    leancloud.use_https(True)
-    assert client.get_base_url().startswith('https://')
+# def test_get_base_url():
+#     leancloud.use_https(False)
+#     assert client.get_base_url().startswith('http://')
+#     leancloud.use_https(True)
+#     assert client.get_base_url().startswith('https://')
 
 
 def test_get_server_time():

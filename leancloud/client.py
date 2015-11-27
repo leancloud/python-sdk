@@ -111,17 +111,17 @@ def use_master_key(flag=True):
     USE_MASTER_KEY = True
 
 
-def use_https(flag=True):
-    """是否启用 HTTPS 和 LeanCloud 存储服务器通讯。
-    默认启用，在 LeanEngine 环境下关闭可以大幅提高 LeanCloud 存储服务查询性能。
-
-    :type flag: bool
-    """
-    global USE_HTTPS
-    if not flag:
-        USE_HTTPS = False
-    else:
-        USE_HTTPS = True
+# def use_https(flag=True):
+#     """是否启用 HTTPS 和 LeanCloud 存储服务器通讯。
+#     默认启用，在 LeanEngine 环境下关闭可以大幅提高 LeanCloud 存储服务查询性能。
+#
+#     :type flag: bool
+#     """
+#     global USE_HTTPS
+#     if not flag:
+#         USE_HTTPS = False
+#     else:
+#         USE_HTTPS = True
 
 
 def check_error(func):
