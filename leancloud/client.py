@@ -15,16 +15,19 @@ APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
 USE_PRODUCTION = '1'
+USE_HTTPS = True
 # 兼容老版本，如果 USE_MASTER_KEY 为 None ，并且 MASTER_KEY 不为 None，则使用 MASTER_KEY
 # 否则依据 USE_MASTER_KEY 来决定是否使用 MASTER_KEY
 USE_MASTER_KEY = None
+REGION = 'CN'
 
-CN_BASE_URL = 'https://api.leancloud.cn'
-US_BASE_URL = 'https://avoscloud.us'
+SERVER_URLS = {
+    'CN': 'api.leancloud.cn',
+    'US': 'us-api.leancloud.cn',
+}
 
 SERVER_VERSION = '1.1'
 SDK_VERSION = '1.0.0'
-BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
 
 TIMEOUT_SECONDS = 15
 
@@ -76,6 +79,15 @@ def need_init(func):
     return new_func
 
 
+def get_base_url():
+    r = {
+        'schema': 'https' if USE_HTTPS else 'http',
+        'version': SERVER_VERSION,
+        'host': SERVER_URLS[REGION],
+    }
+    return '{schema}://{host}/{version}'.format(**r)
+
+
 def use_production(flag):
     """调用生产环境 / 开发环境的 cloud func / cloud hook
     默认调用生产环境。
@@ -99,6 +111,19 @@ def use_master_key(flag=True):
     USE_MASTER_KEY = True
 
 
+def use_https(flag=True):
+    """是否启用 HTTPS 和 LeanCloud 存储服务器通讯。
+    默认启用，在 LeanEngine 环境下关闭可以大幅提高 LeanCloud 存储服务查询性能。
+
+    :type flag: bool
+    """
+    global USE_HTTPS
+    if not flag:
+        USE_HTTPS = False
+    else:
+        USE_HTTPS = True
+
+
 def check_error(func):
     def new_func(*args, **kwargs):
         response = func(*args, **kwargs)
@@ -115,17 +140,15 @@ def check_error(func):
 
 
 def use_region(region):
-    global BASE_URL
-    if region == 'US':
-        BASE_URL = US_BASE_URL + '/' + SERVER_VERSION
-    elif region == 'CN':
-        BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
-    else:
+    if region not in SERVER_URLS:
         raise ValueError('currently no nodes in the region')
+
+    global REGION
+    REGION = region
 
 
 def get_server_time():
-    response = requests.get('https://leancloud.cn/1.1/date')
+    response = requests.get(get_base_url() + '/date')
     content = json.loads(response.content)
     return utils.decode('iso', content)
 
@@ -136,26 +159,26 @@ def get(url, params, headers=None):
     for k, v in params.iteritems():
         if isinstance(v, dict):
             params[k] = json.dumps(v, separators=(',', ':'))
-    response = requests.get(BASE_URL + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)
+    response = requests.get(get_base_url() + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def post(url, params, headers=None):
-    response = requests.post(BASE_URL + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
+    response = requests.post(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def put(url, params, headers=None):
-    response = requests.put(BASE_URL + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
+    response = requests.put(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
     return response
 
 
 @need_init
 @check_error
 def delete(url, params=None, headers=None):
-    response = requests.delete(BASE_URL + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
+    response = requests.delete(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
     return response

@@ -10,6 +10,7 @@ logger.setLevel(logging.CRITICAL)
 
 from .acl import ACL
 from .client import init
+from .client import use_https
 from .client import use_master_key
 from .client import use_production
 from .client import use_region
@@ -54,6 +55,7 @@ __all__ = [
     'cloudfunc',
     'init',
     'push',
+    'use_https',
     'use_master_key',
     'use_production',
     'use_region',
