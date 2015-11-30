@@ -271,4 +271,4 @@ def test_request_login_sms_code():
     try:
         User.request_login_sms_code('18611111111')
     except LeanCloudError as e:
-        assert e.code in (1, 215)
+        assert e.code in (1, 215, 601)
