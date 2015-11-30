@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import random
 
 from nose.tools import with_setup
 
@@ -248,17 +249,19 @@ def test_request_email_verify():
 @with_setup(setup_func)
 def test_request_mobile_phone_verify():
     try:
-        User.request_mobile_phone_verify('18611111111')
+        User.request_mobile_phone_verify('1861111' + str(random.randrange(1000, 9999)))
     except LeanCloudError as e:
-        assert e.code == 212
+        if e.code not in (213, 601):
+            raise e
 
 
 @with_setup(setup_func)
 def test_request_password_reset_by_sms_code():
     try:
-        User.request_password_reset_by_sms_code('111111')
+        User.request_password_reset_by_sms_code('1861111' + str(random.randrange(1000, 9999)))
     except LeanCloudError as e:
-        assert e.code == 212
+        if e.code not in (213, 601):
+            raise e
 
 # cannot be tested without sms code
 # @with_setup(setup_func)
@@ -271,4 +274,5 @@ def test_request_login_sms_code():
     try:
         User.request_login_sms_code('18611111111')
     except LeanCloudError as e:
-        assert e.code in (1, 215, 601)
+        if e.code not in (1, 215, 601):
+            raise e

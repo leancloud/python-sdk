@@ -282,12 +282,12 @@ class User(Object):
 
     @classmethod
     def request_mobile_phone_verify(cls, phone_number):
-        params = {'mobilePhone': phone_number}
+        params = {'mobilePhoneNumber': phone_number}
         client.post('/requestMobilePhoneVerify', params)
 
     @classmethod
     def request_password_reset_by_sms_code(cls, phone_number):
-        params = {'mobilePhone': phone_number}
+        params = {'mobilePhoneNumber': phone_number}
         client.post('/requestPasswordResetBySmsCode', params)
 
     @classmethod
