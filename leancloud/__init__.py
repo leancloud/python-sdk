@@ -32,7 +32,7 @@ import push
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
-__version__ = '1.3.9'
+__version__ = '1.3.10'
 
 
 __all__ = [
