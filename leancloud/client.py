@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import json
 import time
 import hashlib
@@ -80,6 +81,9 @@ def need_init(func):
 
 
 def get_base_url():
+    url = os.environ.get('LC_API_SERVER')
+    if url:
+        return '{}/{}'.format(url, SERVER_VERSION)
     r = {
         'schema': 'https' if USE_HTTPS else 'http',
         'version': SERVER_VERSION,
