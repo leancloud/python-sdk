@@ -131,7 +131,7 @@ def use_master_key(flag=True):
 def check_error(func):
     def new_func(*args, **kwargs):
         response = func(*args, **kwargs)
-        if response.headers['Content-Type'] == 'text/html':
+        if response.headers.get('Content-Type') == 'text/html':
             raise leancloud.LeanCloudError(-1, 'Bad Request')
 
         content = utils.response_to_json(response)
