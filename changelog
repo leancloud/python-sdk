@@ -1,3 +1,11 @@
+## [1.3.12] - 2015-12-30
+### Updated
+- fixed engine hook current user's bug
+
+## [1.3.11] - 2015-12-17
+### Updated
+- use API base URL from env
+
 ## [1.3.10] - 2015-11-30
 ### Added
 - support min_distance param in GEO query
