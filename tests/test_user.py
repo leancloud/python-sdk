@@ -243,7 +243,8 @@ def test_request_email_verify():
     try:
         User.request_email_verify('wow@leancloud.rocks')
     except LeanCloudError as e:
-        assert '邮件验证功能' in str(e)
+        print e
+        assert '邮件验证功能' in str(e) or '请不要往同一个邮件地址发送太多邮件' in str(e)
 
 
 @with_setup(setup_func)

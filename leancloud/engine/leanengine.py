@@ -68,13 +68,26 @@ class LeanEngineApplication(object):
 
     @classmethod
     def process_session(cls, environ):
-        if environ['_app_params']['session_token'] in (None, ''):
+        if environ['_app_params']['session_token'] not in (None, ''):
+            session_token = environ['_app_params']['session_token']
+            user = leancloud.User.become(session_token)
+            context.local.user = user
+            return
+
+        request = environ['leanengine.request']
+        try:
+            data = json.loads(request.get_data())
+        except ValueError:
             context.local.user = None
             return
 
-        session_token = environ['_app_params']['session_token']
-        user = leancloud.User.become(session_token)
-        context.local.user = user
+        if 'user' in data and data['user']:
+            user = leancloud.User()
+            user._finish_fetch(data['user'], True)
+            context.local.user = user
+            return
+
+        context.local.user = None
 
     def dispatch_request(self, request):
         adapter = self.url_map.bind_to_environ(request.environ)

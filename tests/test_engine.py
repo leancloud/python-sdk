@@ -351,3 +351,13 @@ def test_current_user():
         'x-avoscloud-session-token': session_token,
     })
     assert response.status_code == 200
+
+    @engine.before_save('Xxx')
+    def before_xxx_save(xxx):
+        assert engine.current_user.get('username') == saved_user.get('username')
+
+    response = requests.post(url + '/__engine/1/functions/Xxx/beforeSave', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    }, json={'object': {}, 'user': {'username': saved_user.get('username')}})
+    assert response.status_code == 200
