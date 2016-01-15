@@ -3,7 +3,9 @@
 """LeanCloud Python SDK
 """
 
+import sys
 import logging
+import warnings
 
 logger = logging.getLogger('iso8601.iso8601')
 logger.setLevel(logging.CRITICAL)
@@ -58,3 +60,14 @@ __all__ = [
     'use_production',
     'use_region',
 ]
+
+
+version_info = sys.version_info
+
+
+if version_info.major == 2 and version_info.minor < 7:
+    warnings.warn('Python2 version less than 7 is not supported', DeprecationWarning)
+
+
+if version_info.minor == 3 and version_info.minor < 4:
+    warnings.warn('Python3 version less than 4 is not supported', DeprecationWarning)
