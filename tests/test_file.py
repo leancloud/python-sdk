@@ -108,3 +108,21 @@ def test_destroy():
     f.save()
     assert f.id
     f.destroy()
+
+
+@with_setup(setup_func)
+def test_fetch():
+    r = requests.get('http://www.lenna.org/full/len_std.jpg')
+    b = buffer(r.content)
+    f = File('Lenna2.jpg', b)
+    f.metadata['foo'] = 'bar'
+    f.save()
+    fetched = File.create_without_data(f.id)
+    fetched.fetch()
+    assert fetched.id == f.id
+    assert fetched.metadata == f.metadata
+    assert fetched.name == f.name
+    assert fetched.url == f.url
+    assert fetched.size == f.size
+    assert fetched.url == f.url
+    f.destroy()

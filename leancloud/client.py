@@ -159,10 +159,13 @@ def get_server_time():
 
 @need_init
 @check_error
-def get(url, params, headers=None):
-    for k, v in params.iteritems():
-        if isinstance(v, dict):
-            params[k] = json.dumps(v, separators=(',', ':'))
+def get(url, params=None, headers=None):
+    if not params:
+        params = {}
+    else:
+        for k, v in params.iteritems():
+            if isinstance(v, dict):
+                params[k] = json.dumps(v, separators=(',', ':'))
     response = requests.get(get_base_url() + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)
     return response
 
