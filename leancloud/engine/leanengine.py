@@ -81,11 +81,11 @@ class LeanEngineApplication(object):
             context.local.user = None
             return
 
-        if 'user' in data and data['user']:
-            user = leancloud.User()
-            user._finish_fetch(data['user'], True)
-            context.local.user = user
-            return
+        if type(data) == dict and 'user' in data and 'sessionToken' in data['user']:
+            session_token = data['user']['sessionToken']
+            if session_token:
+                context.local.user = leancloud.User.become(session_token)
+                return
 
         context.local.user = None
 

@@ -230,6 +230,19 @@ def test_register_cloud_func():
     assert response.json() == {u'result': u'pong'}
 
 
+def test_cloud_func_params():
+    @engine.define
+    def call_with_user(**params):
+        return 'ok'
+
+    response = requests.post(url + '/__engine/1/functions/call_with_user', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+        }, json={'user': 'xxx'})
+    assert response.ok
+    assert response.json() == {u'result': u'ok'}
+
+
 def test_before_save_hook():
     @engine.before_save('HookObject')
     def before_hook_object_save(obj):
@@ -359,5 +372,5 @@ def test_current_user():
     response = requests.post(url + '/__engine/1/functions/Xxx/beforeSave', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
-    }, json={'object': {}, 'user': {'username': saved_user.get('username')}})
+    }, json={'object': {}, 'user': {'sessionToken': session_token}})
     assert response.status_code == 200
