@@ -3,6 +3,8 @@
 import copy
 import json
 import gzip
+import hashlib
+import hmac
 from datetime import datetime
 from cStringIO import StringIO
 
@@ -171,3 +173,8 @@ def response_to_json(response):
             g.close()
             f.close()
     return json.loads(content)
+
+
+def sign_disable_hook(hook_name, master_key, timestamp):
+    sign = hmac.new(master_key, '{}:{}'.format(hook_name, timestamp), hashlib.sha1).hexdigest()
+    return '{},{}'.format(timestamp, sign)
