@@ -152,7 +152,7 @@ class File(object):
 
             if info.status_code != 200:
                 raise LeanCloudError(1, 'the file is not saved, qiniu status code: {0}'.format(info.status_code))
-        elif self._url and self.metadata['__source'] == 'external':
+        elif self._url and self.metadata.get('__source') == 'external':
             data = {
                 'name': self._name,
                 'ACL': self._acl,
@@ -172,3 +172,13 @@ class File(object):
                 raise ValueError
 
         return self
+
+    def fetch(self):
+        response = client.get('/files/{0}'.format(self.id))
+        content = utils.response_to_json(response)
+        print content
+        self._name = content.get('name')
+        self.id = content.get('objectId')
+        self._url = content.get('url')
+        self._type = content.get('mime_type')
+        self._metadata = content.get('metaData')
