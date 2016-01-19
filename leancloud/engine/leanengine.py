@@ -133,6 +133,7 @@ class LeanEngineApplication(object):
 hook_name_mapping = {
     'beforeSave': '__before_save_for_',
     'afterSave': '__after_save_for_',
+    'beforeUpdate': '__before_update_for',
     'afterUpdate': '__after_update_for_',
     'beforeDelete': '__before_delete_for_',
     'afterDelete': '__after_delete_for_',
@@ -182,6 +183,8 @@ before_save = functools.partial(register_cloud_hook, hook_name='beforeSave')
 
 after_save = functools.partial(register_cloud_hook, hook_name='afterSave')
 
+before_update = functools.partial(register_cloud_hook, hook_name='beforeUpdate')
+
 after_update = functools.partial(register_cloud_hook, hook_name='afterUpdate')
 
 before_delete = functools.partial(register_cloud_hook, hook_name='beforeDelete')
@@ -196,6 +199,9 @@ def dispatch_cloud_hook(class_name, hook_name, params):
 
     obj = leancloud.Object.create(class_name)
     obj._finish_fetch(params['object'], True)
+
+    if '__updateKeys' in params['object']:
+       obj.updated_keys = params['object']['__updateKeys']
 
     logger.info("{0}:{1} is called!".format(class_name, hook_name))
 

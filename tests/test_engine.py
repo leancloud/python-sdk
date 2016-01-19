@@ -260,6 +260,20 @@ def test_after_save_hook():
     assert response.json() == {'result': 'ok'}
 
 
+def test_before_update_hook():
+    @engine.before_update('HookObject')
+    def before_hook_object_update(obj):
+        assert obj.updated_keys == ['clientValue']
+
+    response = requests.post(url + '/__engine/1/functions/HookObject/beforeUpdate', json={
+        'object': {'clientValue': 'blah', '__updateKeys': ['clientValue']}
+    }, headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    })
+    assert response.ok
+
+
 def test_before_delete_hook():
     @engine.before_delete('HookObject')
     def before_hook_object_delete(obj):

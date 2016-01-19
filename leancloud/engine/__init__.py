@@ -17,6 +17,7 @@ from .leanengine import register_on_verified
 from .leanengine import register_on_login
 from .leanengine import before_save
 from .leanengine import after_save
+from .leanengine import before_update
 from .leanengine import after_update
 from .leanengine import before_delete
 from .leanengine import after_delete
@@ -54,6 +55,7 @@ class Engine(object):
     on_login = staticmethod(register_on_login)
     before_save = staticmethod(before_save)
     after_save = staticmethod(after_save)
+    before_update = staticmethod(before_update)
     after_update = staticmethod(after_update)
     before_delete = staticmethod(before_delete)
     after_delete = staticmethod(after_delete)
