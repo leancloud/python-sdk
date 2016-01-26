@@ -25,32 +25,36 @@ def only_init():
     )
 
 
-def setup_func():
-    leancloud.client.USE_MASTER_KEY = None
-    leancloud.client.APP_ID = None
-    leancloud.client.APP_KEY = None
-    leancloud.client.MASTER_KEY = None
-    leancloud.init(
-        os.environ['APP_ID'],
-        master_key=os.environ['MASTER_KEY']
-    )
-    users = Query(User).find()
-    for u in users:
-        u.destroy()
+def get_setup_func(use_master_key=True):
+    def setup_func():
+        leancloud.client.USE_MASTER_KEY = None
+        leancloud.client.APP_ID = None
+        leancloud.client.APP_KEY = None
+        leancloud.client.MASTER_KEY = None
+        leancloud.init(
+            os.environ['APP_ID'],
+            app_key=os.environ['APP_KEY'],
+            master_key=os.environ['MASTER_KEY']
+        )
+        users = Query(User).find()
+        for u in users:
+            u.destroy()
 
-    user1 = User()
-    user1.set('username', 'user1')
-    user1.set('password', 'password')
-    user1.set_email('wow@leancloud.rocks')
-    user1.set_mobile_phone_number('18611111111')
-    user1.sign_up()
-    user1.logout()
+        user1 = User()
+        user1.set('username', 'user1_name')
+        user1.set('password', 'password')
+        user1.set_email('wow@leancloud.rocks')
+        user1.set_mobile_phone_number('18611111111')
+        user1.sign_up()
+        user1.logout()
 
-    user2 = User()
-    user2.set('username', 'user2')
-    user2.set('password', 'password')
-    user2.sign_up()
-    user2.logout()
+        user2 = User()
+        user2.set('username', 'user2_name')
+        user2.set('password', 'password')
+        user2.sign_up()
+        user2.logout()
+        leancloud.client.use_master_key(use_master_key)
+    return setup_func
 
 
 def destroy_func():
@@ -74,21 +78,21 @@ def test_sign_out():
     assert not user.is_current
 
 
-@with_setup(setup_func, destroy_func)
+@with_setup(get_setup_func(), destroy_func)
 def test_login():
     user = User()
-    user.set('username', 'user1')
+    user.set('username', 'user1_name')
     user.set('password', 'password')
     user.login()
 
     user = User()
-    user.login('user1', 'password')
+    user.login('user1_name', 'password')
 
 
-@with_setup(setup_func, destroy_func)
+@with_setup(get_setup_func(), destroy_func)
 def test_file_field():
     user = User()
-    user.login('user1', 'password')
+    user.login('user1_name', 'password')
     user.set('xxxxx', File('xxx.txt', buffer('qqqqq')))
     user.save()
 
@@ -98,27 +102,27 @@ def test_file_field():
     assert saved_user.get('xxxxx').name == 'xxx.txt'
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_follow():
     user1 = User()
-    user1.set('username', 'user1')
+    user1.set('username', 'user1_name')
     user1.set('password', 'password')
     user1.login()
 
     user2 = User()
-    user2.set('username', 'user2')
+    user2.set('username', 'user2_name')
     user2.set('password', 'password')
     user2.login()
 
     user1.follow(user2.id)
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_follower_query():
     user1 = User()
-    user1.login('user1', 'password')
+    user1.login('user1_name', 'password')
     user2 = User()
-    user2.login('user2', 'password')
+    user2.login('user2_name', 'password')
     user2.follow(user1.id)
     query = User.create_follower_query(user1.id)
     assert query.first().id == user2.id
@@ -138,32 +142,32 @@ def test_followee_query():
     }
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_current_user():
     user = User()
-    user.login('user1', 'password')
+    user.login('user1_name', 'password')
     assert user.is_current
     assert User.get_current().id == user.id
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func(use_master_key=False))
 def test_update_user():
     user = User()
-    user.login('user1', 'password')
+    user.login('user1_name', 'password')
     user.set('nickname', 'test_name')
     user.save()
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_user_become():
     existed_user = User()
-    existed_user.login('user1', 'password')
+    existed_user.login('user1_name', 'password')
     session_token = existed_user.get_session_token()
     user = User.become(session_token)
     assert user.get('username') == existed_user.get('username')
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_login_with():
     data = {
         "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
@@ -173,7 +177,7 @@ def test_login_with():
     User.login_with('weixin', data)
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_unlink_from():
     data = {
         "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
@@ -184,7 +188,7 @@ def test_unlink_from():
     user.unlink_from('weixin')
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_is_linked():
     data = {
         "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
@@ -195,7 +199,7 @@ def test_is_linked():
     assert user.is_linked('weixin')
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_signup_or_login_with_mobile_phone():
     try:
         User.signup_or_login_with_mobile_phone('18611111111', '111111')
@@ -203,18 +207,18 @@ def test_signup_or_login_with_mobile_phone():
         assert e.code == 603
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_update_password():
     user = User()
-    user.login('user1', 'password')
+    user.login('user1_name', 'password')
     user.update_password('password', 'new_password')
-    user.login('user1', 'new_password')
+    user.login('user1_name', 'new_password')
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_get_methods():
     user = User()
-    user.login('user1', 'password')
+    user.login('user1_name', 'password')
 
     user.set_username('new_user1')
     assert user.get_username() == 'new_user1'
@@ -229,7 +233,7 @@ def test_get_methods():
     assert user.get_email() == 'wow1@leancloud.rocks'
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_request_password_reset():
     try:
         User.request_password_reset('wow@leancloud.rocks')
@@ -238,7 +242,7 @@ def test_request_password_reset():
             raise e
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_request_email_verify():
     try:
         User.request_email_verify('wow@leancloud.rocks')
@@ -247,7 +251,7 @@ def test_request_email_verify():
         assert '邮件验证功能' in str(e) or '请不要往同一个邮件地址发送太多邮件' in str(e)
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_request_mobile_phone_verify():
     try:
         User.request_mobile_phone_verify('1861111' + str(random.randrange(1000, 9999)))
@@ -256,7 +260,7 @@ def test_request_mobile_phone_verify():
             raise e
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_request_password_reset_by_sms_code():
     try:
         User.request_password_reset_by_sms_code('1861111' + str(random.randrange(1000, 9999)))
@@ -265,12 +269,12 @@ def test_request_password_reset_by_sms_code():
             raise e
 
 # cannot be tested without sms code
-# @with_setup(setup_func)
+# @with_setup(get_setup_func())
 # def test_verify_mobile_phone_number():
 #     User.verify_mobile_phone_number('111111')
 
 
-@with_setup(setup_func)
+@with_setup(get_setup_func())
 def test_request_login_sms_code():
     try:
         User.request_login_sms_code('18611111111')

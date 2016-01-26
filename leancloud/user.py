@@ -24,7 +24,8 @@ class User(Object):
         return self._session_token
 
     def _merge_magic_field(self, attrs):
-        self._session_token = attrs.get('sessionToken')
+        if 'sessionToken' in attrs:
+            self._session_token = attrs.get('sessionToken')
         attrs.pop('sessionToken', None)
 
         return super(User, self)._merge_magic_field(attrs)
