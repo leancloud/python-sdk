@@ -257,3 +257,19 @@ def test_pointer():
     s = score()
     s.set('user', user)
     s.save()
+
+
+@with_setup(setup_func)
+def test_save_and_destroy_all():
+    ObjToDelete = Object.extend('ObjToDelete')
+    objs = [ObjToDelete() for _ in range(3)]
+    Object.save_all(objs)
+    assert all(not x.is_new() for x in objs)
+
+    Object.destroy_all(objs)
+
+    for obj in objs:
+        try:
+            leancloud.Query(ObjToDelete).get(obj.id)
+        except leancloud.LeanCloudError as e:
+            assert e.code == 101
