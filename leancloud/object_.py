@@ -109,6 +109,36 @@ class Object(object):
         obj.id = id_
         return obj
 
+    @classmethod
+    def save_all(cls, objs):
+        """
+        在一个请求中 save 多个 leancloud.Object 对象实例。
+
+        :param objs: 需要 save 的对象
+        :type objs: list
+        """
+        if not objs:
+            return
+        return cls()._deep_save(objs, [])
+
+    @classmethod
+    def destroy_all(cls, objs):
+        """
+        在一个请求中 destroy 多个 leancloud.Object 对象实例。
+
+        :param objs: 需要 destroy 的对象
+        :type objs: list
+        """
+        if not objs:
+            return
+        if not all(x._class_name == objs[0]._class_name for x in objs):
+            raise ValueError("destroy_all requires the argument object list's _class_names must be the same")
+        if any(x.is_new() for x in objs):
+            raise ValueError("Could not destroy unsaved object")
+        ids = {x.id for x in objs}
+        ids = ','.join(ids)
+        client.delete('/classes/{0}/{1}'.format(objs[0]._class_name, ids))
+
     def dump(self):
         obj = self._dump()
         obj.pop('__type')
@@ -173,6 +203,8 @@ class Object(object):
         for f in unsaved_files:
             f.save()
 
+        if not unsaved_children:
+            return
         dumped_objs = []
         for obj in unsaved_children:
             obj._start_save()
@@ -449,7 +481,7 @@ class Object(object):
 
         :rtype: bool
         """
-        return True if self.id else False
+        return False if self.id else True
 
     def is_existed(self):
         return self._existed
