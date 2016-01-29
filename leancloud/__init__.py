@@ -20,6 +20,7 @@ from .engine import LeanEngineError
 from .engine import cloudfunc
 from .engine.https_redirect_middleware import HttpsRedirectMiddleware
 from .errors import LeanCloudError
+from .errors import LeanCloudWarning
 from .file_ import File
 from .geo_point import GeoPoint
 from .object_ import Object
@@ -66,8 +67,8 @@ version_info = sys.version_info
 
 
 if version_info.major == 2 and version_info.minor < 7:
-    warnings.warn('Python2 version less than 7 is not supported', DeprecationWarning)
+    warnings.warn('Python2 version less than 7 is not supported', LeanCloudWarning)
 
 
 if version_info.minor == 3 and version_info.minor < 4:
-    warnings.warn('Python3 version less than 4 is not supported', DeprecationWarning)
+    warnings.warn('Python3 version less than 4 is not supported', LeanCloudWarning)

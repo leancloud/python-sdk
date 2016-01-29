@@ -15,4 +15,10 @@ install:
   - "pip install -e .[test]"
 
 # command to run tests
-script: nosetests --nologcapture 
+script: nosetests --nologcapture
+
+before_install:
+  - pip install codecov
+
+after_success:
+  - codecov

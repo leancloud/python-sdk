@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import copy
+import warnings
 from datetime import datetime
 
 import iso8601
@@ -55,7 +56,7 @@ class Object(object):
 
         self._server_data = {}
         self._op_set_queue = [{}]
-        self.attributes = {}
+        self._attributes = {}
 
         self._existed = False
 
@@ -139,6 +140,11 @@ class Object(object):
         ids = ','.join(ids)
         client.delete('/classes/{0}/{1}'.format(objs[0]._class_name, ids))
 
+    @property
+    def attributes(self):
+        warnings.warn('leancloud.Object.attributes should not be used any more, please use get or set instead', leancloud.errors.LeanCloudWarning)
+        return self._attributes
+
     def dump(self):
         obj = self._dump()
         obj.pop('__type')
@@ -147,7 +153,7 @@ class Object(object):
 
     def _dump(self, seen_objects=None):
         seen_objects = seen_objects or []
-        obj = copy.deepcopy(self.attributes)
+        obj = copy.deepcopy(self._attributes)
         for k, v in obj.iteritems():
             obj[k] = utils.encode(v, seen_objects)
 
@@ -178,10 +184,10 @@ class Object(object):
         unsaved_children = []
         unsaved_files = []
 
-        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
+        self._find_unsaved_children(self._attributes, unsaved_children, unsaved_files)
 
         if len(unsaved_children) + len(unsaved_files) > 0:
-            self._deep_save(unsaved_children, unsaved_files, exclude=self.attributes)
+            self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
         self._start_save()
 
@@ -319,7 +325,7 @@ class Object(object):
         :type attr: basestring
         :return: 字段值
         """
-        return self.attributes.get(attr)
+        return self._attributes.get(attr)
 
     def relation(self, attr):
         """
@@ -346,7 +352,7 @@ class Object(object):
         :return: 当有值时返回 True， 否则返回 False
         :rtype: bool
         """
-        return attr in self.attributes
+        return attr in self._attributes
 
     def set(self, key_or_attrs, value=None, unset=False):
         """
@@ -450,7 +456,7 @@ class Object(object):
 
         :return: 当前对象
         """
-        self.set(self.attributes, unset=True)
+        self.set(self._attributes, unset=True)
 
     def _dump_save(self):
         result = copy.deepcopy(self._op_set_queue[0])
@@ -527,22 +533,22 @@ class Object(object):
         self._has_data = has_data
 
     def _rebuild_estimated_data_for_key(self, key):
-        if self.attributes.get(key):
-            del self.attributes[key]
+        if self._attributes.get(key):
+            del self._attributes[key]
 
         if key in self._server_data:
-            self.attributes[key] = self._server_data[key]
+            self._attributes[key] = self._server_data[key]
 
         for op_set in self._op_set_queue:
             o = op_set.get(key)
             if o is None:
                 continue
-            self.attributes[key] = o._apply(self.attributes.get(key), self, key)
-            if self.attributes[key] is operation._UNSET:
-                del self.attributes[key]
+            self._attributes[key] = o._apply(self._attributes.get(key), self, key)
+            if self._attributes[key] is operation._UNSET:
+                del self._attributes[key]
 
     def _rebuild_all_estimated_data(self):
-        self.attributes = copy.deepcopy(self._server_data)
+        self._attributes = copy.deepcopy(self._server_data)
 
     def _apply_op_set(self, op_set, target):
         for key, change in op_set.iteritems():
