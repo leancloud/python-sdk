@@ -318,10 +318,10 @@ def test_matches_key_in_query():
 
 
 @with_setup(setup_func, match_key_setup)
-def test_matched_key_in_query():
+def test_matches_key_in_query():
     q1 = Query(A).equal_to('age', 1)
     q2 = Query(B)
-    result = q2.matched_key_in_query('work_year', 'age', q1).find()
+    result = q2.matches_key_in_query('work_year', 'age', q1).find()
     assert len(result) == 5
 
 

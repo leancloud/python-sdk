@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import copy
+import warnings
 from datetime import datetime
 
 import iso8601
@@ -141,6 +142,7 @@ class Object(object):
 
     @property
     def attributes(self):
+        warnings.warn('leancloud.Object.attributes should not be used any more, please use get or set instead', leancloud.errors.LeanCloudWarning)
         return self._attributes
 
     def dump(self):
@@ -182,10 +184,10 @@ class Object(object):
         unsaved_children = []
         unsaved_files = []
 
-        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
+        self._find_unsaved_children(self._attributes, unsaved_children, unsaved_files)
 
         if len(unsaved_children) + len(unsaved_files) > 0:
-            self._deep_save(unsaved_children, unsaved_files, exclude=self.attributes)
+            self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
         self._start_save()
 
@@ -350,7 +352,7 @@ class Object(object):
         :return: 当有值时返回 True， 否则返回 False
         :rtype: bool
         """
-        return attr in self.attributes
+        return attr in self._attributes
 
     def set(self, key_or_attrs, value=None, unset=False):
         """

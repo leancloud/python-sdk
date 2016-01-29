@@ -76,10 +76,10 @@ def test_find_unsaved_children_2():
 def test_set():
     album = Album()
     album.set('title', 'Nightwish')
-    eq_(album.attributes, {'title': 'Nightwish'})
+    eq_(album._attributes, {'title': 'Nightwish'})
 
     album = Album(title='Nightwish')
-    eq_(album.attributes, {'title': 'Nightwish'})
+    eq_(album._attributes, {'title': 'Nightwish'})
 
 
 def test_get():
@@ -186,7 +186,7 @@ def test_extend():
 def test_finish_fetch():
     album = Album()
     album._finish_fetch({'title': 'Once', 'artist': 'nightwish'}, False)
-    eq_(album.attributes, {'title': 'Once', 'artist': 'nightwish'})
+    eq_(album._attributes, {'title': 'Once', 'artist': 'nightwish'})
 
 
 def test_dump():

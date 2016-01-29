@@ -11,3 +11,7 @@ class LeanCloudError(Exception):
     def __str__(self):
         error = self.error if isinstance(self.error, str) else self.error.encode('utf-8', 'ignore')
         return '[{0}] {1}'.format(self.code, error)
+
+
+class LeanCloudWarning(UserWarning):
+    pass

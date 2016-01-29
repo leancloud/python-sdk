@@ -235,7 +235,7 @@ class User(Object):
         user._finish_fetch(server_data, True)
         user._handle_save_result(True)
         if 'smsCode' not in server_data:
-            user.attributes.pop('smsCode', None)
+            user._attributes.pop('smsCode', None)
         return user
 
     def update_password(self, old_password, new_password):

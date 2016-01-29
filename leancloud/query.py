@@ -9,6 +9,7 @@ from leancloud import client
 from leancloud import utils
 from leancloud.object_ import Object
 from leancloud.errors import LeanCloudError
+from leancloud.errors import LeanCloudWarning
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -405,7 +406,7 @@ class Query(object):
         return self
 
     def matched_key_in_query(self, key, query_key, query):
-        warnings.warn(' the query is deprecated, please use matches_key_in_query', DeprecationWarning)
+        warnings.warn(' the query is deprecated, please use matches_key_in_query', LeanCloudWarning)
         return self.matches_key_in_query(key, query_key, query)
 
     def matches_key_in_query(self, key, query_key, query):
