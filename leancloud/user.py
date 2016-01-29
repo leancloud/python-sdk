@@ -59,7 +59,7 @@ class User(Object):
         user._finish_fetch(server_data, True)
         user._handle_save_result(True)
         if 'smsCode' not in server_data:
-            user.attributes.pop('smsCode', None)
+            user._attributes.pop('smsCode', None)
         return user
 
     @property
@@ -135,7 +135,7 @@ class User(Object):
         self._finish_fetch(server_data, False)
         self._handle_save_result(True)
         if 'smsCode' not in server_data:
-            self.attributes.pop('smsCode', None)
+            self._attributes.pop('smsCode', None)
 
     def logout(self):
         if not self.is_current:
@@ -251,10 +251,10 @@ class User(Object):
         self._handle_save_result(True)
 
     def get_username(self):
-        return self.attributes.get('username')
+        return self.get('username')
 
     def get_mobile_phone_number(self):
-        return self.attributes.get('mobilePhoneNumber')
+        return self.get('mobilePhoneNumber')
 
     def set_mobile_phone_number(self, phone_number):
         return self.set('mobilePhoneNumber', phone_number)
@@ -269,7 +269,7 @@ class User(Object):
         return self.set('email', email)
 
     def get_email(self):
-        return self.attributes.get('email')
+        return self.get('email')
 
     @classmethod
     def request_password_reset(self, email):
