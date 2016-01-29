@@ -72,6 +72,8 @@ class Object(object):
         self.created_at = None
         self.updated_at = None
 
+        self.fetch_when_save = False
+
         for k, v in attrs.iteritems():
             self.set(k, v)
 
@@ -180,7 +182,7 @@ class Object(object):
         :rtype: None
         """
         if not self.id:
-            return False
+            return
         client.delete('/classes/{0}/{1}'.format(self._class_name, self.id))
 
     def save(self):
@@ -204,10 +206,12 @@ class Object(object):
 
         method = 'PUT' if self.id is not None else 'POST'
 
+        fetch_when_save = 'true' if self.fetch_when_save else 'false'
+
         if method == 'PUT':
-            response = client.put('/classes/{0}/{1}'.format(self._class_name, self.id), data)
+            response = client.put('/classes/{0}/{1}?fetchWhenSave={2}'.format(self._class_name, self.id, fetch_when_save), data)
         else:
-            response = client.post('/classes/{0}'.format(self._class_name), data)
+            response = client.post('/classes/{0}?fetchWhenSave={1}'.format(self._class_name, fetch_when_save), data)
 
         self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
 
