@@ -64,56 +64,6 @@ def encode(value, disallow_objects=False):
     return value
 
 
-# def encode(value, seen_objects=None, disallow_objects=False):
-#     seen_objects = seen_objects or []
-#     if isinstance(value, leancloud.Object):
-#         if disallow_objects:
-#             raise TypeError('Object is now allowed')
-#         if (not seen_objects) or (value in seen_objects) or (not value._has_data):
-#             return value._to_pointer()
-#         if not value.is_dirty():
-#             seen_objects.append(value)
-#             return encode(value._dump(seen_objects=seen_objects), seen_objects, disallow_objects)
-#
-#     if isinstance(value, leancloud.ACL):
-#         return value.dump()
-#
-#     if isinstance(value, datetime):
-#         return {
-#             '__type': 'Date',
-#             'iso': value.isoformat()
-#         }
-#
-#     if isinstance(value, leancloud.GeoPoint):
-#         return value.dump()
-#
-#     if isinstance(value, (tuple, list)):
-#         return [encode(x, seen_objects, disallow_objects) for x in value]
-#
-#     # TODO: regexp
-#
-#     if isinstance(value, leancloud.Relation):
-#         return value.dump()
-#
-#     if isinstance(value, op.BaseOp):
-#         return value.dump()
-#
-#     if isinstance(value, leancloud.File):
-#         if (value.url is None) and (value.id is None):
-#             raise ValueError('tried to save an unsaved file')
-#         return {
-#             '__type': 'File',
-#             'id': value.id,
-#             'name': value.name,
-#             'url': value.url,
-#         }
-#
-#     if isinstance(value, dict):
-#         return {k: encode(v, seen_objects, disallow_objects) for k, v in value.iteritems()}
-#
-#     return value
-
-
 def decode(key, value):
     if isinstance(value, get_dumpable_types()):
         return value
@@ -178,10 +128,8 @@ def decode(key, value):
 
 def traverse_object(obj, callback, seen=None):
     seen = seen or set()
-    # print obj, '>',
 
     if isinstance(obj, leancloud.Object):
-        # print 'is Object'
         if obj in seen:
             return
         seen.add(obj)
@@ -189,11 +137,9 @@ def traverse_object(obj, callback, seen=None):
         return callback(obj)
 
     if isinstance(obj, (leancloud.Relation, leancloud.File)):
-        # print 'is Relation or File'
         return callback(obj)
 
     if isinstance(obj, (list, tuple)):
-        # print 'is list or tuple'
         for idx, child in enumerate(obj):
             new_child = traverse_object(child, callback, seen)
             if new_child:
@@ -201,14 +147,11 @@ def traverse_object(obj, callback, seen=None):
         return callback(obj)
 
     if isinstance(obj, dict):
-        # print 'is dict'
         for key, child in obj.iteritems():
             new_child = traverse_object(child, callback, seen)
             if new_child:
                 obj[key] = new_child
         return callback(obj)
-
-    # print 'is other'
 
     return callback(obj)
 
