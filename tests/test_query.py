@@ -140,22 +140,18 @@ def test_relation():
 @with_setup(setup_func, destroy_func)
 def test_basic_query():
     # find
-    q = Query(GameScore)
-    results = q.find()
+    results = GameScore.query.find()
     eq_(len(results), 10)
 
     # first
-    q = Query(GameScore)
-    game_score = q.first()
+    game_score = GameScore.query.first()
     assert game_score
 
     # get
-    q = Query(GameScore)
-    q.get(game_score.id)
+    GameScore.query.get(game_score.id)
 
     # count
-    q = Query(GameScore)
-    eq_(q.count(), 10)
+    eq_(GameScore.query.count(), 10)
 
     # descending and add_descending
     q = Query(GameScore).add_descending('score').descending('score')

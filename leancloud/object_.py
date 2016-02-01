@@ -40,6 +40,15 @@ class ObjectMeta(type):
         object_class_map[name] = object_class
         return object_class
 
+    @property
+    def query(cls):
+        """
+        获取当前对象的 Query 对象。
+
+        :rtype: leancloud.Query
+        """
+        return leancloud.Query(cls)
+
 
 class Object(object):
     __metaclass__ = ObjectMeta
