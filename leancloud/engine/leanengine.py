@@ -93,7 +93,7 @@ class LeanEngineApplication(object):
         adapter = self.url_map.bind_to_environ(request.environ)
         try:
             endpoint, values = adapter.match()
-        except HTTPException, e:
+        except HTTPException as e:
             return e
 
         params = request.get_data()
@@ -115,14 +115,14 @@ class LeanEngineApplication(object):
             else:
                 raise ValueError    # impossible
             return Response(json.dumps(result), mimetype='application/json')
-        except LeanEngineError, e:
+        except LeanEngineError as e:
             return Response(
                 json.dumps({'code': e.code, 'error': e.message}),
                 status=400,
                 mimetype='application/json'
             )
         except Exception:
-            print traceback.format_exc()
+            print(traceback.format_exc())
             return Response(
                 json.dumps({'code': 141, 'error': 'Cloud Code script had an error.'}),
                 status=500,

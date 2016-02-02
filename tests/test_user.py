@@ -1,5 +1,9 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 import random
 
@@ -247,7 +251,6 @@ def test_request_email_verify():
     try:
         User.request_email_verify('wow@leancloud.rocks')
     except LeanCloudError as e:
-        print e
         assert '邮件验证功能' in str(e) or '请不要往同一个邮件地址发送太多邮件' in str(e)
 
 

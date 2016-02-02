@@ -1,5 +1,9 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 
 from StringIO import StringIO
@@ -39,8 +43,8 @@ def test_basic():
 
 
 def test_create_with_url():
-    f = File.create_with_url('xxx', 'http://www.lenna.org/full/len_std.jpg', meta_data={})
-    assert f.url == 'http://www.lenna.org/full/len_std.jpg'
+    f = File.create_with_url('xxx', 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png', meta_data={})
+    assert f.url == 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png'
 
 
 def test_create_without_data():
@@ -65,7 +69,7 @@ def test_save():
 
 @with_setup(setup_func)
 def test_save_external():
-    f = File.create_with_url('lenna.jpg', 'http://www.lenna.org/full/len_std.jpg')
+    f = File.create_with_url('lenna.jpg', 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     f.save()
     assert f.id
 
@@ -78,7 +82,7 @@ def test_thumbnail_url_erorr():
 
 @raises(ValueError)
 def test_thumbnail_size_erorr():
-    r = requests.get('http://www.lenna.org/full/len_std.jpg')
+    r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     b = buffer(r.content)
     f = File('Lenna2.jpg', b)
     f.save()
@@ -90,7 +94,7 @@ def test_thumbnail_size_erorr():
 
 @with_setup(setup_func)
 def test_thumbnail():
-    r = requests.get('http://www.lenna.org/full/len_std.jpg')
+    r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     b = buffer(r.content)
     f = File('Lenna2.jpg', b)
     f.save()
@@ -102,7 +106,7 @@ def test_thumbnail():
 
 @with_setup(setup_func)
 def test_destroy():
-    r = requests.get('http://www.lenna.org/full/len_std.jpg')
+    r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     b = buffer(r.content)
     f = File('Lenna2.jpg', b)
     f.save()
@@ -112,7 +116,7 @@ def test_destroy():
 
 @with_setup(setup_func)
 def test_fetch():
-    r = requests.get('http://www.lenna.org/full/len_std.jpg')
+    r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     b = buffer(r.content)
     f = File('Lenna2.jpg', b)
     f.metadata['foo'] = 'bar'

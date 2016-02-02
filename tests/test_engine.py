@@ -1,4 +1,9 @@
 # coding: utf-8
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 import time
 import json
@@ -11,8 +16,8 @@ import leancloud
 from leancloud import Engine
 from leancloud import cloudfunc
 from leancloud.engine import authorization
-from request_generator import generate_request
 from leancloud import LeanCloudError
+from .request_generator import generate_request
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
