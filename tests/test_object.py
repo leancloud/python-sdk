@@ -269,6 +269,7 @@ def test_save_and_destroy_all():
             assert e.code == 101
 
 
+@with_setup(setup_func)
 def test_fetch_when_save():
     Foo = Object.extend('Foo')
     foo = Foo()

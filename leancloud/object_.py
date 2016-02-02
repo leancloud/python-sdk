@@ -211,7 +211,6 @@ class Object(object):
             response = client.put('/classes/{0}/{1}?fetchWhenSave={2}'.format(self._class_name, self.id, fetch_when_save), data)
         else:
             response = client.post('/classes/{0}?fetchWhenSave={1}'.format(self._class_name, fetch_when_save), data)
-
         self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
 
     def _deep_save(self, unsaved_children, unsaved_files, exclude=None):
@@ -525,20 +524,17 @@ class Object(object):
         self._op_set_queue = self._op_set_queue[1:]
         self._apply_op_set(saved_changes, self._server_data)
         self._merge_magic_field(server_data)
+        for key, value in server_data.iteritems():
+            self._server_data[key] = utils.decode(key, value)
         self._rebuild_attributes()
 
     def _finish_fetch(self, server_data, existed):
         self._op_set_queue = [{}]
-
         self._merge_magic_field(server_data)
-
         for key, value in server_data.iteritems():
             self._server_data[key] = utils.decode(key, value)
-
         self._rebuild_attributes()
-
         self._op_set_queue = [{}]
-
         self._existed = existed
 
     def _rebuild_attribute(self, key):
