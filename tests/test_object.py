@@ -145,12 +145,6 @@ def test_clear():
     assert album.get('baz') is None
 
 
-def test_op():
-    album = Album()
-    album.set('foo', 'bar')
-    assert isinstance(album.op('foo'), operation.Set)
-
-
 def test_full_dump():
     album = Album()
     album.set('title', 'Nightwish')
@@ -273,3 +267,24 @@ def test_save_and_destroy_all():
             leancloud.Query(ObjToDelete).get(obj.id)
         except leancloud.LeanCloudError as e:
             assert e.code == 101
+
+
+@with_setup(setup_func)
+def test_fetch_when_save():
+    Foo = Object.extend('Foo')
+    foo = Foo()
+    foo.fetch_when_save = True
+    foo.set('counter', 1)
+    foo.save()
+    assert foo.get('counter') == 1
+
+    foo_from_other_thread = leancloud.Query(Foo).get(foo.id)
+    assert foo_from_other_thread.get('counter') == 1
+    foo_from_other_thread.set('counter', 100)
+    foo_from_other_thread.save()
+
+
+    foo.increment('counter', 3)
+    foo.save()
+    eq_(foo.get('counter'), 103)
+    foo.destroy()
