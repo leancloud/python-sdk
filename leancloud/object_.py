@@ -527,7 +527,7 @@ class Object(object):
         self._merge_magic_field(server_data)
         self._rebuild_attributes()
 
-    def _finish_fetch(self, server_data, has_data):
+    def _finish_fetch(self, server_data, existed):
         self._op_set_queue = [{}]
 
         self._merge_magic_field(server_data)
@@ -539,7 +539,7 @@ class Object(object):
 
         self._op_set_queue = [{}]
 
-        self._has_data = has_data
+        self._existed = existed
 
     def _rebuild_attribute(self, key):
         if self._attributes.get(key):
