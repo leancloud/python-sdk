@@ -8,6 +8,7 @@ import copy
 import warnings
 from datetime import datetime
 
+import six
 import iso8601
 from werkzeug import LocalProxy
 
@@ -54,9 +55,8 @@ class ObjectMeta(type):
         return leancloud.Query(cls)
 
 
+@six.add_metaclass(ObjectMeta)
 class Object(object):
-    __metaclass__ = ObjectMeta
-
     def __init__(self, **attrs):
         """
         创建一个新的 leancloud.Object
@@ -89,7 +89,7 @@ class Object(object):
         :return: 派生的子类
         :rtype: ObjectMeta
         """
-        if isinstance(name, unicode):
+        if six.PY2 and isinstance(name, six.text_type):
             name = name.encode('utf-8')
         return type(name, (cls,), {})
 
