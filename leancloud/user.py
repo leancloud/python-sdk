@@ -96,7 +96,7 @@ class User(Object):
         self._cleanup_auth_data()
         # self._sync_all_auth_data()
         self._server_data.pop('password', None)
-        self._rebuild_estimated_data_for_key('password')
+        self._rebuild_attribute('password')
 
     def save(self, make_current=False):
         super(User, self).save()

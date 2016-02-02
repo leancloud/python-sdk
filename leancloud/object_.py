@@ -406,7 +406,7 @@ class Object(object):
 
             current_changes = self._op_set_queue[-1]
             current_changes[k] = v._merge(current_changes.get(k))
-            self._rebuild_estimated_data_for_key(k)
+            self._rebuild_attribute(k)
 
         return self
 
@@ -525,7 +525,7 @@ class Object(object):
         self._op_set_queue = self._op_set_queue[1:]
         self._apply_op_set(saved_changes, self._server_data)
         self._merge_magic_field(server_data)
-        self._rebuild_all_estimated_data()
+        self._rebuild_attributes()
 
     def _finish_fetch(self, server_data, has_data):
         self._op_set_queue = [{}]
@@ -535,13 +535,13 @@ class Object(object):
         for key, value in server_data.iteritems():
             self._server_data[key] = utils.decode(key, value)
 
-        self._rebuild_all_estimated_data()
+        self._rebuild_attributes()
 
         self._op_set_queue = [{}]
 
         self._has_data = has_data
 
-    def _rebuild_estimated_data_for_key(self, key):
+    def _rebuild_attribute(self, key):
         if self._attributes.get(key):
             del self._attributes[key]
 
@@ -556,7 +556,7 @@ class Object(object):
             if self._attributes[key] is operation._UNSET:
                 del self._attributes[key]
 
-    def _rebuild_all_estimated_data(self):
+    def _rebuild_attributes(self):
         self._attributes = copy.deepcopy(self._server_data)
 
     def _apply_op_set(self, op_set, target):
