@@ -145,12 +145,6 @@ def test_clear():
     assert album.get('baz') is None
 
 
-def test_op():
-    album = Album()
-    album.set('foo', 'bar')
-    assert isinstance(album.op('foo'), operation.Set)
-
-
 def test_full_dump():
     album = Album()
     album.set('title', 'Nightwish')

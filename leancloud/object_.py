@@ -162,11 +162,10 @@ class Object(object):
         obj.pop('className')
         return obj
 
-    def _dump(self, seen_objects=None):
-        seen_objects = seen_objects or []
+    def _dump(self):
         obj = copy.deepcopy(self._attributes)
         for k, v in obj.iteritems():
-            obj[k] = utils.encode(v, seen_objects)
+            obj[k] = utils.encode(v)
 
         if self.id is not None:
             obj['objectId'] = self.id
@@ -459,9 +458,6 @@ class Object(object):
         :return: 当前对象
         """
         return self.set(attr, operation.Remove([item]))
-
-    def op(self, attr):
-        return self._op_set_queue[-1][attr]
 
     def clear(self):
         """
