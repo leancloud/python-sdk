@@ -1,6 +1,17 @@
+## [1.4.0] - 2014-02-02
+### Added
+- add leancloud.File.fetch function
+- add leancloud.engine.before_update hook
+- add leancloud.Object.save_all and leancloud.Object.destroy_all function
+- add leancloud.Object.fetch_when_save flag
+- ### Updated
+- bugfix for leancloud.User._session_token is set to None when modify User object
+- bugfix for query leancloud.Role object
+
 ## [1.3.12] - 2015-12-30
 ### Updated
 - fixed engine hook current user's bug
+- access to leancloud.Object.attributes will raise a warning
 
 ## [1.3.11] - 2015-12-17
 ### Updated
