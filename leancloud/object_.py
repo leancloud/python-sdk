@@ -76,6 +76,8 @@ class Object(object):
         self.created_at = None
         self.updated_at = None
 
+        self.fetch_when_save = False
+
         for k, v in attrs.iteritems():
             self.set(k, v)
 
@@ -164,11 +166,10 @@ class Object(object):
         obj.pop('className')
         return obj
 
-    def _dump(self, seen_objects=None):
-        seen_objects = seen_objects or []
+    def _dump(self):
         obj = copy.deepcopy(self._attributes)
         for k, v in obj.iteritems():
-            obj[k] = utils.encode(v, seen_objects)
+            obj[k] = utils.encode(v)
 
         if self.id is not None:
             obj['objectId'] = self.id
@@ -184,7 +185,7 @@ class Object(object):
         :rtype: None
         """
         if not self.id:
-            return False
+            return
         client.delete('/classes/{0}/{1}'.format(self._class_name, self.id))
 
     def save(self):
@@ -208,11 +209,12 @@ class Object(object):
 
         method = 'PUT' if self.id is not None else 'POST'
 
-        if method == 'PUT':
-            response = client.put('/classes/{0}/{1}'.format(self._class_name, self.id), data)
-        else:
-            response = client.post('/classes/{0}'.format(self._class_name), data)
+        fetch_when_save = 'true' if self.fetch_when_save else 'false'
 
+        if method == 'PUT':
+            response = client.put('/classes/{0}/{1}?fetchWhenSave={2}'.format(self._class_name, self.id, fetch_when_save), data)
+        else:
+            response = client.post('/classes/{0}?fetchWhenSave={1}'.format(self._class_name, fetch_when_save), data)
         self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
 
     def _deep_save(self, unsaved_children, unsaved_files, exclude=None):
@@ -407,7 +409,7 @@ class Object(object):
 
             current_changes = self._op_set_queue[-1]
             current_changes[k] = v._merge(current_changes.get(k))
-            self._rebuild_estimated_data_for_key(k)
+            self._rebuild_attribute(k)
 
         return self
 
@@ -459,9 +461,6 @@ class Object(object):
         :return: 当前对象
         """
         return self.set(attr, operation.Remove([item]))
-
-    def op(self, attr):
-        return self._op_set_queue[-1][attr]
 
     def clear(self):
         """
@@ -529,23 +528,20 @@ class Object(object):
         self._op_set_queue = self._op_set_queue[1:]
         self._apply_op_set(saved_changes, self._server_data)
         self._merge_magic_field(server_data)
-        self._rebuild_all_estimated_data()
-
-    def _finish_fetch(self, server_data, has_data):
-        self._op_set_queue = [{}]
-
-        self._merge_magic_field(server_data)
-
         for key, value in server_data.iteritems():
             self._server_data[key] = utils.decode(key, value)
+        self._rebuild_attributes()
 
-        self._rebuild_all_estimated_data()
-
+    def _finish_fetch(self, server_data, existed):
         self._op_set_queue = [{}]
+        self._merge_magic_field(server_data)
+        for key, value in server_data.iteritems():
+            self._server_data[key] = utils.decode(key, value)
+        self._rebuild_attributes()
+        self._op_set_queue = [{}]
+        self._existed = existed
 
-        self._has_data = has_data
-
-    def _rebuild_estimated_data_for_key(self, key):
+    def _rebuild_attribute(self, key):
         if self._attributes.get(key):
             del self._attributes[key]
 
@@ -560,7 +556,7 @@ class Object(object):
             if self._attributes[key] is operation._UNSET:
                 del self._attributes[key]
 
-    def _rebuild_all_estimated_data(self):
+    def _rebuild_attributes(self):
         self._attributes = copy.deepcopy(self._server_data)
 
     def _apply_op_set(self, op_set, target):
