@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import time
 import copy
 import warnings
 from datetime import datetime
@@ -518,6 +519,20 @@ class Object(object):
         """
 
         return self.set('ACL', acl)
+
+    def disable_before_hook(self):
+        master_key = client.get_app_info().get('master_key')
+        if not master_key:
+            raise ValueError('disable_before_hook need LeanCloud master key')
+        timestamp = int(time.time() * 1000)
+        return self.set('__before', utils.sign_disable_hook('__before_for_' + self._class_name, master_key, timestamp))
+
+    def disable_after_hook(self):
+        master_key = client.get_app_info().get('master_key')
+        if not master_key:
+            raise ValueError('disable_before_hook need LeanCloud master key')
+        timestamp = int(time.time() * 1000)
+        return self.set('__after', utils.sign_disable_hook('__after_for_' + self._class_name, master_key, timestamp))
 
     def _finish_save(self, server_data):
         saved_changes = self._op_set_queue[0]

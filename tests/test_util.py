@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from nose.tools import eq_
+
 from leancloud import Object
 from leancloud import ACL
 from leancloud import GeoPoint
@@ -81,3 +83,8 @@ def test_util():
     utils.traverse_object(obj, callback)
 
     assert callback.count == 2
+
+
+def test_sign_disable_hook():
+    sign = utils.sign_disable_hook('__before_for_TestClass', 'test-master-key', '1453711871302')
+    eq_(sign, '1453711871302,f10c9dd65da84b564f1b9a8b57df4a07774bc77b')
