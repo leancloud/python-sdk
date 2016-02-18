@@ -161,6 +161,14 @@ def get_server_time():
     return utils.decode('iso', content)
 
 
+def get_app_info():
+    return {
+        'app_id': APP_ID,
+        'app_key': APP_KEY,
+        'master_key': MASTER_KEY,
+    }
+
+
 @need_init
 @check_error
 def get(url, params=None, headers=None):

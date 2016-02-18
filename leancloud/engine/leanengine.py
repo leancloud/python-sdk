@@ -203,6 +203,17 @@ def dispatch_cloud_hook(class_name, hook_name, params):
     if '__updateKeys' in params['object']:
        obj.updated_keys = params['object']['__updateKeys']
 
+    if hook_name.startswith('__before'):
+        if obj.has('__before'):
+            obj.set('__before', obj.get('__before'))
+        else:
+            obj.disable_before_hook()
+    elif hook_name.startswith('__after'):
+        if obj.has('__after'):
+            obj.set('__after', obj.get('__after'))
+        else:
+            obj.disable_after_hook()
+
     logger.info("{0}:{1} is called!".format(class_name, hook_name))
 
     func = _cloud_codes[hook_name]

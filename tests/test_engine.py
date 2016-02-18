@@ -60,7 +60,7 @@ def setup():
     leancloud.client.APP_ID = None
     leancloud.client.APP_KEY = None
     leancloud.client.MASTER_KEY = None
-    leancloud.init(TEST_APP_ID, TEST_APP_KEY)
+    leancloud.init(TEST_APP_ID, TEST_APP_KEY, TEST_MASTER_KEY)
     authorization._ENABLE_TEST = True
     authorization.APP_ID = TEST_APP_ID
     authorization.APP_KEY = TEST_APP_KEY
@@ -238,6 +238,7 @@ def test_register_cloud_func():
 def test_before_save_hook():
     @engine.before_save('HookObject')
     def before_hook_object_save(obj):
+        assert obj.has('__before')
         obj.set('beforeSaveHookInserted', True)
 
     response = requests.post(url + '/__engine/1/functions/HookObject/beforeSave', json={
@@ -247,13 +248,15 @@ def test_before_save_hook():
         'x-avoscloud-application-key': TEST_APP_KEY,
     })
     assert response.ok
-    assert response.json() == {"beforeSaveHookInserted": True, "clientValue": "blah"}
+    assert response.json()['beforeSaveHookInserted'] == True
+    assert response.json()['clientValue'] == 'blah'
+    assert '__before' in response.json()
 
 
 def test_after_save_hook():
     @engine.after_save('HookObject')
     def after_hook_object_save(obj):
-        pass
+        assert obj.has('__after')
 
     response = requests.post(url + '/__engine/1/functions/HookObject/afterSave', json={
         'object': {'clientValue': 'blah'}
