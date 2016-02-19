@@ -1,12 +1,17 @@
 # coding: utf-8
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 import re
 import base64
-import cStringIO
-import StringIO
 import random
 
 import qiniu
+import six
+from six import StringIO
 
 import leancloud
 from leancloud import client
@@ -44,15 +49,20 @@ class File(object):
 
         if data is None:
             self._source = None
-        elif isinstance(data, cStringIO.OutputType):
-            self._source = StringIO.StringIO(data.getvalue())
-        elif isinstance(data, StringIO.StringIO):
+        elif isinstance(data, StringIO):
             self._source = data
         elif isinstance(data, file):
             data.seek(0, os.SEEK_SET)
-            self._source = StringIO.StringIO(data.read())
+            self._source = StringIO(data.read())
         elif isinstance(data, buffer):
-            self._source = StringIO.StringIO(data)
+            self._source = StringIO(data)
+        elif six.PY2:
+            import cStringIO
+            if isinstance(data, cStringIO.OutputType):
+                data.seek(0, os.SEEK_SET)
+                self._source = StringIO(data.getvalue())
+            else:
+                raise TypeError('data must be a StringIO / buffer / file instance')
         else:
             raise TypeError('data must be a StringIO / buffer / file instance')
 
@@ -128,7 +138,7 @@ class File(object):
 
     def save(self):
         if self._source:
-            output = cStringIO.StringIO()
+            output = StringIO()
             self._source.seek(0)
             base64.encode(self._source, output)
             self._source.seek(0)
@@ -176,7 +186,6 @@ class File(object):
     def fetch(self):
         response = client.get('/files/{0}'.format(self.id))
         content = utils.response_to_json(response)
-        print content
         self._name = content.get('name')
         self.id = content.get('objectId')
         self._url = content.get('url')

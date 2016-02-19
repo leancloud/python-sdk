@@ -1,5 +1,9 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 from leancloud.object_ import Object
 from leancloud import client
 from leancloud import utils

@@ -5,7 +5,7 @@ import json
 
 from werkzeug.wrappers import Response
 
-import utils
+from . import utils
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 

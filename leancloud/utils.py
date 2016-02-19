@@ -1,15 +1,19 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import copy
 import json
 import gzip
 import hashlib
 import hmac
 from datetime import datetime
-from cStringIO import StringIO
 
 import arrow
 import iso8601
+import six
 from dateutil import tz
 
 import leancloud
@@ -167,7 +171,7 @@ def response_to_json(response):
     # hack for requests in python 2.6
     if 'application/json' in response.headers['Content-Type']:
         if content[:2] == '\x1f\x8b':  # gzip file magic header
-            f = StringIO(content)
+            f = six.StringIO(content)
             g = gzip.GzipFile(fileobj=f)
             content = g.read()
             g.close()

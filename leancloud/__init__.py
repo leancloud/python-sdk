@@ -3,6 +3,11 @@
 """LeanCloud Python SDK
 """
 
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import sys
 import logging
 import warnings
@@ -10,6 +15,8 @@ import warnings
 logger = logging.getLogger('iso8601.iso8601')
 logger.setLevel(logging.CRITICAL)
 
+from . import client
+from . import push
 from .acl import ACL
 from .client import init
 from .client import use_master_key
@@ -30,8 +37,6 @@ from .query import Query
 from .relation import Relation
 from .role import Role
 from .user import User
-import client
-import push
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'

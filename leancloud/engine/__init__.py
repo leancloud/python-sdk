@@ -6,8 +6,8 @@ import json
 from werkzeug.wrappers import Request
 from werkzeug.serving import run_simple
 
-import context
 import leancloud
+from . import context
 from .authorization import AuthorizationMiddleware
 from .cors import CORSMiddleware
 from .leanengine import LeanEngineApplication

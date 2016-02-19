@@ -1,4 +1,9 @@
 # coding: utf-8
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 import random
 from datetime import datetime
@@ -302,7 +307,6 @@ def test_matched():
 def test_does_not_match_query():
     q = Query(GameScore).greater_than('score', -1)
     result = Query(GameScore).does_not_match_query('playerName', q).find()
-    print result
 
 
 @with_setup(setup_func, match_key_setup)
