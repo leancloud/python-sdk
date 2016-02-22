@@ -287,8 +287,29 @@ def test_fetch_when_save():
     foo_from_other_thread.set('counter', 100)
     foo_from_other_thread.save()
 
-
     foo.increment('counter', 3)
     foo.save()
     eq_(foo.get('counter'), 103)
     foo.destroy()
+
+
+@with_setup(setup_func)
+def test_save_with_where():
+    Foo = Object.extend('Foo')
+    foo = Foo(aNumber=1)
+
+    assert_raises(TypeError, foo.save, where=Foo.query)
+
+    assert_raises(TypeError, foo.save, where=leancloud.Query('SomeClassNotEqualToFoo'))
+
+    foo.save()
+
+    foo.set('aNumber', 2)
+
+    try:
+        foo.save(where=leancloud.Query('Foo').equal_to('aNumber', 2))
+    except leancloud.LeanCloudError as e:
+        assert e.code == 305
+
+    foo.save(where=leancloud.Query('Foo').equal_to('aNumber', 1))
+    assert leancloud.Query('Foo').get(foo.id).get('aNumber') == 2

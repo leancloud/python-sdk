@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import time
 import copy
+import json
 import warnings
 from datetime import datetime
 
@@ -189,18 +190,25 @@ class Object(object):
             return
         client.delete('/classes/{0}/{1}'.format(self._class_name, self.id))
 
-    def save(self):
+    def save(self, where=None):
         """
         将对象数据保存至服务器
 
         :return: None
         :rtype: None
         """
+        if where and not isinstance(where, leancloud.Query):
+            raise TypeError('where param type should be leancloud.Query, got %s', type(where))
+
+        if where and where._query_class._class_name != self._class_name:
+            raise TypeError('where param\'s class name not equal to the current object\'s class name')
+
+        if where and self.is_new():
+            raise TypeError('where params works only when leancloud.Object is saved')
+
         unsaved_children = []
         unsaved_files = []
-
         self._find_unsaved_children(self._attributes, unsaved_children, unsaved_files)
-
         if len(unsaved_children) + len(unsaved_files) > 0:
             self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
@@ -208,14 +216,17 @@ class Object(object):
 
         data = self._dump_save()
 
-        method = 'PUT' if self.id is not None else 'POST'
-
         fetch_when_save = 'true' if self.fetch_when_save else 'false'
 
-        if method == 'PUT':
-            response = client.put('/classes/{0}/{1}?fetchWhenSave={2}'.format(self._class_name, self.id, fetch_when_save), data)
-        else:
+        if self.is_new():
             response = client.post('/classes/{0}?fetchWhenSave={1}'.format(self._class_name, fetch_when_save), data)
+        else:
+            url = '/classes/{0}/{1}?fetchWhenSave={2}'.format(self._class_name, self.id, fetch_when_save)
+            if where:
+                url += '&where=' + json.dumps(where.dump()['where'], separators=(',', ':'))
+            response = client.put(url, data)
+
+
         self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
 
     def _deep_save(self, unsaved_children, unsaved_files, exclude=None):
