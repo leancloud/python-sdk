@@ -361,10 +361,13 @@ def test_current_user():
     @engine.define
     def current_user():
         user = engine.current_user
-        o = leancloud.Object.extend('TestCurrentUser')()
+        TestCurrentUser = leancloud.Object.extend('TestCurrentUser')
+        o = TestCurrentUser()
         o.set('user', user)
         o.set({'yetAnotherUser': user})
         o.save()
+
+        TestCurrentUser.query.equal_to('user', user).find()
         assert user.get('username') == saved_user.get('username')
 
     response = requests.get(url + '/__engine/1/functions/current_user', headers={
