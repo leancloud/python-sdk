@@ -1,4 +1,4 @@
-## [1.4.0] - 2014-02-02
+## [1.4.0] - 2016-02-02
 ### Added
 - add leancloud.File.fetch function
 - add leancloud.engine.before_update hook
