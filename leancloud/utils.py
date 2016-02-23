@@ -14,6 +14,7 @@ from datetime import datetime
 import arrow
 import iso8601
 import six
+from werkzeug import LocalProxy
 from dateutil import tz
 
 import leancloud
@@ -34,6 +35,9 @@ def get_dumpable_types():
 
 
 def encode(value, disallow_objects=False):
+    if isinstance(value, LocalProxy):
+        value = value._get_current_object()
+
     if isinstance(value, datetime):
         tzinfo = value.tzinfo
         if tzinfo is None:

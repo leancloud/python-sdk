@@ -271,12 +271,6 @@ def test_request_password_reset_by_sms_code():
         if e.code not in (213, 601):
             raise e
 
-# cannot be tested without sms code
-# @with_setup(get_setup_func())
-# def test_verify_mobile_phone_number():
-#     User.verify_mobile_phone_number('111111')
-
-
 @with_setup(get_setup_func())
 def test_request_login_sms_code():
     try:
