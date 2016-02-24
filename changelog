@@ -1,3 +1,10 @@
+## [1.4.1] -2016-02-24
+### Added
+- add leancloud.Object.disable_before_hook and leancloud.Object.disable_after_hook
+- allow where param in Object.save
+### Updated:
+- fixed query with leancloud.Engine.current_user as param bug
+
 ## [1.4.0] - 2016-02-02
 ### Added
 - add leancloud.File.fetch function
