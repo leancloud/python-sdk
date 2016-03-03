@@ -58,6 +58,10 @@ class Query(object):
         self._order = []
         self._select = []
 
+    def __call__(self):
+        warnings.warn('leancloud.Relation.query now is a property, please don\'t call it as a function', LeanCloudWarning)
+        return self
+
     @classmethod
     def or_(cls, *queries):
         """

@@ -55,6 +55,10 @@ def test_query_relation():
     assert band1.id in [x.id for x in bands]
     assert band2.id in [x.id for x in bands]
 
+    bands = relation.query.find()
+    assert band1.id in [x.id for x in bands]
+    assert band2.id in [x.id for x in bands]
+
     album.destroy()
     band1.destroy()
     band2.destroy()
