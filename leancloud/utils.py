@@ -19,6 +19,7 @@ from dateutil import tz
 import leancloud
 from leancloud import operation
 from leancloud._compat import StringIO
+from leancloud._compat import iteritems
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -69,7 +70,7 @@ def encode(value, disallow_objects=False):
         return [encode(x, disallow_objects) for x in value]
 
     if isinstance(value, dict):
-        return dict([(k, encode(v, disallow_objects)) for k, v in value.iteritems()])
+        return dict([(k, encode(v, disallow_objects)) for k, v in iteritems(value)])
 
     return value
 
@@ -85,7 +86,7 @@ def decode(key, value):
         return value
 
     if '__type' not in value:
-        return dict([(k, decode(k, v)) for k, v in value.iteritems()])
+        return dict([(k, decode(k, v)) for k, v in iteritems(value)])
 
     _type = value['__type']
 
@@ -157,7 +158,7 @@ def traverse_object(obj, callback, seen=None):
         return callback(obj)
 
     if isinstance(obj, dict):
-        for key, child in obj.iteritems():
+        for key, child in iteritems(obj):
             new_child = traverse_object(child, callback, seen)
             if new_child:
                 obj[key] = new_child

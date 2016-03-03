@@ -12,6 +12,7 @@ import requests
 
 import leancloud
 from leancloud import utils
+from leancloud._compat import iteritems
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -175,7 +176,7 @@ def get(url, params=None, headers=None):
     if not params:
         params = {}
     else:
-        for k, v in params.iteritems():
+        for k, v in iteritems(params):
             if isinstance(v, dict):
                 params[k] = json.dumps(v, separators=(',', ':'))
     response = requests.get(get_base_url() + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)

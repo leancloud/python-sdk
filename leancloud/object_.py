@@ -20,6 +20,7 @@ from leancloud import operation
 from leancloud._compat import with_metaclass
 from leancloud._compat import PY2
 from leancloud._compat import text_type
+from leancloud._compat import iteritems
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -81,7 +82,7 @@ class Object(with_metaclass(ObjectMeta, object)):
 
         self.fetch_when_save = False
 
-        for k, v in attrs.iteritems():
+        for k, v in iteritems(attrs):
             self.set(k, v)
 
     @classmethod
@@ -171,7 +172,7 @@ class Object(with_metaclass(ObjectMeta, object)):
 
     def _dump(self):
         obj = copy.deepcopy(self._attributes)
-        for k, v in obj.iteritems():
+        for k, v in iteritems(obj):
             obj[k] = utils.encode(v)
 
         if self.id is not None:
@@ -332,7 +333,7 @@ class Object(with_metaclass(ObjectMeta, object)):
     def _cancel_save(self):
         failed_changes = self._op_set_queue.pop(0)
         next_changes = self._op_set_queue[0]
-        for key, op in failed_changes.iteritems():
+        for key, op in iteritems(failed_changes):
             op1 = failed_changes[key]
             op2 = next_changes[key]
             if op1 and op2:
@@ -485,7 +486,7 @@ class Object(with_metaclass(ObjectMeta, object)):
 
     def _dump_save(self):
         result = copy.deepcopy(self._op_set_queue[0])
-        for k, v in result.iteritems():
+        for k, v in iteritems(result):
             result[k] = v.dump()
         return result
 
@@ -555,14 +556,14 @@ class Object(with_metaclass(ObjectMeta, object)):
         self._op_set_queue = self._op_set_queue[1:]
         self._apply_op_set(saved_changes, self._server_data)
         self._merge_magic_field(server_data)
-        for key, value in server_data.iteritems():
+        for key, value in iteritems(server_data):
             self._server_data[key] = utils.decode(key, value)
         self._rebuild_attributes()
 
     def _finish_fetch(self, server_data, existed):
         self._op_set_queue = [{}]
         self._merge_magic_field(server_data)
-        for key, value in server_data.iteritems():
+        for key, value in iteritems(server_data):
             self._server_data[key] = utils.decode(key, value)
         self._rebuild_attributes()
         self._op_set_queue = [{}]
@@ -587,7 +588,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         self._attributes = copy.deepcopy(self._server_data)
 
     def _apply_op_set(self, op_set, target):
-        for key, change in op_set.iteritems():
+        for key, change in iteritems(op_set):
             target[key] = change._apply(target.get(key), self, key)
             if target[key] == operation._UNSET:
                 del target[key]
