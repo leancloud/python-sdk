@@ -10,12 +10,12 @@ import base64
 import random
 
 import qiniu
-import six
-from six import StringIO
 
 import leancloud
 from leancloud import client
 from leancloud import utils
+from leancloud._compat import StringIO
+from leancloud._compat import PY2
 from leancloud.mime_type import mime_types
 from leancloud.errors import LeanCloudError
 
@@ -56,13 +56,14 @@ class File(object):
             self._source = StringIO(data.read())
         elif isinstance(data, buffer):
             self._source = StringIO(data)
-        elif six.PY2:
+        elif PY2:
             import cStringIO
             if isinstance(data, cStringIO.OutputType):
                 data.seek(0, os.SEEK_SET)
                 self._source = StringIO(data.getvalue())
             else:
                 raise TypeError('data must be a StringIO / buffer / file instance')
+
         else:
             raise TypeError('data must be a StringIO / buffer / file instance')
 

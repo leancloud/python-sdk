@@ -10,7 +10,6 @@ import json
 import warnings
 from datetime import datetime
 
-import six
 import iso8601
 from werkzeug import LocalProxy
 
@@ -18,6 +17,9 @@ import leancloud
 from leancloud import utils
 from leancloud import client
 from leancloud import operation
+from leancloud._compat import with_metaclass
+from leancloud._compat import PY2
+from leancloud._compat import text_type
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -57,8 +59,7 @@ class ObjectMeta(type):
         return leancloud.Query(cls)
 
 
-@six.add_metaclass(ObjectMeta)
-class Object(object):
+class Object(with_metaclass(ObjectMeta, object)):
     def __init__(self, **attrs):
         """
         创建一个新的 leancloud.Object
@@ -93,7 +94,7 @@ class Object(object):
         :return: 派生的子类
         :rtype: ObjectMeta
         """
-        if six.PY2 and isinstance(name, six.text_type):
+        if PY2 and isinstance(name, text_type):
             name = name.encode('utf-8')
         return type(name, (cls,), {})
 

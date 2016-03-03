@@ -47,7 +47,7 @@ else:
     itervalues = lambda d: d.itervalues()
     iteritems = lambda d: d.iteritems()
 
-    from cStringIO import StringIO
+    from StringIO import StringIO
 
     exec('def reraise(tp, value, tb=None):\n raise tp, value, tb')
 
