@@ -16,6 +16,7 @@ from leancloud import client
 from leancloud import utils
 from leancloud._compat import StringIO
 from leancloud._compat import PY2
+from leancloud._compat import range_type
 from leancloud.mime_type import mime_types
 from leancloud.errors import LeanCloudError
 
@@ -145,7 +146,7 @@ class File(object):
             self._source.seek(0)
             output.seek(0)
             hex_octet = lambda: hex(int(0x10000 * (1 + random.random())))[-4:]
-            key = ''.join(hex_octet() for _ in xrange(4))
+            key = ''.join(hex_octet() for _ in range_type(4))
             key = '{0}.{1}'.format(key, self.extension)
             data = {
                 'name': self._name,

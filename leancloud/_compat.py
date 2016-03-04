@@ -23,6 +23,7 @@ if not PY2:
     class_types = (type,)
     string_types = (str,)
     integer_types = (int,)
+    range_type = range
 
     iterkeys = lambda d: iter(d.keys())
     itervalues = lambda d: iter(d.values())
@@ -42,6 +43,7 @@ else:
     class_types = (type, types.ClassType)
     string_types = (str, unicode)
     integer_types = (int, long)
+    range_type = xrange
 
     iterkeys = lambda d: d.iterkeys()
     itervalues = lambda d: d.itervalues()
