@@ -79,7 +79,7 @@ class User(Object):
         auth_data = self.get('authData')
         if not auth_data:
             return
-        keys = auth_data.keys()
+        keys = list(auth_data.keys())
         for key in keys:
             if not auth_data[key]:
                 del auth_data[key]

@@ -413,7 +413,7 @@ class Object(with_metaclass(ObjectMeta, object)):
 
         self._merge_magic_field(attrs)
 
-        keys = attrs.keys()
+        keys = list(attrs.keys())
         for k in keys:
             v = attrs[k]
             # TODO: Relation
