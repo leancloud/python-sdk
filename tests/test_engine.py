@@ -341,7 +341,7 @@ def test_request_sms_code():
     leancloud.init(os.environ['APP_ID'], master_key=os.environ['MASTER_KEY'])
     try:
         cloudfunc.request_sms_code('13111111111')
-    except LeanCloudError, e:
+    except LeanCloudError as e:
         # 短信发送过于频繁或者欠费
         if e.code in (601, 160):
             pass
