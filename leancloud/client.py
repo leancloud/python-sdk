@@ -41,11 +41,11 @@ TIMEOUT_SECONDS = 15
 def init(app_id, app_key=None, master_key=None):
     """初始化 LeanCloud 的 AppId / AppKey / MasterKey
 
-    :type app_id: basestring
+    :type app_id: string_types
     :param app_id: 应用的 Application ID
-    :type app_key: None or basestring
+    :type app_key: None or string_types
     :param app_key: 应用的 Application Key
-    :type master_key: None or basestring
+    :type master_key: None or string_types
     :param master_key: 应用的 Master Key
     """
     if (not app_key) and (not master_key):

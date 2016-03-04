@@ -7,6 +7,7 @@ from __future__ import print_function
 import re
 
 import leancloud
+from leancloud._compat import string_types
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -45,8 +46,8 @@ class Role(leancloud.Object):
     def validate(self, attrs):
         if 'name' in attrs and attrs['name'] != self.get_name():
             new_name = attrs['name']
-            if not isinstance(new_name, basestring):
-                raise TypeError('role name must be a basestring')
+            if not isinstance(new_name, string_types):
+                raise TypeError('role name must be string_types')
             r = re.compile('^[0-9a-zA-Z\-_]+$')
             if not r.match(new_name):
                 raise TypeError('role\'s name can only contain alphanumeric characters, _, -, and spaces.')

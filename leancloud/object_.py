@@ -91,7 +91,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         派生一个新的 leancloud.Object 子类
 
         :param name: 子类名称
-        :type name: basestring
+        :type name: string_types
         :return: 派生的子类
         :rtype: ObjectMeta
         """
@@ -105,7 +105,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         根据参数创建一个 leancloud.Object 的子类的实例化对象
 
         :param class_name: 子类名称
-        :type class_name: basestring
+        :type class_name: string_types
         :param attributes: 对象属性
         :return: 派生子类的实例
         :rtype: Object
@@ -119,7 +119,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         根据 objectId 创建一个 leancloud.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据
 
         :param id_: 对象的 objectId
-        :type id_: basestring
+        :type id_: string_types
         :return: 没有数据的对象
         :rtype: Object
         """
@@ -351,7 +351,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         获取对象字段的值
 
         :param attr: 字段名
-        :type attr: basestring
+        :type attr: string_types
         :return: 字段值
         """
         return self._attributes.get(attr)
@@ -361,7 +361,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         返回对象上相应字段的 Relation
 
         :param attr: 字段名
-        :type attr: basestring
+        :type attr: string_types
         :return: Relation
         :rtype: leancloud.Relation
         """
@@ -388,7 +388,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         在当前对象此字段上赋值
 
         :param key_or_attrs: 字段名，或者一个包含 字段名 / 值的 dict
-        :type key_or_attrs: basestring or dict
+        :type key_or_attrs: string_types or dict
         :param value: 字段值
         :param unset:
         :return: 当前对象，供链式调用
