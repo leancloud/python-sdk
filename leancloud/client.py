@@ -161,7 +161,7 @@ def use_region(region):
 
 def get_server_time():
     response = requests.get(get_base_url() + '/date')
-    content = json.loads(response.content)
+    content = json.loads(response.text)
     return utils.decode('iso', content)
 
 

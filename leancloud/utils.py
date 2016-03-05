@@ -172,10 +172,10 @@ def response_to_json(response):
     hack for requests in python 2.6
     """
 
-    content = response.content
+    content = response.text
     # hack for requests in python 2.6
     if 'application/json' in response.headers['Content-Type']:
-        if content[:2] == '\x1f\x8b':  # gzip file magic header
+        if str(content[:2]) == '\x1f\x8b':  # gzip file magic header
             f = StringIO(content)
             g = gzip.GzipFile(fileobj=f)
             content = g.read()
