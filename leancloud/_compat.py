@@ -10,23 +10,52 @@
     :copyright: (c) 2015 by Armin Ronacher.
     :license: BSD, see LICENSE for more details.
 """
+
+from __future__ import absolute_import
+
 import sys
 import types
 import io
 
 
-PY2 = sys.version_info[0] == 2
+# Check the python version.
+_version = sys.version_info.major
+PY2 = _version == 2
+PY3 = _version == 3
+
+
 _identity = lambda x: x
 
 
-if not PY2:
+if PY2:
+    text_type = unicode
+    class_types = (type, types.ClassType)
+    string_types = (str, unicode)
+    integer_types = (int, long)
+    range_type = xrange
+    file_type = file
+    buffer_type = buffer  # python 2.6 don't have memoryview.
+
+    iterkeys = lambda d: d.iterkeys()
+    itervalues = lambda d: d.itervalues()
+    iteritems = lambda d: d.iteritems()
+
+    from StringIO import StringIO
+
+    exec('def reraise(tp, value, tb=None):\n raise tp, value, tb')
+
+    def implements_to_string(cls):
+        cls.__unicode__ = cls.__str__
+        cls.__str__ = lambda x: x.__unicode__().encode('utf-8')
+        return cls
+elif PY3:
     text_type = str
     class_types = (type,)
     string_types = (str,)
     integer_types = (int,)
     range_type = range
     file_type = io.IOBase
-
+    buffer_type = memoryview
 
     iterkeys = lambda d: iter(d.keys())
     itervalues = lambda d: iter(d.values())
@@ -41,27 +70,6 @@ if not PY2:
 
     implements_to_string = _identity
 
-else:
-    text_type = unicode
-    class_types = (type, types.ClassType)
-    string_types = (str, unicode)
-    integer_types = (int, long)
-    range_type = xrange
-    file_type = file
-
-    iterkeys = lambda d: d.iterkeys()
-    itervalues = lambda d: d.itervalues()
-    iteritems = lambda d: d.iteritems()
-
-    from StringIO import StringIO
-
-    exec('def reraise(tp, value, tb=None):\n raise tp, value, tb')
-
-    def implements_to_string(cls):
-        cls.__unicode__ = cls.__str__
-        cls.__str__ = lambda x: x.__unicode__().encode('utf-8')
-        return cls
-
 
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""
@@ -72,27 +80,3 @@ def with_metaclass(meta, *bases):
         def __new__(cls, name, this_bases, d):
             return meta(name, bases, d)
     return type.__new__(metaclass, 'temporary_class', (), {})
-
-
-# Certain versions of pypy have a bug where clearing the exception stack
-# breaks the __exit__ function in a very peculiar way.  This is currently
-# true for pypy 2.2.1 for instance.  The second level of exception blocks
-# is necessary because pypy seems to forget to check if an exception
-# happened until the next bytecode instruction?
-BROKEN_PYPY_CTXMGR_EXIT = False
-if hasattr(sys, 'pypy_version_info'):
-    class _Mgr(object):
-        def __enter__(self):
-            return self
-        def __exit__(self, *args):
-            sys.exc_clear()
-    try:
-        try:
-            with _Mgr():
-                raise AssertionError()
-        except:
-            raise
-    except TypeError:
-        BROKEN_PYPY_CTXMGR_EXIT = True
-    except AssertionError:
-        pass
