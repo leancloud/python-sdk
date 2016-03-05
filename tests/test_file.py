@@ -6,8 +6,6 @@ from __future__ import print_function
 
 import os
 
-from StringIO import StringIO
-import cStringIO
 from nose.tools import with_setup
 from nose.tools import assert_raises
 from nose.tools import raises
@@ -17,6 +15,8 @@ import requests
 import leancloud
 from leancloud import File
 from leancloud import ACL
+from leancloud._compat import PY2
+from leancloud._compat import StringIO
 
 __author__ = 'asaka'
 
@@ -30,8 +30,12 @@ def setup_func():
 
 def test_basic():
     s = StringIO('blah blah blah')
-    s1 = cStringIO.StringIO()
-    s1.write('blah blah blah')
+    if PY2:
+        import cStringIO
+        s1 = cStringIO.StringIO()
+        s1.write('blah blah blah')
+    else:
+        s1 = s
     f1 = File('Blah', s, 'text/plain')
     f2 = File('Blah', s1)
     f3 = File('Blah', open('tests/test_file.txt', 'r'))
