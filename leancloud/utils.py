@@ -185,5 +185,6 @@ def response_to_json(response):
 
 
 def sign_disable_hook(hook_name, master_key, timestamp):
-    sign = hmac.new(master_key, '{}:{}'.format(hook_name, timestamp), hashlib.sha1).hexdigest()
-    return '{},{}'.format(timestamp, sign)
+    sign = hmac.new(master_key.encode('utf-8'), ('{0}:{1}'.format(hook_name, timestamp)).encode('utf-8'),
+                    hashlib.sha1).hexdigest()
+    return '{0},{1}'.format(timestamp, sign)
