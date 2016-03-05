@@ -107,6 +107,7 @@ def test_increment():
     assert album.get('foo') == 2
 
 
+@with_setup(setup_func)
 def test_increment_atfer_save():
     album = Album()
     album.set('foo', 1)
