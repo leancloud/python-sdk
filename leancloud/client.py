@@ -74,7 +74,10 @@ def need_init(func):
             # headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
             headers['X-AVOSCloud-Master-Key'] = MASTER_KEY
         else:
-            md5sum.update(current_time + APP_KEY)
+            # In python 2.x, you can feed this object with arbitrary
+            # strings using the update() method, but in python 3.x,
+            # you should feed with bytes-like objects.
+            md5sum.update((current_time + APP_KEY).encode('utf-8'))
             headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time
 
         user = leancloud.User.get_current()
