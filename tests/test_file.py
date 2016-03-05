@@ -24,7 +24,7 @@ __author__ = 'asaka'
 def setup_func():
     leancloud.init(
         os.environ['APP_ID'],
-        master_key=os.environ['MASTER_KEY']
+        os.environ['APP_KEY']
     )
 
 
