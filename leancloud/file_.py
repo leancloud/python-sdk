@@ -17,6 +17,7 @@ from leancloud import utils
 from leancloud._compat import StringIO
 from leancloud._compat import PY2
 from leancloud._compat import range_type
+from leancloud._compat import file_type
 from leancloud.mime_type import mime_types
 from leancloud.errors import LeanCloudError
 
@@ -52,7 +53,7 @@ class File(object):
             self._source = None
         elif isinstance(data, StringIO):
             self._source = data
-        elif isinstance(data, file):
+        elif isinstance(data, file_type):
             data.seek(0, os.SEEK_SET)
             self._source = StringIO(data.read())
         elif isinstance(data, buffer):

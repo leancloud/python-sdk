@@ -12,6 +12,7 @@
 """
 import sys
 import types
+import io
 
 
 PY2 = sys.version_info[0] == 2
@@ -24,6 +25,8 @@ if not PY2:
     string_types = (str,)
     integer_types = (int,)
     range_type = range
+    file_type = io.IOBase
+
 
     iterkeys = lambda d: iter(d.keys())
     itervalues = lambda d: iter(d.values())
@@ -44,6 +47,7 @@ else:
     string_types = (str, unicode)
     integer_types = (int, long)
     range_type = xrange
+    file_type = file
 
     iterkeys = lambda d: d.iterkeys()
     itervalues = lambda d: d.itervalues()
