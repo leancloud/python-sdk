@@ -38,7 +38,7 @@ NORMAL_HEADERS = {
 
 def app(environ, start_response):
     start_response('200 OK', [('Content-Type', 'text/plain')])
-    return ['Hello LeanCloud']
+    return [b'Hello LeanCloud']
 
 
 engine = Engine(app)
@@ -81,7 +81,7 @@ def teardown():
 def test_origin_response():
     resp = requests.get(url)
     assert resp.ok
-    assert resp.content == 'Hello LeanCloud'
+    assert resp.content == b'Hello LeanCloud'
 
 
 def test_compatibility():
@@ -352,9 +352,9 @@ def test_request_sms_code():
 def test_current_user():
     leancloud.init(os.environ['APP_ID'], master_key=os.environ['MASTER_KEY'])
     saved_user = leancloud.User()
-    saved_user.set('username', 'user{}'.format(int(time.time())))
+    saved_user.set('username', 'user{0}'.format(int(time.time())))
     saved_user.set('password', 'password')
-    saved_user.set_email('{}@leancloud.rocks'.format(int(time.time())))
+    saved_user.set_email('{0}@leancloud.rocks'.format(int(time.time())))
     saved_user.sign_up()
     session_token = saved_user.get_session_token()
 

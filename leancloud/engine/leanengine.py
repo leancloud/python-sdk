@@ -76,7 +76,8 @@ class LeanEngineApplication(object):
 
         request = environ['leanengine.request']
         try:
-            data = json.loads(request.get_data())
+            # the JSON object must be str, not 'bytes' for 3.x.
+            data = json.loads(request.get_data().decode('utf-8'))
         except ValueError:
             context.local.user = None
             return
@@ -96,7 +97,8 @@ class LeanEngineApplication(object):
         except HTTPException as e:
             return e
 
-        params = request.get_data()
+        # the JSON object must be str, not 'bytes' for 3.x.
+        params = request.get_data().decode('utf-8')
         values['params'] = json.loads(params) if params != '' else {}
 
         try:
