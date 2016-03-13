@@ -13,6 +13,7 @@ import requests
 import leancloud
 from leancloud import utils
 from leancloud._compat import iteritems
+from leancloud._compat import to_bytes
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -77,7 +78,7 @@ def need_init(func):
             # In python 2.x, you can feed this object with arbitrary
             # strings using the update() method, but in python 3.x,
             # you should feed with bytes-like objects.
-            md5sum.update((current_time + APP_KEY).encode('utf-8'))
+            md5sum.update(to_bytes(current_time + APP_KEY))
             headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time
 
         user = leancloud.User.get_current()

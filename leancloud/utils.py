@@ -20,7 +20,7 @@ import leancloud
 from leancloud import operation
 from leancloud._compat import BytesIO
 from leancloud._compat import iteritems
-
+from leancloud._compat import to_bytes
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -185,6 +185,7 @@ def response_to_json(response):
 
 
 def sign_disable_hook(hook_name, master_key, timestamp):
-    sign = hmac.new(master_key.encode('utf-8'), ('{0}:{1}'.format(hook_name, timestamp)).encode('utf-8'),
+    sign = hmac.new(to_bytes(master_key),
+                    to_bytes('{0}:{1}'.format(hook_name, timestamp)),
                     hashlib.sha1).hexdigest()
     return '{0},{1}'.format(timestamp, sign)
