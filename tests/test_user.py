@@ -14,6 +14,7 @@ from leancloud import User
 from leancloud import Query
 from leancloud import File
 from leancloud.errors import LeanCloudError
+from leancloud._compat import buffer_type
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -97,7 +98,7 @@ def test_login():
 def test_file_field():
     user = User()
     user.login('user1_name', 'password')
-    user.set('xxxxx', File('xxx.txt', buffer('qqqqq')))
+    user.set('xxxxx', File('xxx.txt', buffer_type(b'qqqqq')))
     user.save()
 
     q = Query(User)
