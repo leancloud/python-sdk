@@ -14,10 +14,12 @@ import qiniu
 import leancloud
 from leancloud import client
 from leancloud import utils
-from leancloud._compat import StringIO
+from leancloud._compat import BytesIO
 from leancloud._compat import PY2
 from leancloud._compat import range_type
 from leancloud._compat import file_type
+from leancloud._compat import buffer_type
+from leancloud._compat import PY3
 from leancloud.mime_type import mime_types
 from leancloud.errors import LeanCloudError
 
@@ -51,18 +53,18 @@ class File(object):
 
         if data is None:
             self._source = None
-        elif isinstance(data, StringIO):
+        elif isinstance(data, BytesIO):
             self._source = data
         elif isinstance(data, file_type):
             data.seek(0, os.SEEK_SET)
-            self._source = StringIO(data.read())
-        elif isinstance(data, buffer):
-            self._source = StringIO(data)
+            self._source = BytesIO(data.read())
+        elif isinstance(data, buffer_type):
+            self._source = BytesIO(data)
         elif PY2:
             import cStringIO
             if isinstance(data, cStringIO.OutputType):
                 data.seek(0, os.SEEK_SET)
-                self._source = StringIO(data.getvalue())
+                self._source = BytesIO(data.getvalue())
             else:
                 raise TypeError('data must be a StringIO / buffer / file instance')
 
@@ -141,7 +143,7 @@ class File(object):
 
     def save(self):
         if self._source:
-            output = StringIO()
+            output = BytesIO()
             self._source.seek(0)
             base64.encode(self._source, output)
             self._source.seek(0)

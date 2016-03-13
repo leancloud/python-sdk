@@ -18,7 +18,7 @@ from dateutil import tz
 
 import leancloud
 from leancloud import operation
-from leancloud._compat import StringIO
+from leancloud._compat import BytesIO
 from leancloud._compat import iteritems
 
 
@@ -176,7 +176,7 @@ def response_to_json(response):
     # hack for requests in python 2.6
     if 'application/json' in response.headers['Content-Type']:
         if str(content[:2]) == '\x1f\x8b':  # gzip file magic header
-            f = StringIO(content)
+            f = BytesIO(content)
             g = gzip.GzipFile(fileobj=f)
             content = g.read()
             g.close()

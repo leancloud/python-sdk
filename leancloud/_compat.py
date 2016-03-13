@@ -41,6 +41,7 @@ if PY2:
     iteritems = lambda d: d.iteritems()
 
     from StringIO import StringIO
+    BytesIO = StringIO
 
     exec('def reraise(tp, value, tb=None):\n raise tp, value, tb')
 
@@ -61,7 +62,7 @@ elif PY3:
     itervalues = lambda d: iter(d.values())
     iteritems = lambda d: iter(d.items())
 
-    from io import StringIO
+    from io import StringIO, BytesIO
 
     def reraise(tp, value, tb=None):
         if value.__traceback__ is not tb:
