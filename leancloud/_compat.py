@@ -49,6 +49,20 @@ if PY2:
         cls.__unicode__ = cls.__str__
         cls.__str__ = lambda x: x.__unicode__().encode('utf-8')
         return cls
+
+    def to_bytes(x, charset=sys.getdefaultencoding(), errors='strict'):
+        if x is None:
+            return None
+        if isinstance(x, (bytes, bytearray, buffer)):
+            return bytes(x)
+        if isinstance(x, unicode):
+            return x.encode(charset, errors)
+        raise TypeError('Expected bytes')
+
+    def to_native(x, charset=sys.getdefaultencoding(), errors='strict'):
+        if x is None or isinstance(x, str):
+            return x
+        return x.encode(charset, errors)
 elif PY3:
     text_type = str
     class_types = (type,)
@@ -70,6 +84,21 @@ elif PY3:
         raise value
 
     implements_to_string = _identity
+
+    def to_bytes(x, charset=sys.getdefaultencoding(), errors='strict'):
+        if x is None:
+            return None
+        if isinstance(x, (bytes, bytearray, memoryview)):
+            return bytes(x)
+        if isinstance(x, str):
+            return x.encode(charset, errors)
+        raise TypeError('Expected bytes')
+
+    def to_native(x, charset=sys.getdefaultencoding(), errors='strict'):
+        if x is None or isinstance(x, str):
+            return x
+        return x.decode(charset, errors)
+
 
 
 def with_metaclass(meta, *bases):
