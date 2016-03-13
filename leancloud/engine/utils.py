@@ -6,9 +6,9 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 def sign_by_key(timestamp, key):
-    return hashlib.md5('{0}{1}'.format(timestamp, key)).hexdigest()
+    return hashlib.md5('{0}{1}'.format(timestamp, key).encode('utf-8')).hexdigest()
 
 
 def sign_disable_hook(hook_name, master_key, timestamp):
-    sign = hashlib.sha1('{}{}:{}'.format(master_key, hook_name, timestamp)).hexdigist()
+    sign = hashlib.sha1('{}{}:{}'.format(master_key, hook_name, timestamp).encode('utf-8')).hexdigist()
     return '{},{}'.format(timestamp, sign)
