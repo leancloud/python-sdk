@@ -23,6 +23,11 @@ def setup_func():
 
 @with_setup(setup_func)
 def test_basic_push():
+    instanlation = leancloud.Installation()
+    instanlation.set('deviceType', 'ios')
+    instanlation.set('deviceToken', 'xxx')
+    instanlation.save()
+
     data = {
         "alert": {
             "title": "标题",
