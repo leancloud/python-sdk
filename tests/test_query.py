@@ -160,26 +160,26 @@ def test_basic_query():
 
     # descending and add_descending
     q = Query(GameScore).add_descending('score').descending('score')
-    eq_([x.get('score') for x in q.find()], range(9, -1, -1))
+    eq_([x.get('score') for x in q.find()], list(range(9, -1, -1)))
 
     # greater_than
     q = Query(GameScore).greater_than('score', 5).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(6, 10))
+    eq_([x.get('score') for x in q.find()], list(range(6, 10)))
 
     q = Query(GameScore).greater_than_or_equal_to('score', 5).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(5, 10))
+    eq_([x.get('score') for x in q.find()], list(range(5, 10)))
 
     q = Query(GameScore).less_than('score', 5).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(0, 5))
+    eq_([x.get('score') for x in q.find()], list(range(0, 5)))
 
     q = Query(GameScore).less_than_or_equal_to('score', 5).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(0, 6))
+    eq_([x.get('score') for x in q.find()], list(range(0, 6)))
 
     q = Query(GameScore).contained_in('score', [1, 2, 3]).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(1, 4))
+    eq_([x.get('score') for x in q.find()], list(range(1, 4)))
 
     q = Query(GameScore).not_contained_in('score', [0, 1, 2, 3]).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(4, 10))
+    eq_([x.get('score') for x in q.find()], list(range(4, 10)))
 
     q = Query(GameScore).select('score')
     assert not q.find()[0].has('playerName')
@@ -253,7 +253,7 @@ def test_or_():
     q1 = Query(GameScore).greater_than('score', -1)
     q2 = Query(GameScore).equal_to('name', 'x')
     result = Query.or_(q1, q2).ascending('score').find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)
@@ -261,7 +261,7 @@ def test_and_():
     q1 = Query(GameScore).greater_than('score', 2)
     q2 = Query(GameScore).greater_than('score', 3)
     result = Query.and_(q1, q2).ascending('score').find()
-    eq_([i.get('score') for i in result], range(4, 10))
+    eq_([i.get('score') for i in result], list(range(4, 10)))
 
 
 @raises(ValueError)
@@ -354,25 +354,25 @@ def test_endswith():
 @with_setup(setup_func)
 def test_add_ascending():
     result = Query(GameScore).add_ascending('score').find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)
 def test_near():
     result = Query(GameScore).near('location', GeoPoint(latitude=0, longitude=0)).find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)
 def test_within_radians():
     result = Query(GameScore).within_radians('location', GeoPoint(latitude=0, longitude=0), 1).find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)
 def test_within_miles():
     result = Query(GameScore).within_miles('location', GeoPoint(latitude=0, longitude=0), 4000).find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)

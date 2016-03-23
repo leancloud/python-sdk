@@ -35,7 +35,7 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     :param where: 一个查询 _Installation 表的查询条件 leancloud.Query 对象
     :type where: leancloud.Query
     :param cql: 一个查询 _Installation 表的查询条件 CQL 语句
-    :type cql: basestring
+    :type cql: string_types
     :param data: 推送给设备的具体信息，详情查看 https://leancloud.cn/docs/push_guide.html#消息内容_Data
     :rtype: Notification
     """

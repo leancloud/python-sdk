@@ -12,6 +12,8 @@ import requests
 
 import leancloud
 from leancloud import utils
+from leancloud._compat import iteritems
+from leancloud._compat import to_bytes
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -40,11 +42,11 @@ TIMEOUT_SECONDS = 15
 def init(app_id, app_key=None, master_key=None):
     """初始化 LeanCloud 的 AppId / AppKey / MasterKey
 
-    :type app_id: basestring
+    :type app_id: string_types
     :param app_id: 应用的 Application ID
-    :type app_key: None or basestring
+    :type app_key: None or string_types
     :param app_key: 应用的 Application Key
-    :type master_key: None or basestring
+    :type master_key: None or string_types
     :param master_key: 应用的 Master Key
     """
     if (not app_key) and (not master_key):
@@ -73,7 +75,10 @@ def need_init(func):
             # headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
             headers['X-AVOSCloud-Master-Key'] = MASTER_KEY
         else:
-            md5sum.update(current_time + APP_KEY)
+            # In python 2.x, you can feed this object with arbitrary
+            # strings using the update() method, but in python 3.x,
+            # you should feed with bytes-like objects.
+            md5sum.update(to_bytes(current_time + APP_KEY))
             headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time
 
         user = leancloud.User.get_current()
@@ -157,7 +162,7 @@ def use_region(region):
 
 def get_server_time():
     response = requests.get(get_base_url() + '/date')
-    content = json.loads(response.content)
+    content = json.loads(response.text)
     return utils.decode('iso', content)
 
 
@@ -175,7 +180,7 @@ def get(url, params=None, headers=None):
     if not params:
         params = {}
     else:
-        for k, v in params.iteritems():
+        for k, v in iteritems(params):
             if isinstance(v, dict):
                 params[k] = json.dumps(v, separators=(',', ':'))
     response = requests.get(get_base_url() + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)

@@ -7,6 +7,12 @@ matrix:
         - appkey=AJpoJrqy1aliyXvcs0SwWrsy
         - masterKey=Uk6DT2Mc2kCACvLyi3PU60p3
         - use_region=US
+    - python: "3.5"
+      env:
+        - appid=pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb
+        - appkey=AJpoJrqy1aliyXvcs0SwWrsy
+        - masterKey=Uk6DT2Mc2kCACvLyi3PU60p3
+        - use_region=US
 
 sudo: false
 

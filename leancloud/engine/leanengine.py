@@ -13,6 +13,7 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.exceptions import NotAcceptable
 
 from . import context
+from leancloud._compat import to_native
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -76,7 +77,8 @@ class LeanEngineApplication(object):
 
         request = environ['leanengine.request']
         try:
-            data = json.loads(request.get_data())
+            # the JSON object must be str, not 'bytes' for 3.x.
+            data = json.loads(to_native(request.get_data()))
         except ValueError:
             context.local.user = None
             return
@@ -96,7 +98,8 @@ class LeanEngineApplication(object):
         except HTTPException as e:
             return e
 
-        params = request.get_data()
+        # the JSON object must be str, not 'bytes' for 3.x.
+        params = to_native(request.get_data())
         values['params'] = json.loads(params) if params != '' else {}
 
         try:
