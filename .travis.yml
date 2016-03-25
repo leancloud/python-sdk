@@ -1,9 +1,10 @@
 language: python
+
 matrix:
   include:
     - python: "2.7"
-      env: 
-        - appid=pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb 
+      env:
+        - appid=pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb
         - appkey=AJpoJrqy1aliyXvcs0SwWrsy
         - masterKey=Uk6DT2Mc2kCACvLyi3PU60p3
         - use_region=US
@@ -16,15 +17,12 @@ matrix:
 
 sudo: false
 
-# command to install dependencies
 install:
-  - "pip install -r dev-requirements.txt"
-
-# command to run tests
-script: nosetests --nologcapture
-
-before_install:
+  - pip install -r dev-requirements.txt
   - pip install codecov
+
+script:
+  - nosetests --with-coverage --cover-package=leancloud
 
 after_success:
   - codecov
