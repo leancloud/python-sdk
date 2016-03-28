@@ -13,13 +13,11 @@ import qiniu
 
 import leancloud
 from leancloud import client
-from leancloud import utils
 from leancloud._compat import BytesIO
 from leancloud._compat import PY2
 from leancloud._compat import range_type
 from leancloud._compat import file_type
 from leancloud._compat import buffer_type
-from leancloud._compat import PY3
 from leancloud.mime_type import mime_types
 from leancloud.errors import LeanCloudError
 
@@ -159,7 +157,7 @@ class File(object):
                 'metaData': self._metadata,
             }
             response = client.post('/qiniu', data)
-            content = utils.response_to_json(response)
+            content = response.json()
             self.id = content['objectId']
             self._url = content['url']
             uptoken = content['token']
@@ -176,7 +174,7 @@ class File(object):
                 'url': self._url,
             }
             response = client.post('/files/{0}'.format(self._name), data)
-            content = utils.response_to_json(response)
+            content = response.json()
 
             self._name = content['name']
             self._url = content['url']
@@ -190,7 +188,7 @@ class File(object):
 
     def fetch(self):
         response = client.get('/files/{0}'.format(self.id))
-        content = utils.response_to_json(response)
+        content = response.json()
         self._name = content.get('name')
         self.id = content.get('objectId')
         self._url = content.get('url')

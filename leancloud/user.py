@@ -58,7 +58,7 @@ class User(Object):
     @classmethod
     def become(cls, session_token):
         response = client.get('/users/me', params={'session_token': session_token})
-        content = utils.response_to_json(response)
+        content = response.json()
         user = cls()
         server_data = user.parse(content, response.status_code)
         user._finish_fetch(server_data, True)
@@ -135,7 +135,7 @@ class User(Object):
         if password:
             self.set('password', password)
         response = client.post('/login', params=self.dump())
-        content = utils.response_to_json(response)
+        content = response.json()
         server_data = self.parse(content, response.status_code)
         self._finish_fetch(server_data, False)
         self._handle_save_result(True)
@@ -234,7 +234,7 @@ class User(Object):
             'smsCode': sms_code
         }
         response = client.post('/usersByMobilePhone', data)
-        content = utils.response_to_json(response)
+        content = response.json()
         user = cls()
         server_data = user.parse(content, response.status_code)
         user._finish_fetch(server_data, True)
@@ -250,7 +250,7 @@ class User(Object):
             'new_password': new_password
         }
         response = client.put(route, params)
-        content = utils.response_to_json(response)
+        content = response.json()
         server_data = self.parse(content, response.status_code)
         self._finish_fetch(server_data, True)
         self._handle_save_result(True)
