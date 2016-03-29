@@ -3,10 +3,10 @@ matrix:
   include:
     - python: "2.7"
       env: 
-        - appid=pgk9e8orv8l9coak1rjht1avt2f4o9kptb0au0by5vbk9upb 
-        - appkey=AJpoJrqy1aliyXvcs0SwWrsy
-        - masterKey=Uk6DT2Mc2kCACvLyi3PU60p3
-        - use_region=US
+        - APP_ID=AjQYwoIyObTeEkD16v1eCq55
+        - APP_KEY=AJpoJrqy1aliyXvcs0SwWrsy
+        - MASTER_KEY=Uk6DT2Mc2kCACvLyi3PU60p3
+        - USE_REGION=US
 
 sudo: false
 
