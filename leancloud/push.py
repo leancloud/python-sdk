@@ -6,7 +6,6 @@ from __future__ import print_function
 
 from leancloud.object_ import Object
 from leancloud import client
-from leancloud import utils
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -57,7 +56,7 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     if cql:
         params['cql'] = cql
 
-    result = utils.response_to_json(client.post('/push', params=params))
+    result = client.post('/push', params=params).json()
 
     notification = Notification.create_without_data(result['objectId'])
     return notification

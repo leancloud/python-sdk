@@ -167,23 +167,6 @@ def traverse_object(obj, callback, seen=None):
     return callback(obj)
 
 
-def response_to_json(response):
-    """
-    hack for requests in python 2.6
-    """
-
-    content = response.text
-    # hack for requests in python 2.6
-    if 'application/json' in response.headers['Content-Type']:
-        if str(content[:2]) == '\x1f\x8b':  # gzip file magic header
-            f = BytesIO(content)
-            g = gzip.GzipFile(fileobj=f)
-            content = g.read()
-            g.close()
-            f.close()
-    return json.loads(content)
-
-
 def sign_disable_hook(hook_name, master_key, timestamp):
     sign = hmac.new(to_bytes(master_key),
                     to_bytes('{0}:{1}'.format(hook_name, timestamp)),

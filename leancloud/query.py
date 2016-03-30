@@ -110,7 +110,7 @@ class Query(object):
         if len(pvalues) > 0:
             params['pvalues'] = json.dumps(pvalues)
 
-        content = utils.response_to_json(client.get('/cloudQuery', params))
+        content = client.get('/cloudQuery', params).json()
 
         objs = []
         query = cls(content['className'])
@@ -158,7 +158,7 @@ class Query(object):
         """
         params = self.dump()
         params['limit'] = 1
-        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), params))
+        content = client.get('/classes/{0}'.format(self._query_class._class_name), params).json()
         results = content['results']
         if not results:
             raise LeanCloudError(101, 'Object not found')
@@ -183,7 +183,7 @@ class Query(object):
 
         :rtype: list
         """
-        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()))
+        content = client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()).json()
 
         objs = []
         for result in content['results']:
@@ -212,7 +212,7 @@ class Query(object):
         params['limit'] = 0
         params['count'] = 1
         response = client.get('/classes/{0}'.format(self._query_class._class_name), params)
-        return utils.response_to_json(response)['count']
+        return response.json()['count']
 
     def skip(self, n):
         """

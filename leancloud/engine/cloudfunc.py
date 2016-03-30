@@ -18,7 +18,7 @@ def run(_cloud_func_name, **params):
     :return: 调用结果
     """
     response = leancloud.client.post('/functions/{0}'.format(_cloud_func_name), params=params)
-    content = utils.response_to_json(response)
+    content = response.json()
     return utils.decode(None, content)['result']
 
 

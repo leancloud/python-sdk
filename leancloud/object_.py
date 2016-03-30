@@ -229,7 +229,7 @@ class Object(with_metaclass(ObjectMeta, object)):
             response = client.put(url, data)
 
 
-        self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
+        self._finish_save(self.parse(response.json(), response.status_code))
 
     def _deep_save(self, unsaved_children, unsaved_files, exclude=None):
         if exclude:
@@ -253,7 +253,7 @@ class Object(with_metaclass(ObjectMeta, object)):
             }
             dumped_objs.append(dumped_obj)
 
-        response = utils.response_to_json(client.post('/batch', params={'requests': dumped_objs}))
+        response = client.post('/batch', params={'requests': dumped_objs}).json()
 
         errors = []
         for idx, obj in enumerate(unsaved_children):
@@ -497,7 +497,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         :return: 当前对象
         """
         response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), {})
-        result = self.parse(utils.response_to_json(response), response.status_code)
+        result = self.parse(response.json(), response.status_code)
         self._finish_fetch(result, True)
 
     def parse(self, content, status_code=None):

@@ -143,7 +143,7 @@ def check_error(func):
         if response.headers.get('Content-Type') == 'text/html':
             raise leancloud.LeanCloudError(-1, 'Bad Request')
 
-        content = utils.response_to_json(response)
+        content = response.json()
 
         if 'error' in content:
             raise leancloud.LeanCloudError(content.get('code', 1), content.get('error', 'Unknown Error'))
