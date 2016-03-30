@@ -175,33 +175,30 @@ def test_user_become():
 @with_setup(get_setup_func())
 def test_login_with():
     data = {
-        "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
-        "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
-        "expires_in": 1382686496
+        'uid': '1',
+        'access_token': 'xxx'
     }
-    User.login_with('weixin', data)
+    User.login_with('xxx', data)
 
 
 @with_setup(get_setup_func())
 def test_unlink_from():
     data = {
-        "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
-        "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
-        "expires_in": 1382686496
+        'uid': '1',
+        'access_token': 'xxx'
     }
-    user = User.login_with('weixin', data)
-    user.unlink_from('weixin')
+    user = User.login_with('xxx', data)
+    user.unlink_from('xxx')
 
 
 @with_setup(get_setup_func())
 def test_is_linked():
     data = {
-        "openid": "0395BA18A5CD6255E5BA185E7BEBA242",
-        "access_token": "12345678-SaMpLeTuo3m2avZxh5cjJmIrAfx4ZYyamdofM7IjU",
-        "expires_in": 1382686496
+        'uid': '1',
+        'access_token': 'xxx'
     }
-    user = User.login_with('weixin', data)
-    assert user.is_linked('weixin')
+    user = User.login_with('xxx', data)
+    assert user.is_linked('xxx')
 
 
 @with_setup(get_setup_func())
@@ -243,8 +240,9 @@ def test_request_password_reset():
     try:
         User.request_password_reset('wow@leancloud.rocks')
     except LeanCloudError as e:
-        if u'请不要往同一个邮件地址发送太多邮件。' not in e.error:
-            raise e
+        print(e.code)
+        assert u'请不要往同一个邮件地址发送太多邮件。' in e.error \
+            or 'Too many emails sent to the same email address' in str(e)
 
 
 @with_setup(get_setup_func())
@@ -252,7 +250,10 @@ def test_request_email_verify():
     try:
         User.request_email_verify('wow@leancloud.rocks')
     except LeanCloudError as e:
-        assert '邮件验证功能' in str(e) or '请不要往同一个邮件地址发送太多邮件' in str(e)
+        print(e)
+        assert '邮件验证功能' in str(e) \
+            or '请不要往同一个邮件地址发送太多邮件' in str(e) \
+            or 'Too many emails sent to the same email address' in str(e)
 
 
 @with_setup(get_setup_func())
