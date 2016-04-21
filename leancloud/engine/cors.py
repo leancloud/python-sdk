@@ -23,6 +23,7 @@ class CORSMiddleware(object):
         'X-LC-Session',
         'X-LC-Sign',
         'X-LC-Prod',
+        'X-LC-UA',
     ])
     ALLOW_METHODS = ', '.join(['PUT', 'GET', 'POST', 'DELETE', 'OPTIONS'])
     MAX_AGE = '86400'
