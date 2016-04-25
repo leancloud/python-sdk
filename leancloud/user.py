@@ -267,7 +267,7 @@ class User(Object):
         return self.set('username', username)
 
     def set_password(self, password):
-        return self.set('passWord', password)
+        return self.set('password', password)
 
     def set_email(self, email):
         return self.set('email', email)

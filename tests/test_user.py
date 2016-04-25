@@ -228,7 +228,7 @@ def test_get_methods():
     assert user.get_mobile_phone_number() == '18611111111x'
 
     user.set_password('new_password')
-    assert user._attributes.get('passWord') == 'new_password'
+    assert user._attributes.get('password') == 'new_password'
 
     user.set_email('wow1@leancloud.rocks')
     assert user.get_email() == 'wow1@leancloud.rocks'
