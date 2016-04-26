@@ -252,7 +252,8 @@ def test_request_email_verify():
         print(e)
         assert '邮件验证功能' in str(e) \
             or '请不要往同一个邮件地址发送太多邮件' in str(e) \
-            or 'Too many emails sent to the same email address' in str(e)
+            or 'Too many emails sent to the same email address' in str(e)\
+            or 'Please enable verifying user email option in application settings' in str(e)
 
 
 @with_setup(get_setup_func())
