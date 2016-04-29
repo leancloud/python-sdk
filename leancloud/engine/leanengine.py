@@ -150,6 +150,7 @@ def register_cloud_func(func):
     if func_name in _cloud_codes:
         raise RuntimeError('cloud function: {0} is already registered'.format(func_name))
     _cloud_codes[func_name] = func
+    return func
 
 
 def dispatch_cloud_func(func_name, params):
