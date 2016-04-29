@@ -273,7 +273,7 @@ def dispatch_on_login(params):
 
 
 def dispatch_ops_meta_data():
-    return _cloud_codes.keys()
+    return list(_cloud_codes.keys())
 
 
 def register_on_bigquery(event):
