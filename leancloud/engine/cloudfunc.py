@@ -33,7 +33,7 @@ def rpc(_cloud_rpc_name, **params):
     """
     encoded_params = {}
     for key, value in params.items():
-        if isinstance(param, leancloud.Object):
+        if isinstance(params, leancloud.Object):
             encoded_params[key] = utils.encode(value._dump())
         else:
             encoded_params[key] = utils.encode(value)
