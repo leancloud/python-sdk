@@ -21,6 +21,15 @@ def run(_cloud_func_name, **params):
     return utils.decode(None, content)['result']
 
 
+def _run_in_local(_cloud_func_name, **params):
+    result = leancloud.engine.leanengine.dispatch_cloud_func(_cloud_func_name, False, params)
+    return utils.decode(None, result)
+
+
+run.remote = run
+run.local = _run_in_local
+
+
 def rpc(_cloud_rpc_name, **params):
     """
     调用 LeanEngine 上的远程代码
@@ -40,6 +49,15 @@ def rpc(_cloud_rpc_name, **params):
     response = leancloud.client.post('/call/{}'.format(_cloud_rpc_name), params=encoded_params)
     content = response.json()
     return utils.decode(None, content['result'])
+
+
+def _rpc_in_local(_cloud_rpc_name, **params):
+    result = leancloud.engine.leanengine.dispatch_cloud_func(_cloud_rpc_name, True, params)
+    return utils.decode(None, result)
+
+
+rpc.remote = rpc
+rpc.local = _rpc_in_local
 
 
 def request_sms_code(phone_number, idd='+86', sms_type='sms', template=None, params=None):
