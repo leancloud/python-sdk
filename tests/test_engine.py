@@ -224,6 +224,7 @@ def test_authorization_3():
 def test_register_cloud_func():
     @engine.define
     def ping(**params):
+        print('params:', params)
         assert params == {"foo": ["bar", "baz"]}
         return 'pong'
 
@@ -233,6 +234,19 @@ def test_register_cloud_func():
     }, json={'foo': ['bar', 'baz']})
     assert response.ok
     assert response.json() == {u'result': u'pong'}
+
+    # test run in local
+    assert cloudfunc.run.local('ping', foo=['bar', 'baz']) == 'pong'
+
+
+def test_rpc_call():
+    @engine.define
+    def rpc(**params):
+        return leancloud.Object.create('Xxx', foo=['bar', 'baz'])
+
+    obj = cloudfunc.rpc.local('rpc')
+    assert isinstance(obj, leancloud.Object)
+    assert obj.get('foo') == ['bar', 'baz']
 
 
 def test_before_save_hook():

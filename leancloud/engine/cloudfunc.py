@@ -21,6 +21,45 @@ def run(_cloud_func_name, **params):
     return utils.decode(None, content)['result']
 
 
+def _run_in_local(_cloud_func_name, **params):
+    result = leancloud.engine.leanengine.dispatch_cloud_func(_cloud_func_name, False, params)
+    return utils.decode(None, result)
+
+
+run.remote = run
+run.local = _run_in_local
+
+
+def rpc(_cloud_rpc_name, **params):
+    """
+    调用 LeanEngine 上的远程代码
+    与cloudfunc.run 类似，但是允许传入 leancloud.Object 作为参数，也允许传入 leancloud.Object 作为结果
+
+    :param name: 需要调用的远程 Cloud Code 的名称
+    :type name: basestring
+    :param params: 调用参数
+    :return: 调用结果
+    """
+    encoded_params = {}
+    for key, value in params.items():
+        if isinstance(params, leancloud.Object):
+            encoded_params[key] = utils.encode(value._dump())
+        else:
+            encoded_params[key] = utils.encode(value)
+    response = leancloud.client.post('/call/{}'.format(_cloud_rpc_name), params=encoded_params)
+    content = response.json()
+    return utils.decode(None, content['result'])
+
+
+def _rpc_in_local(_cloud_rpc_name, **params):
+    result = leancloud.engine.leanengine.dispatch_cloud_func(_cloud_rpc_name, True, params)
+    return utils.decode(None, result)
+
+
+rpc.remote = rpc
+rpc.local = _rpc_in_local
+
+
 def request_sms_code(phone_number, idd='+86', sms_type='sms', template=None, params=None):
     """
     请求发送手机验证码
