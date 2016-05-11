@@ -12,6 +12,7 @@ import requests
 
 import leancloud
 from leancloud import utils
+from leancloud.app_router import AppRouter
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -25,6 +26,8 @@ USE_HTTPS = True
 # 否则依据 USE_MASTER_KEY 来决定是否使用 MASTER_KEY
 USE_MASTER_KEY = None
 REGION = 'CN'
+
+app_router = None
 
 SERVER_URLS = {
     'CN': 'api.leancloud.cn',
@@ -85,13 +88,24 @@ def need_init(func):
 
 
 def get_base_url():
-    url = os.environ.get('LC_API_SERVER')
+    # try to use the base URL from environ
+    url = os.environ.get('LC_API_SERVER') or os.environ.get('LEANCLOUD_API_SERVER')
     if url:
         return '{}/{}'.format(url, SERVER_VERSION)
+
+    if REGION == 'US':
+        # use the hard coded base URL if region is US
+        host = SERVER_URLS[REGION]
+    else:
+        # use base URL from app router
+        global app_router
+        if app_router is None:
+            app_router = AppRouter(APP_ID)
+        host = app_router.get()
     r = {
         'schema': 'https' if USE_HTTPS else 'http',
         'version': SERVER_VERSION,
-        'host': SERVER_URLS[REGION],
+        'host': host,
     }
     return '{schema}://{host}/{version}'.format(**r)
 
