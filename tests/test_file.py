@@ -70,6 +70,7 @@ def test_save():
     f = File('Blah', buffer_type(b'xxx'))
     f.save()
     assert f.id
+    assert f.name == 'Blah'
 
 
 @with_setup(setup_func)

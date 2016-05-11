@@ -7,6 +7,7 @@ from __future__ import print_function
 import os
 import re
 import base64
+import codecs
 import random
 
 import qiniu
@@ -139,32 +140,55 @@ class File(object):
         if response.status_code != 200:
             raise LeanCloudError(1, "the file is not sucessfully destroyed")
 
+    def _save_to_qiniu(self):
+        output = BytesIO()
+        self._source.seek(0)
+        base64.encode(self._source, output)
+        self._source.seek(0)
+        output.seek(0)
+        hex_octet = lambda: hex(int(0x10000 * (1 + random.random())))[-4:]
+        key = ''.join(hex_octet() for _ in range_type(4))
+        key = '{0}.{1}'.format(key, self.extension)
+        data = {
+            'name': self._name,
+            'key': key,
+            'ACL': self._acl,
+            'mime_type': self._type,
+            'metaData': self._metadata,
+        }
+        response = client.post('/qiniu', data)
+        content = response.json()
+        self.id = content['objectId']
+        self._url = content['url']
+        uptoken = content['token']
+        ret, info = qiniu.put_data(uptoken, key, self._source)
+
+        if info.status_code != 200:
+            raise LeanCloudError(1, 'the file is not saved, qiniu status code: {0}'.format(info.status_code))
+
+    def _save_to_leancloud(self):
+        self._source.seek(0)
+        encoded = codecs.encode(self._source.read(), 'base64')
+        data = {
+            'base64': encoded,
+            '_ContentType': self._type,
+            'ACL': self._acl,
+            'mime_type': self._type,
+            'metaData': self._metadata,
+        }
+        response = client.post('/files/{}'.format(self._name), data)
+        response.raise_for_status()
+        content = response.json()
+        self.id = content['objectId']
+        self._url = content['url']
+        self._name = content['name']
+
     def save(self):
         if self._source:
-            output = BytesIO()
-            self._source.seek(0)
-            base64.encode(self._source, output)
-            self._source.seek(0)
-            output.seek(0)
-            hex_octet = lambda: hex(int(0x10000 * (1 + random.random())))[-4:]
-            key = ''.join(hex_octet() for _ in range_type(4))
-            key = '{0}.{1}'.format(key, self.extension)
-            data = {
-                'name': self._name,
-                'key': key,
-                'ACL': self._acl,
-                'mime_type': self._type,
-                'metaData': self._metadata,
-            }
-            response = client.post('/qiniu', data)
-            content = response.json()
-            self.id = content['objectId']
-            self._url = content['url']
-            uptoken = content['token']
-            ret, info = qiniu.put_data(uptoken, key, self._source)
-
-            if info.status_code != 200:
-                raise LeanCloudError(1, 'the file is not saved, qiniu status code: {0}'.format(info.status_code))
+            if client.REGION == 'US':
+                self._save_to_leancloud()
+            else:
+                self._save_to_qiniu()
         elif self._url and self.metadata.get('__source') == 'external':
             data = {
                 'name': self._name,

@@ -1,3 +1,11 @@
+## [1.4.2] - 2016-04-26
+### Fixed
+- User.set_password now set the password to field `password`
+### Updated
+- Relation.query now is a property (not a function)
+- allow `X-LC-UA` CORS header
+- upload files to AWS S3 when region is US
+
 ## [1.4.1] -2016-02-24
 ### Added
 - add leancloud.Object.disable_before_hook and leancloud.Object.disable_after_hook
