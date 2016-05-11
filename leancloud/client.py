@@ -164,6 +164,20 @@ def check_error(func):
     return new_func
 
 
+def region_redirect(func):
+    def new_func(*args, **kwargs):
+        response = func(*args, **kwargs)
+        if response.status_code == 307:
+            # we are requests another region's API server, and it told us to request another API server
+            content = response.json()
+            if app_router:
+                app_router.update(content)
+                response = func(*args, **kwargs)
+        return response
+
+    return new_func
+
+
 def use_region(region):
     if region not in SERVER_URLS:
         raise ValueError('currently no nodes in the region')
@@ -187,6 +201,7 @@ def get_app_info():
 
 
 @need_init
+@region_redirect
 @check_error
 def get(url, params=None, headers=None):
     if not params:
@@ -200,6 +215,7 @@ def get(url, params=None, headers=None):
 
 
 @need_init
+@region_redirect
 @check_error
 def post(url, params, headers=None):
     response = requests.post(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
@@ -207,6 +223,7 @@ def post(url, params, headers=None):
 
 
 @need_init
+@region_redirect
 @check_error
 def put(url, params, headers=None):
     response = requests.put(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
@@ -214,6 +231,7 @@ def put(url, params, headers=None):
 
 
 @need_init
+@region_redirect
 @check_error
 def delete(url, params=None, headers=None):
     response = requests.delete(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
