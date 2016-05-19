@@ -14,6 +14,7 @@ import leancloud
 from leancloud import utils
 from leancloud._compat import iteritems
 from leancloud._compat import to_bytes
+from leancloud.app_router import AppRouter
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -27,6 +28,8 @@ USE_HTTPS = True
 # 否则依据 USE_MASTER_KEY 来决定是否使用 MASTER_KEY
 USE_MASTER_KEY = None
 REGION = 'CN'
+
+app_router = None
 
 SERVER_URLS = {
     'CN': 'api.leancloud.cn',
@@ -90,13 +93,24 @@ def need_init(func):
 
 
 def get_base_url():
-    url = os.environ.get('LC_API_SERVER')
+    # try to use the base URL from environ
+    url = os.environ.get('LC_API_SERVER') or os.environ.get('LEANCLOUD_API_SERVER')
     if url:
         return '{}/{}'.format(url, SERVER_VERSION)
+
+    if REGION == 'US':
+        # use the hard coded base URL if region is US
+        host = SERVER_URLS[REGION]
+    else:
+        # use base URL from app router
+        global app_router
+        if app_router is None:
+            app_router = AppRouter(APP_ID)
+        host = app_router.get()
     r = {
         'schema': 'https' if USE_HTTPS else 'http',
         'version': SERVER_VERSION,
-        'host': SERVER_URLS[REGION],
+        'host': host,
     }
     return '{schema}://{host}/{version}'.format(**r)
 
@@ -140,7 +154,10 @@ def use_master_key(flag=True):
 def check_error(func):
     def new_func(*args, **kwargs):
         response = func(*args, **kwargs)
+        assert isinstance(response, requests.Response)
         if response.headers.get('Content-Type') == 'text/html':
+            print(response.status_code)
+            print(response.content)
             raise leancloud.LeanCloudError(-1, 'Bad Request')
 
         content = response.json()
@@ -149,6 +166,20 @@ def check_error(func):
             raise leancloud.LeanCloudError(content.get('code', 1), content.get('error', 'Unknown Error'))
 
         return response
+    return new_func
+
+
+def region_redirect(func):
+    def new_func(*args, **kwargs):
+        response = func(*args, **kwargs)
+        if response.status_code == 307:
+            # we are requests another region's API server, and it told us to request another API server
+            content = response.json()
+            if app_router:
+                app_router.update(content)
+                response = func(*args, **kwargs)
+        return response
+
     return new_func
 
 
@@ -175,6 +206,7 @@ def get_app_info():
 
 
 @need_init
+@region_redirect
 @check_error
 def get(url, params=None, headers=None):
     if not params:
@@ -188,6 +220,7 @@ def get(url, params=None, headers=None):
 
 
 @need_init
+@region_redirect
 @check_error
 def post(url, params, headers=None):
     response = requests.post(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
@@ -195,6 +228,7 @@ def post(url, params, headers=None):
 
 
 @need_init
+@region_redirect
 @check_error
 def put(url, params, headers=None):
     response = requests.put(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
@@ -202,6 +236,7 @@ def put(url, params, headers=None):
 
 
 @need_init
+@region_redirect
 @check_error
 def delete(url, params=None, headers=None):
     response = requests.delete(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)

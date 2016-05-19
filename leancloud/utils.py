@@ -106,7 +106,7 @@ def decode(key, value):
         value = copy.deepcopy(value)
         class_name = value['className']
         value.pop('__type')
-        value.pop('class_name')
+        value.pop('className')
         obj = leancloud.Object.create(class_name)
         obj._finish_fetch(value, True)
         return obj
