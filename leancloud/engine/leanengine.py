@@ -139,7 +139,7 @@ class LeanEngineApplication(object):
 hook_name_mapping = {
     'beforeSave': '__before_save_for_',
     'afterSave': '__after_save_for_',
-    'beforeUpdate': '__before_update_for',
+    'beforeUpdate': '__before_update_for_',
     'afterUpdate': '__after_update_for_',
     'beforeDelete': '__before_delete_for_',
     'afterDelete': '__after_delete_for_',
