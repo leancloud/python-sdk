@@ -86,6 +86,7 @@ def test_thumbnail_url_erorr():
     f.get_thumbnail_url(100, 100)
 
 
+@with_setup(setup_func)
 @raises(ValueError)
 def test_thumbnail_size_erorr():
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')

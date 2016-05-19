@@ -34,6 +34,8 @@ class LeanEngineApplication(object):
         self.url_map = Map([
             Rule('/__engine/1/functions/<func_name>', endpoint='cloud_function'),
             Rule('/__engine/1.1/functions/<func_name>', endpoint='cloud_function'),
+            Rule('/__engine/1/call/<func_name>', endpoint='rpc_function'),
+            Rule('/__engine/1.1/call/<func_name>', endpoint='rpc_function'),
             Rule('/__engine/1/functions/BigQuery/<event>', endpoint='on_bigquery'),
             Rule('/__engine/1.1/functions/BigQuery/<event>', endpoint='on_bigquery'),
             Rule('/__engine/1.1/functions/_User/onLogin', endpoint='on_login'),
@@ -47,6 +49,8 @@ class LeanEngineApplication(object):
 
             Rule('/1/functions/<func_name>', endpoint='cloud_function'),
             Rule('/1.1/functions/<func_name>', endpoint='cloud_function'),
+            Rule('/1/call/<func_name>', endpoint='rpc_function'),
+            Rule('/1.1/call/<func_name>', endpoint='rpc_function'),
             Rule('/1/functions/BigQuery/<event>', endpoint='on_bigquery'),
             Rule('/1.1/functions/BigQuery/<event>', endpoint='on_bigquery'),
             Rule('/1.1/functions/_User/onLogin', endpoint='on_login'),
@@ -104,7 +108,9 @@ class LeanEngineApplication(object):
 
         try:
             if endpoint == 'cloud_function':
-                result = {'result': dispatch_cloud_func(**values)}
+                result = {'result': dispatch_cloud_func(decode_object=False, **values)}
+            elif endpoint == 'rpc_function':
+                result = {'result': dispatch_cloud_func(decode_object=True, **values)}
             elif endpoint == 'cloud_hook':
                 result = dispatch_cloud_hook(**values)
             elif endpoint == 'on_verified':
@@ -136,7 +142,7 @@ class LeanEngineApplication(object):
 hook_name_mapping = {
     'beforeSave': '__before_save_for_',
     'afterSave': '__after_save_for_',
-    'beforeUpdate': '__before_update_for',
+    'beforeUpdate': '__before_update_for_',
     'afterUpdate': '__after_update_for_',
     'beforeDelete': '__before_delete_for_',
     'afterDelete': '__after_delete_for_',
@@ -153,13 +159,16 @@ def register_cloud_func(func):
     return func
 
 
-def dispatch_cloud_func(func_name, params):
+def dispatch_cloud_func(func_name, decode_object, params):
     # delete all keys in params which starts with low dash.
     # JS SDK may send it's app info with them.
     keys = params.keys()
     for key in keys:
-        if key.startswith('_'):
+        if key.startswith('_') and key != '__type':
             params.pop(key)
+
+    if decode_object:
+        params = leancloud.utils.decode('', params)
 
     func = _cloud_codes.get(func_name)
     if not func:
@@ -167,7 +176,15 @@ def dispatch_cloud_func(func_name, params):
 
     logger.info("{0} is called!".format(func_name))
 
-    return func(**params)
+    result = func(**params)
+
+    if decode_object:
+        if isinstance(result, leancloud.Object):
+            result = leancloud.utils.encode(result._dump())
+        else:
+            result = leancloud.utils.encode(result)
+
+    return result
 
 
 def register_cloud_hook(class_name, hook_name):
