@@ -1,8 +1,15 @@
 language: python
+
 matrix:
   include:
     - python: "2.7"
-      env: 
+      env:
+        - APP_ID=AjQYwoIyObTeEkD16v1eCq55
+        - APP_KEY=AJpoJrqy1aliyXvcs0SwWrsy
+        - MASTER_KEY=Uk6DT2Mc2kCACvLyi3PU60p3
+        - USE_REGION=US
+    - python: "3.5"
+      env:
         - APP_ID=AjQYwoIyObTeEkD16v1eCq55
         - APP_KEY=AJpoJrqy1aliyXvcs0SwWrsy
         - MASTER_KEY=Uk6DT2Mc2kCACvLyi3PU60p3
@@ -10,15 +17,12 @@ matrix:
 
 sudo: false
 
-# command to install dependencies
 install:
-  - "pip install -r dev-requirements.txt"
-
-# command to run tests
-script: nosetests --nologcapture
-
-before_install:
+  - pip install -r dev-requirements.txt
   - pip install codecov
+
+script:
+  - nosetests --with-coverage --cover-package=leancloud
 
 after_success:
   - codecov

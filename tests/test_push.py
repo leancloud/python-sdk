@@ -41,4 +41,4 @@ def test_basic_push():
     }
     query = leancloud.Query('_Installation').equal_to('objectId', 'xxx')
     notification = push.send(data, where=query)
-    notification.fetch()
+    # notification.fetch()

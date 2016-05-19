@@ -4,7 +4,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import six
 import json
 import warnings
 
@@ -14,6 +13,8 @@ from leancloud import utils
 from leancloud.object_ import Object
 from leancloud.errors import LeanCloudError
 from leancloud.errors import LeanCloudWarning
+from leancloud._compat import string_types
+from leancloud._compat import class_types
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -40,12 +41,12 @@ class Query(object):
         """
 
         :param query_class: 要查询的 class 名称或者对象
-        :type query_class: six.string_types or leancloud.ObjectMeta
+        :type query_class: string_types or leancloud.ObjectMeta
         """
-        if isinstance(query_class, six.string_types):
+        if isinstance(query_class, string_types):
             query_class = Object.extend(query_class)
 
-        if (not isinstance(query_class, (type, six.class_types))) or (not issubclass(query_class, Object)):
+        if (not isinstance(query_class, (type, class_types))) or (not issubclass(query_class, Object)):
             raise ValueError('Query takes string or LeanCloud Object')
 
         self._query_class = query_class
@@ -109,7 +110,7 @@ class Query(object):
         if len(pvalues) > 0:
             params['pvalues'] = json.dumps(pvalues)
 
-        content = utils.response_to_json(client.get('/cloudQuery', params))
+        content = client.get('/cloudQuery', params).json()
 
         objs = []
         query = cls(content['className'])
@@ -157,7 +158,7 @@ class Query(object):
         """
         params = self.dump()
         params['limit'] = 1
-        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), params))
+        content = client.get('/classes/{0}'.format(self._query_class._class_name), params).json()
         results = content['results']
         if not results:
             raise LeanCloudError(101, 'Object not found')
@@ -182,7 +183,7 @@ class Query(object):
 
         :rtype: list
         """
-        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()))
+        content = client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()).json()
 
         objs = []
         for result in content['results']:
@@ -211,7 +212,7 @@ class Query(object):
         params['limit'] = 0
         params['count'] = 1
         response = client.get('/classes/{0}'.format(self._query_class._class_name), params)
-        return utils.response_to_json(response)['count']
+        return response.json()['count']
 
     def skip(self, n):
         """
@@ -373,7 +374,7 @@ class Query(object):
         :param multi_line: 查询是否匹配多行，默认不匹配
         :rtype: Query
         """
-        if not isinstance(regex, six.string_types):
+        if not isinstance(regex, string_types):
             raise TypeError('matched only accept str or unicode')
         self._add_condition(key, '$regex', regex)
         modifiers = ''

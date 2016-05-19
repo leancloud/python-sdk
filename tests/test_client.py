@@ -62,7 +62,7 @@ def test_redirect_region():
         return [json.dumps({
             'api_server': 'fake-redirect-server',
             'ttl': 3600,
-        })]
+        }).encode('utf-8')]
 
     host, port = 'app-router.leancloud.cn', 443
     add_wsgi_intercept(host, port, lambda: fake_app_router)
@@ -72,7 +72,7 @@ def test_redirect_region():
         return [json.dumps({
             'api_server': 'fake-api-server',
             'ttl': 3600,
-        })]
+        }).encode('utf-8')]
 
     host, port = 'fake-redirect-server', 443
     add_wsgi_intercept(host, port, lambda: fake_redirect_server)
@@ -82,7 +82,7 @@ def test_redirect_region():
         start_response('200', [('Content-Type', 'application/json')])
         return [json.dumps({
             'result': 42,
-        })]
+        }).encode('utf-8')]
 
     host, port = 'fake-api-server', 443
     add_wsgi_intercept(host, port, lambda: fake_api_server)

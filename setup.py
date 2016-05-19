@@ -37,7 +37,6 @@ setup(
         'iso8601',
         'qiniu',
         'requests',
-        'six',
         'werkzeug',
     ],
 

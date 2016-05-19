@@ -6,6 +6,7 @@ import json
 from werkzeug.wrappers import Response
 
 from . import utils
+from leancloud._compat import to_native
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -95,7 +96,8 @@ class AuthorizationMiddleware(object):
         if (not request.content_type) or ('text/plain' not in request.content_type):
             return
 
-        body = json.loads(request.data)
+        # the JSON object must be str, not 'bytes' for 3.x.
+        body = json.loads(to_native(request.data))
 
         environ['_app_params']['id'] = body.get('_ApplicationId')
         environ['_app_params']['key'] = body.get('_ApplicationKey')

@@ -13,13 +13,14 @@ from datetime import datetime
 
 import arrow
 import iso8601
-import six
 from werkzeug import LocalProxy
 from dateutil import tz
 
 import leancloud
 from leancloud import operation
-
+from leancloud._compat import BytesIO
+from leancloud._compat import iteritems
+from leancloud._compat import to_bytes
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -69,7 +70,7 @@ def encode(value, disallow_objects=False):
         return [encode(x, disallow_objects) for x in value]
 
     if isinstance(value, dict):
-        return dict([(k, encode(v, disallow_objects)) for k, v in value.iteritems()])
+        return dict([(k, encode(v, disallow_objects)) for k, v in iteritems(value)])
 
     return value
 
@@ -85,7 +86,7 @@ def decode(key, value):
         return value
 
     if '__type' not in value:
-        return dict([(k, decode(k, v)) for k, v in value.iteritems()])
+        return dict([(k, decode(k, v)) for k, v in iteritems(value)])
 
     _type = value['__type']
 
@@ -157,7 +158,7 @@ def traverse_object(obj, callback, seen=None):
         return callback(obj)
 
     if isinstance(obj, dict):
-        for key, child in obj.iteritems():
+        for key, child in iteritems(obj):
             new_child = traverse_object(child, callback, seen)
             if new_child:
                 obj[key] = new_child
@@ -166,23 +167,8 @@ def traverse_object(obj, callback, seen=None):
     return callback(obj)
 
 
-def response_to_json(response):
-    """
-    hack for requests in python 2.6
-    """
-
-    content = response.content
-    # hack for requests in python 2.6
-    if 'application/json' in response.headers['Content-Type']:
-        if content[:2] == '\x1f\x8b':  # gzip file magic header
-            f = six.StringIO(content)
-            g = gzip.GzipFile(fileobj=f)
-            content = g.read()
-            g.close()
-            f.close()
-    return json.loads(content)
-
-
 def sign_disable_hook(hook_name, master_key, timestamp):
-    sign = hmac.new(master_key, '{}:{}'.format(hook_name, timestamp), hashlib.sha1).hexdigest()
-    return '{},{}'.format(timestamp, sign)
+    sign = hmac.new(to_bytes(master_key),
+                    to_bytes('{0}:{1}'.format(hook_name, timestamp)),
+                    hashlib.sha1).hexdigest()
+    return '{0},{1}'.format(timestamp, sign)

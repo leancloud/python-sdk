@@ -4,6 +4,7 @@ import sys
 import json
 
 from werkzeug.wrappers import Request
+from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
 
 import leancloud
@@ -40,10 +41,10 @@ class Engine(object):
         if request.path in ('/__engine/1/ping', '/__engine/1.1/ping/'):
             start_response('200 OK', [('Content-Type', 'application/json')])
             version = sys.version_info
-            return [json.dumps({
+            return Response(json.dumps({
                 'version': leancloud.__version__,
                 'runtime': 'cpython-{0}.{1}.{2}'.format(version.major, version.minor, version.micro)
-            })]
+            }))(environ, start_response)
         if request.path.startswith('/__engine/'):
             return self.cloud_app(environ, start_response)
         if request.path.startswith('/1/functions') or request.path.startswith('/1.1/functions'):

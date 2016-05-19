@@ -2,6 +2,7 @@
 
 import leancloud
 from leancloud import utils
+from leancloud._compat import string_types
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -12,12 +13,12 @@ def run(_cloud_func_name, **params):
     调用 LeanEngine 上的远程代码
 
     :param name: 需要调用的远程 Cloud Code 的名称
-    :type name: basestring
+    :type name: string_types
     :param params: 调用参数
     :return: 调用结果
     """
     response = leancloud.client.post('/functions/{0}'.format(_cloud_func_name), params=params)
-    content = utils.response_to_json(response)
+    content = response.json()
     return utils.decode(None, content)['result']
 
 
@@ -69,7 +70,7 @@ def request_sms_code(phone_number, idd='+86', sms_type='sms', template=None, par
     :param sms_type: 验证码发送方式，'voice' 为语音，'sms' 为短信
     :return: None
     """
-    if not isinstance(phone_number, basestring):
+    if not isinstance(phone_number, string_types):
         raise TypeError('phone_number must be a string')
 
     data = {

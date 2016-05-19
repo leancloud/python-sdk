@@ -10,7 +10,6 @@ import json
 import warnings
 from datetime import datetime
 
-import six
 import iso8601
 from werkzeug import LocalProxy
 
@@ -18,6 +17,10 @@ import leancloud
 from leancloud import utils
 from leancloud import client
 from leancloud import operation
+from leancloud._compat import with_metaclass
+from leancloud._compat import PY2
+from leancloud._compat import text_type
+from leancloud._compat import iteritems
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -57,8 +60,7 @@ class ObjectMeta(type):
         return leancloud.Query(cls)
 
 
-@six.add_metaclass(ObjectMeta)
-class Object(object):
+class Object(with_metaclass(ObjectMeta, object)):
     def __init__(self, **attrs):
         """
         创建一个新的 leancloud.Object
@@ -80,7 +82,7 @@ class Object(object):
 
         self.fetch_when_save = False
 
-        for k, v in attrs.iteritems():
+        for k, v in iteritems(attrs):
             self.set(k, v)
 
     @classmethod
@@ -89,11 +91,11 @@ class Object(object):
         派生一个新的 leancloud.Object 子类
 
         :param name: 子类名称
-        :type name: basestring
+        :type name: string_types
         :return: 派生的子类
         :rtype: ObjectMeta
         """
-        if six.PY2 and isinstance(name, six.text_type):
+        if PY2 and isinstance(name, text_type):
             name = name.encode('utf-8')
         return type(name, (cls,), {})
 
@@ -103,7 +105,7 @@ class Object(object):
         根据参数创建一个 leancloud.Object 的子类的实例化对象
 
         :param class_name: 子类名称
-        :type class_name: basestring
+        :type class_name: string_types
         :param attributes: 对象属性
         :return: 派生子类的实例
         :rtype: Object
@@ -117,7 +119,7 @@ class Object(object):
         根据 objectId 创建一个 leancloud.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据
 
         :param id_: 对象的 objectId
-        :type id_: basestring
+        :type id_: string_types
         :return: 没有数据的对象
         :rtype: Object
         """
@@ -170,7 +172,7 @@ class Object(object):
 
     def _dump(self):
         obj = copy.deepcopy(self._attributes)
-        for k, v in obj.iteritems():
+        for k, v in iteritems(obj):
             obj[k] = utils.encode(v)
 
         if self.id is not None:
@@ -227,7 +229,7 @@ class Object(object):
             response = client.put(url, data)
 
 
-        self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
+        self._finish_save(self.parse(response.json(), response.status_code))
 
     def _deep_save(self, unsaved_children, unsaved_files, exclude=None):
         if exclude:
@@ -251,7 +253,7 @@ class Object(object):
             }
             dumped_objs.append(dumped_obj)
 
-        response = utils.response_to_json(client.post('/batch', params={'requests': dumped_objs}))
+        response = client.post('/batch', params={'requests': dumped_objs}).json()
 
         errors = []
         for idx, obj in enumerate(unsaved_children):
@@ -331,7 +333,7 @@ class Object(object):
     def _cancel_save(self):
         failed_changes = self._op_set_queue.pop(0)
         next_changes = self._op_set_queue[0]
-        for key, op in failed_changes.iteritems():
+        for key, op in iteritems(failed_changes):
             op1 = failed_changes[key]
             op2 = next_changes[key]
             if op1 and op2:
@@ -349,7 +351,7 @@ class Object(object):
         获取对象字段的值
 
         :param attr: 字段名
-        :type attr: basestring
+        :type attr: string_types
         :return: 字段值
         """
         return self._attributes.get(attr)
@@ -359,7 +361,7 @@ class Object(object):
         返回对象上相应字段的 Relation
 
         :param attr: 字段名
-        :type attr: basestring
+        :type attr: string_types
         :return: Relation
         :rtype: leancloud.Relation
         """
@@ -386,7 +388,7 @@ class Object(object):
         在当前对象此字段上赋值
 
         :param key_or_attrs: 字段名，或者一个包含 字段名 / 值的 dict
-        :type key_or_attrs: basestring or dict
+        :type key_or_attrs: string_types or dict
         :param value: 字段值
         :param unset:
         :return: 当前对象，供链式调用
@@ -411,7 +413,7 @@ class Object(object):
 
         self._merge_magic_field(attrs)
 
-        keys = attrs.keys()
+        keys = list(attrs.keys())
         for k in keys:
             v = attrs[k]
             # TODO: Relation
@@ -484,7 +486,7 @@ class Object(object):
 
     def _dump_save(self):
         result = copy.deepcopy(self._op_set_queue[0])
-        for k, v in result.iteritems():
+        for k, v in iteritems(result):
             result[k] = v.dump()
         return result
 
@@ -495,7 +497,7 @@ class Object(object):
         :return: 当前对象
         """
         response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), {})
-        result = self.parse(utils.response_to_json(response), response.status_code)
+        result = self.parse(response.json(), response.status_code)
         self._finish_fetch(result, True)
 
     def parse(self, content, status_code=None):
@@ -554,14 +556,14 @@ class Object(object):
         self._op_set_queue = self._op_set_queue[1:]
         self._apply_op_set(saved_changes, self._server_data)
         self._merge_magic_field(server_data)
-        for key, value in server_data.iteritems():
+        for key, value in iteritems(server_data):
             self._server_data[key] = utils.decode(key, value)
         self._rebuild_attributes()
 
     def _finish_fetch(self, server_data, existed):
         self._op_set_queue = [{}]
         self._merge_magic_field(server_data)
-        for key, value in server_data.iteritems():
+        for key, value in iteritems(server_data):
             self._server_data[key] = utils.decode(key, value)
         self._rebuild_attributes()
         self._op_set_queue = [{}]
@@ -586,7 +588,7 @@ class Object(object):
         self._attributes = copy.deepcopy(self._server_data)
 
     def _apply_op_set(self, op_set, target):
-        for key, change in op_set.iteritems():
+        for key, change in iteritems(op_set):
             target[key] = change._apply(target.get(key), self, key)
             if target[key] == operation._UNSET:
                 del target[key]

@@ -6,8 +6,6 @@ from __future__ import print_function
 
 import os
 
-from StringIO import StringIO
-import cStringIO
 from nose.tools import with_setup
 from nose.tools import assert_raises
 from nose.tools import raises
@@ -17,6 +15,9 @@ import requests
 import leancloud
 from leancloud import File
 from leancloud import ACL
+from leancloud._compat import PY2
+from leancloud._compat import BytesIO
+from leancloud._compat import buffer_type
 
 __author__ = 'asaka'
 
@@ -29,12 +30,16 @@ def setup_func():
 
 
 def test_basic():
-    s = StringIO('blah blah blah')
-    s1 = cStringIO.StringIO()
-    s1.write('blah blah blah')
+    s = BytesIO(b'blah blah blah')
+    if PY2:
+        import cStringIO
+        s1 = cStringIO.StringIO()
+        s1.write('blah blah blah')
+    else:
+        s1 = s
     f1 = File('Blah', s, 'text/plain')
     f2 = File('Blah', s1)
-    f3 = File('Blah', open('tests/test_file.txt', 'r'))
+    f3 = File('Blah', open('tests/test_file.txt', 'rb'))
     for f in (f1, f2, f3):
         assert f.name == 'Blah'
         assert f._metadata['size'] == 14
@@ -54,7 +59,7 @@ def test_create_without_data():
 
 def test_acl():
     acl = ACL()
-    f = File('Blah', buffer('xxx'))
+    f = File('Blah', buffer_type(b'xxx'))
     assert_raises(TypeError, f.set_acl, 'a')
     f.set_acl(acl)
     assert f.get_acl() == acl
@@ -62,7 +67,7 @@ def test_acl():
 
 @with_setup(setup_func)
 def test_save():
-    f = File('Blah', buffer('xxx'))
+    f = File('Blah', buffer_type(b'xxx'))
     f.save()
     assert f.id
     assert f.name == 'Blah'
@@ -85,7 +90,7 @@ def test_thumbnail_url_erorr():
 @raises(ValueError)
 def test_thumbnail_size_erorr():
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
-    b = buffer(r.content)
+    b = buffer_type(r.content)
     f = File('Lenna2.jpg', b)
     f.save()
     assert f.id
@@ -97,7 +102,7 @@ def test_thumbnail_size_erorr():
 @with_setup(setup_func)
 def test_thumbnail():
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
-    b = buffer(r.content)
+    b = buffer_type(r.content)
     f = File('Lenna2.jpg', b)
     f.save()
     assert f.id
@@ -109,7 +114,7 @@ def test_thumbnail():
 @with_setup(setup_func)
 def test_destroy():
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
-    b = buffer(r.content)
+    b = buffer_type(r.content)
     f = File('Lenna2.jpg', b)
     f.save()
     assert f.id
@@ -119,7 +124,7 @@ def test_destroy():
 @with_setup(setup_func)
 def test_fetch():
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
-    b = buffer(r.content)
+    b = buffer_type(r.content)
     f = File('Lenna2.jpg', b)
     f.metadata['foo'] = 'bar'
     f.save()
