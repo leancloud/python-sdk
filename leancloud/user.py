@@ -1,5 +1,9 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 
 import threading
 
@@ -7,6 +11,7 @@ from leancloud import FriendshipQuery
 from leancloud import client
 from leancloud import Object
 from leancloud import utils
+from leancloud._compat import string_types
 
 __author__ = 'asaka'
 
@@ -24,14 +29,15 @@ class User(Object):
         return self._session_token
 
     def _merge_magic_field(self, attrs):
-        self._session_token = attrs.get('sessionToken')
+        if 'sessionToken' in attrs:
+            self._session_token = attrs.get('sessionToken')
         attrs.pop('sessionToken', None)
 
         return super(User, self)._merge_magic_field(attrs)
 
     @classmethod
     def create_follower_query(cls, user_id):
-        if not user_id or not isinstance(user_id, basestring):
+        if not user_id or not isinstance(user_id, string_types):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Follower')
         query.equal_to('user', User.create_without_data(user_id))
@@ -39,7 +45,7 @@ class User(Object):
 
     @classmethod
     def create_followee_query(cls, user_id):
-        if not user_id or not isinstance(user_id, basestring):
+        if not user_id or not isinstance(user_id, string_types):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Followee')
         query.equal_to('user', User.create_without_data(user_id))
@@ -52,13 +58,13 @@ class User(Object):
     @classmethod
     def become(cls, session_token):
         response = client.get('/users/me', params={'session_token': session_token})
-        content = utils.response_to_json(response)
+        content = response.json()
         user = cls()
         server_data = user.parse(content, response.status_code)
         user._finish_fetch(server_data, True)
         user._handle_save_result(True)
         if 'smsCode' not in server_data:
-            user.attributes.pop('smsCode', None)
+            user._attributes.pop('smsCode', None)
         return user
 
     @property
@@ -73,7 +79,7 @@ class User(Object):
         auth_data = self.get('authData')
         if not auth_data:
             return
-        keys = auth_data.keys()
+        keys = list(auth_data.keys())
         for key in keys:
             if not auth_data[key]:
                 del auth_data[key]
@@ -95,11 +101,11 @@ class User(Object):
         self._cleanup_auth_data()
         # self._sync_all_auth_data()
         self._server_data.pop('password', None)
-        self._rebuild_estimated_data_for_key('password')
+        self._rebuild_attribute('password')
 
-    def save(self):
+    def save(self, make_current=False):
         super(User, self).save()
-        self._handle_save_result(False)
+        self._handle_save_result(make_current)
 
     def sign_up(self, username=None, password=None):
         """
@@ -118,7 +124,7 @@ class User(Object):
         if not password:
             raise TypeError('invalid password')
 
-        self.save()
+        self.save(make_current=True)
 
     def login(self, username=None, password=None):
         """
@@ -129,17 +135,16 @@ class User(Object):
         if password:
             self.set('password', password)
         response = client.post('/login', params=self.dump())
-        content = utils.response_to_json(response)
+        content = response.json()
         server_data = self.parse(content, response.status_code)
         self._finish_fetch(server_data, False)
         self._handle_save_result(True)
         if 'smsCode' not in server_data:
-            self.attributes.pop('smsCode', None)
+            self._attributes.pop('smsCode', None)
 
     def logout(self):
         if not self.is_current:
             return
-        self._logout_with_all()
         self._cleanup_auth_data()
         thread_locals.current_user = None
 
@@ -219,8 +224,8 @@ class User(Object):
     @classmethod
     def signup_or_login_with_mobile_phone(cls, phone_number, sms_code):
         '''
-        param phone_nubmer: basestring
-        param sms_code: basestring
+        param phone_nubmer: string_types
+        param sms_code: string_types
 
         在调用此方法前请先使用 request_sms_code 请求 sms code
         '''
@@ -229,13 +234,13 @@ class User(Object):
             'smsCode': sms_code
         }
         response = client.post('/usersByMobilePhone', data)
-        content = utils.response_to_json(response)
+        content = response.json()
         user = cls()
         server_data = user.parse(content, response.status_code)
         user._finish_fetch(server_data, True)
         user._handle_save_result(True)
         if 'smsCode' not in server_data:
-            user.attributes.pop('smsCode', None)
+            user._attributes.pop('smsCode', None)
         return user
 
     def update_password(self, old_password, new_password):
@@ -245,16 +250,16 @@ class User(Object):
             'new_password': new_password
         }
         response = client.put(route, params)
-        content = utils.response_to_json(response)
+        content = response.json()
         server_data = self.parse(content, response.status_code)
         self._finish_fetch(server_data, True)
         self._handle_save_result(True)
 
     def get_username(self):
-        return self.attributes.get('username')
+        return self.get('username')
 
     def get_mobile_phone_number(self):
-        return self.attributes.get('mobilePhoneNumber')
+        return self.get('mobilePhoneNumber')
 
     def set_mobile_phone_number(self, phone_number):
         return self.set('mobilePhoneNumber', phone_number)
@@ -263,13 +268,13 @@ class User(Object):
         return self.set('username', username)
 
     def set_password(self, password):
-        return self.set('passWord', password)
+        return self.set('password', password)
 
     def set_email(self, email):
         return self.set('email', email)
 
     def get_email(self):
-        return self.attributes.get('email')
+        return self.get('email')
 
     @classmethod
     def request_password_reset(self, email):
@@ -283,12 +288,12 @@ class User(Object):
 
     @classmethod
     def request_mobile_phone_verify(cls, phone_number):
-        params = {'mobilePhone': phone_number}
+        params = {'mobilePhoneNumber': phone_number}
         client.post('/requestMobilePhoneVerify', params)
 
     @classmethod
     def request_password_reset_by_sms_code(cls, phone_number):
-        params = {'mobilePhone': phone_number}
+        params = {'mobilePhoneNumber': phone_number}
         client.post('/requestPasswordResetBySmsCode', params)
 
     @classmethod

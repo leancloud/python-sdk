@@ -1,5 +1,9 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 
 from nose.tools import with_setup
@@ -19,6 +23,11 @@ def setup_func():
 
 @with_setup(setup_func)
 def test_basic_push():
+    instanlation = leancloud.Installation()
+    instanlation.set('deviceType', 'ios')
+    instanlation.set('deviceToken', 'xxx')
+    instanlation.save()
+
     data = {
         "alert": {
             "title": "标题",
@@ -30,6 +39,6 @@ def test_basic_push():
             "launch-image": "",
         }
     }
-    notification = push.send(data)
-    notification.fetch()
-    print notification.attributes
+    query = leancloud.Query('_Installation').equal_to('objectId', 'xxx')
+    notification = push.send(data, where=query)
+    # notification.fetch()

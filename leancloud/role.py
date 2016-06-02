@@ -1,16 +1,25 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import re
 
 import leancloud
+from leancloud._compat import string_types
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class Role(leancloud.Object):
-    def __init__(self, name, acl):
+    def __init__(self, name=None, acl=None):
         super(Role, self).__init__()
-        self.set_name(name)
+        if name:
+            self.set_name(name)
+        if acl is None:
+            acl = leancloud.ACL()
+            acl.set_public_read_access(True)
         self.set_acl(acl)
 
     def get_name(self):
@@ -37,8 +46,8 @@ class Role(leancloud.Object):
     def validate(self, attrs):
         if 'name' in attrs and attrs['name'] != self.get_name():
             new_name = attrs['name']
-            if not isinstance(new_name, basestring):
-                raise TypeError('role name must be a basestring')
+            if not isinstance(new_name, string_types):
+                raise TypeError('role name must be string_types')
             r = re.compile('^[0-9a-zA-Z\-_]+$')
             if not r.match(new_name):
                 raise TypeError('role\'s name can only contain alphanumeric characters, _, -, and spaces.')

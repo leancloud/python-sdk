@@ -1,11 +1,12 @@
 from setuptools import setup, find_packages
 from os import path
 
+
 here = path.abspath(path.dirname(__file__))
 
 setup(
     name='leancloud-sdk',
-    version='1.3.0',
+    version='1.6.0',
     description='LeanCloud Python SDK',
 
     url='https://leancloud.cn/',
@@ -33,9 +34,9 @@ setup(
 
     install_requires=[
         'arrow',
+        'iso8601',
         'qiniu',
         'requests',
-        'iso8601',
         'werkzeug',
     ],
 

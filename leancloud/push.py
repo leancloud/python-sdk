@@ -1,8 +1,11 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 from leancloud.object_ import Object
 from leancloud import client
-from leancloud import utils
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -28,10 +31,10 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     :type expiration_time: datetime
     :param expiration_interval: 消息过期的相对时间，从调用 API 的时间开始算起，单位是秒
     :type expiration_interval: int
-    :param where: 一个查询 _Installation 表的查询条件 JSON 对象
+    :param where: 一个查询 _Installation 表的查询条件 leancloud.Query 对象
     :type where: leancloud.Query
     :param cql: 一个查询 _Installation 表的查询条件 CQL 语句
-    :type cql: basestring
+    :type cql: string_types
     :param data: 推送给设备的具体信息，详情查看 https://leancloud.cn/docs/push_guide.html#消息内容_Data
     :rtype: Notification
     """
@@ -49,11 +52,11 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     if expiration_interval:
         params['expiration_interval'] = expiration_interval
     if where:
-        params['where'] = where.dump()
+        params['where'] = where.dump().get('where', {})
     if cql:
         params['cql'] = cql
 
-    result = utils.response_to_json(client.post('/push', params=params))
+    result = client.post('/push', params=params).json()
 
     notification = Notification.create_without_data(result['objectId'])
     return notification

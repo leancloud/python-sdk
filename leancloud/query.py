@@ -1,7 +1,10 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import json
-import types
 import warnings
 
 import leancloud
@@ -9,6 +12,9 @@ from leancloud import client
 from leancloud import utils
 from leancloud.object_ import Object
 from leancloud.errors import LeanCloudError
+from leancloud.errors import LeanCloudWarning
+from leancloud._compat import string_types
+from leancloud._compat import class_types
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -35,12 +41,12 @@ class Query(object):
         """
 
         :param query_class: 要查询的 class 名称或者对象
-        :type query_class: basestring or leancloud.ObjectMeta
+        :type query_class: string_types or leancloud.ObjectMeta
         """
-        if isinstance(query_class, basestring):
+        if isinstance(query_class, string_types):
             query_class = Object.extend(query_class)
 
-        if (not isinstance(query_class, (type, types.ClassType))) or (not issubclass(query_class, Object)):
+        if (not isinstance(query_class, (type, class_types))) or (not issubclass(query_class, Object)):
             raise ValueError('Query takes string or LeanCloud Object')
 
         self._query_class = query_class
@@ -52,6 +58,10 @@ class Query(object):
         self._extra = {}
         self._order = []
         self._select = []
+
+    def __call__(self):
+        warnings.warn('leancloud.Relation.query now is a property, please don\'t call it as a function', LeanCloudWarning)
+        return self
 
     @classmethod
     def or_(cls, *queries):
@@ -100,7 +110,7 @@ class Query(object):
         if len(pvalues) > 0:
             params['pvalues'] = json.dumps(pvalues)
 
-        content = utils.response_to_json(client.get('/cloudQuery', params))
+        content = client.get('/cloudQuery', params).json()
 
         objs = []
         query = cls(content['className'])
@@ -128,7 +138,7 @@ class Query(object):
         if self._skip > 0:
             params['skip'] = self._skip
         if self._order:
-            params['order'] = self._order
+            params['order'] = ",".join(self._order)
         params.update(self._extra)
         return params
 
@@ -148,7 +158,7 @@ class Query(object):
         """
         params = self.dump()
         params['limit'] = 1
-        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), params))
+        content = client.get('/classes/{0}'.format(self._query_class._class_name), params).json()
         results = content['results']
         if not results:
             raise LeanCloudError(101, 'Object not found')
@@ -173,7 +183,7 @@ class Query(object):
 
         :rtype: list
         """
-        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()))
+        content = client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()).json()
 
         objs = []
         for result in content['results']:
@@ -202,7 +212,7 @@ class Query(object):
         params['limit'] = 0
         params['count'] = 1
         response = client.get('/classes/{0}'.format(self._query_class._class_name), params)
-        return utils.response_to_json(response)['count']
+        return response.json()['count']
 
     def skip(self, n):
         """
@@ -364,7 +374,7 @@ class Query(object):
         :param multi_line: 查询是否匹配多行，默认不匹配
         :rtype: Query
         """
-        if not isinstance(regex, basestring):
+        if not isinstance(regex, string_types):
             raise TypeError('matched only accept str or unicode')
         self._add_condition(key, '$regex', regex)
         modifiers = ''
@@ -405,7 +415,7 @@ class Query(object):
         return self
 
     def matched_key_in_query(self, key, query_key, query):
-        warnings.warn(' the query is deprecated, please use matches_key_in_query', DeprecationWarning)
+        warnings.warn(' the query is deprecated, please use matches_key_in_query', LeanCloudWarning)
         return self.matches_key_in_query(key, query_key, query)
 
     def matches_key_in_query(self, key, query_key, query):
@@ -535,40 +545,49 @@ class Query(object):
         self._add_condition(key, '$nearSphere', point)
         return self
 
-    def within_radians(self, key, point, distance):
+    def within_radians(self, key, point, max_distance, min_distance=None):
         """
         增加查询条件，限制返回结果指定字段值的位置在某点的一段距离之内。
 
         :param key: 查询条件字段名
         :param point: 查询地理位置
-        :param distance: 距离限定（弧度）
+        :param max_distance: 最大距离限定（弧度）
+        :param min_distance: 最小距离限定（弧度）
         :rtype: Query
         """
         self.near(key, point)
-        self._add_condition(key, '$maxDistance', distance)
+        self._add_condition(key, '$maxDistance', max_distance)
+        if min_distance is not None:
+            self._add_condition(key, '$minDistance', min_distance)
         return self
 
-    def within_miles(self, key, point, distance):
+    def within_miles(self, key, point, max_distance, min_distance=None):
         """
         增加查询条件，限制返回结果指定字段值的位置在某点的一段距离之内。
 
         :param key: 查询条件字段名
         :param point: 查询地理位置
-        :param distance: 距离限定（英里）
+        :param max_distance: 最大距离限定（英里）
+        :param min_distance: 最小距离限定（英里）
         :rtype: Query
         """
-        return self.within_radians(key, point, distance / 3958.8)
+        if min_distance is not None:
+            min_distance = min_distance / 3958.8
+        return self.within_radians(key, point, max_distance / 3958.8, min_distance)
 
-    def within_kilometers(self, key, point, distance):
+    def within_kilometers(self, key, point, max_distance, min_distance=None):
         """
         增加查询条件，限制返回结果指定字段值的位置在某点的一段距离之内。
 
         :param key: 查询条件字段名
         :param point: 查询地理位置
-        :param distance: 距离限定（千米）
+        :param max_distance: 最大距离限定（千米）
+        :param min_distance: 最小距离限定（千米）
         :rtype: Query
         """
-        return self.within_radians(key, point, distance / 6371.0)
+        if min_distance is not None:
+            min_distance = min_distance / 6371.0
+        return self.within_radians(key, point, max_distance / 6371.0, min_distance)
 
     def within_geo_box(self, key, southwest, northeast):
         """

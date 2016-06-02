@@ -1,6 +1,12 @@
 # coding: utf-8
-from datetime import datetime
+
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
+import random
+from datetime import datetime
 
 from nose.tools import eq_
 from nose.tools import with_setup
@@ -36,6 +42,10 @@ B = Object.extend('B')
 
 
 def setup_func():
+    leancloud.client.USE_MASTER_KEY = None
+    leancloud.client.APP_ID = None
+    leancloud.client.APP_KEY = None
+    leancloud.client.MASTER_KEY = None
     leancloud.init(
         os.environ['APP_ID'],
         os.environ['APP_KEY']
@@ -54,6 +64,7 @@ def setup_func():
             game_score.set('score', i)
             game_score.set('playerName', '张三')
             game_score.set('location', GeoPoint(latitude=i, longitude=-i))
+            game_score.set('random', random.randrange(100))
             game_score.save()
 
 
@@ -134,45 +145,41 @@ def test_relation():
 @with_setup(setup_func, destroy_func)
 def test_basic_query():
     # find
-    q = Query(GameScore)
-    results = q.find()
+    results = GameScore.query.find()
     eq_(len(results), 10)
 
     # first
-    q = Query(GameScore)
-    game_score = q.first()
+    game_score = GameScore.query.first()
     assert game_score
 
     # get
-    q = Query(GameScore)
-    q.get(game_score.id)
+    GameScore.query.get(game_score.id)
 
     # count
-    q = Query(GameScore)
-    eq_(q.count(), 10)
+    eq_(GameScore.query.count(), 10)
 
     # descending and add_descending
     q = Query(GameScore).add_descending('score').descending('score')
-    eq_([x.get('score') for x in q.find()], range(9, -1, -1))
+    eq_([x.get('score') for x in q.find()], list(range(9, -1, -1)))
 
     # greater_than
     q = Query(GameScore).greater_than('score', 5).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(6, 10))
+    eq_([x.get('score') for x in q.find()], list(range(6, 10)))
 
     q = Query(GameScore).greater_than_or_equal_to('score', 5).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(5, 10))
+    eq_([x.get('score') for x in q.find()], list(range(5, 10)))
 
     q = Query(GameScore).less_than('score', 5).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(0, 5))
+    eq_([x.get('score') for x in q.find()], list(range(0, 5)))
 
     q = Query(GameScore).less_than_or_equal_to('score', 5).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(0, 6))
+    eq_([x.get('score') for x in q.find()], list(range(0, 6)))
 
     q = Query(GameScore).contained_in('score', [1, 2, 3]).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(1, 4))
+    eq_([x.get('score') for x in q.find()], list(range(1, 4)))
 
     q = Query(GameScore).not_contained_in('score', [0, 1, 2, 3]).ascending('score')
-    eq_([x.get('score') for x in q.find()], range(4, 10))
+    eq_([x.get('score') for x in q.find()], list(range(4, 10)))
 
     q = Query(GameScore).select('score')
     assert not q.find()[0].has('playerName')
@@ -188,6 +195,23 @@ def test_or_and_query():
 
     q = Query.or_(q1, q2, q3)
     assert q.dump() == {'where': {'$or': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}, {'playerName': 'foobar'}]}}
+
+
+@with_setup(setup_func)
+def test_multiple_order():
+    MultipleOrderObject = leancloud.Object.extend('MultipleOrderObject')
+    for obj in Query(MultipleOrderObject).find():
+        obj.destroy()
+    MultipleOrderObject(a=1, b=10).save()
+    MultipleOrderObject(a=10, b=20).save()
+    MultipleOrderObject(a=1, b=3).save()
+    q = Query(MultipleOrderObject)
+    q.add_descending('a')
+    q.add_descending('b')
+    r = q.find()
+    for i in range(1, len(r)):
+        assert r[i - 1].get('a') >= r[i].get('a')
+        assert r[i - 1].get('b') >= r[i].get('b')
 
 
 @raises(ValueError)
@@ -229,7 +253,7 @@ def test_or_():
     q1 = Query(GameScore).greater_than('score', -1)
     q2 = Query(GameScore).equal_to('name', 'x')
     result = Query.or_(q1, q2).ascending('score').find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)
@@ -237,7 +261,7 @@ def test_and_():
     q1 = Query(GameScore).greater_than('score', 2)
     q2 = Query(GameScore).greater_than('score', 3)
     result = Query.and_(q1, q2).ascending('score').find()
-    eq_([i.get('score') for i in result], range(4, 10))
+    eq_([i.get('score') for i in result], list(range(4, 10)))
 
 
 @raises(ValueError)
@@ -283,7 +307,6 @@ def test_matched():
 def test_does_not_match_query():
     q = Query(GameScore).greater_than('score', -1)
     result = Query(GameScore).does_not_match_query('playerName', q).find()
-    print result
 
 
 @with_setup(setup_func, match_key_setup)
@@ -295,10 +318,10 @@ def test_matches_key_in_query():
 
 
 @with_setup(setup_func, match_key_setup)
-def test_matched_key_in_query():
+def test_matches_key_in_query():
     q1 = Query(A).equal_to('age', 1)
     q2 = Query(B)
-    result = q2.matched_key_in_query('work_year', 'age', q1).find()
+    result = q2.matches_key_in_query('work_year', 'age', q1).find()
     assert len(result) == 5
 
 
@@ -331,25 +354,25 @@ def test_endswith():
 @with_setup(setup_func)
 def test_add_ascending():
     result = Query(GameScore).add_ascending('score').find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)
 def test_near():
     result = Query(GameScore).near('location', GeoPoint(latitude=0, longitude=0)).find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)
 def test_within_radians():
     result = Query(GameScore).within_radians('location', GeoPoint(latitude=0, longitude=0), 1).find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)
 def test_within_miles():
     result = Query(GameScore).within_miles('location', GeoPoint(latitude=0, longitude=0), 4000).find()
-    eq_([i.get('score') for i in result], range(10))
+    eq_([i.get('score') for i in result], list(range(10)))
 
 
 @with_setup(setup_func)

@@ -1,5 +1,9 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import leancloud
 from leancloud import operation
 
@@ -70,6 +74,7 @@ class Relation(object):
             'className': self.target_class_name
         }
 
+    @property
     def query(self):
         """
         获取指向 Relation 内容的 Query 对象。

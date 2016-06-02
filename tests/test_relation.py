@@ -1,5 +1,9 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 
 from nose.tools import with_setup
@@ -48,6 +52,10 @@ def test_query_relation():
     album = leancloud.Query('Album').get(album.id)
     relation = album.relation('band')
     bands = relation.query().find()
+    assert band1.id in [x.id for x in bands]
+    assert band2.id in [x.id for x in bands]
+
+    bands = relation.query.find()
     assert band1.id in [x.id for x in bands]
     assert band2.id in [x.id for x in bands]
 

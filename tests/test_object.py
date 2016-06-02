@@ -1,5 +1,9 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import os
 
 from nose.tools import with_setup
@@ -15,6 +19,10 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 def setup_func():
+    leancloud.client.USE_MASTER_KEY = None
+    leancloud.client.APP_ID = None
+    leancloud.client.APP_KEY = None
+    leancloud.client.MASTER_KEY = None
     leancloud.init(
         os.environ['APP_ID'],
         os.environ['APP_KEY']
@@ -72,10 +80,10 @@ def test_find_unsaved_children_2():
 def test_set():
     album = Album()
     album.set('title', 'Nightwish')
-    eq_(album.attributes, {'title': 'Nightwish'})
+    eq_(album._attributes, {'title': 'Nightwish'})
 
     album = Album(title='Nightwish')
-    eq_(album.attributes, {'title': 'Nightwish'})
+    eq_(album._attributes, {'title': 'Nightwish'})
 
 
 def test_get():
@@ -99,6 +107,7 @@ def test_increment():
     assert album.get('foo') == 2
 
 
+@with_setup(setup_func)
 def test_increment_atfer_save():
     album = Album()
     album.set('foo', 1)
@@ -141,12 +150,6 @@ def test_clear():
     assert album.get('baz') is None
 
 
-def test_op():
-    album = Album()
-    album.set('foo', 'bar')
-    assert isinstance(album.op('foo'), operation.Set)
-
-
 def test_full_dump():
     album = Album()
     album.set('title', 'Nightwish')
@@ -182,7 +185,7 @@ def test_extend():
 def test_finish_fetch():
     album = Album()
     album._finish_fetch({'title': 'Once', 'artist': 'nightwish'}, False)
-    eq_(album.attributes, {'title': 'Once', 'artist': 'nightwish'})
+    eq_(album._attributes, {'title': 'Once', 'artist': 'nightwish'})
 
 
 def test_dump():
@@ -253,3 +256,61 @@ def test_pointer():
     s = score()
     s.set('user', user)
     s.save()
+
+
+@with_setup(setup_func)
+def test_save_and_destroy_all():
+    ObjToDelete = Object.extend('ObjToDelete')
+    objs = [ObjToDelete() for _ in range(3)]
+    Object.save_all(objs)
+    assert all(not x.is_new() for x in objs)
+
+    Object.destroy_all(objs)
+
+    for obj in objs:
+        try:
+            leancloud.Query(ObjToDelete).get(obj.id)
+        except leancloud.LeanCloudError as e:
+            assert e.code == 101
+
+
+@with_setup(setup_func)
+def test_fetch_when_save():
+    Foo = Object.extend('Foo')
+    foo = Foo()
+    foo.fetch_when_save = True
+    foo.set('counter', 1)
+    foo.save()
+    assert foo.get('counter') == 1
+
+    foo_from_other_thread = leancloud.Query(Foo).get(foo.id)
+    assert foo_from_other_thread.get('counter') == 1
+    foo_from_other_thread.set('counter', 100)
+    foo_from_other_thread.save()
+
+    foo.increment('counter', 3)
+    foo.save()
+    eq_(foo.get('counter'), 103)
+    foo.destroy()
+
+
+@with_setup(setup_func)
+def test_save_with_where():
+    Foo = Object.extend('Foo')
+    foo = Foo(aNumber=1)
+
+    assert_raises(TypeError, foo.save, where=Foo.query)
+
+    assert_raises(TypeError, foo.save, where=leancloud.Query('SomeClassNotEqualToFoo'))
+
+    foo.save()
+
+    foo.set('aNumber', 2)
+
+    try:
+        foo.save(where=leancloud.Query('Foo').equal_to('aNumber', 2))
+    except leancloud.LeanCloudError as e:
+        assert e.code == 305
+
+    foo.save(where=leancloud.Query('Foo').equal_to('aNumber', 1))
+    assert leancloud.Query('Foo').get(foo.id).get('aNumber') == 2

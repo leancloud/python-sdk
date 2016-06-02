@@ -1,14 +1,26 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import time
 import copy
+import json
+import warnings
 from datetime import datetime
 
 import iso8601
+from werkzeug import LocalProxy
 
 import leancloud
 from leancloud import utils
 from leancloud import client
 from leancloud import operation
+from leancloud._compat import with_metaclass
+from leancloud._compat import PY2
+from leancloud._compat import text_type
+from leancloud._compat import iteritems
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -38,10 +50,17 @@ class ObjectMeta(type):
         object_class_map[name] = object_class
         return object_class
 
+    @property
+    def query(cls):
+        """
+        获取当前对象的 Query 对象。
 
-class Object(object):
-    __metaclass__ = ObjectMeta
+        :rtype: leancloud.Query
+        """
+        return leancloud.Query(cls)
 
+
+class Object(with_metaclass(ObjectMeta, object)):
     def __init__(self, **attrs):
         """
         创建一个新的 leancloud.Object
@@ -54,14 +73,16 @@ class Object(object):
 
         self._server_data = {}
         self._op_set_queue = [{}]
-        self.attributes = {}
+        self._attributes = {}
 
         self._existed = False
 
         self.created_at = None
         self.updated_at = None
 
-        for k, v in attrs.iteritems():
+        self.fetch_when_save = False
+
+        for k, v in iteritems(attrs):
             self.set(k, v)
 
     @classmethod
@@ -70,11 +91,11 @@ class Object(object):
         派生一个新的 leancloud.Object 子类
 
         :param name: 子类名称
-        :type name: basestring
+        :type name: string_types
         :return: 派生的子类
         :rtype: ObjectMeta
         """
-        if isinstance(name, unicode):
+        if PY2 and isinstance(name, text_type):
             name = name.encode('utf-8')
         return type(name, (cls,), {})
 
@@ -84,7 +105,7 @@ class Object(object):
         根据参数创建一个 leancloud.Object 的子类的实例化对象
 
         :param class_name: 子类名称
-        :type class_name: basestring
+        :type class_name: string_types
         :param attributes: 对象属性
         :return: 派生子类的实例
         :rtype: Object
@@ -98,7 +119,7 @@ class Object(object):
         根据 objectId 创建一个 leancloud.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据
 
         :param id_: 对象的 objectId
-        :type id_: basestring
+        :type id_: string_types
         :return: 没有数据的对象
         :rtype: Object
         """
@@ -108,17 +129,51 @@ class Object(object):
         obj.id = id_
         return obj
 
+    @classmethod
+    def save_all(cls, objs):
+        """
+        在一个请求中 save 多个 leancloud.Object 对象实例。
+
+        :param objs: 需要 save 的对象
+        :type objs: list
+        """
+        if not objs:
+            return
+        return cls()._deep_save(objs, [])
+
+    @classmethod
+    def destroy_all(cls, objs):
+        """
+        在一个请求中 destroy 多个 leancloud.Object 对象实例。
+
+        :param objs: 需要 destroy 的对象
+        :type objs: list
+        """
+        if not objs:
+            return
+        if not all(x._class_name == objs[0]._class_name for x in objs):
+            raise ValueError("destroy_all requires the argument object list's _class_names must be the same")
+        if any(x.is_new() for x in objs):
+            raise ValueError("Could not destroy unsaved object")
+        ids = {x.id for x in objs}
+        ids = ','.join(ids)
+        client.delete('/classes/{0}/{1}'.format(objs[0]._class_name, ids))
+
+    @property
+    def attributes(self):
+        warnings.warn('leancloud.Object.attributes should not be used any more, please use get or set instead', leancloud.errors.LeanCloudWarning)
+        return self._attributes
+
     def dump(self):
         obj = self._dump()
         obj.pop('__type')
         obj.pop('className')
         return obj
 
-    def _dump(self, seen_objects=None):
-        seen_objects = seen_objects or []
-        obj = copy.deepcopy(self.attributes)
-        for k, v in obj.iteritems():
-            obj[k] = utils.encode(v, seen_objects)
+    def _dump(self):
+        obj = copy.deepcopy(self._attributes)
+        for k, v in iteritems(obj):
+            obj[k] = utils.encode(v)
 
         if self.id is not None:
             obj['objectId'] = self.id
@@ -134,36 +189,47 @@ class Object(object):
         :rtype: None
         """
         if not self.id:
-            return False
+            return
         client.delete('/classes/{0}/{1}'.format(self._class_name, self.id))
 
-    def save(self):
+    def save(self, where=None):
         """
         将对象数据保存至服务器
 
         :return: None
         :rtype: None
         """
+        if where and not isinstance(where, leancloud.Query):
+            raise TypeError('where param type should be leancloud.Query, got %s', type(where))
+
+        if where and where._query_class._class_name != self._class_name:
+            raise TypeError('where param\'s class name not equal to the current object\'s class name')
+
+        if where and self.is_new():
+            raise TypeError('where params works only when leancloud.Object is saved')
+
         unsaved_children = []
         unsaved_files = []
-
-        self._find_unsaved_children(self.attributes, unsaved_children, unsaved_files)
-
+        self._find_unsaved_children(self._attributes, unsaved_children, unsaved_files)
         if len(unsaved_children) + len(unsaved_files) > 0:
-            self._deep_save(unsaved_children, unsaved_files, exclude=self.attributes)
+            self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
         self._start_save()
 
         data = self._dump_save()
 
-        method = 'PUT' if self.id is not None else 'POST'
+        fetch_when_save = 'true' if self.fetch_when_save else 'false'
 
-        if method == 'PUT':
-            response = client.put('/classes/{0}/{1}'.format(self._class_name, self.id), data)
+        if self.is_new():
+            response = client.post('/classes/{0}?fetchWhenSave={1}'.format(self._class_name, fetch_when_save), data)
         else:
-            response = client.post('/classes/{0}'.format(self._class_name), data)
+            url = '/classes/{0}/{1}?fetchWhenSave={2}'.format(self._class_name, self.id, fetch_when_save)
+            if where:
+                url += '&where=' + json.dumps(where.dump()['where'], separators=(',', ':'))
+            response = client.put(url, data)
 
-        self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
+
+        self._finish_save(self.parse(response.json(), response.status_code))
 
     def _deep_save(self, unsaved_children, unsaved_files, exclude=None):
         if exclude:
@@ -172,6 +238,8 @@ class Object(object):
         for f in unsaved_files:
             f.save()
 
+        if not unsaved_children:
+            return
         dumped_objs = []
         for obj in unsaved_children:
             obj._start_save()
@@ -185,7 +253,7 @@ class Object(object):
             }
             dumped_objs.append(dumped_obj)
 
-        response = utils.response_to_json(client.post('/batch', params={'requests': dumped_objs}))
+        response = client.post('/batch', params={'requests': dumped_objs}).json()
 
         errors = []
         for idx, obj in enumerate(unsaved_children):
@@ -265,7 +333,7 @@ class Object(object):
     def _cancel_save(self):
         failed_changes = self._op_set_queue.pop(0)
         next_changes = self._op_set_queue[0]
-        for key, op in failed_changes.iteritems():
+        for key, op in iteritems(failed_changes):
             op1 = failed_changes[key]
             op2 = next_changes[key]
             if op1 and op2:
@@ -283,17 +351,17 @@ class Object(object):
         获取对象字段的值
 
         :param attr: 字段名
-        :type attr: basestring
+        :type attr: string_types
         :return: 字段值
         """
-        return self.attributes.get(attr)
+        return self._attributes.get(attr)
 
     def relation(self, attr):
         """
         返回对象上相应字段的 Relation
 
         :param attr: 字段名
-        :type attr: basestring
+        :type attr: string_types
         :return: Relation
         :rtype: leancloud.Relation
         """
@@ -313,22 +381,28 @@ class Object(object):
         :return: 当有值时返回 True， 否则返回 False
         :rtype: bool
         """
-        return attr in self.attributes
+        return attr in self._attributes
 
     def set(self, key_or_attrs, value=None, unset=False):
         """
         在当前对象此字段上赋值
 
         :param key_or_attrs: 字段名，或者一个包含 字段名 / 值的 dict
-        :type key_or_attrs: basestring or dict
+        :type key_or_attrs: string_types or dict
         :param value: 字段值
         :param unset:
         :return: 当前对象，供链式调用
         """
         if isinstance(key_or_attrs, dict) and value is None:
             attrs = key_or_attrs
+            keys = attrs.keys()
+            for k in keys:
+                if isinstance(attrs[k], LocalProxy):
+                    attrs[k] = attrs[k]._get_current_object()
         else:
             key = key_or_attrs
+            if isinstance(value, LocalProxy):
+                value = value._get_current_object()
             attrs = {key: utils.decode(key, value)}
 
         if unset:
@@ -339,7 +413,7 @@ class Object(object):
 
         self._merge_magic_field(attrs)
 
-        keys = attrs.keys()
+        keys = list(attrs.keys())
         for k in keys:
             v = attrs[k]
             # TODO: Relation
@@ -349,7 +423,7 @@ class Object(object):
 
             current_changes = self._op_set_queue[-1]
             current_changes[k] = v._merge(current_changes.get(k))
-            self._rebuild_estimated_data_for_key(k)
+            self._rebuild_attribute(k)
 
         return self
 
@@ -402,20 +476,17 @@ class Object(object):
         """
         return self.set(attr, operation.Remove([item]))
 
-    def op(self, attr):
-        return self._op_set_queue[-1][attr]
-
     def clear(self):
         """
         将当前对象所有字段全部移除。
 
         :return: 当前对象
         """
-        self.set(self.attributes, unset=True)
+        self.set(self._attributes, unset=True)
 
     def _dump_save(self):
         result = copy.deepcopy(self._op_set_queue[0])
-        for k, v in result.iteritems():
+        for k, v in iteritems(result):
             result[k] = v.dump()
         return result
 
@@ -426,7 +497,7 @@ class Object(object):
         :return: 当前对象
         """
         response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), {})
-        result = self.parse(utils.response_to_json(response), response.status_code)
+        result = self.parse(response.json(), response.status_code)
         self._finish_fetch(result, True)
 
     def parse(self, content, status_code=None):
@@ -442,7 +513,7 @@ class Object(object):
 
         :rtype: bool
         """
-        return True if self.id else False
+        return False if self.id else True
 
     def is_existed(self):
         return self._existed
@@ -466,47 +537,58 @@ class Object(object):
 
         return self.set('ACL', acl)
 
+    def disable_before_hook(self):
+        master_key = client.get_app_info().get('master_key')
+        if not master_key:
+            raise ValueError('disable_before_hook need LeanCloud master key')
+        timestamp = int(time.time() * 1000)
+        return self.set('__before', utils.sign_disable_hook('__before_for_' + self._class_name, master_key, timestamp))
+
+    def disable_after_hook(self):
+        master_key = client.get_app_info().get('master_key')
+        if not master_key:
+            raise ValueError('disable_before_hook need LeanCloud master key')
+        timestamp = int(time.time() * 1000)
+        return self.set('__after', utils.sign_disable_hook('__after_for_' + self._class_name, master_key, timestamp))
+
     def _finish_save(self, server_data):
         saved_changes = self._op_set_queue[0]
         self._op_set_queue = self._op_set_queue[1:]
         self._apply_op_set(saved_changes, self._server_data)
         self._merge_magic_field(server_data)
-        self._rebuild_all_estimated_data()
-
-    def _finish_fetch(self, server_data, has_data):
-        self._op_set_queue = [{}]
-
-        self._merge_magic_field(server_data)
-
-        for key, value in server_data.iteritems():
+        for key, value in iteritems(server_data):
             self._server_data[key] = utils.decode(key, value)
+        self._rebuild_attributes()
 
-        self._rebuild_all_estimated_data()
-
+    def _finish_fetch(self, server_data, existed):
         self._op_set_queue = [{}]
+        self._merge_magic_field(server_data)
+        for key, value in iteritems(server_data):
+            self._server_data[key] = utils.decode(key, value)
+        self._rebuild_attributes()
+        self._op_set_queue = [{}]
+        self._existed = existed
 
-        self._has_data = has_data
-
-    def _rebuild_estimated_data_for_key(self, key):
-        if self.attributes.get(key):
-            del self.attributes[key]
+    def _rebuild_attribute(self, key):
+        if self._attributes.get(key):
+            del self._attributes[key]
 
         if key in self._server_data:
-            self.attributes[key] = self._server_data[key]
+            self._attributes[key] = self._server_data[key]
 
         for op_set in self._op_set_queue:
             o = op_set.get(key)
             if o is None:
                 continue
-            self.attributes[key] = o._apply(self.attributes.get(key), self, key)
-            if self.attributes[key] is operation._UNSET:
-                del self.attributes[key]
+            self._attributes[key] = o._apply(self._attributes.get(key), self, key)
+            if self._attributes[key] is operation._UNSET:
+                del self._attributes[key]
 
-    def _rebuild_all_estimated_data(self):
-        self.attributes = copy.deepcopy(self._server_data)
+    def _rebuild_attributes(self):
+        self._attributes = copy.deepcopy(self._server_data)
 
     def _apply_op_set(self, op_set, target):
-        for key, change in op_set.iteritems():
+        for key, change in iteritems(op_set):
             target[key] = change._apply(target.get(key), self, key)
             if target[key] == operation._UNSET:
                 del target[key]
