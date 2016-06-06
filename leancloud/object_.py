@@ -346,7 +346,7 @@ class Object(with_metaclass(ObjectMeta, object)):
             raise TypeError('acl must be a ACL')
         return True
 
-    def get(self, attr):
+    def get(self, attr, deafult=None):
         """
         获取对象字段的值
 
@@ -354,7 +354,11 @@ class Object(with_metaclass(ObjectMeta, object)):
         :type attr: string_types
         :return: 字段值
         """
-        return self._attributes.get(attr)
+        value = self._attributes.get(attr)
+        if value:
+            return value
+        else:
+            return deafult
 
     def relation(self, attr):
         """
