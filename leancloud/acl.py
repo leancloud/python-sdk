@@ -34,10 +34,10 @@ class ACL(object):
 
         if allowed:
             self.permissions_by_id[user_id][access_type] = True
-        else:
+        elif self.permissions_by_id[user_id].get(access_type):
             del self.permissions_by_id[user_id][access_type]
-            if not self.permissions_by_id[user_id]:
-                del self.permissions_by_id[user_id]
+        if not self.permissions_by_id[user_id]:
+            del self.permissions_by_id[user_id]
 
     def _get_access(self, access_type, user_id):
         if isinstance(user_id, leancloud.User):
