@@ -59,6 +59,9 @@ def test_set_and_get_public_read_access():
     user_acl.set_public_read_access(True)
     assert user_acl.permissions_by_id['*']['read']
     assert user_acl.get_public_read_access()
+    user_acl.set_public_read_access(False)
+    assert not user_acl.permissions_by_id.get('*')
+    assert not user_acl.get_public_read_access()
 
 
 def test_set_and_get_public_write_access():
@@ -66,7 +69,13 @@ def test_set_and_get_public_write_access():
     user_acl.set_public_write_access(True)
     assert user_acl.permissions_by_id['*']['write']
     assert user_acl.get_public_write_access()
+    
 
+def test_first_set_read_ture_and_then_write_false():
+    user_acl = acl.ACL()
+    user_acl.set_read_access(520, True)
+    user_acl.set_write_access(520, False)
+    
 
 def test_set_and_get_role_read_access():
     role_acl = acl.ACL()

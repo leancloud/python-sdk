@@ -34,7 +34,7 @@ class ACL(object):
 
         if allowed:
             self.permissions_by_id[user_id][access_type] = True
-        else:
+        elif access_type in self.permissions_by_id[user_id]:
             del self.permissions_by_id[user_id][access_type]
             if not self.permissions_by_id[user_id]:
                 del self.permissions_by_id[user_id]

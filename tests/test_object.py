@@ -92,6 +92,11 @@ def test_get():
     assert album.get('foo') == 'bar'
 
 
+def test_get_deafult():
+    album = Album()
+    assert album.get('foo', 'bar') == 'bar'
+
+
 def test_unset():
     album = Album()
     album.set('foo', 'bar')
