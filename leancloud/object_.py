@@ -354,11 +354,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         :type attr: string_types
         :return: 字段值
         """
-        value = self._attributes.get(attr)
-        if value:
-            return value
-        else:
-            return deafult
+        return self._attributes.get(attr, deafult)
 
     def relation(self, attr):
         """
