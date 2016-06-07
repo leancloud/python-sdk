@@ -1,0 +1,29 @@
+from typing import Union,Any,Tuple
+
+import leancloud
+from leancloud.object_ import Object
+
+
+class Query(object):
+    def __init__(self, query_class: Union[str, Object]) -> None:...
+
+#     @classmethod
+#     def or_(cls, *queries: Query) -> Query:...
+# 
+#     @lcassmethod
+#     def and_(cls, *queries: Query) -> Query:...
+
+    def get(self, object_id: str) -> Object:...
+
+    def skip(self, n:int) -> Query:...
+
+    def limit(self,n:int) -> Query:...
+
+    def contained_in(self, key: Any, values: Union[List[Any],Tuple[Any]]) -> Query:...
+
+    def not_contained_in(self, key: Any, values: Union[List[Any],Tuple[Any]]) -> Query:...
+
+    def contains_all(self, key: Any, values: Union[List[Any],Tuple[Any]]) -> Query:...
+
+
+
