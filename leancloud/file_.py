@@ -84,7 +84,11 @@ class File(object):
         if meta_data:
             f._metadata.update(meta_data)
 
-        f._url = url
+        if isinstance(url, str):
+            f._url = url
+        else:
+            raise ValueError('url must be a string')
+
         f._metadata['__source'] = 'external'
         return f
 
