@@ -1,0 +1,16 @@
+import leancloud
+from leancloud.object_ import Object
+from typing import Any, Union
+
+class Relation(object):
+    def __init__(self, parent: Object, key: str=None) -> None :...
+
+    @classmethod
+    def reverse_query(cls, parent_class: Union[str, Object], relation_key: str, child: Object):...
+
+    def add(self, *obj_or_objs: Union[Object, List[Object]]):...
+
+    def remove(slef, *obj_or_objs: Union[object, List[Object]]):...
+
+    @property
+    def query(self):...
