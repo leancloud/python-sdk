@@ -191,31 +191,6 @@ class File(object):
         self._url = content['url']
         self._name = content['name']
 
-    def save(self):
-        if self._source:
-            if client.REGION == 'US':
-                self._save_to_leancloud()
-            else:
-                self._save_to_qiniu()
-        elif self._url and self.metadata.get('__source') == 'external':
-            data = {
-                'name': self._name,
-                'ACL': self._acl,
-                'metaData': self._metadata,
-                'mime_type': self._type,
-                'url': self._url,
-            }
-            response = client.post('/files/{0}'.format(self._name), data)
-            content = response.json()
-
-            self._name = content['name']
-            self._url = content['url']
-            self.id = content['objectId']
-            if 'size' in content:
-                self._metadata['size'] = content['size']
-            else:
-                raise ValueError
-
     def _save_external(self):
         data = {
             'name': self._name,

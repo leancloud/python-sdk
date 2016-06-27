@@ -1,8 +1,17 @@
 from setuptools import setup, find_packages
 from os import path
+import sys
 
 
 here = path.abspath(path.dirname(__file__))
+
+extra_require = {
+        'dev': ['sphinx'],
+        'test': ['nose', 'coverage', 'wsgi_intercept'],
+    }
+
+if sys.version_info.major == 2:
+    extra_require['test'].append('typing')
 
 setup(
     name='leancloud-sdk',
@@ -41,8 +50,5 @@ setup(
         'werkzeug',
     ],
 
-    extras_require={
-        'dev': ['sphinx'],
-        'test': ['nose', 'coverage', 'wsgi_intercept','typing'],
-    },
+    extras_require=extra_require
 )

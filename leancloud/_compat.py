@@ -74,7 +74,7 @@ elif PY3:
     itervalues = lambda d: iter(d.values())
     iteritems = lambda d: iter(d.items())
 
-    from io import StringIO, BytesIO
+    from io import BytesIO
 
     def reraise(tp, value, tb=None):
         if value.__traceback__ is not tb:

@@ -10,7 +10,6 @@ import threading
 from leancloud import FriendshipQuery
 from leancloud import client
 from leancloud import Object
-from leancloud import utils
 from leancloud._compat import string_types
 
 __author__ = 'asaka'
