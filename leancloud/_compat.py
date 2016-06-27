@@ -23,9 +23,7 @@ _version = sys.version_info.major
 PY2 = _version == 2
 PY3 = _version == 3
 
-
 _identity = lambda x: x
-
 
 if PY2:
     text_type = unicode
@@ -76,7 +74,7 @@ elif PY3:
     itervalues = lambda d: iter(d.values())
     iteritems = lambda d: iter(d.items())
 
-    from io import StringIO, BytesIO
+    from io import BytesIO
 
     def reraise(tp, value, tb=None):
         if value.__traceback__ is not tb:
@@ -98,8 +96,6 @@ elif PY3:
         if x is None or isinstance(x, str):
             return x
         return x.decode(charset, errors)
-
-
 
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""

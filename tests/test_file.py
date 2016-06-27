@@ -53,8 +53,8 @@ def test_create_with_url():
 
 
 def test_create_without_data():
-    f = File.create_without_data(123)
-    assert f.id == 123
+    f = File.create_without_data('a123')
+    assert f.id == 'a123'
 
 
 def test_acl():
@@ -82,7 +82,7 @@ def test_save_external():
 
 @raises(ValueError)
 def test_thumbnail_url_erorr():
-    f = File.create_with_url('xx', False)
+    f = File.create_with_url('xx', '')
     f.get_thumbnail_url(100, 100)
 
 
