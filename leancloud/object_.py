@@ -69,7 +69,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         """
         self.id = None
         self._class_name = self._class_name  # for IDE
-        self.changes = {}
+        self._changes = {}
         self._attributes = {}
         self.created_at = None
         self.updated_at = None
@@ -218,7 +218,7 @@ class Object(with_metaclass(ObjectMeta, object)):
                 url += '&where=' + json.dumps(where.dump()['where'], separators=(',', ':'))
             response = client.put(url, data)
 
-        self._bind_data(response.json())
+        self._update_data(response.json())
 
     def _deep_save(self, unsaved_children, unsaved_files, exclude=None):
         if exclude:
@@ -249,7 +249,7 @@ class Object(with_metaclass(ObjectMeta, object)):
             if not content.get('success'):
                 errors.append(leancloud.LeanCloudError(content.get('code'), content.get('error')))
             else:
-                obj._bind_data(content['success'])
+                obj._update_data(content['success'])
 
             if errors:
                 # TODO: how to raise list of errors?
@@ -276,9 +276,9 @@ class Object(with_metaclass(ObjectMeta, object)):
     def is_dirty(self, attr=None):
         #consider renaming to is_changed?
         if attr:
-            return attr in self.changes
+            return attr in self._changes
         else:
-            return bool(not self.id or self.changes)
+            return bool(not self.id or self._changes)
 
     def _to_pointer(self):
         return {
@@ -381,7 +381,7 @@ class Object(with_metaclass(ObjectMeta, object)):
             self._attributes[k] = v._apply(self._attributes.get(k),self, k)
             if self._attributes[k] == operation._UNSET:
                 del self._attributes[k]
-            self.changes[k] = v._merge(self.changes.get(k))
+            self._changes[k] = v._merge(self._changes.get(k))
 
         return self
 
@@ -443,10 +443,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         self.set(self._attributes, unset=True)
 
     def _dump_save(self):
-        result = copy.deepcopy(self.changes)
-        for k, v in iteritems(result):
-            result[k] = v.dump()
-        return result
+        return {k:v.dump() for k,v in iteritems(self._changes)}
 
     def fetch(self):
         """
@@ -455,7 +452,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         :return: 当前对象
         """
         response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), {})
-        self._bind_data(response.json())
+        self._update_data(response.json())
 
     def is_new(self):
         """
@@ -501,9 +498,9 @@ class Object(with_metaclass(ObjectMeta, object)):
         timestamp = int(time.time() * 1000)
         return self.set('__after', utils.sign_disable_hook('__after_for_' + self._class_name, master_key, timestamp))
 
-    def _bind_data(self, server_data):
+    def _update_data(self, server_data):
 
         self._merge_metadata(server_data)
         for key, value in iteritems(server_data):
             self._attributes[key] = utils.decode(key, value)
-        self.changes = {}
+        self._changes = {}

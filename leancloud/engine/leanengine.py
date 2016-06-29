@@ -89,7 +89,7 @@ class LeanEngineApplication(object):
 
         if 'user' in data and data['user']:
             user = leancloud.User()
-            user._bind_data(data['user'])
+            user._update_data(data['user'])
             context.local.user = user
             return
 
@@ -219,7 +219,7 @@ def dispatch_cloud_hook(class_name, hook_name, params):
         raise NotAcceptable
 
     obj = leancloud.Object.create(class_name)
-    obj._bind_data(params['object'])
+    obj._update_data(params['object'])
 
     if '__updateKeys' in params['object']:
        obj.updated_keys = params['object']['__updateKeys']
@@ -285,7 +285,7 @@ def dispatch_on_login(params):
         return
 
     user = leancloud.User()
-    user._bind_data(params['object'])
+    user._update_data(params['object'])
 
     return func(user)
 

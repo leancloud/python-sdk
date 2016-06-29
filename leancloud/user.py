@@ -58,7 +58,7 @@ class User(Object):
         response = client.get('/users/me', params={'session_token': session_token})
         content = response.json()
         user = cls()
-        user._bind_data(content)
+        user._update_data(content)
         user._handle_save_result(True)
         if 'smsCode' not in content:
             user._attributes.pop('smsCode', None)
@@ -132,7 +132,7 @@ class User(Object):
             self.set('password', password)
         response = client.post('/login', params=self.dump())
         content = response.json()
-        self._bind_data(content)
+        self._update_data(content)
         self._handle_save_result(True)
         if 'smsCode' not in content:
             self._attributes.pop('smsCode', None)
@@ -150,7 +150,7 @@ class User(Object):
             'mobilePhoneNumber': phone_number,
             'password': password
         }
-        user._bind_data(params)
+        user._update_data(params)
         user.login()
         return user
 
@@ -231,7 +231,7 @@ class User(Object):
         response = client.post('/usersByMobilePhone', data)
         content = response.json()
         user = cls()
-        user._bind_data(content)
+        user._update_data(content)
         user._handle_save_result(True)
         if 'smsCode' not in content:
             user._attributes.pop('smsCode', None)
@@ -244,7 +244,7 @@ class User(Object):
             'new_password': new_password
         }
         content = client.put(route, params).json()
-        self._bind_data(content)
+        self._update_data(content)
         self._handle_save_result(True)
 
     def get_username(self):

@@ -97,9 +97,9 @@ def decode(key, value):
         if 'createdAt' in value:
             value.pop('__type')
             value.pop('className')
-            pointer._bind_data(value)
+            pointer._update_data(value)
         else:
-            pointer._bind_data({'objectId': value['objectId']})
+            pointer._update_data({'objectId': value['objectId']})
         return pointer
 
     if _type == 'Object':
@@ -108,7 +108,7 @@ def decode(key, value):
         value.pop('__type')
         value.pop('className')
         obj = leancloud.Object.create(class_name)
-        obj._bind_data(value)
+        obj._update_data(value)
         return obj
 
     if _type == 'Date':

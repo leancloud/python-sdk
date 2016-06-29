@@ -186,9 +186,9 @@ def test_extend():
     ok_(Object.extend('Album'))
 
 
-def test_bind_data():
+def test_update_data():
     album = Album()
-    album._bind_data({'title': 'Once', 'artist': 'nightwish'})
+    album._update_data({'title': 'Once', 'artist': 'nightwish'})
     eq_(album._attributes, {'title': 'Once', 'artist': 'nightwish'})
 
 
