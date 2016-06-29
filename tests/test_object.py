@@ -12,7 +12,6 @@ from nose.tools import eq_
 from nose.tools import assert_raises
 
 import leancloud
-from leancloud import operation
 from leancloud import Object
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -187,9 +186,9 @@ def test_extend():
     ok_(Object.extend('Album'))
 
 
-def test_finish_fetch():
+def test_bind_data():
     album = Album()
-    album._finish_fetch({'title': 'Once', 'artist': 'nightwish'}, False)
+    album._bind_data({'title': 'Once', 'artist': 'nightwish'})
     eq_(album._attributes, {'title': 'Once', 'artist': 'nightwish'})
 
 

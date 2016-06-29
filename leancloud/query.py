@@ -116,7 +116,7 @@ class Query(object):
         query = cls(content['className'])
         for result in content['results']:
             obj = query._new_object()
-            obj._finish_fetch(query._process_result(result), True)
+            obj._bind_data(query._process_result(result))
             objs.append(obj)
 
         return CQLResult(objs, content.get('count'), content.get('className'))
@@ -163,7 +163,7 @@ class Query(object):
         if not results:
             raise LeanCloudError(101, 'Object not found')
         obj = self._new_object()
-        obj._finish_fetch(self._process_result(results[0]), True)
+        obj._bind_data(self._process_result(results[0]))
         return obj
 
     def get(self, object_id):
@@ -188,7 +188,7 @@ class Query(object):
         objs = []
         for result in content['results']:
             obj = self._new_object()
-            obj._finish_fetch(self._process_result(result), True)
+            obj._bind_data(self._process_result(result))
             objs.append(obj)
 
         return objs

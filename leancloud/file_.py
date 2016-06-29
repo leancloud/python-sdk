@@ -6,14 +6,11 @@ from __future__ import print_function
 
 import os
 import re
-import json
 import base64
 import codecs
 import random
 
-import six
 import requests
-from six import StringIO
 
 import leancloud
 from leancloud import client
