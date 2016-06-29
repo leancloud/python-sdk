@@ -27,12 +27,11 @@ class User(Object):
     def get_session_token(self):
         return self._session_token
 
-    def _merge_magic_field(self, attrs):
+    def _merge_metadata(self, attrs):
         if 'sessionToken' in attrs:
-            self._session_token = attrs.get('sessionToken')
-        attrs.pop('sessionToken', None)
+            self._session_token = attrs.pop('sessionToken')
 
-        return super(User, self)._merge_magic_field(attrs)
+        return super(User, self)._merge_metadata(attrs)
 
     @classmethod
     def create_follower_query(cls, user_id):
@@ -59,10 +58,9 @@ class User(Object):
         response = client.get('/users/me', params={'session_token': session_token})
         content = response.json()
         user = cls()
-        server_data = user.parse(content, response.status_code)
-        user._finish_fetch(server_data, True)
+        user._update_data(content)
         user._handle_save_result(True)
-        if 'smsCode' not in server_data:
+        if 'smsCode' not in content:
             user._attributes.pop('smsCode', None)
         return user
 
@@ -83,24 +81,23 @@ class User(Object):
             if not auth_data[key]:
                 del auth_data[key]
 
-    def _sync_all_auth_data(self):
-        auth_data = self.get('authData')
-        if not auth_data:
-            return
-        for key in auth_data.keys():
-            self._sync_auth_data(key)
+#    def _sync_all_auth_data(self):
+#        auth_data = self.get('authData')
+#        if not auth_data:
+#            return
+#        for key in auth_data.keys():
+#            self._sync_auth_data(key)
 
-    def _sync_auth_data(self, key):
-        if not self.is_current:
-            return
+#    def _sync_auth_data(self, key):
+#        if not self.is_current:
+#            return
 
     def _handle_save_result(self, make_current=False):
         if make_current:
             thread_locals.current_user = self
         self._cleanup_auth_data()
         # self._sync_all_auth_data()
-        self._server_data.pop('password', None)
-        self._rebuild_attribute('password')
+        self._attributes.pop('password', None)
 
     def save(self, make_current=False):
         super(User, self).save()
@@ -135,10 +132,9 @@ class User(Object):
             self.set('password', password)
         response = client.post('/login', params=self.dump())
         content = response.json()
-        server_data = self.parse(content, response.status_code)
-        self._finish_fetch(server_data, False)
+        self._update_data(content)
         self._handle_save_result(True)
-        if 'smsCode' not in server_data:
+        if 'smsCode' not in content:
             self._attributes.pop('smsCode', None)
 
     def logout(self):
@@ -154,7 +150,7 @@ class User(Object):
             'mobilePhoneNumber': phone_number,
             'password': password
         }
-        user._finish_fetch(params, True)
+        user._update_data(params)
         user.login()
         return user
 
@@ -210,7 +206,7 @@ class User(Object):
         if type(provider) != str:
             raise TypeError('input should be a string')
         self.link_with(provider, None)
-        self._sync_auth_data(provider)
+        # self._sync_auth_data(provider)
         return self
 
     def is_linked(self, provider):
@@ -235,10 +231,9 @@ class User(Object):
         response = client.post('/usersByMobilePhone', data)
         content = response.json()
         user = cls()
-        server_data = user.parse(content, response.status_code)
-        user._finish_fetch(server_data, True)
+        user._update_data(content)
         user._handle_save_result(True)
-        if 'smsCode' not in server_data:
+        if 'smsCode' not in content:
             user._attributes.pop('smsCode', None)
         return user
 
@@ -248,10 +243,8 @@ class User(Object):
             'old_password': old_password,
             'new_password': new_password
         }
-        response = client.put(route, params)
-        content = response.json()
-        server_data = self.parse(content, response.status_code)
-        self._finish_fetch(server_data, True)
+        content = client.put(route, params).json()
+        self._update_data(content)
         self._handle_save_result(True)
 
     def get_username(self):
