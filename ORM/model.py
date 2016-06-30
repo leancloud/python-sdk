@@ -20,7 +20,11 @@ class BaseModel(type):
 
 class Model(six.with_metaclass(BaseModel)):
     def __init__(self, **kargv):
-        self._object = leancloud._object.Object()
+        self.id = None
+        self.created_at = None
+        self.updated_at = None
+
+        self._object = leancloud.object_.Object()
         for key in kargv:
             if not key in self.fields:
                 raise AttributeError('There is no {} field in the model'.format(key))
@@ -35,9 +39,9 @@ class Model(six.with_metaclass(BaseModel)):
     def __setattr__(self, name, value):
         if name in self.fields:
             self.fields[name].verify(value)
-            self.object.set(name, value)
+            self._object.set(name, value)
         else:
-            warnings.warn('There the value is not set to a field', leancloud.errors.LeanCloudWarning)
+            #warnings.warn('The value is not set to a field')
             self.in_class_setattr(name, value)
 
     def __delattr__(self, name):
@@ -47,10 +51,14 @@ class Model(six.with_metaclass(BaseModel)):
             self.in_class_delattr(name)
 
     def __getattr__(self, name):
-        try:
-            return self._object._attribute[name]
-        except KeyError:
-            raise AttributeError('{0} does not have the attribute {1}'.format(self.name, name))
+        # try:
+        #     return self._object._attribute[name]
+        # except KeyError:
+        #     raise AttributeError('{0} does not have the attribute {1}'.format(self.name, name))
+        if not self._object.has(name):
+            raise AttributeError('The model instance does not have the attribute {}'.format(name))
+        else:
+            return self._object.get(name)
 
     def increment(self, attr, num=1):
         if attr in self.fields:
@@ -63,8 +71,14 @@ class Model(six.with_metaclass(BaseModel)):
 
 
     def save(self, where=None, fetch_when_save=False):
-        self._object.fetch_when_ave = fetch_when_save
-        self._object.save(where=where)
+        self._object.fetch_when_save = fetch_when_save
+        self._object.save()
+        self.copy_meta_data()
+
+    def copy_meta_data(self):
+        for attr in ('id', 'created_at', 'updated_at'):
+            if not getattr(self, attr):
+                setattr(self, attr, getattr(self._object, attr))
 
 #    def fetch(self):
 #        if not self.id:
