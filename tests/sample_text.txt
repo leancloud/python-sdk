@@ -1,0 +1,22 @@
+Shall I compare thee to a summer’s day?
+Thou art more lovely and more temperate.
+Rough winds do shake the darling buds of May,
+And summer’s lease hath all too short a date.
+Sometime too hot the eye of heaven shines,
+And often is his gold complexion dimmed;
+And every fair from fair sometime declines,
+By chance, or nature’s changing course, untrimmed;
+But thy eternal summer shall not fade,
+Nor lose possession of that fair thou ow’st,
+Nor shall death brag thou wand’rest in his shade,
+When in eternal lines to Time thou grow’st.
+So long as men can breathe, or eyes can see,
+So long lives this, and this gives life to thee.
+
+青青河畔草，绵绵思远道。远道不可思，宿昔梦见之。
+梦见在我傍，忽觉在他乡。他乡各异县，展转不相见。
+枯桑知天风，海水知天寒。入门各自媚，谁肯相为言！
+客从远方来，遗我双鲤鱼。呼儿烹鲤鱼，中有尺素书。
+长跪读素书，书中竟何如？上言加餐食，下言长相忆。
+
+1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377...

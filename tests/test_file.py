@@ -39,7 +39,7 @@ def test_basic():
         s1 = s
     f1 = File('Blah', s, 'text/plain')
     f2 = File('Blah', s1)
-    f3 = File('Blah', open('tests/test_file.txt', 'rb'))
+    f3 = File('Blah', open('tests/sample_text.txt', 'rb'))
     for f in (f1, f2, f3):
         assert f.name == 'Blah'
         assert f._metadata['size'] == 14
@@ -137,3 +137,10 @@ def test_fetch():
     assert fetched.size == f.size
     assert fetched.url == f.url
     f.destroy()
+
+def test_save_to_qcloud():
+    pass
+
+def test_checksum():
+    f = File('Blah', open('tests/sample_text.txt', 'rb'))
+    assert f._metadata['_checksum'] == 'd0588d95e45eed70745ffabdf0b18acd'
