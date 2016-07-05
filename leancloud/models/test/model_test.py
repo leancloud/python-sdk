@@ -7,9 +7,8 @@ from nose.tools import raises
 
 import leancloud
 
-sys.path.append('~/Leancloud/python_ORM')
-import model
-import field
+from .. import model
+from .. import field
 
 def setup():
     leancloud.client.USE_MASTER_KEY = None

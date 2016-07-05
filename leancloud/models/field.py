@@ -1,12 +1,13 @@
 import abc 
-import six
 from datetime import datetime
 
-from leancloud import acl
 from leancloud.file_ import File as AVFile
 from leancloud.object_ import Object
 from leancloud import relation
 from leancloud import user
+from .._compat import with_metaclass
+
+import six
 
 class Field(six.with_metaclass(abc.ABCMeta)):
     def __init__(self, default=None, nullable=NotImplemented, verifier=NotImplemented):
@@ -27,13 +28,13 @@ class Number(Field):
             raise ValueError('NumField requires a value of float or int')
 
 
-class List(Field):
+class Array(Field):
     def __init__(self, default=None, nullable=NotImplemented, verifier=NotImplemented):
-        super(List, self).__init__(default, nullable, verifier)
+        super(Array, self).__init__(default, nullable, verifier)
 
     def verify(self, value):
         if not isinstance(value, list):
-            raise ValueError('ListField requires the value of list type')
+            raise ValueError('Array Field requires the value of list type')
 
 
 class Date(Field):

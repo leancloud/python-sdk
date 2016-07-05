@@ -1,6 +1,7 @@
-import six
 
 import leancloud
+from .._compat import with_metaclass
+import six
 
 import field
 
@@ -11,7 +12,7 @@ class BaseModel(type):
         attrs['fields']= {field_name: f for field_name, f in attrs.items() if isinstance(f, field.Field)}
         for field_name in attrs['fields']:
             attrs.pop(field_name)
-        attrs['_class_name'] = name
+        attrs['_object'] = leancloud.object_.Object()
         return super(BaseModel, cls).__new__(cls, name, bases, attrs)
 
 class Model(six.with_metaclass(BaseModel)):
@@ -21,6 +22,8 @@ class Model(six.with_metaclass(BaseModel)):
         self.updated_at = None
 
         self._object = leancloud.object_.Object()
+        # self.__dict__['_object'] = leancloud.object_.Object()
+
         for key in kargv:
             if not key in self.fields:
                 raise AttributeError('There is no {} field in the model'.format(key))
@@ -30,10 +33,10 @@ class Model(six.with_metaclass(BaseModel)):
             else:
                 setattr(self, key, self.fields[key].default)
 
-    def in_class_setattr(self, key, value):
+    def _inclass_setattr(self, key, value):
         object.__setattr__(self, key, value)
 
-    def in_class_delattr(self, name):
+    def _inclass_delattr(self, name):
         object.__delattr__(self, name)
 
     def __setattr__(self, name, value):
@@ -41,21 +44,22 @@ class Model(six.with_metaclass(BaseModel)):
             self.fields[name].verify(value)
             self._object.set(name, value)
         else:
-            #warnings.warn('The value is not set to a field')
-            self.in_class_setattr(name, value)
+            self._inclass_setattr(name, value)
 
     def __delattr__(self, name):
         if name in self.fields:
             self._object.unset(name)
         else:
-            self.in_class_delattr(name)
+            self._inclass_delattr(name)
 
     def __getattr__(self, name):
-        if not self._object.has(name):
+        if not self._object:
+            object.__getattribute__(name)
+        elif not self._object.has(name):
             raise AttributeError('The model instance does not have the attribute {}'.format(name))
         else:
             return self._object.get(name)
-
+    
     def increment(self, attr, num=1):
         if attr in self.fields:
             if not isinstance(self.fields[attr], field.Number):
@@ -70,9 +74,9 @@ class Model(six.with_metaclass(BaseModel)):
         self._object.fetch_when_save = fetch_when_save
         #self._object.save(where=where)
         self._object.save()
-        self.copy_meta_data()
+        self._copy_meta_data()
 
-    def copy_meta_data(self):
+    def _copy_meta_data(self):
         for attr in ('id', 'created_at', 'updated_at'):
             if not getattr(self, attr):
                 setattr(self, attr, getattr(self._object, attr))
@@ -81,7 +85,7 @@ class Model(six.with_metaclass(BaseModel)):
         if not self._object.id:
             raise ValueError('the Model needs its ID to fetch data from the server') 
         self._object.fetch()
-        self.copy_meta_data
+        # self._copy_meta_data()
 
     def dump(self):
         return self._object.dump()
