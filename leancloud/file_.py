@@ -204,15 +204,17 @@ class File(object):
         elif not self._source:
             pass
         else:
-            uptoken, upload_url, key, provider = self.get_file_token()
-            if provider == 'qiniu':
-                self._save_to_qiniu(uptoken, key)
-            elif provider == 'qcloud':
-                self._save_to_qcloud(uptoken, upload_url)
+            content = self._get_file_token()
+            if content['provider'] == 'qiniu':
+                self._save_to_qiniu(content['token'], content['key'])
+            elif content['provider']== 'qcloud':
+                self._save_to_qcloud(content['token'], content['upload_url'])
+            elif content['provider'] == 's3':
+                self._save_to_s3(content['upload_url'])
             else:
-                self._save_to_s3(upload_url)
+                raise RuntimeError('The provider field in the fetched content is empty')
 
-    def get_file_token(self):
+    def _get_file_token(self):
         hex_octet = lambda: hex(int(0x10000 * (1 + random.random())))[-4:]
         key = ''.join(hex_octet() for _ in range(4))
         key = '{0}.{1}'.format(key, self.extension)
@@ -227,10 +229,9 @@ class File(object):
         content = response.json()
         self.id = content['objectId']
         self._url = content['url']
-        if client.REGION == 'CN':
-            return content['token'], content['upload_url'], key, content['provider']
-        else:
-            return 'NoToken', content['upload_url'], key, content['provider']
+        content['key'] = key
+        return content
+
 
     def fetch(self):
         response = client.get('/files/{0}'.format(self.id))
