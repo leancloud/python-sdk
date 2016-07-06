@@ -137,8 +137,6 @@ def test_fetch():
     assert fetched.url == f.url
     f.destroy()
 
-def test_save_to_qcloud():
-    pass
 
 def test_checksum():
     f = File('Blah', open('tests/sample_text.txt', 'rb'))
