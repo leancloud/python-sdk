@@ -295,7 +295,10 @@ class Object(with_metaclass(ObjectMeta, object)):
                 self.id = server_data[key]
             else:
                 dt = iso8601.parse_date(server_data[key])
-                setattr(self, key, dt)
+                if key == 'createdAt':
+                    self.created_at = dt
+                else:
+                    self.updated_at = dt
             del server_data[key]
 
     def validate(self, attrs):

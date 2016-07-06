@@ -159,9 +159,9 @@ class File(object):
 
     def _save_to_s3(self, upload_url):
         self._source.seek(0)
-        respond = client.put(upload_url, self._source, headers={'Content-Type':self._type})
-        respond = respond.json()
-        if respond['status'] != 200:
+        responce = client.put(upload_url, self._source, headers={'Content-Type':self._type})
+        content = responce.json()
+        if content['status'] != 200:
             raise LeanCloudError(1, 'The file is not successfully saved to Qcloud')
         self._source.seek(0)
 

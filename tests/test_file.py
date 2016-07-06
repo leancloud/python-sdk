@@ -39,8 +39,7 @@ def test_basic():
         s1 = s
     f1 = File('Blah', s, 'text/plain')
     f2 = File('Blah', s1)
-    f3 = File('Blah', open('tests/sample_text.txt', 'rb'))
-    for f in (f1, f2, f3):
+    for f in (f1, f2):
         assert f.name == 'Blah'
         assert f._metadata['size'] == 14
         assert f.size == 14
