@@ -66,6 +66,18 @@ def test_find_unsaved_children():
     assert unsaved_files == []
 
 
+@with_setup(setup_func)
+def test_file_save():
+    import cStringIO
+    from leancloud.file_ import File
+    s1 = cStringIO.StringIO()
+    s1.write('blah blah blah')
+    f = File('well', s1)
+    album = Album()
+    album.set('file', f)
+    album.save()
+
+
 def test_find_unsaved_children_2():
     album = Album()
     band = Band()

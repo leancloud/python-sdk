@@ -1,8 +1,5 @@
-
-import leancloud
+from ..object_ import Object
 from .._compat import with_metaclass
-import six
-
 import field
 
 
@@ -12,17 +9,16 @@ class BaseModel(type):
         attrs['fields']= {field_name: f for field_name, f in attrs.items() if isinstance(f, field.Field)}
         for field_name in attrs['fields']:
             attrs.pop(field_name)
-        attrs['_object'] = leancloud.object_.Object()
+        # attrs['_object'] = None # Object()
+        attrs['fields']['acl'] = field.ACL(default=None)
         return super(BaseModel, cls).__new__(cls, name, bases, attrs)
 
-class Model(six.with_metaclass(BaseModel)):
+class Model(with_metaclass(BaseModel)):
     def __init__(self, **kargv):
+        self._object = Object()
         self.id = None
         self.created_at = None
         self.updated_at = None
-
-        self._object = leancloud.object_.Object()
-        # self.__dict__['_object'] = leancloud.object_.Object()
 
         for key in kargv:
             if not key in self.fields:
@@ -41,7 +37,7 @@ class Model(six.with_metaclass(BaseModel)):
 
     def __setattr__(self, name, value):
         if name in self.fields:
-            self.fields[name].verify(value)
+            self.fields[name].validate(value)
             self._object.set(name, value)
         else:
             self._inclass_setattr(name, value)
@@ -53,9 +49,9 @@ class Model(six.with_metaclass(BaseModel)):
             self._inclass_delattr(name)
 
     def __getattr__(self, name):
-        if not self._object:
-            object.__getattribute__(name)
-        elif not self._object.has(name):
+        # if not self._object:
+        #     object.__getattribute__(name)
+        if not self._object.has(name):
             raise AttributeError('The model instance does not have the attribute {}'.format(name))
         else:
             return self._object.get(name)
@@ -85,7 +81,6 @@ class Model(six.with_metaclass(BaseModel)):
         if not self._object.id:
             raise ValueError('the Model needs its ID to fetch data from the server') 
         self._object.fetch()
-        # self._copy_meta_data()
 
     def dump(self):
         return self._object.dump()
@@ -132,7 +127,9 @@ class Model(six.with_metaclass(BaseModel)):
 
 class UserModel(Model):
     def __init__(self, **kargv):
-        super(self, UserModel).__init__(**kargv)
+        self.fields['username'] = field.String()
+        self.fields['password'] = field.String()
+        super(UserModel, self).__init__(**kargv)
 
     def __getattr__(self, name):
         if not self._object.has(name):

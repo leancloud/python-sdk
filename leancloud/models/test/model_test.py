@@ -1,5 +1,5 @@
 import os
-import sys
+import datetime
 
 from nose.tools import with_setup
 from nose.tools import eq_
@@ -20,46 +20,90 @@ def setup():
     os.environ['APP_KEY']
     )
 
+def get_person():
+    class Person(model.UserModel):
+        hobby = field.String()
+
+    plato = Person(
+        username = 'Plato', 
+        password = 'philosophy',
+        hobby = 'plaza talk'
+    )
+    return plato
+
+
 def get_book():
     class Book(model.Model):
         readers_num = field.Number()
-    return Book(readers_num=1)
+        influnced = field.Array()
+        published_at = field.Date()
+        title = field.String()
+        is_Greek = field.Boolean()
+        whatever = field.File()
+        related_book = field.Pointer()
+        auther = field.User()
+        readers = field.Relation()
+
+    import cStringIO
+    s1 = cStringIO.StringIO()
+    s1.write('whatever')
+
+    republic =  Book(
+      #  readers_num=1, 
+      #  influnced=[], 
+      #  published_at=datetime.datetime.now(), 
+      #  title='Repulic', 
+      #  is_Greek=True, 
+        whatever = leancloud.file_.File('chapter', s1), 
+      #  related_book=None, 
+      #  auther=None, 
+      #  readers=None
+    )
+    return republic
 
 def test_set_field_value():
-    apology = get_book()
-    apology.readers_num = 3
-    eq_(apology.readers_num, 3)
-    #assert apology.fields['readers_num'].current
+    republic = get_book()
+    republic.readers_num = 3
+    eq_(republic.readers_num, 3)
 
 @raises(AttributeError)
 def test_del_field():
-    apology = get_book()
-    del apology.readers_num
-    apology.readers_num
+    republic = get_book()
+    del republic.readers_num
+    republic.readers_num
+
+@raises(AttributeError)
+def test_set_with_incrrect_field_name():
+    class Book(model.Model):
+        author = field.String()
+    Book(reader='Plato')
 
 def test_increment():
-    apology = get_book()
-    apology.increment('readers_num', 1)
-    apology.readers_num
-    #print(apology._object.attributes)
-    #eq_(apology.readers_num, 2)
+    republic = get_book()
+    republic.increment('readers_num', 1)
+    republic.readers_num
+    eq_(republic.readers_num, 2)
 
 @raises(ValueError)
 def test_validate_num():
-    apology = get_book()
-    apology.readers_num = 'a'
+    republic = get_book()
+    republic.readers_num = 'a'
 
 @with_setup(setup)
 def test_initial_save():
-    apology = get_book()
-    apology.save()
-    assert apology.id
-    assert apology.created_at
+    republic = get_book()
+    print(republic._object._attributes)
+    republic.save()
+    assert republic.id
+    assert republic.created_at
 
 @with_setup(setup)
 def test_update_save():
-    apology = get_book()
-    apology.save()
-    apology.increment('readers_num', 2)
-    apology.save()
-    assert apology.updated_at - apology.created_at
+    republic = get_book()
+    republic.save()
+    republic.increment('readers_num', 2)
+    republic.save()
+    assert republic.updated_at - republic.created_at
+
+# test plan. all fields, 
+
