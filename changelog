@@ -1,3 +1,16 @@
+## [1.6.1] - 2016-07-08
+### Added
+- leancloud.User.reset_password_by_sms_code
+- add default value for leancloud.Object.get
+### Updated
+- refactor file upload process
+- clean up leancloud.Object fields (reduce memory size)
+- add type interface for python3.5's type announce
+
+## [1.6.0] - 2016-05-23
+### Updatred
+- support python 3.5
+
 ## [1.5.1] - 2016-05-19
 ### Fixed
 - fixed before update hook not word correctly
