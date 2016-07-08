@@ -4,9 +4,9 @@ matrix:
   include:
     - python: "2.7"
       env:
-        - APP_ID=AjQYwoIyObTeEkD16v1eCq55
-        - APP_KEY=AJpoJrqy1aliyXvcs0SwWrsy
-        - MASTER_KEY=Uk6DT2Mc2kCACvLyi3PU60p3
+        - APP_ID=8FfQwpvihLHK4htqmtEvkNrv
+        - APP_KEY=eE9tNOcCiWoMHM1phxY41rAz
+        - MASTER_KEY=75zAjEJSj7lifKQqKSTryae9
         - USE_REGION=US
     - python: "3.5"
       env:
