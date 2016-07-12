@@ -6,9 +6,9 @@ from nose.tools import eq_
 from nose.tools import raises 
 
 import leancloud
+from leancloud.models import model
+from leancloud.models import field
 
-from .. import model
-from .. import field
 
 def setup():
     leancloud.client.USE_MASTER_KEY = None
@@ -39,7 +39,7 @@ def get_book():
         published_at = field.Date()
         title = field.String()
         is_Greek = field.Boolean()
-        whatever = field.File()
+        index = field.File()
         related_book = field.Pointer()
         auther = field.User()
         readers = field.Relation()
@@ -48,14 +48,16 @@ def get_book():
     s1 = cStringIO.StringIO()
     s1.write('whatever')
 
+    logos = Book(title='Logos')
+
     republic =  Book(
       #  readers_num=1, 
       #  influnced=[], 
       #  published_at=datetime.datetime.now(), 
       #  title='Repulic', 
       #  is_Greek=True, 
-        whatever = leancloud.file_.File('chapter', s1), 
-      #  related_book=None, 
+      #  index = leancloud.file_.File('chapter', s1),
+        related_book=logos
       #  auther=None, 
       #  readers=None
     )

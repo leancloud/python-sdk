@@ -330,3 +330,10 @@ def test_save_with_where():
 
     foo.save(where=leancloud.Query('Foo').equal_to('aNumber', 1))
     assert leancloud.Query('Foo').get(foo.id).get('aNumber') == 2
+
+# @with_setup(setup_func)
+# def save_object():
+#     album = Album()
+#     band = Band()
+#     album.set('b', band)
+#     album.save()

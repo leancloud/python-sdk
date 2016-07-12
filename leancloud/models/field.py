@@ -1,12 +1,13 @@
 import abc 
 from datetime import datetime
 
-from ..file_ import File as AVFile
-from ..object_ import Object
-from .. import relation
-from .. import user
-from .._compat import with_metaclass
-from .. import acl
+import leancloud
+from leancloud import File as AVFile
+from leancloud import Object
+from leancloud import relation
+from leancloud import user
+from leancloud._compat import with_metaclass
+from leancloud import acl
 
 
 class Field(with_metaclass(abc.ABCMeta)):
@@ -28,10 +29,9 @@ class Field(with_metaclass(abc.ABCMeta)):
 class Number(Field):
     def __init__(self, default=None, nullable=True, verifier=NotImplemented):
         super(Number, self).__init__(default, nullable, verifier)
-
     def validate(self, value):
         if not self.is_valid_empty_field(value):
-            if not (isinstance(value, float) or isinstance(value, int)):
+            if not isinstance(value, (float, int)):
                 raise ValueError('NumField requires a value of float or int')
 
 
@@ -96,12 +96,13 @@ class File(Field):
 
 class Pointer(Field):
     def  __init__(self, default=None, nullable=True, verifier=NotImplemented):
+        Object, leancloud.models.model.Model()
         super(Pointer, self).__init__(default, nullable, verifier)
 
     def validate(self, value):
         if not self.is_valid_empty_field(value):
-            if not isinstance(value, Object):
-                raise ValueError('Pointer field requires the value of Leancloud.Object or Leancloud.Modle type, but {0} has a type of {1}'.format(value, type(value)))
+            if not isinstance(value, (Object, leancloud.models.model.Model)):
+                raise ValueError('Pointer field requires the value of Leancloud.Object or Leancloud.Model type, but {0} has a type of {1}'.format(value, type(value)))
 
 
 class User(Field):

@@ -1,6 +1,7 @@
-from ..object_ import Object
-from .._compat import with_metaclass
-import field
+import leancloud
+from leancloud import Object
+from leancloud._compat import with_metaclass
+from leancloud.models import field
 
 
 # TODO inherience

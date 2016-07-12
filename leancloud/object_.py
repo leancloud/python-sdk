@@ -208,6 +208,7 @@ class Object(with_metaclass(ObjectMeta, object)):
             self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
         data = self._dump_save()
+        print(data)
         fetch_when_save = 'true' if self.fetch_when_save else 'false'
 
         if self.is_new():
@@ -259,11 +260,16 @@ class Object(with_metaclass(ObjectMeta, object)):
 
     @classmethod
     def _find_unsaved_children(cls, obj, children, files):
-
         def callback(o):
             if isinstance(o, Object):
                 if o.is_dirty():
                     children.append(o)
+                return
+
+            from leancloud.models import model
+            if isinstance(o, model.Model):
+                if o._object.is_dirty():
+                    children.append(o._object)
                 return
 
             if isinstance(o, leancloud.File):
