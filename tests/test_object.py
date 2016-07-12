@@ -338,3 +338,8 @@ def save_object():
     album.set('b', band)
     album.set('c', None)
     album.save()
+
+def test_setting_None():
+    album = Album()
+    album.set('roker', None)
+    eq_(album._changes.get('roker', 'no_key'), 'no_key')

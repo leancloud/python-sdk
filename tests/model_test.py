@@ -48,7 +48,7 @@ def get_book():
     s1 = cStringIO.StringIO()
     s1.write('whatever')
 
-    logos = Book()
+    logos = Book(title='Apology')
 
     republic =  Book(
         readers_num=1,
@@ -58,8 +58,8 @@ def get_book():
         is_Greek=True,
         index = leancloud.file_.File('chapter', s1),
         related_book=logos,
-        #auther=None,
-        #readers=None
+        auther=None,
+        readers=None
     )
     return republic
 

@@ -381,15 +381,18 @@ class Object(with_metaclass(ObjectMeta, object)):
         keys = list(attrs.keys())
         for k in keys:
             v = attrs[k]
-            # TODO: Relation
+            if v == None:
+                # avoid setting DB fileld to object
+                pass
+            else:
+                # TODO: Relation
+                if not isinstance(v, operation.BaseOp):
+                    v = operation.Set(v)
 
-            if not isinstance(v, operation.BaseOp):
-                v = operation.Set(v)
-
-            self._attributes[k] = v._apply(self._attributes.get(k),self, k)
-            if self._attributes[k] == operation._UNSET:
-                del self._attributes[k]
-            self._changes[k] = v._merge(self._changes.get(k))
+                self._attributes[k] = v._apply(self._attributes.get(k),self, k)
+                if self._attributes[k] == operation._UNSET:
+                    del self._attributes[k]
+                self._changes[k] = v._merge(self._changes.get(k))
 
         return self
 

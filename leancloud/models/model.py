@@ -29,8 +29,7 @@ class Model(with_metaclass(BaseModel)):
         for key in self.fields:
             if key in kargv:
                 setattr(self, key, kargv[key])
-            # setback to setattr defalut after change setattr(attr, None) behavior
-            elif self.fields[key].default:
+            else:
                 setattr(self, key, self.fields[key].default)
 
     def _inclass_setattr(self, key, value):
