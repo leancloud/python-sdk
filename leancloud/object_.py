@@ -208,7 +208,6 @@ class Object(with_metaclass(ObjectMeta, object)):
             self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
         data = self._dump_save()
-        print(data)
         fetch_when_save = 'true' if self.fetch_when_save else 'false'
 
         if self.is_new():

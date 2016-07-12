@@ -48,18 +48,18 @@ def get_book():
     s1 = cStringIO.StringIO()
     s1.write('whatever')
 
-    logos = Book(title='Logos')
+    logos = Book()
 
     republic =  Book(
-      #  readers_num=1, 
-      #  influnced=[], 
-      #  published_at=datetime.datetime.now(), 
-      #  title='Repulic', 
-      #  is_Greek=True, 
-      #  index = leancloud.file_.File('chapter', s1),
-        related_book=logos
-      #  auther=None, 
-      #  readers=None
+        readers_num=1,
+        influnced=[],
+        published_at=datetime.datetime.now(),
+        title='Repulic',
+        is_Greek=True,
+        index = leancloud.file_.File('chapter', s1),
+        related_book=logos,
+        #auther=None,
+        #readers=None
     )
     return republic
 
@@ -94,7 +94,7 @@ def test_validate_num():
 @with_setup(setup)
 def test_initial_save():
     republic = get_book()
-    print(republic._object._attributes)
+    #print(republic._object._attributes)
     republic.save()
     assert republic.id
     assert republic.created_at

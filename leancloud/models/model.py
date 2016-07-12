@@ -5,6 +5,7 @@ from leancloud.models import field
 
 
 # TODO inherience
+# TODO _classname of _object
 class BaseModel(type):
     def __new__(cls, name, bases, attrs):
         attrs['fields']= {field_name: f for field_name, f in attrs.items() if isinstance(f, field.Field)}
@@ -17,6 +18,7 @@ class BaseModel(type):
 class Model(with_metaclass(BaseModel)):
     def __init__(self, **kargv):
         self._object = Object()
+        self._object._class_name = self.__class__.__name__
         self.id = None
         self.created_at = None
         self.updated_at = None
@@ -27,7 +29,8 @@ class Model(with_metaclass(BaseModel)):
         for key in self.fields:
             if key in kargv:
                 setattr(self, key, kargv[key])
-            else:
+            # setback to setattr defalut after change setattr(attr, None) behavior
+            elif self.fields[key].default:
                 setattr(self, key, self.fields[key].default)
 
     def _inclass_setattr(self, key, value):
