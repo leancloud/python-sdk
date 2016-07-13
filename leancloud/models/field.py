@@ -111,7 +111,7 @@ class User(Field):
 
     def validate(self, value):
         if not self.is_valid_empty_field(value):
-            if not isinstance(value, user.User):
+            if not isinstance(value, (user.User, leancloud.models.model.UserModel)):
                 raise ValueError('User field requires the value of Leancloud.User type, but {0} has a type of {1}'.format(value, type(value)))
 
 

@@ -214,7 +214,7 @@ class Relation(BaseOp):
         self.relations_to_remove = set([self._pointer_to_id(x) for x in removes])
 
     def _pointer_to_id(self, obj):
-        if isinstance(obj, leancloud.Object):
+        if isinstance(obj, (leancloud.Object, leancloud.Model)):
             if obj.id is None:
                 raise TypeError('cant add an unsaved Object to a relation')
             if self._target_class_name is None:

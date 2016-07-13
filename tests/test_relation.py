@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import warnings
 
 from nose.tools import with_setup
 
@@ -51,7 +52,9 @@ def test_query_relation():
 
     album = leancloud.Query('Album').get(album.id)
     relation = album.relation('band')
-    bands = relation.query().find()
+    with warnings.catch_warnings(record=True) as w:
+        bands = relation.query().find()
+        assert w
     assert band1.id in [x.id for x in bands]
     assert band2.id in [x.id for x in bands]
 

@@ -1,5 +1,6 @@
 import os
 import datetime
+import random
 
 from nose.tools import with_setup
 from nose.tools import eq_
@@ -8,7 +9,8 @@ from nose.tools import raises
 import leancloud
 from leancloud.models import model
 from leancloud.models import field
-
+from leancloud import relation
+from leancloud.errors import LeanCloudError
 
 def setup():
     leancloud.client.USE_MASTER_KEY = None
@@ -19,6 +21,7 @@ def setup():
     os.environ['APP_ID'],
     os.environ['APP_KEY']
     )
+
 
 def get_person():
     class Person(model.UserModel):
@@ -31,6 +34,17 @@ def get_person():
     )
     return plato
 
+def test_user_sign_up():
+    plato = get_person()
+    plato.sign_up()
+    assert plato.id
+
+def test_destroy():
+    republic = get_book()
+    republic.save()
+    id = republic.id
+    leancloud.Query('Book').get(id)
+    republic.destroy()
 
 def get_book():
     class Book(model.Model):
@@ -48,7 +62,7 @@ def get_book():
     s1 = cStringIO.StringIO()
     s1.write('whatever')
 
-    logos = Book(title='Apology')
+    logos = Book(title='logos')
 
     republic =  Book(
         readers_num=1,
@@ -58,10 +72,18 @@ def get_book():
         is_Greek=True,
         index = leancloud.file_.File('chapter', s1),
         related_book=logos,
-        auther=None,
-        readers=None
+        auther=get_person(),
     )
     return republic
+
+def test_set_relation():
+    republic = get_book()
+    republic.save()
+    plato = get_person()
+    plato.save()
+    readers = republic.relation('readers')
+    readers.add(plato)
+    republic.save()
 
 def test_set_field_value():
     republic = get_book()
@@ -94,7 +116,6 @@ def test_validate_num():
 @with_setup(setup)
 def test_initial_save():
     republic = get_book()
-    #print(republic._object._attributes)
     republic.save()
     assert republic.id
     assert republic.created_at
@@ -107,5 +128,10 @@ def test_update_save():
     republic.save()
     assert republic.updated_at - republic.created_at
 
-# test plan. all fields, 
-
+def test_reset_password_by_sms_code():
+    plato = get_person()
+    try:
+        plato.reset_password_by_sms_code('1861111' + str(random.randrange(1000, 9999)), "password")
+    except LeanCloudError as e:
+        if e.code != 1:
+            raise e
