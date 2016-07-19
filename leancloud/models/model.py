@@ -42,13 +42,15 @@ class Model(with_metaclass(BaseModel)):
             self.fields[name].validate(value)
             self._object.set(name, value)
         else:
-            self._inclass_setattr(name, value)
+            # self._inclass_setattr(name, value)
+            super(self, Model).__setattr__(name, value)
 
     def __delattr__(self, name):
         if name in self.fields:
             self._object.unset(name)
         else:
-            self._inclass_delattr(name)
+            # self._inclass_delattr(name)
+            super(self, Model).__delattr__(name)
 
 #    def __getattr__(self, name):
 #        # if not self._object:
@@ -66,6 +68,11 @@ class Model(with_metaclass(BaseModel)):
                 return getattr(self._object, name)
             except AttributeError:
                 raise AttributeError('The model instance does not have the attribute {}'.format(name))
+
+    def fetch_when_save():
+        pass
+
+    Magic_mode = False
     
     def increment(self, attr, num=1):
         if attr in self.fields:
@@ -140,10 +147,11 @@ class UserModel(Model):
     def __init__(self, **kargv):
         self.fields['username'] = field.String()
         self.fields['password'] = field.String()
+        self.fields['email'] = field.String()
+        self.fields['mobilePhoneNumber'] = field.String()
 
         self._object = User()
-        self._object._class_name = self.__class__.__name__
-
+        self._object._class_name = '_User'
         for key in kargv:
             if not key in self.fields:
                 raise AttributeError('There is no {} field in the model'.format(key))
