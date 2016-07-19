@@ -26,3 +26,6 @@ script:
 
 after_success:
   - codecov
+
+notifications:
+  webhooks: https://hook.bearychat.com/=bw52Y/travis/a6614ed1ce835ba1f88a78bd1810a51b
