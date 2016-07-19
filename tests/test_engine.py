@@ -352,6 +352,8 @@ def test_client():
 
 
 def test_request_sms_code():
+    if leancloud.client.REGION == 'US':
+        return
     leancloud.init(os.environ['APP_ID'], master_key=os.environ['MASTER_KEY'])
     try:
         cloudfunc.request_sms_code('13111111111')
