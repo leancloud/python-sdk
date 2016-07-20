@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+from datetime import datetime
 
 from nose.tools import with_setup
 
@@ -39,6 +40,7 @@ def test_basic_push():
             "launch-image": "",
         }
     }
+    t = datetime.fromtimestamp(0)
     query = leancloud.Query('_Installation').equal_to('objectId', 'xxx')
-    notification = push.send(data, where=query)
-    # notification.fetch()
+    notification = push.send(data, where=query, push_time=datetime.now())
+    assert(notification.id)
