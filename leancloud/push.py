@@ -4,6 +4,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import arrow
+from dateutil import tz
+
 from leancloud.object_ import Object
 from leancloud import client
 
@@ -46,7 +49,13 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     if channels:
         params['channels'] = channels
     if push_time:
-        params['push_time'] = push_time.isoformat()
+        tzinfo = push_time.tzinfo
+        if tzinfo is None:
+            print('is None!')
+            tzinfo = tz.tzlocal()
+        print(tzinfo)
+        params['push_time'] = arrow.get(push_time, tzinfo).to('utc').format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z'
+        print(params['push_time'])
     if expiration_time:
         params['expiration_time'] = expiration_time.isoformat()
     if expiration_interval:

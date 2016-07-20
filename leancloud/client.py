@@ -155,8 +155,6 @@ def check_error(func):
         response = func(*args, **kwargs)
         assert isinstance(response, requests.Response)
         if response.headers.get('Content-Type') == 'text/html':
-            print(response.status_code)
-            print(response.content)
             raise leancloud.LeanCloudError(-1, 'Bad Request')
 
         content = response.json()
