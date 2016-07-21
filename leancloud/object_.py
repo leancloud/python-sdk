@@ -507,3 +507,14 @@ class Object(with_metaclass(ObjectMeta, object)):
         for key, value in iteritems(server_data):
             self._attributes[key] = utils.decode(key, value)
         self._changes = {}
+
+def as_class_name(arg):
+    if callable(arg):
+        cls = arg
+        cls._class_name = cls.__name__
+        return cls
+    else:
+        def inner_decorator(cls):
+            cls._class_name = arg
+            return cls
+        return inner_decorator
