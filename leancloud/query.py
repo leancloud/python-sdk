@@ -542,6 +542,9 @@ class Query(object):
         :param point: 需要查询的地理位置
         :rtype: Query
         """
+        if point is None:
+            raise ValueError('near query does not accept None')
+
         self._add_condition(key, '$nearSphere', point)
         return self
 
