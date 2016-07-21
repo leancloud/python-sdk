@@ -15,6 +15,7 @@ from leancloud import Query
 from leancloud import File
 from leancloud.errors import LeanCloudError
 from leancloud._compat import buffer_type
+from leancloud.object_ import as_class_name
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -291,3 +292,24 @@ def test_request_login_sms_code():
     except LeanCloudError as e:
         if e.code not in (1, 215, 601):
             raise e
+
+
+@with_setup(only_init())
+def test_as_class_name_decorator():
+    @as_class_name
+    class Philosopher(User):
+        pass
+    @as_class_name('Student')
+    class Physicist(User):
+        pass
+
+    Plato = Philosopher()
+    Plato.save()
+    Aristotle = Physicist()
+    Aristotle.save()
+
+    assert Query('Philosopher').get(Plato.id)
+    assert Query('Student').get(Aristotle.id)
+
+    Plato.destroy()
+    Aristotle.destroy()
