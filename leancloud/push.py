@@ -51,11 +51,8 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     if push_time:
         tzinfo = push_time.tzinfo
         if tzinfo is None:
-            print('is None!')
             tzinfo = tz.tzlocal()
-        print(tzinfo)
         params['push_time'] = arrow.get(push_time, tzinfo).to('utc').format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z'
-        print(params['push_time'])
     if expiration_time:
         params['expiration_time'] = expiration_time.isoformat()
     if expiration_interval:
