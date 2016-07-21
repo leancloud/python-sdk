@@ -1,3 +1,9 @@
+## [1.6.2] - 2016-07-21
+### Fixed
+- invalid push_time format in leancloud.push.send function
+### Updated
+- add leancloud.Object.as_class static function
+
 ## [1.6.1] - 2016-07-08
 ### Added
 - leancloud.User.reset_password_by_sms_code
@@ -6,9 +12,10 @@
 - refactor file upload process
 - clean up leancloud.Object fields (reduce memory size)
 - add type interface for python3.5's type announce
+- raise ValueError while pass a None value to leancloud.Query.near
 
 ## [1.6.0] - 2016-05-23
-### Updatred
+### Updated
 - support python 3.5
 
 ## [1.5.1] - 2016-05-19
