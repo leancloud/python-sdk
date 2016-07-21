@@ -66,6 +66,18 @@ def test_find_unsaved_children():
     assert unsaved_files == []
 
 
+@with_setup(setup_func)
+def test_file_save():
+    import cStringIO
+    from leancloud.file_ import File
+    s1 = cStringIO.StringIO()
+    s1.write('blah blah blah')
+    f = File('well', s1)
+    album = Album()
+    album.set('file', f)
+    album.save()
+
+
 def test_find_unsaved_children_2():
     album = Album()
     band = Band()
@@ -318,3 +330,16 @@ def test_save_with_where():
 
     foo.save(where=leancloud.Query('Foo').equal_to('aNumber', 1))
     assert leancloud.Query('Foo').get(foo.id).get('aNumber') == 2
+
+@with_setup(setup_func)
+def save_object():
+    album = Album()
+    band = Band()
+    album.set('b', band)
+    album.set('c', None)
+    album.save()
+
+def test_setting_None():
+    album = Album()
+    album.set('roker', None)
+    eq_(album._changes.get('roker', 'no_key'), 'no_key')

@@ -18,6 +18,7 @@ from dateutil import tz
 
 import leancloud
 from leancloud import operation
+# from leancloud.models.model import Model
 from leancloud._compat import BytesIO
 from leancloud._compat import iteritems
 from leancloud._compat import to_bytes
@@ -52,6 +53,11 @@ def encode(value, disallow_objects=False):
         if disallow_objects:
             raise ValueError('leancloud.Object not allowed')
         return value._to_pointer()
+
+    if isinstance(value, leancloud.models.model.Model):
+        if disallow_objects:
+            raise ValueError('leancloud.Model not allowed')
+        return value._object._to_pointer()
 
     if isinstance(value, leancloud.File):
         if not value.url and not value.id:

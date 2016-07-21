@@ -1,5 +1,4 @@
 # coding: utf-8
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -20,7 +19,7 @@ from leancloud._compat import with_metaclass
 from leancloud._compat import PY2
 from leancloud._compat import text_type
 from leancloud._compat import iteritems
-
+from leancloud import relation
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -259,11 +258,16 @@ class Object(with_metaclass(ObjectMeta, object)):
 
     @classmethod
     def _find_unsaved_children(cls, obj, children, files):
-
         def callback(o):
             if isinstance(o, Object):
                 if o.is_dirty():
                     children.append(o)
+                return
+
+            from leancloud.models import model
+            if isinstance(o, model.Model):
+                if o._object.is_dirty():
+                    children.append(o._object)
                 return
 
             if isinstance(o, leancloud.File):
@@ -301,10 +305,10 @@ class Object(with_metaclass(ObjectMeta, object)):
                     self.updated_at = dt
             del server_data[key]
 
-    def validate(self, attrs):
-        if 'ACL' in attrs and not isinstance(attrs['ACL'], leancloud.ACL):
-            raise TypeError('acl must be a ACL')
-        return True
+#    def validate(self, attrs):
+#        if 'ACL' in attrs and not isinstance(attrs['ACL'], leancloud.ACL):
+#            raise TypeError('acl must be a ACL')
+#        return True
 
     def get(self, attr, deafult=None):
         """
@@ -369,22 +373,26 @@ class Object(with_metaclass(ObjectMeta, object)):
             for k in attrs.keys():
                 attrs[k] = operation.Unset()
 
-        self.validate(attrs)
+        # self.validate(attrs)
 
         self._merge_metadata(attrs)
 
         keys = list(attrs.keys())
         for k in keys:
             v = attrs[k]
-            # TODO: Relation
+            if v == None:
+                # avoid setting DB fileld to object
+                pass
+            else:
+                if isinstance(v, relation.Relation):
+                    raise TypeError('Leancloud relaiton should be set in the proper way')
+                if not isinstance(v, operation.BaseOp):
+                    v = operation.Set(v)
 
-            if not isinstance(v, operation.BaseOp):
-                v = operation.Set(v)
-
-            self._attributes[k] = v._apply(self._attributes.get(k),self, k)
-            if self._attributes[k] == operation._UNSET:
-                del self._attributes[k]
-            self._changes[k] = v._merge(self._changes.get(k))
+                self._attributes[k] = v._apply(self._attributes.get(k),self, k)
+                if self._attributes[k] == operation._UNSET:
+                    del self._attributes[k]
+                self._changes[k] = v._merge(self._changes.get(k))
 
         return self
 

@@ -37,6 +37,7 @@ from .query import Query
 from .relation import Relation
 from .role import Role
 from .user import User
+from .models.model import Model
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
