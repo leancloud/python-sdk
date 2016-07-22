@@ -35,7 +35,13 @@ class ObjectMeta(type):
             return cached_class
 
         super_new = super(ObjectMeta, cls).__new__
-        if name == 'User':
+
+        # let user define their class_name at subclass-creation stage
+        class_name = attrs.pop('class_name', None)
+
+        if class_name:
+            attrs['_class_name'] = class_name
+        elif name == 'User':
             attrs['_class_name'] = '_User'
         elif name == 'Installation':
             attrs['_class_name'] = '_Installation'
@@ -45,6 +51,7 @@ class ObjectMeta(type):
             attrs['_class_name'] = '_Role'
         else:
             attrs['_class_name'] = name
+
         object_class = super_new(cls, name, bases, attrs)
         object_class_map[name] = object_class
         return object_class
@@ -508,12 +515,8 @@ class Object(with_metaclass(ObjectMeta, object)):
             self._attributes[key] = utils.decode(key, value)
         self._changes = {}
 
-def as_class_name(arg):
-    if callable(arg):
-        cls = arg
-        cls._class_name = cls.__name__
-        return cls
-    else:
+    @staticmethod
+    def as_class(arg):
         def inner_decorator(cls):
             cls._class_name = arg
             return cls
