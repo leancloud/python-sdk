@@ -416,3 +416,7 @@ def test_pointer_query():
     query = leancloud.Query('Comment')
     query.matches_query("post", inner_query)
     assert query.dump() == {'where': {'post': {'$inQuery': {'className': 'Post', 'where': {'image': {'$exists': True}}}}}}
+
+@raises(ValueError)
+def test_near_not_none():
+    Query('test').near('oops', None)

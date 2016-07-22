@@ -13,6 +13,7 @@ from nose.tools import assert_raises
 
 import leancloud
 from leancloud import Object
+from leancloud import Query
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -318,3 +319,23 @@ def test_save_with_where():
 
     foo.save(where=leancloud.Query('Foo').equal_to('aNumber', 1))
     assert leancloud.Query('Foo').get(foo.id).get('aNumber') == 2
+
+@with_setup(setup_func)
+def test_modify_class_name():
+    class Philosopher(Object):
+        class_name = 'Teacher'
+
+    @Object.as_class('Student')
+    class Physicist(Object):
+        pass
+
+    plato = Philosopher()
+    plato.save()
+    aristotle = Physicist()
+    aristotle.save()
+
+    assert Query('Teacher').get(plato.id)
+    assert Query('Student').get(aristotle.id)
+
+    plato.destroy()
+    aristotle.destroy()
