@@ -30,14 +30,14 @@ class Album(Object):
     pass
 
 
-def test_create_relation():
+def test_create_relation(): # type: () -> None
     album = Album()
     r = Relation(album, 'band')
     assert r
 
 
 @with_setup(setup_func)
-def test_query_relation():
+def test_query_relation(): # type: () -> None
     album = Album(title='variety')
     band1 = Band(name='xxx')
     band1.save()

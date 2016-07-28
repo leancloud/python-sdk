@@ -25,7 +25,7 @@ def setup_func():
         master_key=os.environ['MASTER_KEY']
     )
 
-def test_init():
+def test_init(): # type: () -> None
     acl = leancloud.ACL()
     role = leancloud.Role('xxx', acl)
     assert role
@@ -33,7 +33,7 @@ def test_init():
     assert role.get_acl() == acl
 
 
-def test_init_with_default_acl():
+def test_init_with_default_acl(): # type: () -> None
     role = leancloud.Role('qux')
     assert role
     assert role.get_name() == 'qux'
@@ -42,7 +42,7 @@ def test_init_with_default_acl():
 
 
 @with_setup(setup=setup_func)
-def test_role_query():
+def test_role_query(): # type: () -> None
     roles = leancloud.Query(leancloud.Role).limit(1000).find()
     leancloud.Object.destroy_all(roles)
 
