@@ -78,13 +78,13 @@ def teardown():
     requests_intercept.uninstall()
 
 
-def test_origin_response():
+def test_origin_response(): # type: () -> None
     resp = requests.get(url)
     assert resp.ok
     assert resp.content == b'Hello LeanCloud'
 
 
-def test_compatibility():
+def test_compatibility(): # type: () -> None
     requests.get(url + '/1/functions/hello')
     assert '_app_params' in authorization.current_environ
 
@@ -92,12 +92,12 @@ def test_compatibility():
     assert '_app_params' in authorization.current_environ
 
 
-def test_app_params_1():
+def test_app_params_1(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello')
     assert '_app_params' in authorization.current_environ
 
 
-def test_app_params_2():
+def test_app_params_2(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': 'foo',
         'x-avoscloud-application-key': 'bar',
@@ -109,7 +109,7 @@ def test_app_params_2():
     assert env['_app_params']['session_token'] == 'baz'
 
 
-def test_app_params_3():
+def test_app_params_3(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-request-sign': sign_by_app_key
     })
@@ -117,7 +117,7 @@ def test_app_params_3():
     assert env['_app_params']['key'] == TEST_APP_KEY
 
 
-def test_app_params_4():
+def test_app_params_4(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-request-sign': sign_by_master_key
     })
@@ -125,7 +125,7 @@ def test_app_params_4():
     assert env['_app_params']['master_key'] == TEST_MASTER_KEY
 
 
-def test_app_params_5():
+def test_app_params_5(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': 'foo',
         'x-avoscloud-master-key': 'bar',
@@ -135,7 +135,7 @@ def test_app_params_5():
     assert env['_app_params']['master_key'] == 'bar'
 
 
-def test_short_app_params_1():
+def test_short_app_params_1(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello', headers={
         'x-lc-id': 'foo',
         'x-lc-key': 'bar',
@@ -148,7 +148,7 @@ def test_short_app_params_1():
     assert env['_app_params']['session_token'] == 'baz'
 
 
-def test_short_app_params_2():
+def test_short_app_params_2(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello', headers={
         'x-lc-id': 'foo',
         'x-lc-key': 'bar,master',
@@ -161,7 +161,7 @@ def test_short_app_params_2():
     assert env['_app_params']['session_token'] == 'baz'
 
 
-def test_short_app_params_3():
+def test_short_app_params_3(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello', headers={
         'x-lc-sign': sign_by_app_key
     })
@@ -170,7 +170,7 @@ def test_short_app_params_3():
     assert env['_app_params']['master_key'] is None
 
 
-def test_short_app_params_4():
+def test_short_app_params_4(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello', headers={
         'x-lc-sign': sign_by_master_key
     })
@@ -179,7 +179,7 @@ def test_short_app_params_4():
     assert env['_app_params']['master_key'] == TEST_MASTER_KEY
 
 
-def test_body_params():
+def test_body_params(): # type: () -> None
     requests.get(url + '/__engine/1/functions/hello', headers={
         'Content-Type': 'text/plain',
     }, data=json.dumps({
@@ -195,7 +195,7 @@ def test_body_params():
     assert env['_app_params']['session_token'] == 'qux'
 
 
-def test_authorization_1():
+def test_authorization_1(): # type: () -> None
     response = requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
@@ -204,7 +204,7 @@ def test_authorization_1():
     assert response.json() == {u'result': u'hello'}
 
 
-def test_authorization_2():
+def test_authorization_2(): # type: () -> None
     response = requests.get(url + '/__engine/1/functions/hello', headers={
         'x-lc-id': TEST_APP_ID,
         'x-lc-key': TEST_MASTER_KEY,
@@ -213,7 +213,7 @@ def test_authorization_2():
     assert response.json() == {u'result': u'hello'}
 
 
-def test_authorization_3():
+def test_authorization_3(): # type: () -> None
     response = requests.get(url + '/__engine/1/functions/hello', headers={
         'x-avoscloud-application-id': 'foo',
         'x-avoscloud-application-key': 'bar',
@@ -221,7 +221,7 @@ def test_authorization_3():
     assert response.status_code == 401
 
 
-def test_register_cloud_func():
+def test_register_cloud_func(): # type: () -> None
     @engine.define
     def ping(**params):
         print('params:', params)
@@ -239,7 +239,7 @@ def test_register_cloud_func():
     assert cloudfunc.run.local('ping', foo=['bar', 'baz']) == 'pong'
 
 
-def test_rpc_call():
+def test_rpc_call(): # type: () -> None
     @engine.define
     def rpc(**params):
         return leancloud.Object.create('Xxx', foo=['bar', 'baz'])
@@ -249,7 +249,7 @@ def test_rpc_call():
     assert obj.get('foo') == ['bar', 'baz']
 
 
-def test_before_save_hook():
+def test_before_save_hook(): # type: () -> None
     @engine.before_save('HookObject')
     def before_hook_object_save(obj):
         assert obj.has('__before')
@@ -267,7 +267,7 @@ def test_before_save_hook():
     assert '__before' in response.json()
 
 
-def test_after_save_hook():
+def test_after_save_hook(): # type: () -> None
     @engine.after_save('HookObject')
     def after_hook_object_save(obj):
         assert obj.has('__after')
@@ -282,7 +282,7 @@ def test_after_save_hook():
     assert response.json() == {'result': 'ok'}
 
 
-def test_before_update_hook():
+def test_before_update_hook(): # type: () -> None
     @engine.before_update('HookObject')
     def before_hook_object_update(obj):
         assert obj.updated_keys == ['clientValue']
@@ -296,7 +296,7 @@ def test_before_update_hook():
     assert response.ok
 
 
-def test_before_delete_hook():
+def test_before_delete_hook(): # type: () -> None
     @engine.before_delete('HookObject')
     def before_hook_object_delete(obj):
         pass
@@ -311,7 +311,7 @@ def test_before_delete_hook():
     assert response.json() == {}
 
 
-def test_on_login():
+def test_on_login(): # type: () -> None
     @engine.on_login
     def on_login(user):
         assert isinstance(user, leancloud.User)
@@ -325,7 +325,7 @@ def test_on_login():
     assert response.ok
 
 
-def test_bigquery():
+def test_bigquery(): # type: () -> None
     @engine.on_bigquery('end')
     def on_bigquery_end(ok, data):
         assert ok is False
@@ -346,12 +346,12 @@ def test_bigquery():
     assert response.ok
 
 
-def test_client():
+def test_client(): # type: () -> None
     leancloud.init(os.environ['APP_ID'], os.environ['APP_KEY'])
     assert cloudfunc.run('add', a=1, b=2) == 3
 
 
-def test_request_sms_code():
+def test_request_sms_code(): # type: () -> None
     if leancloud.client.REGION == 'US':
         return
     leancloud.init(os.environ['APP_ID'], master_key=os.environ['MASTER_KEY'])
@@ -365,7 +365,7 @@ def test_request_sms_code():
             raise e
 
 
-def test_current_user():
+def test_current_user(): # type: () -> None
     leancloud.init(os.environ['APP_ID'], master_key=os.environ['MASTER_KEY'])
     saved_user = leancloud.User()
     saved_user.set('username', 'user{0}'.format(int(time.time())))

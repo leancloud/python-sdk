@@ -14,7 +14,7 @@ from leancloud import utils
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-def test_encode():
+def test_encode(): # type: () -> None
     Foo = Object.extend('Foo')
     obj = Foo()
     assert utils.encode(obj) == {
@@ -61,7 +61,7 @@ def test_encode():
     }
 
 
-def test_decode():
+def test_decode(): # type: () -> None
     p = utils.decode('test_key', {
         '__type': 'GeoPoint',
         'longitude': 0,
@@ -72,7 +72,7 @@ def test_decode():
     assert p.longitude == 0
 
 
-def test_util():
+def test_util(): # type: () -> None
     obj = Object.extend('Foo')()
 
     def callback(o):
@@ -89,6 +89,6 @@ def test_util():
     assert callback.count == 2
 
 
-def test_sign_disable_hook():
+def test_sign_disable_hook(): # type: () -> None
     sign = utils.sign_disable_hook('__before_for_TestClass', 'test-master-key', '1453711871302')
     eq_(sign, '1453711871302,f10c9dd65da84b564f1b9a8b57df4a07774bc77b')

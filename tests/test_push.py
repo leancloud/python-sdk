@@ -23,7 +23,7 @@ def setup_func():
 
 
 @with_setup(setup_func)
-def test_basic_push():
+def test_basic_push(): # type: () -> None
     instanlation = leancloud.Installation()
     instanlation.set('deviceType', 'ios')
     instanlation.set('deviceToken', 'xxx')

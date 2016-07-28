@@ -11,17 +11,17 @@ from leancloud import operation
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-def test_set():
+def test_set(): # type: () -> None
     s = operation.Set(10)
     assert s.value == 10
 
 
-def test_unset():
+def test_unset(): # type: () -> None
     s = operation.Unset()
     assert s._apply(operation.Set(10)) == operation._UNSET
 
 
-def test_increment():
+def test_increment(): # type: () -> None
     s = operation.Increment(1)
     assert s.amount == 1
     previous = operation.Increment(2)
@@ -29,7 +29,7 @@ def test_increment():
     assert isinstance(new, operation.Increment)
     assert new.amount == 3
 
-def test_apply_relation_op():
+def test_apply_relation_op(): # type: () -> None
     album = leancloud.Object.create("Album",
                                     objectId="abc001",
                                     title="variety")
