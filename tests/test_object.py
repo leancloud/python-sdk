@@ -37,28 +37,28 @@ class Band(Object):
     pass
 
 
-def test_new():
+def test_new(): # type: () -> None
     album = Album()
     assert album._class_name == 'Album'
 
 
-def test_class_equal():
+def test_class_equal(): # type: () -> None
     AnotherAlbum = Object.extend('Album')
     assert AnotherAlbum is Album
     album = AnotherAlbum()
     assert isinstance(album, AnotherAlbum)
 
 
-def test_dirty():
+def test_dirty(): # type: () -> None
     album = Album()
     assert album.is_dirty() is True
-    album.id = 123
+    album.id = '123'
     assert album.is_dirty() is False
     album.set('foo', 'bar')
     assert album.is_dirty() is True
 
 
-def test_find_unsaved_children():
+def test_find_unsaved_children(): # type: ignore
     album = Album()
     unsaved_children = []
     unsaved_files = []
@@ -67,7 +67,7 @@ def test_find_unsaved_children():
     assert unsaved_files == []
 
 
-def test_find_unsaved_children_2():
+def test_find_unsaved_children_2(): # type: ignore
     album = Album()
     band = Band()
     album.set('band', band)
@@ -77,7 +77,7 @@ def test_find_unsaved_children_2():
     assert unsaved_children == [band, album]
 
 
-def test_set():
+def test_set(): # type: () -> None
     album = Album()
     album.set('title', 'Nightwish')
     eq_(album._attributes, {'title': 'Nightwish'})
@@ -86,18 +86,18 @@ def test_set():
     eq_(album._attributes, {'title': 'Nightwish'})
 
 
-def test_get():
+def test_get(): # type: () -> None
     album = Album()
     album.set('foo', 'bar')
     assert album.get('foo') == 'bar'
 
 
-def test_get_deafult():
+def test_get_deafult(): # type: () -> None
     album = Album()
     assert album.get('foo', 'bar') == 'bar'
 
 
-def test_unset():
+def test_unset(): # type: () -> None
     album = Album()
     album.set('foo', 'bar')
     album.unset('foo')
@@ -105,7 +105,7 @@ def test_unset():
     assert album.has('foo') is False
 
 
-def test_increment():
+def test_increment(): # type: () -> None
     album = Album()
     album.set('foo', 1)
     album.increment('foo', 1)
@@ -113,7 +113,7 @@ def test_increment():
 
 
 @with_setup(setup_func)
-def test_increment_atfer_save():
+def test_increment_atfer_save(): # type: () -> None
     album = Album()
     album.set('foo', 1)
     album.save()
@@ -123,7 +123,7 @@ def test_increment_atfer_save():
     assert album.get('foo') == 235
 
 
-def test_add():
+def test_add(): # type: () -> None
     album = Album()
     album.add('foo', 1)
     eq_(album.get('foo'), [1])
@@ -131,7 +131,7 @@ def test_add():
     eq_(album.get('foo'), [1, 2])
 
 
-def test_add_unique():
+def test_add_unique(): # type: () -> None
     album = Album()
     album.add_unique('foo', 1)
     album.add_unique('foo', 1)
@@ -140,14 +140,14 @@ def test_add_unique():
     eq_(album.get('foo'), [1, 2])
 
 
-def test_remove():
+def test_remove(): # type: () -> None
     album = Album()
     album.set('foo', ['bar', 'baz'])
     album.remove('foo', 'bar')
     eq_(album.get('foo'), ['baz'])
 
 
-def test_clear():
+def test_clear(): # type: () -> None
     album = Album(foo=1, bar=2, baz=3)
     album.clear()
     assert album.get('foo') is None
@@ -155,7 +155,7 @@ def test_clear():
     assert album.get('baz') is None
 
 
-def test_full_dump():
+def test_full_dump(): # type: ignore
     album = Album()
     album.set('title', 'Nightwish')
     assert album._dump() == {
@@ -177,74 +177,74 @@ def test_full_dump():
     }
 
 
-def test_dump_save():
+def test_dump_save(): # type: ignore
     album = Album()
     album.set('foo', 'bar')
     eq_(album._dump_save(), {'foo': 'bar'})
 
 
-def test_extend():
+def test_extend(): # type: () -> None
     ok_(Object.extend('Album'))
 
 
-def test_update_data():
+def test_update_data(): # type: ignore
     album = Album()
     album._update_data({'title': 'Once', 'artist': 'nightwish'})
     eq_(album._attributes, {'title': 'Once', 'artist': 'nightwish'})
 
 
-def test_dump():
+def test_dump(): # type: () -> None
     album = Album()
     album.set('foo', 'bar')
     eq_(album.dump(), {'foo': 'bar'})
 
 
-def test_to_pointer():
+def test_to_pointer(): # type: ignore
     album = Album()
     album.set('foo', 'bar')
     album._to_pointer()
 
 
 @with_setup(setup_func)
-def test_fetch():
+def test_fetch(): # type: () -> None
     album = Album(title='Once')
     band = Band(name='Nightwish')
     album.set('parent', band)
     album.save()
 
     query = leancloud.Query(Album)
-    album = query.get(album.id)
-    assert album.get('parent').get('name') is None
+    album_1 = query.get(album.id)
+    assert album_1.get('parent').get('name') is None
 
-    album.get('parent').fetch()
-    assert album.get('parent').get('name') == 'Nightwish'
+    album_1.get('parent').fetch()
+    assert album_1.get('parent').get('name') == 'Nightwish'
 
     album.destroy()
     band.destroy()
 
 
-def test_has():
+def test_has(): # type: () -> None
     album = Album()
     album.set('foo', 'bar')
     assert album.has('foo') is True
     assert album.has('bar') is False
 
 
-def test_get_set_acl():
+def test_get_set_acl(): # type: () -> None
     acl = leancloud.ACL()
     album = Album()
     album.set_acl(acl)
     assert album.get_acl() == acl
 
 
-def test_invalid_acl():
+def test_invalid_acl(): # type: () -> None
     album = Album()
     assert_raises(TypeError, album.set, 'ACL', 1)
     assert_raises(TypeError, album.set_acl, 1)
 
 
 @with_setup(setup_func)
-def test_relation():
+def test_relation(): # type: () -> None
     album = Album()
     band = Band()
     band.save()
@@ -255,7 +255,7 @@ def test_relation():
 
 
 @with_setup(setup_func)
-def test_pointer():
+def test_pointer(): # type: () -> None
     user = leancloud.User.create_without_data('555ed132e4b032867865884e')
     score = leancloud.Object.extend('score')
     s = score()
@@ -264,7 +264,7 @@ def test_pointer():
 
 
 @with_setup(setup_func)
-def test_save_and_destroy_all():
+def test_save_and_destroy_all(): # type: () -> None
     ObjToDelete = Object.extend('ObjToDelete')
     objs = [ObjToDelete() for _ in range(3)]
     Object.save_all(objs)
@@ -280,7 +280,7 @@ def test_save_and_destroy_all():
 
 
 @with_setup(setup_func)
-def test_fetch_when_save():
+def test_fetch_when_save(): # type: () -> None
     Foo = Object.extend('Foo')
     foo = Foo()
     foo.fetch_when_save = True
@@ -300,7 +300,7 @@ def test_fetch_when_save():
 
 
 @with_setup(setup_func)
-def test_save_with_where():
+def test_save_with_where(): # type: () -> None
     Foo = Object.extend('Foo')
     foo = Foo(aNumber=1)
 
@@ -321,7 +321,7 @@ def test_save_with_where():
     assert leancloud.Query('Foo').get(foo.id).get('aNumber') == 2
 
 @with_setup(setup_func)
-def test_modify_class_name():
+def test_modify_class_name(): # type: () -> None
     class Philosopher(Object):
         class_name = 'Teacher'
 
