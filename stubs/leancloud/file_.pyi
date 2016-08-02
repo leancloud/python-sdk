@@ -10,11 +10,10 @@ from leancloud.acl import ACL
 
 
 if six.PY3:
-    from io import IOBase
-    file_type = IOBase
+    file_type = IO[Any]
     buffer_type = memoryview
 else:
-    file_type = IO[Any] #file
+    file_type = file
     buffer_type = buffer
 
 class File(object):

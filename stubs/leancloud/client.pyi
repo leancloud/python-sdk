@@ -1,1 +1,15 @@
-def use_region(region: )
+import datetime
+
+USE_PRODUCTION = ... # type: str
+REGION = ... # type: str
+USE_MASTER_KEY = ... # type: bool
+
+def init(app_id: str, app_key: str=None, master_key: str=None) -> None: ...
+
+def use_region(region: str) -> None: ...
+
+def use_production(flag: bool) -> None: ...
+
+def use_master_key(flag: bool=True) -> None: ...
+
+def get_server_time() -> datetime.datetime: ...

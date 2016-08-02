@@ -1,5 +1,4 @@
 from typing import Any, Dict, Union, SupportsFloat
-
 import leancloud
 from leancloud.query import Query
 from leancloud.acl import ACL
@@ -7,6 +6,10 @@ from leancloud.relation import Relation
 
 
 class Object(object):
+    id = ... # type: str
+    _class_name = ... # type: str
+    _attributes = ... # type: Dict
+
     def __init__(self, **attrs) -> None: ...
 
     # the real implementation of query property is on metaclass
@@ -33,6 +36,8 @@ class Object(object):
 
     def dump(self) -> Object:...
 
+    def is_dirty(self, attr: str=None) -> bool:...
+
     def destroy(self) -> None:...
 
     def save(self, where: Query=None) -> None:...
@@ -50,6 +55,8 @@ class Object(object):
     def increment(self, attr: str, amount: SupportsFloat=1) -> Object:...
 
     def add(self, attr: str, item: Any) -> Object:...
+
+    def add_unique(self, attr: str, item: Any) -> Object:...
 
     def remove(self, attr: str, item: Any) -> Object:...
 

@@ -57,11 +57,11 @@ def test_create_without_data(): # type: () -> None
 
 
 def test_acl(): # type: () -> None
-    acl = ACL()
+    acl_ = ACL()
     f = File('Blah', buffer_type(b'xxx'))
     assert_raises(TypeError, f.set_acl, 'a')
-    f.set_acl(acl)
-    assert f.get_acl() == acl
+    f.set_acl(acl_)
+    assert f.get_acl() == acl_
 
 
 @with_setup(setup_func)

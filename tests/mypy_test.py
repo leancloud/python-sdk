@@ -2,9 +2,9 @@ import ast
 import os
 
 def main():
-    file_list = [f for f in os.listdir('.') if f.endswith('.py') and f !='test_mypy.py']
+    file_list = [f for f in os.listdir('.') if f.endswith('.py') and f !=('test_mypy.py' or 'test_engine.py')]
 
-    for f in (file_list[-10], ):
+    for f in file_list:
         f_buf = open(f)
         f_text = f_buf.read()
         f_buf.close()
@@ -23,7 +23,7 @@ def main():
         mypy_test.close()
 
         os.system('mypy {}'.format(file_name))
-        # os.system('rm {}'.format(file_name))
+        os.system('rm {}'.format(file_name))
 
 
 if __name__ == '__main__':
