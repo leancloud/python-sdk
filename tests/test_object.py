@@ -52,13 +52,13 @@ def test_class_equal(): # type: () -> None
 def test_dirty(): # type: () -> None
     album = Album()
     assert album.is_dirty() is True
-    album.id = 123
+    album.id = '123'
     assert album.is_dirty() is False
     album.set('foo', 'bar')
     assert album.is_dirty() is True
 
 
-def test_find_unsaved_children(): # type: () -> None
+def test_find_unsaved_children(): # type: ignore
     album = Album()
     unsaved_children = []
     unsaved_files = []
@@ -67,7 +67,7 @@ def test_find_unsaved_children(): # type: () -> None
     assert unsaved_files == []
 
 
-def test_find_unsaved_children_2(): # type: () -> None
+def test_find_unsaved_children_2(): # type: ignore
     album = Album()
     band = Band()
     album.set('band', band)
@@ -155,7 +155,7 @@ def test_clear(): # type: () -> None
     assert album.get('baz') is None
 
 
-def test_full_dump(): # type: () -> None
+def test_full_dump(): # type: ignore
     album = Album()
     album.set('title', 'Nightwish')
     assert album._dump() == {
@@ -177,7 +177,7 @@ def test_full_dump(): # type: () -> None
     }
 
 
-def test_dump_save(): # type: () -> None
+def test_dump_save(): # type: ignore
     album = Album()
     album.set('foo', 'bar')
     eq_(album._dump_save(), {'foo': 'bar'})
@@ -187,7 +187,7 @@ def test_extend(): # type: () -> None
     ok_(Object.extend('Album'))
 
 
-def test_update_data(): # type: () -> None
+def test_update_data(): # type: ignore
     album = Album()
     album._update_data({'title': 'Once', 'artist': 'nightwish'})
     eq_(album._attributes, {'title': 'Once', 'artist': 'nightwish'})
@@ -199,7 +199,7 @@ def test_dump(): # type: () -> None
     eq_(album.dump(), {'foo': 'bar'})
 
 
-def test_to_pointer(): # type: () -> None
+def test_to_pointer(): # type: ignore
     album = Album()
     album.set('foo', 'bar')
     album._to_pointer()
@@ -213,11 +213,11 @@ def test_fetch(): # type: () -> None
     album.save()
 
     query = leancloud.Query(Album)
-    album = query.get(album.id)
-    assert album.get('parent').get('name') is None
+    album_1 = query.get(album.id)
+    assert album_1.get('parent').get('name') is None
 
-    album.get('parent').fetch()
-    assert album.get('parent').get('name') == 'Nightwish'
+    album_1.get('parent').fetch()
+    assert album_1.get('parent').get('name') == 'Nightwish'
 
     album.destroy()
     band.destroy()

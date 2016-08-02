@@ -101,7 +101,7 @@ def destroy_func():
 
 @raises(ValueError)
 def test_query_error(): # type: () -> None
-    Query(123)
+    Query(123) # type: ignore
 
 
 # @with_setup(setup_func, destroy_func)
@@ -181,7 +181,7 @@ def test_basic_query(): # type: () -> None
     q = Query(GameScore).not_contained_in('score', [0, 1, 2, 3]).ascending('score')
     eq_([x.get('score') for x in q.find()], list(range(4, 10)))
 
-    q = Query(GameScore).select('score')
+    q = Query(GameScore).select(['score'])
     assert not q.find()[0].has('playerName')
 
 
@@ -216,7 +216,7 @@ def test_multiple_order(): # type: () -> None
 
 @raises(ValueError)
 def test_or_erorr(): # type: () -> None
-    Query(GameScore).or_('score')
+    Query(GameScore).or_('score') # type: ignore
 
 
 @with_setup(setup_func)
@@ -266,7 +266,7 @@ def test_and_(): # type: () -> None
 
 @raises(ValueError)
 def test_and_error(): # type: () -> None
-    Query(GameScore).and_('score')
+    Query(GameScore).and_('score') # type: ignore
 # @with_setup(setup_func)
 # def test_dump():
 #     q = Query(GameScore)
@@ -294,7 +294,7 @@ def test_exist_and_does_not_exists(): # type: () -> None
 
 @raises(TypeError)
 def test_matched_error(): # type: () -> None
-    Query(GameScore).matched('score', 1)
+    Query(GameScore).matched('score', 1) #type: ignore
 
 
 @with_setup(setup_func)

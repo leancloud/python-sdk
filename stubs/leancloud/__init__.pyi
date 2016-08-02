@@ -1,3 +1,4 @@
+from . import client
 from . import push
 from .acl import ACL
 from .file_ import File
@@ -7,3 +8,8 @@ from .query import Query
 from .relation import Relation
 from .role import Role
 from .user import User
+from .client import init
+from .client import use_master_key
+from .client import use_production
+from .client import use_region
+from .push import Installation

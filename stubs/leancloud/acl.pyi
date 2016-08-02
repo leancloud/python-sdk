@@ -9,7 +9,7 @@ user_type = Union[str, User, Role]
 role_type = Union[Role, str]
 
 class ACL(object):
-
+    permissions_by_id = ... #type: Dict
     def __init__(self, permissions_by_id: Dict=None) -> None: ...
 
     def dump(self) -> Dict:...
