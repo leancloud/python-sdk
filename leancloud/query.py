@@ -355,6 +355,10 @@ class Query(object):
         return self
 
     def does_not_exists(self, key):
+        warnings.warn(' the query is deprecated, please use matches_key_in_query', LeanCloudWarning)
+        return self.does_not_exist(key)
+
+    def does_not_exist(self, key):
         """
         增加查询条件，限制查询结果对象不包含指定字段
 

@@ -292,6 +292,13 @@ def test_exist_and_does_not_exists():
     assert len(result) == 10
 
 
+@with_setup(setup_func)
+def test_exist_and_does_not_exist():
+    assert Query(GameScore).does_not_exist('oops').find()
+    result = Query(GameScore).exists('playerName').find()
+    assert len(result) == 10
+
+
 @raises(TypeError)
 def test_matched_error():
     Query(GameScore).matched('score', 1)
