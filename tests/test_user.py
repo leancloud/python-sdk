@@ -7,7 +7,7 @@ from __future__ import print_function
 import os
 import random
 
-from nose.tools import with_setup
+from nose.tools import with_setup # type: ignore
 
 import leancloud
 from leancloud import User
@@ -67,7 +67,7 @@ def destroy_func():
 
 
 @with_setup(only_init)
-def test_sign_up():
+def test_sign_up(): # type: () -> None
     user = User()
     user.set('username', 'foo')
     user.set('password', 'bar')
@@ -76,7 +76,7 @@ def test_sign_up():
 
 
 @with_setup(only_init)
-def test_sign_out():
+def test_sign_out(): # type: () -> None
     user = User()
     user.sign_up('Musen', 'password')
     user.logout()
@@ -84,7 +84,7 @@ def test_sign_out():
 
 
 @with_setup(get_setup_func(), destroy_func)
-def test_login():
+def test_login(): # type: () -> None
     user = User()
     user.set('username', 'user1_name')
     user.set('password', 'password')
@@ -95,7 +95,7 @@ def test_login():
 
 
 @with_setup(get_setup_func(), destroy_func)
-def test_file_field():
+def test_file_field(): # type: () -> None
     user = User()
     user.login('user1_name', 'password')
     user.set('xxxxx', File('xxx.txt', buffer_type(b'qqqqq')))
@@ -108,7 +108,7 @@ def test_file_field():
 
 
 @with_setup(get_setup_func())
-def test_follow():
+def test_follow(): # type: () -> None
     user1 = User()
     user1.set('username', 'user1_name')
     user1.set('password', 'password')
@@ -123,7 +123,7 @@ def test_follow():
 
 
 @with_setup(get_setup_func())
-def test_follower_query():
+def test_follower_query(): # type: () -> None
     user1 = User()
     user1.login('user1_name', 'password')
     user2 = User()
@@ -133,7 +133,7 @@ def test_follower_query():
     assert query.first().id == user2.id
 
 
-def test_followee_query():
+def test_followee_query(): # type: () -> None
     query = User.create_followee_query('1')
     assert query._friendship_tag == 'followee'
     assert query.dump() == {
@@ -148,7 +148,7 @@ def test_followee_query():
 
 
 @with_setup(get_setup_func())
-def test_current_user():
+def test_current_user(): # type: () -> None
     user = User()
     user.login('user1_name', 'password')
     assert user.is_current
@@ -156,7 +156,7 @@ def test_current_user():
 
 
 @with_setup(get_setup_func(use_master_key=False))
-def test_update_user():
+def test_update_user(): # type: () -> None
     user = User()
     user.login('user1_name', 'password')
     user.set('nickname', 'test_name')
@@ -164,7 +164,7 @@ def test_update_user():
 
 
 @with_setup(get_setup_func())
-def test_user_become():
+def test_user_become(): # type: () -> None
     existed_user = User()
     existed_user.login('user1_name', 'password')
     session_token = existed_user.get_session_token()
@@ -173,7 +173,7 @@ def test_user_become():
 
 
 @with_setup(get_setup_func())
-def test_login_with():
+def test_login_with(): # type: () -> None
     data = {
         'uid': '1',
         'access_token': 'xxx'
@@ -182,7 +182,7 @@ def test_login_with():
 
 
 @with_setup(get_setup_func())
-def test_unlink_from():
+def test_unlink_from(): # type: () -> None
     data = {
         'uid': '1',
         'access_token': 'xxx'
@@ -192,7 +192,7 @@ def test_unlink_from():
 
 
 @with_setup(get_setup_func())
-def test_is_linked():
+def test_is_linked(): # type: () -> None
     data = {
         'uid': '1',
         'access_token': 'xxx'
@@ -202,7 +202,7 @@ def test_is_linked():
 
 
 @with_setup(get_setup_func())
-def test_signup_or_login_with_mobile_phone():
+def test_signup_or_login_with_mobile_phone(): # type: () -> None
     try:
         User.signup_or_login_with_mobile_phone('18611111111', '111111')
     except LeanCloudError as e:
@@ -210,7 +210,7 @@ def test_signup_or_login_with_mobile_phone():
 
 
 @with_setup(get_setup_func())
-def test_update_password():
+def test_update_password(): # type: () -> None
     user = User()
     user.login('user1_name', 'password')
     user.update_password('password', 'new_password')
@@ -218,7 +218,7 @@ def test_update_password():
 
 
 @with_setup(get_setup_func())
-def test_get_methods():
+def test_get_methods(): # type: () -> None
     user = User()
     user.login('user1_name', 'password')
 
@@ -236,7 +236,7 @@ def test_get_methods():
 
 
 @with_setup(get_setup_func())
-def test_request_password_reset():
+def test_request_password_reset(): # type: () -> None
     try:
         User.request_password_reset('wow@leancloud.rocks')
     except LeanCloudError as e:
@@ -246,7 +246,7 @@ def test_request_password_reset():
 
 
 @with_setup(get_setup_func())
-def test_request_email_verify():
+def test_request_email_verify(): # type: () -> None
     try:
         User.request_email_verify('wow@leancloud.rocks')
     except LeanCloudError as e:
@@ -258,7 +258,7 @@ def test_request_email_verify():
 
 
 @with_setup(get_setup_func())
-def test_request_mobile_phone_verify():
+def test_request_mobile_phone_verify(): # type: () -> None
     try:
         User.request_mobile_phone_verify('1861111' + str(random.randrange(1000, 9999)))
     except LeanCloudError as e:
@@ -267,7 +267,7 @@ def test_request_mobile_phone_verify():
 
 
 @with_setup(get_setup_func())
-def test_request_password_reset_by_sms_code():
+def test_request_password_reset_by_sms_code(): # type: () -> None
     try:
         User.request_password_reset_by_sms_code('1861111' + str(random.randrange(1000, 9999)))
     except LeanCloudError as e:
@@ -276,7 +276,7 @@ def test_request_password_reset_by_sms_code():
 
 
 @with_setup(get_setup_func())
-def test_reset_password_by_sms_code():
+def test_reset_password_by_sms_code(): # type: () -> None
     try:
         User.reset_password_by_sms_code('1861111' + str(random.randrange(1000, 9999)), "password")
     except LeanCloudError as e:
@@ -285,7 +285,7 @@ def test_reset_password_by_sms_code():
         
 
 @with_setup(get_setup_func())
-def test_request_login_sms_code():
+def test_request_login_sms_code(): # type: () -> None
     try:
         User.request_login_sms_code('18611111111')
     except LeanCloudError as e:

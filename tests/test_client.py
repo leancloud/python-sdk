@@ -8,18 +8,18 @@ import os
 import json
 import datetime
 
-from werkzeug.wrappers import Request
-from wsgi_intercept import requests_intercept, add_wsgi_intercept
+from werkzeug.wrappers import Request #type: ignore
+from wsgi_intercept import requests_intercept, add_wsgi_intercept #type: ignore
 
 import leancloud
 from leancloud import client
-from leancloud.app_router import AppRouter
+from leancloud.app_router import AppRouter #type: ignore
 
 
 __author__ = 'asaka'
 
 
-def test_use_production():
+def test_use_production(): # type: () -> None
     assert client.USE_PRODUCTION == '1'
     leancloud.use_production(False)
     assert client.USE_PRODUCTION == '0'
@@ -27,7 +27,7 @@ def test_use_production():
     assert client.USE_PRODUCTION == '1'
 
 
-def test_use_master_key():
+def test_use_master_key(): # type: () -> None
     leancloud.init(os.environ['APP_ID'], os.environ['APP_KEY'], os.environ['MASTER_KEY'])
     assert client.USE_MASTER_KEY is None
     leancloud.use_master_key(True)
@@ -43,11 +43,11 @@ def test_use_master_key():
 #     assert client.get_base_url().startswith('https://')
 
 
-def test_get_server_time():
+def test_get_server_time(): # type: () -> None
     assert type(client.get_server_time()) == datetime.datetime
 
 
-def test_redirect_region():
+def test_redirect_region(): # type: () -> None
     if client.REGION == 'US':
         # US region server doesn't support app router now
         return

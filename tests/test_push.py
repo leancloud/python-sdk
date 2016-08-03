@@ -7,7 +7,7 @@ from __future__ import print_function
 import os
 from datetime import datetime
 
-from nose.tools import with_setup
+from nose.tools import with_setup #type: ignore
 
 import leancloud
 from leancloud import push
@@ -23,7 +23,7 @@ def setup_func():
 
 
 @with_setup(setup_func)
-def test_basic_push():
+def test_basic_push(): # type: () -> None
     instanlation = leancloud.Installation()
     instanlation.set('deviceType', 'ios')
     instanlation.set('deviceToken', 'xxx')

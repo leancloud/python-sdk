@@ -1,11 +1,13 @@
 from typing import Any, Dict
-
 import leancloud
 from leancloud.object_ import Object
 from leancloud.query import Query
 
 
+
+
 class User(Object): 
+    _session_token = ... # type: str
 
     def get_session_token(self) -> str:...
 

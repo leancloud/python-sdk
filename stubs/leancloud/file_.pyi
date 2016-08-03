@@ -2,7 +2,7 @@ import sys
 
 import six
 from six import StringIO, BytesIO
-from typing import Union, Dict, SupportsFloat, Any
+from typing import Union, Dict, SupportsFloat, Any, IO
 
 import leancloud
 from leancloud.object_ import Object
@@ -10,8 +10,7 @@ from leancloud.acl import ACL
 
 
 if six.PY3:
-    from io import IOBase
-    file_type = IOBase
+    file_type = IO[Any]
     buffer_type = memoryview
 else:
     file_type = file
@@ -19,7 +18,12 @@ else:
 
 class File(object):
 
+    id =... # type: str 
+    _metadata = ... #type: Dict[str, Any]
+    _type = ... #type: str
+
     def __init__(self, name: str, data: Union[StringIO, BytesIO, file_type, buffer_type]=None, type_: str=None) -> None:...
+
 
     @classmethod
     def create_with_url(cls, name: str, url: str, meta_data: Dict =None, type_: str=None) -> File:...
@@ -46,7 +50,7 @@ class File(object):
     @property
     def metadata(self) -> Dict:...
 
-    def get_thumbnail_url(self, width: SupportsFloat, height: SupportsFloat, quality: SupportsFloat, scale_to_fit: bool=True, fmt: str='png') -> str:...
+    def get_thumbnail_url(self, width: SupportsFloat, height: SupportsFloat, quality: SupportsFloat=100, scale_to_fit: bool=True, fmt: str='png') -> str:...
 
     def destroy(self) -> None:...
 

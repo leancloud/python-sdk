@@ -5,7 +5,7 @@ from leancloud.acl import ACL
 from leancloud.relation import Relation
 
 
-class Role(object):
+class Role(leancloud.Object):
     def __init__(self, name: str=None, acl: ACL=None) -> None:...
 
     def get_name(self) -> str:...
