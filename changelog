@@ -1,3 +1,9 @@
+## [1.6.3] - 2016-08-03
+### Fixed
+- deprecate leancloud.Query.does_not_exists and add leancloud.Query.does_not_exist
+### Updated
+- updated pyi stub files
+
 ## [1.6.2] - 2016-07-21
 ### Fixed
 - invalid push_time format in leancloud.push.send function

@@ -40,7 +40,7 @@ from .user import User
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
-__version__ = '1.6.2'
+__version__ = '1.6.3'
 
 
 __all__ = [
