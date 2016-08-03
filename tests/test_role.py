@@ -6,8 +6,8 @@ from __future__ import print_function
 
 import os
 
-from nose.tools import eq_
-from nose.tools import with_setup
+from nose.tools import eq_ # type: ignore
+from nose.tools import with_setup # type: ignore
 
 import leancloud
 

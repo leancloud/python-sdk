@@ -4,8 +4,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from nose.tools import assert_raises
-from nose.tools import eq_
+from nose.tools import assert_raises #type: ignore
+from nose.tools import eq_ #type: ignore
 
 from leancloud import GeoPoint
 

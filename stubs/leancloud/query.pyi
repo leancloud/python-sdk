@@ -8,6 +8,11 @@ class CQLResult(object):
     def __init__(self, results: List[Object], count: SupportsFloat, class_name: str) -> None:...
 
 class Query(object):
+    _skip = ... # type: int
+    _limit = ... # type: int
+    _friendship_tag = ... # type: str
+
+
     def __init__(self, query_class: Union[str, Object, type]) -> None:...
 
     @classmethod
@@ -57,7 +62,7 @@ class Query(object):
 
     def does_not_exists(self, key:str) -> Query:...
 
-    def matched(self, key: str, regex: str, ignore_case: bool=False, muliti_line: bool=False) -> Query:...
+    def matched(self, key: str, regex: str, ignore_case: bool=False, multi_line: bool=False) -> Query:...
 
     def matches_query(self, key: str, value: Any) -> Query:...
 

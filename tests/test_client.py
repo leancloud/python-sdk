@@ -8,12 +8,12 @@ import os
 import json
 import datetime
 
-from werkzeug.wrappers import Request
-from wsgi_intercept import requests_intercept, add_wsgi_intercept
+from werkzeug.wrappers import Request #type: ignore
+from wsgi_intercept import requests_intercept, add_wsgi_intercept #type: ignore
 
 import leancloud
 from leancloud import client
-from leancloud.app_router import AppRouter
+from leancloud.app_router import AppRouter #type: ignore
 
 
 __author__ = 'asaka'

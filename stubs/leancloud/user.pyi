@@ -7,6 +7,7 @@ from leancloud.query import Query
 
 
 class User(Object): 
+    _session_token = ... # type: str
 
     def get_session_token(self) -> str:...
 

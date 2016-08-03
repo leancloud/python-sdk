@@ -145,7 +145,7 @@ def test_relation(): # type: () -> None
 @with_setup(setup_func, destroy_func)
 def test_basic_query(): # type: () -> None
     # find
-    results = GameScore.query.find()
+    results = GameScore.query.find() # type:ignore
     eq_(len(results), 10)
 
     # first

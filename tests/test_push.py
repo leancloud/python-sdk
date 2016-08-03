@@ -7,7 +7,7 @@ from __future__ import print_function
 import os
 from datetime import datetime
 
-from nose.tools import with_setup
+from nose.tools import with_setup #type: ignore
 
 import leancloud
 from leancloud import push

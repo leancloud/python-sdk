@@ -6,10 +6,10 @@ from __future__ import print_function
 
 import os
 
-from nose.tools import with_setup
-from nose.tools import ok_
-from nose.tools import eq_
-from nose.tools import assert_raises
+from nose.tools import with_setup # type: ignore
+from nose.tools import ok_ # type: ignore
+from nose.tools import eq_ # type: ignore
+from nose.tools import assert_raises # type: ignore
 
 import leancloud
 from leancloud import Object
@@ -304,7 +304,7 @@ def test_save_with_where(): # type: () -> None
     Foo = Object.extend('Foo')
     foo = Foo(aNumber=1)
 
-    assert_raises(TypeError, foo.save, where=Foo.query)
+    assert_raises(TypeError, foo.save, where=Foo.query) # type: ignore
 
     assert_raises(TypeError, foo.save, where=leancloud.Query('SomeClassNotEqualToFoo'))
 

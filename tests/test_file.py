@@ -6,9 +6,9 @@ from __future__ import print_function
 
 import os
 
-from nose.tools import with_setup
-from nose.tools import assert_raises
-from nose.tools import raises
+from nose.tools import with_setup # type: ignore
+from nose.tools import assert_raises # type: ignore
+from nose.tools import raises # type: ignore
 
 import requests
 
@@ -32,7 +32,7 @@ def setup_func():
 def test_basic(): # type: () -> None
     s = BytesIO(b'blah blah blah')
     if PY2:
-        import cStringIO
+        import cStringIO # type: ignore
         s1 = cStringIO.StringIO()
         s1.write('blah blah blah')
     else:
