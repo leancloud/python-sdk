@@ -54,7 +54,7 @@ def encode(value, disallow_objects=False):
             raise ValueError('leancloud.Object not allowed')
         return value._to_pointer()
 
-    if isinstance(value, leancloud.models.model.Model):
+    if isinstance(value, leancloud.models.models.Model):
         if disallow_objects:
             raise ValueError('leancloud.Model not allowed')
         return value._object._to_pointer()

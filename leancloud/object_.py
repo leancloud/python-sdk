@@ -264,8 +264,8 @@ class Object(with_metaclass(ObjectMeta, object)):
                     children.append(o)
                 return
 
-            from leancloud.models import model
-            if isinstance(o, model.Model):
+            from leancloud.models import models
+            if isinstance(o, models.Model):
                 if o._object.is_dirty():
                     children.append(o._object)
                 return

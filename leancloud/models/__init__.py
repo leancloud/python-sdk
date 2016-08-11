@@ -1,2 +1,2 @@
-from . import field
-from . import model
+from . import fields
+from . import models

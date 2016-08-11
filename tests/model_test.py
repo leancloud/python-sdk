@@ -7,8 +7,8 @@ from nose.tools import eq_
 from nose.tools import raises 
 
 import leancloud
-from leancloud.models import model
-from leancloud.models import field
+from leancloud.models import models
+from leancloud.models.fields import *
 from leancloud import relation
 from leancloud.errors import LeanCloudError
 
@@ -24,8 +24,8 @@ def setup():
 
 
 def get_person():
-    class Person(model.UserModel):
-        hobby = field.String()
+    class Person(models.UserModel):
+        hobby = StringField()
 
     plato = Person(
         username = 'Plato', 
@@ -47,16 +47,16 @@ def test_destroy():
     republic.destroy()
 
 def get_book():
-    class Book(model.Model):
-        readers_num = field.Number()
-        influnced = field.Array()
-        published_at = field.Date()
-        title = field.String()
-        is_Greek = field.Boolean()
-        index = field.File()
-        related_book = field.Pointer()
-        auther = field.User()
-        readers = field.Relation()
+    class Book(models.Model):
+        readers_num = NumberField()
+        influnced = ArrayField()
+        published_at = DateField()
+        title = StringField()
+        is_Greek = BooleanField()
+        index = FileField()
+        related_book = PointerField()
+        auther = UserField()
+        readers = RelationField()
 
     import cStringIO
     s1 = cStringIO.StringIO()
@@ -67,7 +67,7 @@ def get_book():
     republic =  Book(
         readers_num=1,
         influnced=[],
-        published_at=datetime.datetime.now(),
+        # published_at=datetime.datetime.now(),
         title='Repulic',
         is_Greek=True,
         index = leancloud.file_.File('chapter', s1),
@@ -98,8 +98,8 @@ def test_del_field():
 
 @raises(AttributeError)
 def test_set_with_incrrect_field_name():
-    class Book(model.Model):
-        author = field.String()
+    class Book(models.Model):
+        author = StringField()
     Book(reader='Plato')
 
 def test_increment():
@@ -119,8 +119,8 @@ def test_verifier():
         if value <= 10:
             raise ValueError('value too small')
 
-    class Book(model.Model):
-        pages = field.Number(verifier=verify)
+    class Book(models.Model):
+        pages = NumberField(verifier=verify)
 
     republic = Book()
     republic.pages = 9

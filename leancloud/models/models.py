@@ -6,17 +6,17 @@ from __future__ import print_function
 import leancloud
 from leancloud import Object
 from leancloud._compat import with_metaclass
-from leancloud.models import field
+from leancloud.models.fields import *
 from leancloud import User
 
 
 # TODO inherience
 class ModelMeta(type):
     def __new__(cls, name, bases, attrs):
-        attrs['fields']= {field_name: f for field_name, f in attrs.items() if isinstance(f, field.Field)}
+        attrs['fields']= {field_name: f for field_name, f in attrs.items() if isinstance(f, BaseField)}
         for field_name in attrs['fields']:
             attrs.pop(field_name)
-        attrs['fields']['ACL'] = field.ACL(default=None)
+        attrs['fields']['ACL'] = ACLField(default=None)
         return super(ModelMeta, cls).__new__(cls, name, bases, attrs)
 
 class Model(with_metaclass(ModelMeta)):
@@ -81,7 +81,7 @@ class Model(with_metaclass(ModelMeta)):
     
     def increment(self, attr, num=1):
         if attr in self.fields:
-            if not isinstance(self.fields[attr], field.Number):
+            if not isinstance(self.fields[attr], NumberField):
                 raise TypeError("only number can be incremented")
             else:
                 self._object.increment(attr, num)
@@ -103,14 +103,14 @@ class Model(with_metaclass(ModelMeta)):
 #    def fetch(self):
 #        if not self._object.id:
 #            raise ValueError('the Model needs its ID to fetch data from the server') 
-#        self._object.fetch()
+#        self._object.fetch()field.
 #
 #    def dump(self):
 #        return self._object.dump()
 
     def add(self, attr, objs):
         if attr in self.fields:
-            if not isinstance(self.fields[attr], field.List):
+            if not isinstance(self.fields[attr], ListField):
                 raise TypeError("only list can add items")
             else:
                 self._object.add(attr, list(objs))
@@ -120,7 +120,7 @@ class Model(with_metaclass(ModelMeta)):
 
     def add_unique(self, attr, objs):
         if attr in self.fields:
-            if not isinstance(self.fields[attr], field.List):
+            if not isinstance(self.fields[attr], ListField):
                 raise TypeError("only list can uniquely add items")
             else:
                 self._object.add_unique(attr, list(objs))
@@ -150,8 +150,8 @@ class Model(with_metaclass(ModelMeta)):
 
 class UserModel(Model):
     def __init__(self, **kwargs):
-        self.fields['username'] = field.String()
-        self.fields['password'] = field.String()
+        self.fields['username'] = StringField()
+        self.fields['password'] = StringField()
 
         self._object = User()
         self._object._class_name = self.__class__.__name__
