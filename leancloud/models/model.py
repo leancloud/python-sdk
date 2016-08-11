@@ -1,3 +1,8 @@
+# coding: utf-8
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import leancloud
 from leancloud import Object
 from leancloud._compat import with_metaclass
@@ -6,28 +11,28 @@ from leancloud import User
 
 
 # TODO inherience
-class BaseModel(type):
+class ModelMeta(type):
     def __new__(cls, name, bases, attrs):
         attrs['fields']= {field_name: f for field_name, f in attrs.items() if isinstance(f, field.Field)}
         for field_name in attrs['fields']:
             attrs.pop(field_name)
         attrs['fields']['ACL'] = field.ACL(default=None)
-        return super(BaseModel, cls).__new__(cls, name, bases, attrs)
+        return super(ModelMeta, cls).__new__(cls, name, bases, attrs)
 
-class Model(with_metaclass(BaseModel)):
-    def __init__(self, **kargv):
+class Model(with_metaclass(ModelMeta)):
+    def __init__(self, **kwargs):
         self._object = Object()
         self._object._class_name = self.__class__.__name__
         # self.id = None
         # self.created_at = None
         # self.updated_at = None
 
-        for key in kargv:
+        for key in kwargs:
             if not key in self.fields:
                 raise AttributeError('There is no {} field in the model'.format(key))
         for key in self.fields:
-            if key in kargv:
-                setattr(self, key, kargv[key])
+            if key in kwargs:
+                setattr(self, key, kwargs[key])
             else:
                 setattr(self, key, self.fields[key].default)
 
@@ -42,13 +47,15 @@ class Model(with_metaclass(BaseModel)):
             self.fields[name].validate(value)
             self._object.set(name, value)
         else:
-            self._inclass_setattr(name, value)
+            # self._inclass_setattr(name, value)
+            super(Model, self).__setattr__(name, value)
 
     def __delattr__(self, name):
         if name in self.fields:
             self._object.unset(name)
         else:
-            self._inclass_delattr(name)
+            # self._inclass_delattr(name)
+            super(Model, self).__delattr__(name)
 
 #    def __getattr__(self, name):
 #        # if not self._object:
@@ -66,6 +73,11 @@ class Model(with_metaclass(BaseModel)):
                 return getattr(self._object, name)
             except AttributeError:
                 raise AttributeError('The model instance does not have the attribute {}'.format(name))
+
+    def fetch_when_save():
+        pass
+
+    Magic_mode = False
     
     def increment(self, attr, num=1):
         if attr in self.fields:
@@ -137,19 +149,19 @@ class Model(with_metaclass(BaseModel)):
 #        self._object.validate(None)
 
 class UserModel(Model):
-    def __init__(self, **kargv):
+    def __init__(self, **kwargs):
         self.fields['username'] = field.String()
         self.fields['password'] = field.String()
 
         self._object = User()
         self._object._class_name = self.__class__.__name__
 
-        for key in kargv:
+        for key in kwargs:
             if not key in self.fields:
                 raise AttributeError('There is no {} field in the model'.format(key))
         for key in self.fields:
-            if key in kargv:
-                setattr(self, key, kargv[key])
+            if key in kwargs:
+                setattr(self, key, kwargs[key])
             else:
                 setattr(self, key, self.fields[key].default)
 

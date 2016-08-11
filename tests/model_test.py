@@ -113,6 +113,18 @@ def test_validate_num():
     republic = get_book()
     republic.readers_num = 'a'
 
+@raises(ValueError)
+def test_verifier():
+    def verify(value):
+        if value <= 10:
+            raise ValueError('value too small')
+
+    class Book(model.Model):
+        pages = field.Number(verifier=verify)
+
+    republic = Book()
+    republic.pages = 9
+
 @with_setup(setup)
 def test_initial_save():
     republic = get_book()
