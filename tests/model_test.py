@@ -8,6 +8,7 @@ from nose.tools import raises
 
 import leancloud
 from leancloud.models import models
+from leancloud.models.models import ModelMeta
 from leancloud.models.fields import *
 from leancloud import relation
 from leancloud.errors import LeanCloudError
@@ -147,3 +148,17 @@ def test_reset_password_by_sms_code():
     except LeanCloudError as e:
         if e.code != 1:
             raise e
+
+def test_get_bases():
+    class A(object): pass
+    class B(A): pass
+    class C(B): pass
+    class D(C, B): pass
+
+    assert ModelMeta._get_all_bases(()) == ()
+    assert ModelMeta._get_all_bases((object,)) == ()
+    assert ModelMeta._get_all_bases((A,)) == (A,)
+    assert ModelMeta._get_all_bases((B,)) == (B, A)
+    assert ModelMeta._get_all_bases((C,)) == (C, B, A)
+    assert ModelMeta._get_all_bases((D,)) == (D, C, B, A)
+

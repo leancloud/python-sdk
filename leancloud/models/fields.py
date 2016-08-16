@@ -39,7 +39,16 @@ class BaseField(object):
                 raise ValueError("field verifier should be a function")
             self.verifier(value)
 
+    # descriptor definition of field
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+        # return instance._data.get(self.name)
 
+    def __set__(self, instance, value):
+        pass
+
+# TODO __init__ and Super paramerters with **karg
 class NumberField(BaseField):
     def __init__(self, default=None, nullable=True, verifier=None):
         super(NumberField, self).__init__(default=default, nullable=nullable, verifier=verifier)

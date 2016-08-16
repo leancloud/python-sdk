@@ -13,11 +13,54 @@ from leancloud import User
 # TODO inherience
 class ModelMeta(type):
     def __new__(cls, name, bases, attrs):
+        flattened_bases = cls._get_all_bases(bases)
+        hierachy_bases = flattened_bases[::-1]
+        meta = {
+               'abstract' : False,
+               'delete_rule': None,
+               'allow_inherence': False,
+               }
+        # merge ancestors' meta
+        for base in hierachy_bases:
+            if hasattr(base, '_meta'):
+                meta.update(base._meta)
+
+        # merge user-defeined metadata
+        meta.update(attrs.get('meta', {}))
+        if 'meta' in attrs: del attrs['meta']
+        attrs['_meta'] = meta
+
+        #find parent class
+        ancestors = [ a for a in flattened_bases if type(a) == ModelMeta]
+        parent = None if not ancestors else ancestors[0]
+
+        #abstract class check
+
+
         attrs['fields']= {field_name: f for field_name, f in attrs.items() if isinstance(f, BaseField)}
         for field_name in attrs['fields']:
             attrs.pop(field_name)
         attrs['fields']['ACL'] = ACLField(default=None)
         return super(ModelMeta, cls).__new__(cls, name, bases, attrs)
+
+    @classmethod
+    def _get_all_bases(cls, bases):
+        if not bases or bases == (object,):
+            return ()
+        bases = cls._get_bases_helper(bases)
+        seen = []
+        unique_bases = (base for base in bases if not (base in seen or seen.append(base)))
+        return tuple(unique_bases)
+
+    @classmethod
+    def _get_bases_helper(cls, bases):
+        for base in bases:
+            if base is object:
+                continue
+            yield base
+            for father_base in cls._get_bases_helper(base.__bases__):
+                yield father_base
+
 
 class Model(with_metaclass(ModelMeta)):
     def __init__(self, **kwargs):
