@@ -13,12 +13,13 @@ from leancloud import User
 # TODO inherience
 class ModelMeta(type):
     def __new__(cls, name, bases, attrs):
+        super_new = super(ModelMeta, cls).__new__
         flattened_bases = cls._get_all_bases(bases)
         hierachy_bases = flattened_bases[::-1]
         meta = {
                'abstract' : False,
-               'delete_rule': None,
-               'allow_inherence': False,
+               'delete_rule' : None,
+               'allow_inherence' : False,
                }
         # merge ancestors' meta
         for base in hierachy_bases:
@@ -34,14 +35,39 @@ class ModelMeta(type):
         ancestors = [ a for a in flattened_bases if type(a) == ModelMeta]
         parent = None if not ancestors else ancestors[0]
 
-        #abstract class check
+        # abstract class check
+        if meta.get('abstract'):
+            if parent and not parent._meta.get('abstract', False):
+                raise ValueError('abstract Model should inherent from abstract models')
 
+        # inherent fields
+        fields = {}
+        for base in hierachy_bases:
+            if hasattr(base, '_fields'):
+                fields.update(base._fields)
 
-        attrs['fields']= {field_name: f for field_name, f in attrs.items() if isinstance(f, BaseField)}
-        for field_name in attrs['fields']:
-            attrs.pop(field_name)
-        attrs['fields']['ACL'] = ACLField(default=None)
-        return super(ModelMeta, cls).__new__(cls, name, bases, attrs)
+        # get new-added fields
+        field_names = {}
+        for key, value in attrs.items():
+            if not isinstance(value, BaseField):
+                continue
+            if not value.db_field:
+                value.db_field = key
+            fields[key] = value
+
+            field_names[value.db_field] = field_names.get(value.db_field, 0) + 1
+
+        #count duplicated fields
+        duplicated_fields = [k for k,v in field_names.items() if v >= 3]
+        if duplicated_fields: 
+            raise KeyError('The following field names are duplicated: {}'.format(', '.join(duplicated_fields)))
+
+        attrs['_fields'] = fields
+        # attrs['_db_field_map'] = {field.db_field : key, field for field in fields.items}
+        # attrs['_reverse_db_field_map'] = {value : key for key, value in attrs['_db_field_map'].items()}
+
+        # attrs['_fields']['ACL'] = ACLField(default=None)
+        return super_new(cls, name, bases, attrs)
 
     @classmethod
     def _get_all_bases(cls, bases):
@@ -71,13 +97,13 @@ class Model(with_metaclass(ModelMeta)):
         # self.updated_at = None
 
         for key in kwargs:
-            if not key in self.fields:
+            if not key in self._fields:
                 raise AttributeError('There is no {} field in the model'.format(key))
-        for key in self.fields:
+        for key in self._fields:
             if key in kwargs:
                 setattr(self, key, kwargs[key])
             else:
-                setattr(self, key, self.fields[key].default)
+                setattr(self, key, self._fields[key].default)
 
     def _inclass_setattr(self, key, value):
         object.__setattr__(self, key, value)
@@ -86,15 +112,16 @@ class Model(with_metaclass(ModelMeta)):
         object.__delattr__(self, name)
 
     def __setattr__(self, name, value):
-        if name in self.fields:
-            self.fields[name].validate(value)
+        if name in self._fields:
+            print(self._fields, name)
+            self._fields[name].validate(value)
             self._object.set(name, value)
         else:
             # self._inclass_setattr(name, value)
             super(Model, self).__setattr__(name, value)
 
     def __delattr__(self, name):
-        if name in self.fields:
+        if name in self._fields:
             self._object.unset(name)
         else:
             # self._inclass_delattr(name)
@@ -117,14 +144,14 @@ class Model(with_metaclass(ModelMeta)):
             except AttributeError:
                 raise AttributeError('The model instance does not have the attribute {}'.format(name))
 
-    def fetch_when_save():
+    def fetch_when_save(self):
         pass
 
     Magic_mode = False
     
     def increment(self, attr, num=1):
-        if attr in self.fields:
-            if not isinstance(self.fields[attr], NumberField):
+        if attr in self._fields:
+            if not isinstance(self._fields[attr], NumberField):
                 raise TypeError("only number can be incremented")
             else:
                 self._object.increment(attr, num)
@@ -152,8 +179,8 @@ class Model(with_metaclass(ModelMeta)):
 #        return self._object.dump()
 
     def add(self, attr, objs):
-        if attr in self.fields:
-            if not isinstance(self.fields[attr], ListField):
+        if attr in self._fields:
+            if not isinstance(self._fields[attr], ListField):
                 raise TypeError("only list can add items")
             else:
                 self._object.add(attr, list(objs))
@@ -162,8 +189,8 @@ class Model(with_metaclass(ModelMeta)):
 
 
     def add_unique(self, attr, objs):
-        if attr in self.fields:
-            if not isinstance(self.fields[attr], ListField):
+        if attr in self._fields:
+            if not isinstance(self._fields[attr], ListField):
                 raise TypeError("only list can uniquely add items")
             else:
                 self._object.add_unique(attr, list(objs))
@@ -193,20 +220,20 @@ class Model(with_metaclass(ModelMeta)):
 
 class UserModel(Model):
     def __init__(self, **kwargs):
-        self.fields['username'] = StringField()
-        self.fields['password'] = StringField()
+        self._fields['username'] = StringField()
+        self._fields['password'] = StringField()
 
         self._object = User()
         self._object._class_name = self.__class__.__name__
 
         for key in kwargs:
-            if not key in self.fields:
+            if not key in self._fields:
                 raise AttributeError('There is no {} field in the model'.format(key))
-        for key in self.fields:
+        for key in self._fields:
             if key in kwargs:
                 setattr(self, key, kwargs[key])
             else:
-                setattr(self, key, self.fields[key].default)
+                setattr(self, key, self._fields[key].default)
 
 #    def __getattr__(self, name):
 #        if self._object.has(name):
