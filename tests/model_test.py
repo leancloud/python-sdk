@@ -200,3 +200,22 @@ def test_ordered_assgiment_error():
         co_author = StringField()
 
     Book('Republic', 'Socretes', author='someone', co_author='Plato')
+
+
+def convinence_property_test():
+    plato = get_person()
+    fields = []
+    for f in plato:
+        fields.append(f)
+    assert fields == ['hobby']
+    plato['hobby'] = 'reading'
+    assert plato['hobby'] == 'reading'
+    assert 'hobby' in plato
+    assert len(plato) == 3 # discussion needed
+
+    republic = get_book()
+    plato.save()
+    republic.save()
+
+    assert plato == plato
+    assert plato != republic

@@ -17,10 +17,10 @@ class ModelMeta(type):
         flattened_bases = cls._get_all_bases(bases)
         hierachy_bases = flattened_bases[::-1]
         meta = {
-               'abstract' : False,
-               'delete_rule' : None,
-               'allow_inherence' : False,
-               }
+            'abstract': False,
+            'delete_rule': None,
+            'allow_inherence': False,
+        }
         # merge ancestors' meta
         for base in hierachy_bases:
             if hasattr(base, '_meta'):
@@ -28,11 +28,12 @@ class ModelMeta(type):
 
         # merge user-defeined metadata
         meta.update(attrs.get('meta', {}))
-        if 'meta' in attrs: del attrs['meta']
+        if 'meta' in attrs:
+            del attrs['meta']
         attrs['_meta'] = meta
 
-        #find parent class
-        ancestors = [ a for a in flattened_bases if type(a) == ModelMeta]
+        # find parent class
+        ancestors = [a for a in flattened_bases if type(a) == ModelMeta]
         parent = None if not ancestors else ancestors[0]
 
         # abstract class check
@@ -57,9 +58,9 @@ class ModelMeta(type):
 
             field_names[value.db_field] = field_names.get(value.db_field, 0) + 1
 
-        #count duplicated fields
-        duplicated_fields = [k for k,v in field_names.items() if v >= 3]
-        if duplicated_fields: 
+        # count duplicated fields
+        duplicated_fields = [k for k, v in field_names.items() if v >= 3]
+        if duplicated_fields:
             raise KeyError('The following field names are duplicated: {}'.format(', '.join(duplicated_fields)))
 
         attrs['_fields'] = fields
@@ -70,10 +71,10 @@ class ModelMeta(type):
         # attrs['_fields']['ACL'] = ACLField(default=None)
 
         attrs['_fields_ordered'] = tuple(
-                                        i[1] for i in sorted(
-                                        (value.creation_counter, value.db_field)
-                                        for key, value in fields.items())
-                                        )
+            i[1] for i in sorted(
+                (value.creation_counter, value.db_field)
+                for key, value in fields.items())
+        )
 
         # handle delete rule
 
@@ -118,6 +119,40 @@ class Model(with_metaclass(ModelMeta)):
             else:
                 setattr(self, key, self._fields[key].default)
 
+    def __iter__(self):
+        return iter(self._fields_ordered)
+
+    def __getitem__(self, name):
+        try:
+            if name in self._fields_ordered:
+                return getattr(self, name)
+        except AttributeError:
+            pass
+        raise KeyError(name)
+
+    def __setitem__(self, name, value):
+        return setattr(self, name, value)
+
+    def __contains__(self, name):
+        try:
+            val = getattr(self, name)
+            return val is not None
+        except AttributeError:
+            return False
+
+    def __len__(self):
+        return len(self._fields)
+
+    def __eq__(self, other):
+        if not isinstance(other, Model):
+            return False
+        if not self.id:
+            return self is other
+        return self.id == other.id
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def _inclass_setattr(self, key, value):
         object.__setattr__(self, key, value)
 
@@ -160,7 +195,7 @@ class Model(with_metaclass(ModelMeta)):
         pass
 
     Magic_mode = False
-    
+
     def increment(self, attr, num=1):
         if attr in self._fields:
             if not isinstance(self._fields[attr], NumberField):
@@ -184,7 +219,7 @@ class Model(with_metaclass(ModelMeta)):
 #
 #    def fetch(self):
 #        if not self._object.id:
-#            raise ValueError('the Model needs its ID to fetch data from the server') 
+#            raise ValueError('the Model needs its ID to fetch data from the server')
 #        self._object.fetch()field.
 #
 #    def dump(self):
@@ -198,7 +233,6 @@ class Model(with_metaclass(ModelMeta)):
                 self._object.add(attr, list(objs))
         else:
             raise AttributeError('There is no {} field in the model'.format(attr))
-
 
     def add_unique(self, attr, objs):
         if attr in self._fields:
@@ -230,8 +264,10 @@ class Model(with_metaclass(ModelMeta)):
 #    def validate(self):
 #        self._object.validate(None)
 
+
 class UserModel(Model):
     def __init__(self, **kwargs):
+        # maybe only validate and but not define them here? to straight up field-ordered
         self._fields['username'] = StringField()
         self._fields['password'] = StringField()
 
@@ -239,7 +275,7 @@ class UserModel(Model):
         self._object._class_name = self.__class__.__name__
 
         for key in kwargs:
-            if not key in self._fields:
+            if key not in self._fields:
                 raise AttributeError('There is no {} field in the model'.format(key))
         for key in self._fields:
             if key in kwargs:
