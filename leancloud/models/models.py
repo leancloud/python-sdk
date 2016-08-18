@@ -63,10 +63,20 @@ class ModelMeta(type):
             raise KeyError('The following field names are duplicated: {}'.format(', '.join(duplicated_fields)))
 
         attrs['_fields'] = fields
+
         # attrs['_db_field_map'] = {field.db_field : key, field for field in fields.items}
         # attrs['_reverse_db_field_map'] = {value : key for key, value in attrs['_db_field_map'].items()}
 
         # attrs['_fields']['ACL'] = ACLField(default=None)
+
+        attrs['_fields_ordered'] = tuple(
+                                        i[1] for i in sorted(
+                                        (value.creation_counter, value.db_field)
+                                        for key, value in fields.items())
+                                        )
+
+        # handle delete rule
+
         return super_new(cls, name, bases, attrs)
 
     @classmethod
@@ -89,15 +99,18 @@ class ModelMeta(type):
 
 
 class Model(with_metaclass(ModelMeta)):
-    def __init__(self, **kwargs):
+    def __init__(self, *arg, **kwargs):
         self._object = Object()
         self._object._class_name = self.__class__.__name__
-        # self.id = None
-        # self.created_at = None
-        # self.updated_at = None
+        if arg:
+            for i in range(len(arg)):
+                field = self._fields_ordered[i]
+                if field in kwargs:
+                    raise KeyError(' multiassignment for field {}'.format(field))
+                kwargs[field] = arg[i]
 
         for key in kwargs:
-            if not key in self._fields:
+            if key not in self._fields:
                 raise AttributeError('There is no {} field in the model'.format(key))
         for key in self._fields:
             if key in kwargs:
@@ -113,7 +126,6 @@ class Model(with_metaclass(ModelMeta)):
 
     def __setattr__(self, name, value):
         if name in self._fields:
-            print(self._fields, name)
             self._fields[name].validate(value)
             self._object.set(name, value)
         else:

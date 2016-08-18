@@ -15,11 +15,17 @@ from leancloud import acl
 
 
 class BaseField(object):
+    creation_counter = 0
+
     def __init__(self, db_field=None, unnique=NotImplemented, unique_with=NotImplemented, default=None, nullable=True, verifier=None):
         self.db_field = db_field
         self.default = default
         self.nullable = nullable
         self.verifier = verifier
+
+        # maintain the order of field creation
+        self.creation_counter = BaseField.creation_counter
+        BaseField.creation_counter += 1
 
     def validate(self, value):
         return
@@ -43,10 +49,10 @@ class BaseField(object):
     def __get__(self, instance, owner):
         if instance is None:
             return self
-        # return instance._data.get(self.name)
+        return instance._object.get(self.name)
 
-    def __set__(self, instance, value):
-        pass
+#    def __set__(self, instance, value):
+#        pass
 
 # TODO __init__ and Super paramerters with **karg
 class NumberField(BaseField):
