@@ -13,6 +13,7 @@ from leancloud import Object
 from leancloud import relation
 from leancloud import user
 from leancloud import acl
+from leancloud.models.errors import ValidationError
 
 
 class BaseField(object):
@@ -56,6 +57,9 @@ class BaseField(object):
         if instance is None:
             return self
         return instance._object.get(self.name)
+
+    def error(self, message='', errors=None, name=None):
+        raise ValidationError(message, errors=errors, name=self.db_field)
 
 #    def __set__(self, instance, value):
 #        pass
