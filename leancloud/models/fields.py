@@ -5,6 +5,7 @@ from __future__ import print_function
 
 from datetime import datetime
 import six
+import re
 
 import leancloud
 from leancloud import File as AVFile
@@ -17,11 +18,16 @@ from leancloud import acl
 class BaseField(object):
     creation_counter = 0
 
-    def __init__(self, db_field=None, unnique=NotImplemented, unique_with=NotImplemented, default=None, nullable=True, verifier=None):
+    def __init__(self, db_field=None, unnique=NotImplemented, unique_with=NotImplemented, default=None, nullable=True, verifier=None, **kwargs):
         self.db_field = db_field
         self.default = default
         self.nullable = nullable
         self.verifier = verifier
+
+        # detect conflicts
+        conflicts = set(dir(self)) & set(kwargs)
+        if conflicts:
+            raise KeyError("The following attribute(s) are already defined: {}".format(', '.join(list(conflicts))))
 
         # maintain the order of field creation
         self.creation_counter = BaseField.creation_counter
@@ -31,7 +37,7 @@ class BaseField(object):
         return
 
     def is_valid_empty_field(self, value):
-        if self.nullable and value == None:
+        if self.nullable and value is None:
             return True
         return False
 
@@ -54,7 +60,23 @@ class BaseField(object):
 #    def __set__(self, instance, value):
 #        pass
 
-# TODO __init__ and Super paramerters with **karg
+
+class StringField(BaseField):
+    def __init__(self, max_len=None, min_len=None, regex=None, **kwargs):
+        self.max_len = max_len
+        self.min_len = min_len
+        self.regex = re.compile(regex) if regex else None
+        super(StringField, self).__init__(**kwargs)
+
+    def validate(self, value):
+        self._validate(value, str)
+
+        if len(value) > self.max_len:
+            raise ValueError('String of field {} is longer than expected'.format(self.db_field))
+        if len(value) < self.min_len:
+            raise ValueError('String of field {} is shorter than expected'.format(self.db_field))
+
+
 class NumberField(BaseField):
     def __init__(self, default=None, nullable=True, verifier=None):
         super(NumberField, self).__init__(default=default, nullable=nullable, verifier=verifier)
@@ -75,38 +97,31 @@ class ArrayField(BaseField):
 
 
 class DateField(BaseField):
-    def  __init__(self, default=None, nullable=True, verifier=None):
+    def __init__(self, default=None, nullable=True, verifier=None):
         super(DateField, self).__init__(default, nullable, verifier)
-    
+
     def validate(self, value):
         self._validate(value, datetime)
 
 
 class ACLField(BaseField):
-    def  __init__(self, default=None, nullable=True, verifier=None):
+    def __init__(self, default=None, nullable=True, verifier=None):
         super(ACLField, self).__init__(default, nullable, verifier)
-    
+
     def validate(self, value):
         self._validate(value, acl.ACL)
 
 
-class StringField(BaseField):
-    def  __init__(self, default=None, nullable=True, verifier=None):
-        super(StringField, self).__init__(default, nullable, verifier)
-
-    def validate(self, value):
-        self._validate(value, str)
-
-
 class BooleanField(BaseField):
-    def  __init__(self, default=None, nullable=True, verifier=None):
+    def __init__(self, default=None, nullable=True, verifier=None):
         super(BooleanField, self).__init__(default, nullable, verifier)
 
     def validate(self, value):
         self._validate(value, bool)
 
+
 class FileField(BaseField):
-    def  __init__(self, default=None, nullable=True, verifier=None):
+    def __init__(self, default=None, nullable=True, verifier=None):
         super(FileField, self).__init__(default, nullable, verifier)
 
     def validate(self, value):
@@ -114,7 +129,7 @@ class FileField(BaseField):
 
 
 class PointerField(BaseField):
-    def  __init__(self, default=None, nullable=True, verifier=None):
+    def __init__(self, default=None, nullable=True, verifier=None):
         super(PointerField, self).__init__(default, nullable, verifier)
 
     def validate(self, value):
@@ -122,7 +137,7 @@ class PointerField(BaseField):
 
 
 class UserField(BaseField):
-    def  __init__(self, default=None, nullable=True, verifier=None):
+    def __init__(self, default=None, nullable=True, verifier=None):
         super(UserField, self).__init__(default, nullable, verifier)
 
     def validate(self, value):
@@ -130,7 +145,7 @@ class UserField(BaseField):
 
 
 class RelationField(BaseField):
-    def  __init__(self, default=None, nullable=True, verifier=None):
+    def __init__(self, default=None, nullable=True, verifier=None):
         super(RelationField, self).__init__(default, nullable, verifier)
 
     def validate(self, value):
