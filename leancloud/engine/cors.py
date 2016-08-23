@@ -39,7 +39,7 @@ class CORSMiddleware(object):
                 ('Access-Control-Allow-Methods', self.ALLOW_METHODS),
                 ('Access-Control-Max-Age', self.MAX_AGE)
             ])
-            return ['']
+            return [b'']
         else:
             def cors_start_response(status, headers, exc_info=None):
                 headers.append(('Access-Control-Allow-Origin', self.ALLOW_ORIGIN))
