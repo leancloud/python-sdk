@@ -238,8 +238,12 @@ class Object(with_metaclass(ObjectMeta, object)):
             return
         dumped_objs = []
         for obj in unsaved_children:
-            method = 'POST' if obj.id is None else 'PUT'
-            path = '/{0}/classes/{1}'.format(client.SERVER_VERSION, obj._class_name)
+            if obj.id is None:
+                method = 'POST'
+                path = '/{0}/classes/{1}'.format(client.SERVER_VERSION, obj._class_name)
+            else:
+                method = 'PUT'
+                path = '/{0}/classes/{1}/{2}'.format(client.SERVER_VERSION, obj._class_name, obj.id)
             body = obj._dump_save()
             dumped_obj = {
                 'method': method,
@@ -253,16 +257,17 @@ class Object(with_metaclass(ObjectMeta, object)):
         errors = []
         for idx, obj in enumerate(unsaved_children):
             content = response[idx]
-            if not content.get('success'):
-                errors.append(leancloud.LeanCloudError(content.get('code'), content.get('error')))
+            error = content.get('error')
+            if error:
+                errors.append(leancloud.LeanCloudError(error.get('code'), error.get('error')))
             else:
                 obj._update_data(content['success'])
 
-            if errors:
-                # TODO: how to raise list of errors?
-                # raise MultipleValidationErrors(errors)
-                # add test
-                raise errors[0]
+        if errors:
+            # TODO: how to raise list of errors?
+            # raise MultipleValidationErrors(errors)
+            # add test
+            raise errors[0]
 
     @classmethod
     def _find_unsaved_children(cls, obj, children, files):
