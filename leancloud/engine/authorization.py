@@ -96,7 +96,6 @@ class AuthorizationMiddleware(object):
         if (not request.content_type) or ('text/plain' not in request.content_type):
             return
 
-        # the JSON object must be str, not 'bytes' for 3.x.
         body = json.loads(to_native(request.data))
 
         environ['_app_params']['id'] = body.get('_ApplicationId')

@@ -167,7 +167,7 @@ def traverse_object(obj, callback, seen=None):
     return callback(obj)
 
 
-def sign_disable_hook(hook_name, master_key, timestamp):
+def sign_hook(hook_name, master_key, timestamp):
     sign = hmac.new(to_bytes(master_key),
                     to_bytes('{0}:{1}'.format(hook_name, timestamp)),
                     hashlib.sha1).hexdigest()
