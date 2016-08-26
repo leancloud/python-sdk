@@ -267,6 +267,9 @@ def test_pointer(): # type: () -> None
 def test_save_and_destroy_all(): # type: () -> None
     ObjToDelete = Object.extend('ObjToDelete')
     objs = [ObjToDelete() for _ in range(3)]
+    already_saved_obj = ObjToDelete()
+    already_saved_obj.save()
+    objs.append(already_saved_obj)
     Object.save_all(objs)
     assert all(not x.is_new() for x in objs)
 
