@@ -224,7 +224,6 @@ def test_authorization_3(): # type: () -> None
 def test_register_cloud_func(): # type: () -> None
     @engine.define
     def ping(**params):
-        print('params:', params)
         assert params == {"foo": ["bar", "baz"]}
         return 'pong'
 
@@ -237,6 +236,48 @@ def test_register_cloud_func(): # type: () -> None
 
     # test run in local
     assert cloudfunc.run.local('ping', foo=['bar', 'baz']) == 'pong'
+
+
+def test_realtime_cloud_func(): # type: () -> None
+    @engine.define
+    def _messageReceived():
+        pass
+    try:
+        cloudfunc.run.local('_messageReceived', __sign='321,xxx')
+    except leancloud.LeanEngineError as e:
+        assert e.code == 401
+    else:
+        raise AssertionError
+    response = requests.post(url + '/__engine/1/functions/_messageReceived', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    }, json={'foo': ['bar', 'baz'], '__sign': '123,xxx'})
+    assert response.status_code == 401
+
+    timestamp = int(time.time() * 1000)
+    cloudfunc.run.local('_messageReceived', __sign=leancloud.utils.sign_hook('_messageReceived', TEST_MASTER_KEY, timestamp))
+
+
+def test_on_verified(): # type: () -> None
+    @engine.on_verified('sms')
+    def on_sms_verified(user):
+        assert isinstance(user, leancloud.User)
+        assert user.id == 'xxx'
+
+    timestamp = int(time.time() * 1000)
+    response = requests.post(url + '/__engine/1/functions/onVerified/sms', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    }, json={'__sign': '123,xxx'})
+    assert response.status_code == 401
+    response = requests.post(url + '/__engine/1/functions/onVerified/sms', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    }, json={
+        '__sign': leancloud.utils.sign_hook('__on_verified_sms', TEST_MASTER_KEY, timestamp),
+        'object': {'objectId': 'xxx'},
+    })
+    assert response.ok
 
 
 def test_rpc_call(): # type: () -> None
@@ -316,8 +357,10 @@ def test_on_login(): # type: () -> None
     def on_login(user):
         assert isinstance(user, leancloud.User)
 
+    timestamp = int(time.time() * 1000)
     response = requests.post(url + '/__engine/1.1/functions/_User/onLogin', json={
-        'object': {}
+        'object': {},
+        '__sign': leancloud.utils.sign_hook('__on_login__User', TEST_MASTER_KEY, timestamp),
     }, headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
@@ -335,13 +378,15 @@ def test_bigquery(): # type: () -> None
             "message": u"当  status 为 ERROR 时的错误消息"
         }
 
+    timestamp = int(time.time() * 1000)
     response = requests.post(url + '/__engine/1/functions/BigQuery/onComplete', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
     }, json={
         "id": u"job id",
         "status": u"OK/ERROR",
-        "message": u"当  status 为 ERROR 时的错误消息"
+        "message": u"当  status 为 ERROR 时的错误消息",
+        '__sign': leancloud.utils.sign_hook('__on_complete_bigquery_job', TEST_MASTER_KEY, timestamp),
     })
     assert response.ok
 

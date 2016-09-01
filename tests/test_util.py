@@ -4,8 +4,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import time
+
 from nose.tools import eq_
 
+import leancloud
 from leancloud import Object
 from leancloud import ACL
 from leancloud import GeoPoint
@@ -89,6 +92,8 @@ def test_util(): # type: () -> None
     assert callback.count == 2
 
 
-def test_sign_disable_hook(): # type: () -> None
-    sign = utils.sign_disable_hook('__before_for_TestClass', 'test-master-key', '1453711871302')
+def test_sign_hook(): # type: () -> None
+    sign = utils.sign_hook('__before_for_TestClass', 'test-master-key', '1453711871302')
     eq_(sign, '1453711871302,f10c9dd65da84b564f1b9a8b57df4a07774bc77b')
+    sign = utils.sign_hook('__before_for_TestClass', 'test-master-key', int(time.time()) * 1000)
+    leancloud.engine.utils.verify_hook_sign('__before_for_TestClass', 'test-master-key', sign)

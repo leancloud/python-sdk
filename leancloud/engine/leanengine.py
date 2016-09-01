@@ -1,5 +1,10 @@
 # coding: utf-8
 
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import sys
 import json
 import logging
 import traceback
@@ -13,6 +18,7 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.exceptions import NotAcceptable
 
 from . import context
+from . import utils
 from leancloud._compat import to_native
 
 
@@ -81,7 +87,6 @@ class LeanEngineApplication(object):
 
         request = environ['leanengine.request']
         try:
-            # the JSON object must be str, not 'bytes' for 3.x.
             data = json.loads(to_native(request.get_data()))
         except ValueError:
             context.local.user = None
@@ -102,7 +107,6 @@ class LeanEngineApplication(object):
         except HTTPException as e:
             return e
 
-        # the JSON object must be str, not 'bytes' for 3.x.
         params = to_native(request.get_data())
         values['params'] = json.loads(params) if params != '' else {}
 
@@ -118,6 +122,9 @@ class LeanEngineApplication(object):
             elif endpoint == 'on_login':
                 result = {'result': dispatch_on_login(**values)}
             elif endpoint == 'ops_meta_data':
+                from .authorization import MASTER_KEY
+                if request.environ.get('_app_params', {}).get('master_key') != MASTER_KEY:
+                    raise LeanEngineError(code=401, message='Unauthorized.')
                 result = {'result': dispatch_ops_meta_data()}
             elif endpoint == 'on_bigquery':
                 result = {'result': dispatch_on_bigquery(**values)}
@@ -127,11 +134,11 @@ class LeanEngineApplication(object):
         except LeanEngineError as e:
             return Response(
                 json.dumps({'code': e.code, 'error': e.message}),
-                status=400,
+                status=e.code if e.code else 400,
                 mimetype='application/json'
             )
         except Exception:
-            print(traceback.format_exc())
+            print(traceback.format_exc(), file=sys.stderr)
             return Response(
                 json.dumps({'code': 141, 'error': 'Cloud Code script had an error.'}),
                 status=500,
@@ -160,12 +167,20 @@ def register_cloud_func(func):
 
 
 def dispatch_cloud_func(func_name, decode_object, params):
+    # let's check realtime hook sign first
+    realtime_hook_funcs = [
+        '_messageReceived', '_receiversOffline', '_messageSent', '_conversationStart', '_conversationStarted',
+        '_conversationAdd', '_conversationRemove', '_conversationUpdate'
+    ]
+    from .authorization import MASTER_KEY
+    sign = params.pop('__sign', '')
+    if func_name in realtime_hook_funcs:
+        if not utils.verify_hook_sign(func_name, MASTER_KEY, sign):
+            raise LeanEngineError(code=401, message='Unauthorized.')
+
     # delete all keys in params which starts with low dash.
     # JS SDK may send it's app info with them.
-    keys = params.keys()
-    for key in keys:
-        if key.startswith('_') and key != '__type':
-            params.pop(key)
+    params = {k: v for k, v in params.items() if (not k.startswith('_')) or k == '__type'}
 
     if decode_object:
         params = leancloud.utils.decode('', params)
@@ -263,11 +278,19 @@ def register_on_verified(verify_type):
     return new_func
 
 
-def dispatch_on_verified(verify_type, user):
-    func = _cloud_codes.get(verify_type)
+def dispatch_on_verified(verify_type, params):
+    func_name = '__on_verified_' + verify_type
+    from .authorization import MASTER_KEY
+    sign = params.pop('__sign', '')
+    if not utils.verify_hook_sign(func_name, MASTER_KEY, sign):
+        raise LeanEngineError(code=401, message='Unauthorized.')
+
+    user = leancloud.User()
+    user._update_data(params['object'])
+
+    func = _cloud_codes.get(func_name)
     if not func:
         return
-
     return func(user)
 
 
@@ -280,6 +303,11 @@ def register_on_login(func):
 
 
 def dispatch_on_login(params):
+    from .authorization import MASTER_KEY
+    sign = params.pop('__sign', '')
+    if not utils.verify_hook_sign('__on_login__User', MASTER_KEY, sign):
+        raise LeanEngineError(code=401, message='Unauthorized.')
+
     func = _cloud_codes.get('__on_login__User')
     if not func:
         return
@@ -312,6 +340,11 @@ def dispatch_on_bigquery(event, params):
         func_name = '__on_complete_bigquery_job'
     else:
         return
+
+    from .authorization import MASTER_KEY
+    sign = params.pop('__sign', '')
+    if not utils.verify_hook_sign(func_name, MASTER_KEY, sign):
+        raise LeanEngineError(code=401, message='Unauthorized.')
 
     func = _cloud_codes.get(func_name)
     if not func:
