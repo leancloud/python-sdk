@@ -1,7 +1,8 @@
-leancloud.role module
-=====================
+leancloud.Role class
+====================
 
-.. automodule:: leancloud.role
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. autoclass:: leancloud.Role
+  :show-inheritance:
+  :inherited-members:
+  :members:
+  :undoc-members:

@@ -1,7 +1,7 @@
-leancloud.Engine class
+leancloud.GeoPoint class
 ========================
 
-.. autoclass:: leancloud.Engine
+.. autoclass:: leancloud.GeoPoint
   :show-inheritance:
   :inherited-members:
   :members:

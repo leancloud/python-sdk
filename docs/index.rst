@@ -3,22 +3,34 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+================================================
 LeanCloud-Python-SDK API 文档
 ================================================
 
 
 .. toctree::
-   :maxdepth: 2
+  :maxdepth: 4
 
-   leancloud
-   leancloud.engine
-
-
+  leancloud
+  leancloud.Object
+  leancloud.User
+  leancloud.File
+  leancloud.Query
+  leancloud.Relation
+  leancloud.FriendshipQuery
+  leancloud.Role
+  leancloud.ACL
+  leancloud.GeoPoint
+  leancloud.Engine
+  leancloud.HttpsRedirectMiddleware
+  leancloud.LeanCloudError
+  leancloud.LeanCloudWarning
+  leancloud.cloudfunc
+  leancloud.engine.cloudfunc
+  leancloud.push
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
-
