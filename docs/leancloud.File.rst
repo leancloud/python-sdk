@@ -1,7 +1,7 @@
-leancloud.ACL class
-===================
+leancloud.File class
+====================
 
-.. autoclass:: leancloud.ACL
+.. autoclass:: leancloud.File
   :show-inheritance:
   :inherited-members:
   :members:

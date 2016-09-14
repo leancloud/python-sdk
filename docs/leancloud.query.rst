@@ -1,7 +1,8 @@
-leancloud.query module
-======================
+leancloud.Query class
+=====================
 
-.. automodule:: leancloud.query
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. autoclass:: leancloud.Query
+  :show-inheritance:
+  :inherited-members:
+  :members:
+  :undoc-members:

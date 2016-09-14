@@ -1,7 +1,8 @@
-leancloud.relation module
-=========================
+leancloud.Relation class
+========================
 
-.. automodule:: leancloud.relation
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. autoclass:: leancloud.Relation
+  :show-inheritance:
+  :inherited-members:
+  :members:
+  :undoc-members:

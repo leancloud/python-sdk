@@ -1,24 +1,12 @@
-leancloud package
-=================
+leancloud module
+================
 
-Submodules
-----------
+.. module:: leancloud
 
-.. toctree::
+.. autofunction:: init
 
-   leancloud.acl
-   leancloud.client
-   leancloud.errors
-   leancloud.fields
-   leancloud.file_
-   leancloud.geo_point
-   leancloud.mime_type
-   leancloud.object_
-   leancloud.operation
-   leancloud.push
-   leancloud.query
-   leancloud.relation
-   leancloud.role
-   leancloud.user
-   leancloud.utils
+.. autofunction:: use_master_key
 
+.. autofunction:: use_production
+
+.. autofunction:: use_region

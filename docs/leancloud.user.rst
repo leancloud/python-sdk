@@ -1,7 +1,8 @@
-leancloud.user module
-=====================
+leancloud.User class
+====================
 
-.. automodule:: leancloud.user
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. autoclass:: leancloud.User
+  :show-inheritance:
+  :inherited-members:
+  :members:
+  :undoc-members:
