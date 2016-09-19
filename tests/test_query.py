@@ -151,6 +151,10 @@ def test_basic_query(): # type: () -> None
     # first
     game_score = GameScore.query.first()
     assert game_score
+    assert game_score.get('objectId')
+
+    assert isinstance(game_score.get('createdAt'), datetime)
+    assert isinstance(game_score.get('updatedAt'), datetime)
 
     # get
     GameScore.query.get(game_score.id)

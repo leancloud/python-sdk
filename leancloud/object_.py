@@ -307,11 +307,13 @@ class Object(with_metaclass(ObjectMeta, object)):
                 self.id = server_data[key]
             else:
                 dt = iso8601.parse_date(server_data[key])
+                server_data[key] = dt
                 if key == 'createdAt':
                     self.created_at = dt
-                else:
+                elif key == 'updatedAt':
                     self.updated_at = dt
-            del server_data[key]
+                else:
+                    raise TypeError
 
     def validate(self, attrs):
         if 'ACL' in attrs and not isinstance(attrs['ACL'], leancloud.ACL):
