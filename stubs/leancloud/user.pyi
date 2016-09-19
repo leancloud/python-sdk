@@ -1,5 +1,6 @@
 from typing import Any, Dict
 import leancloud
+from leancloud.role import Role
 from leancloud.object_ import Object
 from leancloud.query import Query
 
@@ -69,6 +70,8 @@ class User(Object):
     def set_email(self, email: str) -> User:...
 
     def get_email(self) -> User:...
+
+    def get_roles(self): -> List[Role]
 
     @classmethod
     def request_password_reset(self, email: str) -> None:...

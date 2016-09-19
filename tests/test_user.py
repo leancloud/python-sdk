@@ -236,6 +236,21 @@ def test_get_methods(): # type: () -> None
 
 
 @with_setup(get_setup_func())
+def test_get_roles(): # type: () -> None
+    role = leancloud.Role('xxx')
+    role.save()
+
+    user = User()
+    user.login('user1_name', 'password')
+    role.get_users().add(user)
+    role.save()
+    bind_roles = user.get_roles()
+    assert len(bind_roles) == 1
+    assert bind_roles[0].get('name') == 'xxx'
+
+    role.destroy()
+
+@with_setup(get_setup_func())
 def test_request_password_reset(): # type: () -> None
     try:
         User.request_password_reset('wow@leancloud.rocks')
