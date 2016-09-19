@@ -17,6 +17,7 @@ logger.setLevel(logging.CRITICAL)
 
 from . import client
 from . import push
+from . import cloudfunc
 from .acl import ACL
 from .client import init
 from .client import use_master_key
@@ -24,7 +25,6 @@ from .client import use_production
 from .client import use_region
 from .engine import Engine
 from .engine import LeanEngineError
-from .engine import cloudfunc
 from .engine.https_redirect_middleware import HttpsRedirectMiddleware
 from .errors import LeanCloudError
 from .errors import LeanCloudWarning
