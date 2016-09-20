@@ -8,8 +8,9 @@ from __future__ import print_function
 import threading
 
 from leancloud import FriendshipQuery
-from leancloud import client
 from leancloud import Object
+from leancloud import Relation
+from leancloud import client
 from leancloud._compat import string_types
 
 __author__ = 'asaka'
@@ -267,6 +268,9 @@ class User(Object):
 
     def get_email(self):
         return self.get('email')
+
+    def get_roles(self):
+        return Relation.reverse_query('_Role', 'users', self).find()
 
     @classmethod
     def request_password_reset(self, email):
