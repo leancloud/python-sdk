@@ -2,6 +2,7 @@
 
 import sys
 import json
+import warnings
 
 from werkzeug.wrappers import Request
 from werkzeug.wrappers import Response
@@ -53,6 +54,11 @@ class Engine(object):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 
+    @staticmethod
+    def on_bigquery(*args, **kwargs):
+        warnings.warn('on_bigquery is deprecated, please use on_insight instead', leancloud.LeanCloudWarning)
+        return register_on_bigquery(*args, **kwargs)
+
     define = staticmethod(register_cloud_func)
     on_verified = staticmethod(register_on_verified)
     on_login = staticmethod(register_on_login)
@@ -62,8 +68,7 @@ class Engine(object):
     after_update = staticmethod(after_update)
     before_delete = staticmethod(before_delete)
     after_delete = staticmethod(after_delete)
-    on_bigquery = staticmethod(register_on_bigquery)
-
+    on_insight = staticmethod(register_on_bigquery)
     run = staticmethod(run_simple)
 
 
