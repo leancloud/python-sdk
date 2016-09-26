@@ -1,3 +1,12 @@
+## [1.6.4] - 2016-09-26
+### Fixed
+- LeanEngine CORS middleware error in Python3
+- missing objectId while using Object._deep_save to update an object
+- allow Object.get method get objectId / createAt/ updatedAt field
+### Updated
+- leancloud.User#get_roles()
+- rename leancloud.Engine#on_bigquery to leancloud.Engine#on_insight
+
 ## [1.6.3] - 2016-08-03
 ### Fixed
 - deprecate leancloud.Query.does_not_exists and add leancloud.Query.does_not_exist
