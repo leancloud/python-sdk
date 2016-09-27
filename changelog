@@ -1,3 +1,7 @@
+## [1.6.5] - 2016-09-27
+### Fixed
+- LeanEngine on_login / on_verified bugfix
+
 ## [1.6.4] - 2016-09-26
 ### Fixed
 - LeanEngine CORS middleware error in Python3
