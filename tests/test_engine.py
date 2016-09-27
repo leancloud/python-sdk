@@ -268,14 +268,16 @@ def test_on_verified(): # type: () -> None
     response = requests.post(url + '/__engine/1/functions/onVerified/sms', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
-    }, json={'__sign': '123,xxx'})
+    }, json={'object': {'__sign': '123,xxx'}})
     assert response.status_code == 401
     response = requests.post(url + '/__engine/1/functions/onVerified/sms', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
     }, json={
-        '__sign': leancloud.utils.sign_hook('__on_verified_sms', TEST_MASTER_KEY, timestamp),
-        'object': {'objectId': 'xxx'},
+        'object': {
+            'objectId': 'xxx',
+            '__sign': leancloud.utils.sign_hook('__on_verified_sms', TEST_MASTER_KEY, timestamp),
+        },
     })
     assert response.ok
 
@@ -359,8 +361,9 @@ def test_on_login(): # type: () -> None
 
     timestamp = int(time.time() * 1000)
     response = requests.post(url + '/__engine/1.1/functions/_User/onLogin', json={
-        'object': {},
-        '__sign': leancloud.utils.sign_hook('__on_login__User', TEST_MASTER_KEY, timestamp),
+        'object': {
+            '__sign': leancloud.utils.sign_hook('__on_login__User', TEST_MASTER_KEY, timestamp),
+        },
     }, headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
