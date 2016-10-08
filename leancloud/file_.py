@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import os
 import re
+import io
 import base64
 import codecs
 import random
@@ -15,7 +16,6 @@ import requests
 
 import leancloud
 from leancloud import client
-from leancloud._compat import BytesIO
 from leancloud._compat import PY2
 from leancloud._compat import range_type
 from leancloud._compat import file_type
@@ -53,18 +53,18 @@ class File(object):
 
         if data is None:
             self._source = None
-        elif isinstance(data, BytesIO):
+        elif isinstance(data, io.BytesIO):
             self._source = data
         elif isinstance(data, file_type):
             data.seek(0, os.SEEK_SET)
-            self._source = BytesIO(data.read())
+            self._source = io.BytesIO(data.read())
         elif isinstance(data, buffer_type):
-            self._source = BytesIO(data)
+            self._source = io.BytesIO(data)
         elif PY2:
-            import cStringIO
-            if isinstance(data, cStringIO.OutputType):
+            import cStringIO, StringIO
+            if isinstance(data, (cStringIO.OutputType, StringIO.StringIO)):
                 data.seek(0, os.SEEK_SET)
-                self._source = BytesIO(data.getvalue())
+                self._source = io.BytesIO(data.getvalue())
             else:
                 raise TypeError('data must be a StringIO / buffer / file instance')
 
