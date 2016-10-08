@@ -355,7 +355,7 @@ class Query(object):
         return self
 
     def does_not_exists(self, key):
-        warnings.warn(' the query is deprecated, please use matches_key_in_query', LeanCloudWarning)
+        warnings.warn('the query does_not_exists is deprecated, please use does_not_exist instead', LeanCloudWarning)
         return self.does_not_exist(key)
 
     def does_not_exist(self, key):
@@ -419,7 +419,7 @@ class Query(object):
         return self
 
     def matched_key_in_query(self, key, query_key, query):
-        warnings.warn(' the query is deprecated, please use matches_key_in_query', LeanCloudWarning)
+        warnings.warn('the query matched_key_in_query is deprecated, please use matches_key_in_query', LeanCloudWarning)
         return self.matches_key_in_query(key, query_key, query)
 
     def matches_key_in_query(self, key, query_key, query):
