@@ -125,6 +125,14 @@ push
   :undoc-members:
   :show-inheritance:
 
+cloudfunc
+---------
+
+.. automodule:: leancloud.cloudfunc
+  :members:
+  :undoc-members:
+  :show-inheritance:
+
 Indices and tables
 ==================
 
