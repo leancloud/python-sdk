@@ -117,16 +117,16 @@ Engine
   :members:
   :undoc-members:
 
-push
-----
+leancloud.push
+==============
 
 .. automodule:: leancloud.push
   :members:
   :undoc-members:
   :show-inheritance:
 
-cloudfunc
----------
+leancloud.cloudfunc
+===================
 
 .. automodule:: leancloud.cloudfunc
   :members:
