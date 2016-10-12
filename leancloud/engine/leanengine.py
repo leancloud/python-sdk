@@ -20,6 +20,7 @@ from werkzeug.exceptions import NotAcceptable
 from . import context
 from . import utils
 from leancloud._compat import to_native
+from leancloud._compat import string_types
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -30,7 +31,10 @@ user = context.local('user')
 
 
 class LeanEngineError(Exception):
-    def __init__(self, code=1, message='error'):
+    def __init__(self, code=400, message='error'):
+        if isinstance(code, string_types):
+            message = code
+            code = 400
         self.code = code
         self.message = message
 
