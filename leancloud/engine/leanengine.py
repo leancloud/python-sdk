@@ -20,6 +20,7 @@ from werkzeug.exceptions import NotAcceptable
 from . import context
 from . import utils
 from leancloud._compat import to_native
+from leancloud._compat import string_types
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -158,7 +159,17 @@ hook_name_mapping = {
 _cloud_codes = {}
 
 
-def register_cloud_func(func):
+def register_cloud_func(func_or_func_name):
+    if isinstance(func_or_func_name, string_types):
+        func_name = func_or_func_name
+        def inner_func(func):
+            if func_name in _cloud_codes:
+                raise RuntimeError('cloud function: {0} is already registered'.format(func_name))
+            _cloud_codes[func_name] = func
+            return func
+        return inner_func
+
+    func = func_or_func_name
     func_name = func.__name__
     if func_name in _cloud_codes:
         raise RuntimeError('cloud function: {0} is already registered'.format(func_name))

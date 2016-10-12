@@ -73,6 +73,10 @@ def setup():
     def hello(**params):
         return 'hello'
 
+    @engine.define('fooBarBaz')
+    def foo_bar_baz(**params):
+        return 'yes'
+
 
 def teardown():
     requests_intercept.uninstall()
@@ -236,6 +240,15 @@ def test_register_cloud_func(): # type: () -> None
 
     # test run in local
     assert cloudfunc.run.local('ping', foo=['bar', 'baz']) == 'pong'
+
+
+def test_cloud_func_name_alias(): # type: () -> None
+    response = requests.get(url + '/__engine/1/functions/fooBarBaz', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    })
+    assert response.ok
+    assert response.json() == {u'result': u'yes'}
 
 
 def test_realtime_cloud_func(): # type: () -> None
