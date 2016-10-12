@@ -78,6 +78,15 @@ def teardown():
     requests_intercept.uninstall()
 
 
+def test_lean_engine_error():
+    err = leancloud.LeanEngineError(233, 'llllleancloud')
+    assert err.code == 233
+    assert err.message == 'llllleancloud'
+    err = leancloud.LeanEngineError('error messages')
+    assert err.code == 400
+    assert err.message == 'error messages'
+
+
 def test_origin_response(): # type: () -> None
     resp = requests.get(url)
     assert resp.ok
