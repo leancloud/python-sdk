@@ -1,6 +1,6 @@
 # Python-SDK
 
-[![Build Status](https://travis-ci.org/leancloud/python-sdk.svg?branch=master)](https://travis-ci.org/leancloud/python-sdk)
+[![Build Status](https://travis-ci.org/leancloud/python-sdk.svg?branch=master)](https://travis-ci.org/leancloud/python-sdk) [![Python3 Support](https://caniusepython3.com/project/leancloud-sdk.svg)](https://caniusepython3.com/project/leancloud-sdk)
 
 LeanCloud Python SDK (under development)
 
