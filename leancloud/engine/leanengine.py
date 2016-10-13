@@ -28,6 +28,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 logger = logging.getLogger('leancloud.cloudcode.cloudcode')
 
 user = context.local('user')
+current = context.local('current')
 
 
 class LeanEngineError(Exception):
@@ -83,13 +84,20 @@ class LeanEngineApplication(object):
 
     @classmethod
     def process_session(cls, environ):
+        request = environ['leanengine.request']
+        context.local.current = context.Current()
+        context.local.current.meta = {
+            'remote_address': get_remote_address(request),
+        }
+
         if environ['_app_params']['session_token'] not in (None, ''):
             session_token = environ['_app_params']['session_token']
             user = leancloud.User.become(session_token)
+            context.local.current.user = user
+            context.local.current.session_token = session_token
             context.local.user = user
             return
 
-        request = environ['leanengine.request']
         try:
             data = json.loads(to_native(request.get_data()))
         except ValueError:
@@ -99,6 +107,8 @@ class LeanEngineApplication(object):
         if 'user' in data and data['user']:
             user = leancloud.User()
             user._update_data(data['user'])
+            context.local.current.user = user
+            context.local.current.session_token = user.get_session_token()
             context.local.user = user
             return
 
@@ -366,3 +376,7 @@ def dispatch_on_bigquery(event, params):
 
     ok = True if params['status'] == 'OK' else False
     return func(ok, params)
+
+
+def get_remote_address(request):
+    return request.headers.get('x-real-ip') or request.headers.get('x-forwarded-for') or request.remote_addr

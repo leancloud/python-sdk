@@ -24,6 +24,7 @@ from .leanengine import after_update
 from .leanengine import before_delete
 from .leanengine import after_delete
 from .leanengine import user
+from .leanengine import current
 from .leanengine import register_on_bigquery
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -31,7 +32,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 class Engine(object):
     def __init__(self, wsgi_app):
-        self.current_user = user
+        self.current = current
         self.origin_app = wsgi_app
         self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(LeanEngineApplication())))
 
@@ -53,6 +54,11 @@ class Engine(object):
         if request.path.startswith('/1/call') or request.path.startswith('/1.1/call'):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
+
+    @property
+    def current_user(self):
+        warnings.warn('Engine.current_user is deprecated, please use Engine.current.user instead', leancloud.LeanCloudWarning)
+        return user
 
     @staticmethod
     def on_bigquery(*args, **kwargs):
