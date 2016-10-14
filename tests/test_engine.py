@@ -456,6 +456,11 @@ def test_current_user(): # type: () -> None
         TestCurrentUser.query.equal_to('user', user).find()
         assert user.get('username') == saved_user.get('username')
 
+        # test current
+        assert engine.current.session_token == session_token
+        assert user.get('username') is engine.current.user.get('username')
+        assert 'remote_address' in engine.current.meta
+
     response = requests.get(url + '/__engine/1/functions/current_user', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
@@ -472,3 +477,6 @@ def test_current_user(): # type: () -> None
         'x-avoscloud-application-key': TEST_APP_KEY,
     }, json={'object': {}, 'user': {'username': saved_user.get('username')}})
     assert response.status_code == 200
+
+    # cleanup
+    saved_user.destroy()
