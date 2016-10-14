@@ -43,9 +43,14 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     """
     if push_time and expiration_time:
         raise TypeError('Both expiration_time and expiration_time_interval can\'t be set')
+
     params = {
         'data': data,
     }
+
+    if client.USE_PRODUCTION == '0':
+        params['prod'] = 'dev'
+
     if channels:
         params['channels'] = channels
     if push_time:
