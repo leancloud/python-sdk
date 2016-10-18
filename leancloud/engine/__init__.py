@@ -9,23 +9,23 @@ from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
 
 import leancloud
-from . import context
 from .authorization import AuthorizationMiddleware
 from .cors import CORSMiddleware
 from .leanengine import LeanEngineApplication
 from .leanengine import LeanEngineError
-from .leanengine import register_cloud_func
-from .leanengine import register_on_verified
-from .leanengine import register_on_login
-from .leanengine import before_save
+from .leanengine import after_delete
 from .leanengine import after_save
-from .leanengine import before_update
 from .leanengine import after_update
 from .leanengine import before_delete
-from .leanengine import after_delete
-from .leanengine import user
+from .leanengine import before_save
+from .leanengine import before_update
+from .leanengine import context
 from .leanengine import current
+from .leanengine import register_cloud_func
 from .leanengine import register_on_bigquery
+from .leanengine import register_on_login
+from .leanengine import register_on_verified
+from .leanengine import user
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -65,17 +65,38 @@ class Engine(object):
         warnings.warn('on_bigquery is deprecated, please use on_insight instead', leancloud.LeanCloudWarning)
         return register_on_bigquery(*args, **kwargs)
 
-    define = staticmethod(register_cloud_func)
-    on_verified = staticmethod(register_on_verified)
-    on_login = staticmethod(register_on_login)
-    before_save = staticmethod(before_save)
-    after_save = staticmethod(after_save)
-    before_update = staticmethod(before_update)
-    after_update = staticmethod(after_update)
-    before_delete = staticmethod(before_delete)
-    after_delete = staticmethod(after_delete)
-    on_insight = staticmethod(register_on_bigquery)
-    run = staticmethod(run_simple)
+    def define(self, *args, **kwargs):
+        return register_cloud_func(*args, **kwargs)
+
+    def on_verified(self, *args, **kwargs):
+        return register_on_verified(*args, **kwargs)
+
+    def on_login(self, *args, **kwargs):
+        return register_on_login(*args, **kwargs)
+
+    def before_save(self, *args, **kwargs):
+        return before_save(*args, **kwargs)
+
+    def after_save(self, *args, **kwargs):
+        return after_save(*args, **kwargs)
+
+    def before_update(self, *args, **kwargs):
+        return before_update(*args, **kwargs)
+
+    def after_update(self, *args, **kwargs):
+        return after_update(*args, **kwargs)
+
+    def before_delete(self, *args, **kwargs):
+        return before_delete(*args, **kwargs)
+
+    def after_delete(self, *args, **kwargs):
+        return after_delete(*args, **kwargs)
+
+    def on_insight(self, *args, **kwargs):
+        return register_on_bigquery(*args, **kwargs)
+
+    def run(self, *args, **kwargs):
+        return run_simple(*args, **kwargs)
 
 
 __all__ = [
