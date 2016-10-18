@@ -8,9 +8,10 @@ import os
 import time
 import json
 import requests
+import typing
 
-from wsgi_intercept import requests_intercept, add_wsgi_intercept
-
+from wsgi_intercept import requests_intercept
+from wsgi_intercept import add_wsgi_intercept
 
 import leancloud
 from leancloud import Engine
@@ -22,7 +23,7 @@ from .request_generator import generate_request
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
-env = None
+env = None  # type: typing.Dict[str, str]
 
 TEST_APP_ID = os.environ['APP_ID']
 TEST_APP_KEY = os.environ['APP_KEY']

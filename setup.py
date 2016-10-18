@@ -5,13 +5,15 @@ import sys
 
 here = path.abspath(path.dirname(__file__))
 
-extra_require = {
-        'dev': ['sphinx'],
-        'test': ['nose', 'coverage', 'wsgi_intercept'],
-    }
-
-if sys.version_info.major == 2:
-    extra_require['test'].append('typing')
+install_requires=[
+    'arrow',
+    'iso8601',
+    'qiniu',
+    'requests',
+    'werkzeug',
+]
+if sys.version_info < (3, 5, 0):
+    install_requires.append('typing')
 
 setup(
     name='leancloud-sdk',
@@ -41,13 +43,10 @@ setup(
 
     test_suite='nose.collector',
 
-    install_requires=[
-        'arrow',
-        'iso8601',
-        'qiniu',
-        'requests',
-        'werkzeug',
-    ],
+    install_requires=install_requires,
 
-    extras_require=extra_require
+    extras_require = {
+        'dev': ['sphinx'],
+        'test': ['nose', 'wsgi_intercept'],
+    }
 )
