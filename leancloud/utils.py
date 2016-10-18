@@ -14,7 +14,7 @@ from datetime import datetime
 import arrow
 import iso8601
 from werkzeug import LocalProxy
-from dateutil import tz
+import dateutil.tz as tz
 
 import leancloud
 from leancloud import operation

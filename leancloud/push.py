@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import arrow
-from dateutil import tz
+import dateutil.tz as tz
 
 from leancloud.object_ import Object
 from leancloud import client

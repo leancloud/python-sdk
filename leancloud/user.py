@@ -7,11 +7,11 @@ from __future__ import print_function
 
 import threading
 
-from leancloud import FriendshipQuery
-from leancloud import Object
-from leancloud import Relation
 from leancloud import client
 from leancloud._compat import string_types
+from leancloud.query import FriendshipQuery
+from leancloud.query import Object
+from leancloud.relation import Relation
 
 __author__ = 'asaka'
 
