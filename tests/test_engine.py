@@ -305,13 +305,44 @@ def test_on_verified(): # type: () -> None
 
 
 def test_rpc_call(): # type: () -> None
+    # test unsaved object
     @engine.define
-    def rpc(**params):
-        return leancloud.Object.create('Xxx', foo=['bar', 'baz'])
+    def rpc_unsaved(**params):
+        result = leancloud.Object.create('Xxx', foo=['bar', 'baz'])
+        return result
 
-    obj = cloudfunc.rpc.local('rpc')
+    obj = cloudfunc.rpc.local('rpc_unsaved')
     assert isinstance(obj, leancloud.Object)
     assert obj.get('foo') == ['bar', 'baz']
+
+    # tewst saved object
+    @engine.define
+    def rpc_saved(**params):
+        result = leancloud.Object.create('Xxx', foo=['bar', 'baz'])
+        result.save()
+        return result
+
+    obj = cloudfunc.rpc.local('rpc_saved')
+    assert isinstance(obj, leancloud.Object)
+    assert obj.get('foo') == ['bar', 'baz']
+    obj.destroy()
+
+    # test object list
+    @engine.define
+    def rpc_list(**params):
+        objs = [
+            leancloud.Object.create('Xxx', foo=['bar']),
+            leancloud.Object.create('xXX', foo=['baz']),
+        ]
+        objs[0].save()
+        return objs
+
+    objs = cloudfunc.rpc.local('rpc_list')
+    assert isinstance(objs, list)
+    assert objs[0].get('foo') == ['bar']
+    assert objs[1].get('foo') == ['baz']
+    objs[0].destroy()
+
 
 
 def test_before_save_hook(): # type: () -> None

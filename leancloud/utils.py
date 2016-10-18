@@ -35,7 +35,7 @@ def get_dumpable_types():
     )
 
 
-def encode(value, disallow_objects=False):
+def encode(value, disallow_objects=False, dump_objects=False):
     if isinstance(value, LocalProxy):
         value = value._get_current_object()
 
@@ -51,6 +51,8 @@ def encode(value, disallow_objects=False):
     if isinstance(value, leancloud.Object):
         if disallow_objects:
             raise ValueError('leancloud.Object not allowed')
+        if dump_objects:
+            return value._dump()
         return value._to_pointer()
 
     if isinstance(value, leancloud.File):
@@ -67,10 +69,10 @@ def encode(value, disallow_objects=False):
         return value.dump()
 
     if isinstance(value, (tuple, list)):
-        return [encode(x, disallow_objects) for x in value]
+        return [encode(x, disallow_objects, dump_objects) for x in value]
 
     if isinstance(value, dict):
-        return dict([(k, encode(v, disallow_objects)) for k, v in iteritems(value)])
+        return dict([(k, encode(v, disallow_objects, dump_objects)) for k, v in iteritems(value)])
 
     return value
 

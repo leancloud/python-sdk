@@ -19,6 +19,7 @@ from leancloud import operation
 from leancloud._compat import with_metaclass
 from leancloud._compat import PY2
 from leancloud._compat import text_type
+from leancloud._compat import string_types
 from leancloud._compat import iteritems
 
 
@@ -306,7 +307,12 @@ class Object(with_metaclass(ObjectMeta, object)):
             if key == 'objectId':
                 self.id = server_data[key]
             else:
-                dt = iso8601.parse_date(server_data[key])
+                if isinstance(server_data[key], string_types):
+                    dt = iso8601.parse_date(server_data[key])
+                elif server_data[key]['__type'] == 'Date':
+                    dt = iso8601.parse_date(server_data[key]['iso'])
+                else:
+                    raise TypeError('Invalid date type')
                 server_data[key] = dt
                 if key == 'createdAt':
                     self.created_at = dt
@@ -516,7 +522,6 @@ class Object(with_metaclass(ObjectMeta, object)):
         return self.set('__after', utils.sign_hook('__after_for_' + self._class_name, master_key, timestamp))
 
     def _update_data(self, server_data):
-
         self._merge_metadata(server_data)
         for key, value in iteritems(server_data):
             self._attributes[key] = utils.decode(key, value)
