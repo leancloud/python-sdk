@@ -218,10 +218,7 @@ def dispatch_cloud_func(func_name, decode_object, params):
     result = func(**params)
 
     if decode_object:
-        if isinstance(result, leancloud.Object):
-            result = leancloud.utils.encode(result._dump())
-        else:
-            result = leancloud.utils.encode(result)
+        result = leancloud.utils.encode(result, dump_objects=True)
 
     return result
 
