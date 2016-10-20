@@ -161,7 +161,7 @@ class File(object):
         self._source.seek(0)
         responce = requests.put(upload_url, data=self._source.getvalue(), headers={'Content-Type':self._type}) 
         if responce.status_code != 200:
-            raise LeanCloudError(1, 'The file is not successfully saved to Qcloud')
+            raise LeanCloudError(1, 'The file is not successfully saved to S3')
         self._source.seek(0)
 
     def _save_external(self):
