@@ -55,6 +55,10 @@ class User(Object):
         return getattr(thread_locals, 'current_user', None)
 
     @classmethod
+    def set_current(cls, user):
+        thread_locals.current_user = user
+
+    @classmethod
     def become(cls, session_token):
         response = client.get('/users/me', params={'session_token': session_token})
         content = response.json()
@@ -95,7 +99,7 @@ class User(Object):
 
     def _handle_save_result(self, make_current=False):
         if make_current:
-            thread_locals.current_user = self
+            User.set_current(self)
         self._cleanup_auth_data()
         # self._sync_all_auth_data()
         self._attributes.pop('password', None)
@@ -142,7 +146,7 @@ class User(Object):
         if not self.is_current:
             return
         self._cleanup_auth_data()
-        thread_locals.current_user = None
+        del thread_locals.current_user
 
     @classmethod
     def login_with_mobile_phone(cls, phone_number, password):
