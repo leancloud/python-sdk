@@ -7,7 +7,7 @@ from __future__ import print_function
 import os
 from datetime import datetime
 
-from nose.tools import with_setup #type: ignore
+from nose.tools import with_setup  # type: ignore
 
 import leancloud
 from leancloud import push
@@ -23,7 +23,7 @@ def setup_func():
 
 
 @with_setup(setup_func)
-def test_basic_push(): # type: () -> None
+def test_basic_push():  # type: () -> None
     instanlation = leancloud.Installation()
     instanlation.set('deviceType', 'ios')
     instanlation.set('deviceToken', 'xxx')
@@ -40,7 +40,7 @@ def test_basic_push(): # type: () -> None
             "launch-image": "",
         }
     }
-    t = datetime.fromtimestamp(0)
     query = leancloud.Query('_Installation').equal_to('objectId', 'xxx')
     notification = push.send(data, where=query, push_time=datetime.now())
+    notification.fetch()
     assert(notification.id)
