@@ -19,7 +19,12 @@ class Installation(Object):
 
 
 class Notification(Object):
-    pass
+
+    def fetch(self):
+        """同步服务器的 Notification 数据
+        """
+        response = client.get('/tables/Notifications/{0}'.format(self.id))
+        self._update_data(response.json())
 
 
 def send(data, channels=None, push_time=None, expiration_time=None, expiration_interval=None, where=None, cql=None):
