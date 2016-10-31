@@ -1,3 +1,13 @@
+## [1.7.0] - 2016-10-31
+### Fixed
+- leancloud.Notification now support fetch()
+- allow return a nested structure of leancloud.Object in rpc call
+### Added
+- define cloud function with alternate function name
+- support dev mode in leancloud.push.send
+- leancloud.Engine#current request local variable
+- session token WSGI middleware
+
 ## [1.6.5] - 2016-09-27
 ### Fixed
 - LeanEngine on_login / on_verified bugfix
