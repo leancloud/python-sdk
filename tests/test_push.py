@@ -44,3 +44,10 @@ def test_basic_push():  # type: () -> None
     notification = push.send(data, where=query, push_time=datetime.now())
     notification.fetch()
     assert(notification.id)
+
+    try:
+        notification.save()
+    except leancloud.LeanCloudError as e:
+        assert e.code == 1
+    else:
+        raise Exception()
