@@ -315,3 +315,18 @@ def test_refresh_session_token():
     old_session_token = user.get_session_token()
     user.refresh_session_token()
     assert old_session_token != user.get_session_token()
+
+
+@with_setup(get_setup_func(use_master_key=False))
+def test_is_authenticated():
+    user = User()
+    assert not user.is_authenticated()
+
+    user._session_token = 'invalid-session-token'
+    assert not user.is_authenticated()
+
+    user = User()
+    user.set('username', 'user1_name')
+    user.set('password', 'password')
+    user.login()
+    assert user.is_authenticated()

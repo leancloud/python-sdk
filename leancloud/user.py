@@ -9,6 +9,7 @@ import threading
 
 from leancloud import client
 from leancloud._compat import string_types
+from leancloud.errors import LeanCloudError
 from leancloud.query import FriendshipQuery
 from leancloud.query import Object
 from leancloud.relation import Relation
@@ -285,6 +286,23 @@ class User(Object):
         content = response.json()
         self._update_data(content)
         self._handle_save_result(False)
+
+    def is_authenticated(self):
+        '''
+        判断当前用户对象是否已登录。
+        会先检查此用户对象上是否有 `session_token`，如果有的话，会继续请求服务器验证 `session_token` 是否合法。
+        '''
+        session_token = self.get_session_token()
+        if not session_token:
+            return False
+        try:
+            response = client.get('/users/me', params={'session_token': session_token})
+        except LeanCloudError as e:
+            if e.code == 211:
+                return False
+            else:
+                raise
+        return response.status_code == 200
 
     @classmethod
     def request_password_reset(self, email):
