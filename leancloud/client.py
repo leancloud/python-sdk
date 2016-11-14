@@ -30,6 +30,7 @@ USE_MASTER_KEY = None
 REGION = 'CN'
 
 app_router = None
+session = requests.Session()
 
 SERVER_URLS = {
     'CN': 'api.leancloud.cn',
@@ -189,7 +190,7 @@ def use_region(region):
 
 
 def get_server_time():
-    response = requests.get(get_base_url() + '/date')
+    response = session.get(get_base_url() + '/date')
     content = json.loads(response.text)
     return utils.decode('iso', content)
 
@@ -212,7 +213,7 @@ def get(url, params=None, headers=None):
         for k, v in iteritems(params):
             if isinstance(v, dict):
                 params[k] = json.dumps(v, separators=(',', ':'))
-    response = requests.get(get_base_url() + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)
+    response = session.get(get_base_url() + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)
     return response
 
 
@@ -220,7 +221,7 @@ def get(url, params=None, headers=None):
 @region_redirect
 @check_error
 def post(url, params, headers=None):
-    response = requests.post(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
+    response = session.post(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
     return response
 
 
@@ -228,7 +229,7 @@ def post(url, params, headers=None):
 @region_redirect
 @check_error
 def put(url, params, headers=None):
-    response = requests.put(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
+    response = session.put(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
     return response
 
 
@@ -236,5 +237,5 @@ def put(url, params, headers=None):
 @region_redirect
 @check_error
 def delete(url, params=None, headers=None):
-    response = requests.delete(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
+    response = session.delete(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
     return response

@@ -13,6 +13,7 @@ import requests
 
 class AppRouter(object):
     def __init__(self, app_id):
+        self.session = requests.Session()
         self.lock = threading.Lock()
         self.app_id = app_id
         self.api_server = None
@@ -28,7 +29,7 @@ class AppRouter(object):
     def refresh(self):
         url = 'https://app-router.leancloud.cn/1/route?appId={}'.format(self.app_id)
         try:
-            result = requests.get(url).json()
+            result = self.session.get(url).json()
             self.update(result)
             return result['api_server']
         except Exception as e:
