@@ -276,6 +276,16 @@ class User(Object):
     def get_roles(self):
         return Relation.reverse_query('_Role', 'users', self).find()
 
+    def refresh_session_token(self):
+        """
+        重置当前用户 `session token`。
+        会使其他客户端已登录用户登录失效。
+        """
+        response = client.put('/users/{}/refreshSessionToken'.format(self.id), None)
+        content = response.json()
+        self._update_data(content)
+        self._handle_save_result(False)
+
     @classmethod
     def request_password_reset(self, email):
         params = {'email': email}

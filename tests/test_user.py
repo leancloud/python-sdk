@@ -304,3 +304,14 @@ def test_request_login_sms_code(): # type: () -> None
     except LeanCloudError as e:
         if e.code not in (1, 215, 601):
             raise e
+
+
+@with_setup(get_setup_func())
+def test_refresh_session_token():
+    user = User()
+    user.set('username', 'user1_name')
+    user.set('password', 'password')
+    user.login()
+    old_session_token = user.get_session_token()
+    user.refresh_session_token()
+    assert old_session_token != user.get_session_token()
