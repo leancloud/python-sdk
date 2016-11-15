@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/leancloud/python-sdk.svg?branch=master)](https://travis-ci.org/leancloud/python-sdk) [![Python3 Support](https://caniusepython3.com/project/leancloud-sdk.svg)](https://caniusepython3.com/project/leancloud-sdk) [![Codecov](https://img.shields.io/codecov/c/github/leancloud/python-sdk.svg)](https://codecov.io/gh/leancloud/python-sdk)
 
-LeanCloud Python SDK (under development)
+LeanCloud Python SDK
 
 ## Install
 
