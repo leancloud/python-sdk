@@ -1,3 +1,9 @@
+## [1.8.0] - 2016-11-15
+### Added
+- leancloud.User#refresh_session_token()
+- leancloud.User#is_authenticated()
+- keep alive on LeanCloud API Server HTTP connections
+
 ## [1.7.0] - 2016-10-31
 ### Fixed
 - leancloud.Notification now support fetch()
