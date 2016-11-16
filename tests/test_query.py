@@ -428,6 +428,22 @@ def test_pointer_query(): # type: () -> None
     query.matches_query("post", inner_query)
     assert query.dump() == {'where': {'post': {'$inQuery': {'className': 'Post', 'where': {'image': {'$exists': True}}}}}}
 
+
 @raises(ValueError)
 def test_near_not_none(): # type: () -> None
     Query('test').near('oops', None)
+
+
+@with_setup(setup_func)
+def test_save_with_query():
+    Account = leancloud.Object.extend('Account')
+    account = Account(balance=10)
+    account.save()
+    account.increment('balance', -100)
+    try:
+        account.save(where=Account.query.greater_than_or_equal_to('balance', 100))
+    except leancloud.LeanCloudError as e:
+        assert e.code == 305
+    else:
+        raise Exception('305 error not raised')
+    account.destroy()
