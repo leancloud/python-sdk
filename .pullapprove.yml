@@ -15,6 +15,6 @@ groups:
     required: 1
     users:
       - aisk
-      - jysperm
+      - jwfing
     team:
       - sdker

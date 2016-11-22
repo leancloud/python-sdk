@@ -286,7 +286,6 @@ def test_save_and_destroy_all(): # type: () -> None
 def test_fetch_when_save(): # type: () -> None
     Foo = Object.extend('Foo')
     foo = Foo()
-    foo.fetch_when_save = True
     foo.set('counter', 1)
     foo.save()
     assert foo.get('counter') == 1
@@ -297,7 +296,7 @@ def test_fetch_when_save(): # type: () -> None
     foo_from_other_thread.save()
 
     foo.increment('counter', 3)
-    foo.save()
+    foo.save(fetch_when_save=True)
     eq_(foo.get('counter'), 103)
     foo.destroy()
 

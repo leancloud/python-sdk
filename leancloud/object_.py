@@ -81,10 +81,19 @@ class Object(with_metaclass(ObjectMeta, object)):
         self._attributes = {}
         self.created_at = None
         self.updated_at = None
-        self.fetch_when_save = False
+        self._fetch_when_save = False
 
         for k, v in iteritems(attrs):
             self.set(k, v)
+
+    @property
+    def fetch_when_save(self):
+        return self._fetch_when_save
+
+    @fetch_when_save.setter
+    def fetch_when_save(self, value):
+        warnings.warn('leancloud.Object.fetch_when_save is deprecated, please use leancloud.Object.save with param fetch_when_save instead.', leancloud.errors.LeanCloudWarning);
+        self._fetch_when_save = value
 
     @classmethod
     def extend(cls, name):
@@ -193,7 +202,7 @@ class Object(with_metaclass(ObjectMeta, object)):
             return
         client.delete('/classes/{0}/{1}'.format(self._class_name, self.id))
 
-    def save(self, where=None):
+    def save(self, where=None, fetch_when_save=None):
         """
         将对象数据保存至服务器
 
@@ -216,7 +225,9 @@ class Object(with_metaclass(ObjectMeta, object)):
             self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
         data = self._dump_save()
-        fetch_when_save = 'true' if self.fetch_when_save else 'false'
+        if fetch_when_save is None:
+            fetch_when_save = self.fetch_when_save
+        fetch_when_save = 'true' if fetch_when_save else 'false'
 
         if self.is_new():
             response = client.post('/classes/{0}?fetchWhenSave={1}'.format(self._class_name, fetch_when_save), data)
