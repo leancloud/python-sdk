@@ -16,5 +16,7 @@ groups:
     users:
       - aisk
       - jwfing
+      - leeyeh
+      - juvenn
     team:
-      - sdker
+      - leancloud/sdker
