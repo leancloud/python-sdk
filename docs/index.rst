@@ -21,11 +21,6 @@ leancloud
   :members:
   :undoc-members:
 
-.. autoclass:: leancloud.HttpsRedirectMiddleware
-  :show-inheritance:
-  :members:
-  :undoc-members:
-
 .. autoclass:: leancloud.LeanCloudError
   :show-inheritance:
   :members:
@@ -114,6 +109,22 @@ Engine
 .. autoclass:: leancloud.Engine
   :show-inheritance:
   :inherited-members:
+  :members:
+  :undoc-members:
+
+HttpsRedirectMiddleware
+-----------------------
+
+.. autoclass:: leancloud.engine.HttpsRedirectMiddleware
+  :show-inheritance:
+  :members:
+  :undoc-members:
+
+CookieSessionMiddleware
+-----------------------
+
+.. autoclass:: leancloud.engine.CookieSessionMiddleware
+  :show-inheritance:
   :members:
   :undoc-members:
 
