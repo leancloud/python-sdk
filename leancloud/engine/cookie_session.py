@@ -16,6 +16,21 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class CookieSessionMiddleware(object):
+    """
+    用来在 webhosting 功能中实现自动管理 LeanCloud 用户登录状态的 WSGI 中间件。
+    使用此中间件之后，在处理 web 请求中调用了 `leancloud.User.login()` 方法登录成功后，
+    会将此用户 session token 写入到 cookie 中。
+    后续此次会话都可以通过 `leancloud.User.get_current()` 获取到此用户对象。
+
+    :param secret: 对保存在 cookie 中的用户 session token 进行签名时需要的 key，可使用任意方法随机生成，请不要泄漏
+    :type secret: str
+    :param name: 在 cookie 中保存的 session token 的 key 的名称，默认为 "leancloud:session"
+    :type name: str
+    :param exluded_paths: 指定哪些 URL path 不处理 session token，比如在处理静态文件的 URL path 上不进行处理，防止无谓的性能浪费
+    :type exluded_paths: list
+    :param fetch_user: 处理请求时是否要从存储服务获取用户数据，如果为 false 的话，leancloud.User.get_current() 获取到的用户数据上除了 session_token 之外没有任何其他数据，需要自己调用 fetch() 来获取。为 true 的话，会自动在用户对象上调用 fetch()，这样将会产生一次数据存储的 API 调用。默认为 false
+    :type fetch_user: bool
+    """
     def __init__(self, app, secret, name='leancloud:session', exluded_paths=None, fetch_user=False):
         if not secret:
             raise RuntimeError('secret is required')
@@ -71,4 +86,4 @@ class CookieSessionMiddleware(object):
             'session_token': user.get_session_token(),
         }, self.secret)
         raw = http.dump_cookie(self.name, cookie.serialize())
-        headers.append((b'Set-Cookie', raw))
+        headers.append(('Set-Cookie', raw))
