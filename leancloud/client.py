@@ -31,6 +31,7 @@ REGION = 'CN'
 
 app_router = None
 session = requests.Session()
+request_hooks = {}
 
 SERVER_URLS = {
     'CN': 'api.leancloud.cn',
@@ -213,7 +214,13 @@ def get(url, params=None, headers=None):
         for k, v in iteritems(params):
             if isinstance(v, dict):
                 params[k] = json.dumps(v, separators=(',', ':'))
-    response = session.get(get_base_url() + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS)
+    response = session.get(
+        get_base_url() + url,
+        headers=headers,
+        params=params,
+        timeout=TIMEOUT_SECONDS,
+        hooks=request_hooks,
+    )
     return response
 
 
@@ -221,7 +228,13 @@ def get(url, params=None, headers=None):
 @region_redirect
 @check_error
 def post(url, params, headers=None):
-    response = session.post(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
+    response = session.post(
+        get_base_url() + url,
+        headers=headers,
+        data=json.dumps(params, separators=(',', ':')),
+        timeout=TIMEOUT_SECONDS,
+        hooks=request_hooks,
+    )
     return response
 
 
@@ -229,7 +242,13 @@ def post(url, params, headers=None):
 @region_redirect
 @check_error
 def put(url, params, headers=None):
-    response = session.put(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
+    response = session.put(
+        get_base_url() + url,
+        headers=headers,
+        data=json.dumps(params, separators=(',', ':')),
+        timeout=TIMEOUT_SECONDS,
+        hooks=request_hooks,
+    )
     return response
 
 
@@ -237,5 +256,11 @@ def put(url, params, headers=None):
 @region_redirect
 @check_error
 def delete(url, params=None, headers=None):
-    response = session.delete(get_base_url() + url, headers=headers, data=json.dumps(params, separators=(',', ':')), timeout=TIMEOUT_SECONDS)
+    response = session.delete(
+        get_base_url() + url,
+        headers=headers,
+        data=json.dumps(params, separators=(',', ':')),
+        timeout=TIMEOUT_SECONDS,
+        hooks=request_hooks,
+    )
     return response
