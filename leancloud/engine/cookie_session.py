@@ -50,9 +50,9 @@ class CookieSessionMiddleware(object):
 
     def __call__(self, environ, start_response):
         self.pre_process(environ)
-        def new_start_response(status, response_headers):
+        def new_start_response(status, response_headers, exc_info=None):
             self.post_process(response_headers)
-            return start_response(status, response_headers)
+            return start_response(status, response_headers, exc_info)
         return self.app(environ, new_start_response)
 
     def pre_process(self, environ):
