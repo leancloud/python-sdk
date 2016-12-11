@@ -5,3 +5,4 @@ requests
 werkzeug
 wsgi-intercept
 nose
+flask
