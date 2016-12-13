@@ -50,8 +50,9 @@ class CookieSessionMiddleware(object):
 
     def __call__(self, environ, start_response):
         self.pre_process(environ)
+
         def new_start_response(status, response_headers, exc_info=None):
-            self.post_process(response_headers)
+            self.post_process(environ, response_headers)
             return start_response(status, response_headers, exc_info)
         return self.app(environ, new_start_response)
 
@@ -76,10 +77,13 @@ class CookieSessionMiddleware(object):
             user = User.become(session['session_token'])
             User.set_current(user)
 
-
-    def post_process(self, headers):
+    def post_process(self, environ, headers):
         user = User.get_current()
         if not user:
+            cookies = http.parse_cookie(environ)
+            if self.name in cookies:
+                raw = http.dump_cookie(self.name, '', expires=1)
+                headers.append(('Set-Cookie', raw))
             return
         cookie = SecureCookie({
             'uid': user.id,
