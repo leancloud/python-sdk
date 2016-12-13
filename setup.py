@@ -18,17 +18,18 @@ if sys.version_info < (3, 5, 0):
 
 setup(
     name='leancloud-sdk',
-    version='1.8.0',
+    version='1.9.0',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
     author='asaka',
     author_email='lan@leancloud.rocks',
     license='LGPL',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
     ],
     keywords='Leancloud SDK',
