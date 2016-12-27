@@ -174,8 +174,11 @@ class Query(object):
         :return: 查询结果
         :rtype: Object
         """
-        self.equal_to('objectId', object_id)
-        return self.first()
+        if not object_id:
+            raise LeanCloudError(code=101, error='Object not found.')
+        obj = self._query_class.create_without_data(object_id)
+        obj.fetch(select=self._select, include=self._include)
+        return obj
 
     def find(self):
         """
