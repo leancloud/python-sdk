@@ -212,12 +212,10 @@ def test_fetch(): # type: () -> None
     album.set('parent', band)
     album.save()
 
-    query = leancloud.Query(Album)
-    album_1 = query.get(album.id)
-    assert album_1.get('parent').get('name') is None
-
-    album_1.get('parent').fetch()
+    album_1 = Album.create_without_data(album.id)
+    album_1.fetch(include=['parent'], select=['name', 'parent'])
     assert album_1.get('parent').get('name') == 'Nightwish'
+    assert not album_1.has('title')
 
     album.destroy()
     band.destroy()
