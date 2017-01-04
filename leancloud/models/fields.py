@@ -75,10 +75,15 @@ class StringField(BaseField):
     def validate(self, value):
         self._validate(value, str)
 
-        if len(value) > self.max_len:
+        if self.max_len and len(value) > self.max_len:
             raise ValueError('String of field {} is longer than expected'.format(self.db_field))
-        if len(value) < self.min_len:
+        if self.min_len and len(value) < self.min_len:
             raise ValueError('String of field {} is shorter than expected'.format(self.db_field))
+        if self.regex and not self.regex.match(value):
+            self.error('String value of {} does not match the regular expression'.format(self.db_field))
+
+class URLField(StringField):
+    pass
 
 
 class NumberField(BaseField):
