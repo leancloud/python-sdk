@@ -36,6 +36,34 @@ class CQLResult(object):
         self.class_name = class_name
 
 
+class Cursor(object):
+    """
+    Query.scan 返回结果对象。
+    """
+    def __init__(self, query_class, batch_size, scan_key, params):
+        self._params = params
+        self._query_class = query_class
+
+        if batch_size is not None:
+            self._params['limit'] = batch_size
+
+        if scan_key is not None:
+            self._params['scan_key'] = scan_key
+
+    def __iter__(self):
+        while True:
+            content = client.get('/scan/classes/{}'.format(self._query_class._class_name), self._params).json()
+            for result in content['results']:
+                obj = self._query_class()
+                obj._update_data(result)
+                yield obj
+
+            if not content.get('cursor'):
+                break
+
+            self._params['cursor'] = content['cursor']
+
+
 class Query(object):
     def __init__(self, query_class):
         """
@@ -193,14 +221,13 @@ class Query(object):
 
         return objs
 
-    # def destroy_all(self):
-    #     """
-    #     在服务器上删除所有满足查询条件的对象。
-
-    #     :raise: LeanCLoudError
-    #     """
-    #     result = client.delete('/classes/{0}'.format(self._query_class._class_name), self.dump())
-    #     return result
+    def scan(self, batch_size=None, scan_key=None):
+        params = self.dump()
+        if 'skip' in params:
+            raise LeanCloudError(1, 'Query.scan dose not support skip option')
+        if 'limit' in params:
+            raise LeanCloudError(1, 'Query.scan dose not support limit option')
+        return Cursor(self._query_class, batch_size, scan_key, params)
 
     def count(self):
         """
