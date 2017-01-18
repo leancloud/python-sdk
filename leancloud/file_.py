@@ -236,7 +236,8 @@ class File(object):
     def _get_file_token(self):
         hex_octet = lambda: hex(int(0x10000 * (1 + random.random())))[-4:]
         key = ''.join(hex_octet() for _ in range(4))
-        key = '{0}.{1}'.format(key, self.extension)
+        if self.extension:
+            key = '{0}.{1}'.format(key, self.extension)
         data = {
             'name': self._name,
             'key': key,

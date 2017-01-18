@@ -65,11 +65,12 @@ def test_acl(): # type: () -> None
 
 @with_setup(setup_func)
 def test_save(): # type: () -> None
-    f = File('Blah.txt', buffer_type(b'xxx'))
+    f = File('Blah', buffer_type(b'xxx'))
     f.save()
     assert f.id
-    assert f.name == 'Blah.txt'
+    assert f.name == 'Blah'
     assert f.mime_type == 'text/plain'
+    assert not f.url.endswith('.')
 
 
 @with_setup(setup_func)
