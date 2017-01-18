@@ -87,17 +87,6 @@ class User(Object):
             if not auth_data[key]:
                 del auth_data[key]
 
-#    def _sync_all_auth_data(self):
-#        auth_data = self.get('authData')
-#        if not auth_data:
-#            return
-#        for key in auth_data.keys():
-#            self._sync_auth_data(key)
-
-#    def _sync_auth_data(self, key):
-#        if not self.is_current:
-#            return
-
     def _handle_save_result(self, make_current=False):
         if make_current:
             User.set_current(self)

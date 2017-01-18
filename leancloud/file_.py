@@ -34,11 +34,11 @@ class File(object):
         self.id = None
         self._url = None
         self._acl = None
-        self.current_user = None  # TODO
+        self.current_user = leancloud.User.get_current()
         self._metadata = {
             'owner': 'unknown'
         }
-        if self.current_user and self.current_user is not None:
+        if self.current_user and self.current_user != None:
             self._metadata['owner'] = self.current_user.id
 
         if type_ is not None:

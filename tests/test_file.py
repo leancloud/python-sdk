@@ -65,8 +65,13 @@ def test_acl(): # type: () -> None
 
 @with_setup(setup_func)
 def test_save(): # type: () -> None
+    user = leancloud.User()
+    user.login('user1_name', 'password')
+
     f = File('Blah', buffer_type(b'xxx'))
     f.save()
+
+    assert f.owner_id == user.id
     assert f.id
     assert f.name == 'Blah'
     assert f.mime_type == 'text/plain'
