@@ -11,6 +11,7 @@ import base64
 import codecs
 import random
 import hashlib
+import warnings
 
 import requests
 
@@ -22,12 +23,13 @@ from leancloud._compat import file_type
 from leancloud._compat import buffer_type
 from leancloud.mime_type import mime_types
 from leancloud.errors import LeanCloudError
+from leancloud.errors import LeanCloudWarning
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class File(object):
-    def __init__(self, name, data=None, type_=None):
+    def __init__(self, name, data=None, mime_type=None, type_=None):
         self._name = name
         self.id = None
         self._url = None
@@ -39,6 +41,11 @@ class File(object):
         if self.current_user and self.current_user is not None:
             self._metadata['owner'] = self.current_user.id
 
+        if type_ is not None:
+            warnings.warn('optional param `type_` is deprecated, please use `mime_type` instead')
+            mime_type = type_
+
+
         pattern = re.compile('\.([^.]*)$')
         extension = pattern.findall(name)
         if extension:
@@ -46,10 +53,10 @@ class File(object):
         else:
             self.extension = ''
 
-        if type_:
-            self._type = type_
+        if mime_type:
+            self._mime_type = mime_type
         else:
-            self._type = mime_types.get(self.extension, 'text/plain')
+            self._mime_type = mime_types.get(self.extension, 'text/plain')
 
         if data is None:
             self._source = None
@@ -80,8 +87,12 @@ class File(object):
             self._metadata['_checksum'] = checksum.hexdigest()
 
     @classmethod
-    def create_with_url(cls, name, url, meta_data=None, type_=None):
-        f = File(name, None, type_)
+    def create_with_url(cls, name, url, meta_data=None, mime_type=None, type_=None):
+        if type_ is not None:
+            warnings.warn('optional param `type_` is deprecated, please use `mime_type` instead')
+            mime_type = type_
+
+        f = File(name, None, mime_type)
         if meta_data:
             f._metadata.update(meta_data)
 
@@ -114,6 +125,14 @@ class File(object):
     @property
     def url(self):
         return self._url
+
+    @property
+    def mime_type(self):
+        return self._mime_type
+
+    @mime_type.setter
+    def set_mime_type(self, mime_type):
+        self._mime_type = mime_type
 
     @property
     def size(self):
@@ -159,7 +178,7 @@ class File(object):
 
     def _save_to_s3(self, upload_url):
         self._source.seek(0)
-        responce = requests.put(upload_url, data=self._source.getvalue(), headers={'Content-Type':self._type}) 
+        responce = requests.put(upload_url, data=self._source.getvalue(), headers={'Content-Type':self.mime_type})
         if responce.status_code != 200:
             raise LeanCloudError(1, 'The file is not successfully saved to S3')
         self._source.seek(0)
@@ -169,7 +188,7 @@ class File(object):
             'name': self._name,
             'ACL': self._acl,
             'metaData': self._metadata,
-            'mime_type': self._type,
+            'mime_type': self.mime_type,
             'url': self._url,
         }
         response = client.post('/files/{0}'.format(self._name), data)
@@ -222,7 +241,7 @@ class File(object):
             'name': self._name,
             'key': key,
             'ACL': self._acl,
-            'mime_type': self._type,
+            'mime_type': self.mime_type,
             'metaData': self._metadata,
         }
         response = client.post('/fileTokens', data)
@@ -239,5 +258,5 @@ class File(object):
         self._name = content.get('name')
         self.id = content.get('objectId')
         self._url = content.get('url')
-        self._type = content.get('mime_type')
+        self._mime_type = content.get('mime_type')
         self._metadata = content.get('metaData')

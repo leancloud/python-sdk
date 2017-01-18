@@ -37,17 +37,16 @@ def test_basic(): # type: () -> None
         s1.write('blah blah blah')
     else:
         s1 = s
-    f1 = File('Blah', s, 'text/plain')
-    f2 = File('Blah', s1)
+    f1 = File('Blah', s, mime_type='text/plain')
+    f2 = File('Blah', s1, type_='text/plain')
     for f in (f1, f2):
         assert f.name == 'Blah'
         assert f._metadata['size'] == 14
         assert f.size == 14
-        assert f._type == 'text/plain'
 
 
 def test_create_with_url(): # type: () -> None
-    f = File.create_with_url('xxx', 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png', meta_data={})
+    f = File.create_with_url('xxx', u'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png', meta_data={})
     assert f.url == 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png'
 
 
@@ -66,10 +65,11 @@ def test_acl(): # type: () -> None
 
 @with_setup(setup_func)
 def test_save(): # type: () -> None
-    f = File('Blah', buffer_type(b'xxx'))
+    f = File('Blah.txt', buffer_type(b'xxx'))
     f.save()
     assert f.id
-    assert f.name == 'Blah'
+    assert f.name == 'Blah.txt'
+    assert f.mime_type == 'text/plain'
 
 
 @with_setup(setup_func)
