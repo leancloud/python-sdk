@@ -41,31 +41,40 @@ B = Object.extend('B')
 #            k.destroy()
 
 
-def setup_func():
-    leancloud.client.USE_MASTER_KEY = None
-    leancloud.client.APP_ID = None
-    leancloud.client.APP_KEY = None
-    leancloud.client.MASTER_KEY = None
-    leancloud.init(
-        os.environ['APP_ID'],
-        os.environ['APP_KEY']
-    )
+def make_setup_func(use_master_key=False):
+    def setup_func():
+        leancloud.client.USE_MASTER_KEY = None
+        leancloud.client.APP_ID = None
+        leancloud.client.APP_KEY = None
+        leancloud.client.MASTER_KEY = None
+        if use_master_key:
+            leancloud.init(
+                os.environ['APP_ID'],
+                master_key=os.environ['MASTER_KEY']
+            )
+        else:
+            leancloud.init(
+                os.environ['APP_ID'],
+                os.environ['APP_KEY']
+            )
 
-    olds = Query(GameScore).find()
-    # make sure the test data does not change, else re-initialize it
-    if len(olds) == 10:
-        pass
-    else:
-        for old in olds:
-            old.destroy()
+        olds = Query(GameScore).find()
+        # make sure the test data does not change, else re-initialize it
+        if len(olds) == 10:
+            pass
+        else:
+            for old in olds:
+                old.destroy()
 
-        for i in range(10):
-            game_score = GameScore()
-            game_score.set('score', i)
-            game_score.set('playerName', '张三')
-            game_score.set('location', GeoPoint(latitude=i, longitude=-i))
-            game_score.set('random', random.randrange(100))
-            game_score.save()
+            for i in range(10):
+                game_score = GameScore()
+                game_score.set('score', i)
+                game_score.set('playerName', '张三')
+                game_score.set('location', GeoPoint(latitude=i, longitude=-i))
+                game_score.set('random', random.randrange(100))
+                game_score.save()
+
+    return setup_func
 
 
 def match_key_setup():
@@ -104,12 +113,12 @@ def test_query_error(): # type: () -> None
     Query(123) # type: ignore
 
 
-# @with_setup(setup_func, destroy_func)
+# @with_setup(make_setup_func(), destroy_func)
 # def test_save():
 #     assert game_scores[0].id
 
 
-@with_setup(setup_func, destroy_func)
+@with_setup(make_setup_func(), destroy_func)
 def test_save_date(): # type: () -> None
     DateObject = Object.extend('DateObject')
     now = datetime.now()
@@ -130,7 +139,7 @@ def test_batch(): # type: () -> None
     # TODO: check if relation is corrected
 
 
-@with_setup(setup_func, destroy_func)
+@with_setup(make_setup_func(), destroy_func)
 def test_relation(): # type: () -> None
     foo = Object.extend('Foo')()
     foo.set('a', 1)
@@ -142,7 +151,7 @@ def test_relation(): # type: () -> None
     foo.save()
 
 
-@with_setup(setup_func, destroy_func)
+@with_setup(make_setup_func(), destroy_func)
 def test_basic_query(): # type: () -> None
     # find
     results = GameScore.query.find() # type:ignore
@@ -201,7 +210,7 @@ def test_or_and_query(): # type: () -> None
     assert q.dump() == {'where': {'$or': [{'score': {'$gt': 5}}, {'score': {'$lt': 10}}, {'playerName': 'foobar'}]}}
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_multiple_order(): # type: () -> None
     MultipleOrderObject = leancloud.Object.extend('MultipleOrderObject')
     for obj in Query(MultipleOrderObject).find():
@@ -223,7 +232,7 @@ def test_or_erorr(): # type: () -> None
     Query(GameScore).or_('score') # type: ignore
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_skip(): # type: () -> None
     q = Query(GameScore)
     q.skip(5)
@@ -241,7 +250,7 @@ def test_limit_error(): # type: () -> None
     Query(GameScore).limit(1001)
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_cloud_query(): # type: () -> None
     q = Query(GameScore)
     result = q.do_cloud_query('select count(*), * from GameScore where score<11', ['score'])
@@ -252,7 +261,7 @@ def test_cloud_query(): # type: () -> None
     assert result.class_name == 'GameScore'
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_or_(): # type: () -> None
     q1 = Query(GameScore).greater_than('score', -1)
     q2 = Query(GameScore).equal_to('name', 'x')
@@ -260,7 +269,7 @@ def test_or_(): # type: () -> None
     eq_([i.get('score') for i in result], list(range(10)))
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_and_(): # type: () -> None
     q1 = Query(GameScore).greater_than('score', 2)
     q2 = Query(GameScore).greater_than('score', 3)
@@ -271,32 +280,32 @@ def test_and_(): # type: () -> None
 @raises(ValueError)
 def test_and_error(): # type: () -> None
     Query(GameScore).and_('score') # type: ignore
-# @with_setup(setup_func)
+# @with_setup(make_setup_func())
 # def test_dump():
 #     q = Query(GameScore)
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_not_equal_to(): # type: () -> None
     result = Query(GameScore).not_equal_to('playerName', '李四').find()
     assert len(result) == 10
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_contains_all(): # type: () -> None
     q = Query(GameScore).contains_all('score', [5])
     result = q.find()
     eq_([i.get('score') for i in result], [5])
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_exist_and_does_not_exists(): # type: () -> None
     assert Query(GameScore).does_not_exists('oops').find()
     result = Query(GameScore).exists('playerName').find()
     assert len(result) == 10
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_exist_and_does_not_exist():
     assert Query(GameScore).does_not_exist('oops').find()
     result = Query(GameScore).exists('playerName').find()
@@ -308,19 +317,19 @@ def test_matched_error(): # type: () -> None
     Query(GameScore).matched('score', 1) #type: ignore
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_matched(): # type: () -> None
     result = Query(GameScore).matched('playerName', '^张', ignore_case=True, multi_line=True).find()
     assert len(result) == 10
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_does_not_match_query(): # type: () -> None
     q = Query(GameScore).greater_than('score', -1)
     result = Query(GameScore).does_not_match_query('playerName', q).find()
 
 
-@with_setup(setup_func, match_key_setup)
+@with_setup(make_setup_func(), match_key_setup)
 def test_matches_key_in_query(): # type: () -> None
     q1 = Query(A).equal_to('age', 1)
     q2 = Query(B)
@@ -328,7 +337,7 @@ def test_matches_key_in_query(): # type: () -> None
     assert len(result) == 5
 
 
-@with_setup(setup_func, match_key_setup)
+@with_setup(make_setup_func(), match_key_setup)
 def test_matches_key_in_query(): # type: () -> None
     q1 = Query(A).equal_to('age', 1)
     q2 = Query(B)
@@ -336,7 +345,7 @@ def test_matches_key_in_query(): # type: () -> None
     assert len(result) == 5
 
 
-@with_setup(setup_func, match_key_setup)
+@with_setup(make_setup_func(), match_key_setup)
 def test_does_not_match_key_in_query(): # type: () -> None
     q1 = Query(A).equal_to('age', 1)
     q2 = Query(B)
@@ -344,74 +353,74 @@ def test_does_not_match_key_in_query(): # type: () -> None
     assert len(result) == 45
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_contains(): # type: () -> None
     q = Query(GameScore).contains('playerName', '三')
     eq_(len(q.find()), 10)
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_startswith(): # type: () -> None
     q = Query(GameScore).startswith('playerName', '张')
     eq_(len(q.find()), 10)
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_endswith(): # type: () -> None
     q = Query(GameScore).endswith('playerName', '三')
     eq_(len(q.find()), 10)
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_add_ascending(): # type: () -> None
     result = Query(GameScore).add_ascending('score').find()
     eq_([i.get('score') for i in result], list(range(10)))
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_near(): # type: () -> None
     result = Query(GameScore).near('location', GeoPoint(latitude=0, longitude=0)).find()
     eq_([i.get('score') for i in result], list(range(10)))
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_within_radians(): # type: () -> None
     result = Query(GameScore).within_radians('location', GeoPoint(latitude=0, longitude=0), 1).find()
     eq_([i.get('score') for i in result], list(range(10)))
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_within_miles(): # type: () -> None
     result = Query(GameScore).within_miles('location', GeoPoint(latitude=0, longitude=0), 4000).find()
     eq_([i.get('score') for i in result], list(range(10)))
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_within_kilometers(): # type: () -> None
     result = Query(GameScore).within_kilometers('location', GeoPoint(latitude=0, longitude=0), 4000).find()
     assert len(result) == 10
 
 
 # to_check
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_within_geobox(): # type: () -> None
     result = Query(GameScore).within_geo_box('location', (0, 0), (11, 11)).find()
     eq_([i.get('score') for i in result], [0])
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_include(): # type: () -> None
     result = Query(GameScore).include(['score']).find()
     assert len(result) == 10
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_select(): # type: () -> None
     result = Query(GameScore).select(['score', 'playerName']).find()
     eq_(len(result), 10)
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_pointer_query(): # type: () -> None
     foo = Object.create('Foo')
     bar = Object.create('Bar')
@@ -434,7 +443,7 @@ def test_near_not_none(): # type: () -> None
     Query('test').near('oops', None)
 
 
-@with_setup(setup_func)
+@with_setup(make_setup_func())
 def test_save_with_query():
     Account = leancloud.Object.extend('Account')
     account = Account(balance=10)
@@ -447,3 +456,12 @@ def test_save_with_query():
     else:
         raise Exception('305 error not raised')
     account.destroy()
+
+
+@with_setup(make_setup_func(use_master_key=True))
+def test_scan():
+    cursor = GameScore.query.scan(batch_size=2, scan_key='random')
+    r = 0
+    for i in cursor:
+        assert r <= i.get('random')
+        r = i.get('random')
