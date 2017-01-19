@@ -7,8 +7,6 @@ from __future__ import print_function
 import os
 import re
 import io
-import base64
-import codecs
 import random
 import hashlib
 import warnings
@@ -19,10 +17,8 @@ import leancloud
 from leancloud import client
 from leancloud._compat import PY2
 from leancloud._compat import string_types
-from leancloud._compat import range_type
 from leancloud._compat import file_type
 from leancloud._compat import buffer_type
-from leancloud.mime_type import mime_types
 from leancloud.errors import LeanCloudError
 from leancloud.errors import LeanCloudWarning
 
@@ -30,6 +26,8 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class File(object):
+    _class_name = '_File'  # walks like a leancloud.Object
+
     def __init__(self, name, data=None, mime_type=None, type_=None):
         self._name = name
         self.id = None
@@ -39,13 +37,12 @@ class File(object):
         self._metadata = {
             'owner': 'unknown'
         }
-        if self.current_user and self.current_user != None:
+        if self.current_user and self.current_user != None:  # NOQA: self.current_user may be a thread_local object
             self._metadata['owner'] = self.current_user.id
 
         if type_ is not None:
-            warnings.warn('optional param `type_` is deprecated, please use `mime_type` instead')
+            warnings.warn(LeanCloudWarning('optional param `type_` is deprecated, please use `mime_type` instead'))
             mime_type = type_
-
 
         pattern = re.compile('\.([^.]*)$')
         extension = pattern.findall(name)
@@ -54,10 +51,7 @@ class File(object):
         else:
             self.extension = ''
 
-        if mime_type:
-            self._mime_type = mime_type
-        else:
-            self._mime_type = mime_types.get(self.extension, 'text/plain')
+        self._mime_type = mime_type
 
         if data is None:
             self._source = None
@@ -69,7 +63,8 @@ class File(object):
         elif isinstance(data, buffer_type):
             self._source = io.BytesIO(data)
         elif PY2:
-            import cStringIO, StringIO
+            import cStringIO
+            import StringIO
             if isinstance(data, (cStringIO.OutputType, StringIO.StringIO)):
                 data.seek(0, os.SEEK_SET)
                 self._source = io.BytesIO(data.getvalue())
@@ -179,8 +174,8 @@ class File(object):
 
     def _save_to_s3(self, upload_url):
         self._source.seek(0)
-        responce = requests.put(upload_url, data=self._source.getvalue(), headers={'Content-Type':self.mime_type})
-        if responce.status_code != 200:
+        response = requests.put(upload_url, data=self._source.getvalue(), headers={'Content-Type': self.mime_type})
+        if response.status_code != 200:
             raise LeanCloudError(1, 'The file is not successfully saved to S3')
         self._source.seek(0)
 
@@ -225,17 +220,32 @@ class File(object):
             pass
         else:
             content = self._get_file_token()
+            self._mime_type = content['mime_type']
             if content['provider'] == 'qiniu':
                 self._save_to_qiniu(content['token'], content['key'])
-            elif content['provider']== 'qcloud':
+            elif content['provider'] == 'qcloud':
                 self._save_to_qcloud(content['token'], content['upload_url'])
             elif content['provider'] == 's3':
                 self._save_to_s3(content['upload_url'])
             else:
                 raise RuntimeError('The provider field in the fetched content is empty')
+            self._update_data(content)
+
+    def _update_data(self, server_data):
+        if 'objectId' in server_data:
+            self.id = server_data.get('objectId')
+        if 'name' in server_data:
+            self._name = server_data.get('name')
+        if 'url' in server_data:
+            self._url = server_data.get('url')
+        if 'mime_type' in server_data:
+            self._mime_type = server_data['mime_type']
+        if 'metaData' in server_data:
+            self._metadata = server_data.get('metaData')
 
     def _get_file_token(self):
-        hex_octet = lambda: hex(int(0x10000 * (1 + random.random())))[-4:]
+        def hex_octet():
+            return hex(int(0x10000 * (1 + random.random())))[-4:]
         key = ''.join(hex_octet() for _ in range(4))
         if self.extension:
             key = '{0}.{1}'.format(key, self.extension)
@@ -253,12 +263,7 @@ class File(object):
         content['key'] = key
         return content
 
-
     def fetch(self):
         response = client.get('/files/{0}'.format(self.id))
         content = response.json()
-        self._name = content.get('name')
-        self.id = content.get('objectId')
-        self._url = content.get('url')
-        self._mime_type = content.get('mime_type')
-        self._metadata = content.get('metaData')
+        self._update_data(content)
