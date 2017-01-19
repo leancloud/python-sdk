@@ -18,6 +18,7 @@ import requests
 import leancloud
 from leancloud import client
 from leancloud._compat import PY2
+from leancloud._compat import string_types
 from leancloud._compat import range_type
 from leancloud._compat import file_type
 from leancloud._compat import buffer_type
@@ -96,10 +97,10 @@ class File(object):
         if meta_data:
             f._metadata.update(meta_data)
 
-        if isinstance(url, str):
+        if isinstance(url, string_types):
             f._url = url
         else:
-            raise ValueError('url must be a string')
+            raise ValueError('url must be a str / unicode')
 
         f._metadata['__source'] = 'external'
         return f
