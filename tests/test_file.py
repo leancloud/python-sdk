@@ -29,34 +29,33 @@ def setup_func():
     )
 
 
-def test_basic(): # type: () -> None
+def test_basic():  # type: () -> None
     s = BytesIO(b'blah blah blah')
     if PY2:
-        import cStringIO # type: ignore
+        import cStringIO  # type: ignore
         s1 = cStringIO.StringIO()
         s1.write('blah blah blah')
     else:
         s1 = s
-    f1 = File('Blah', s, 'text/plain')
-    f2 = File('Blah', s1)
+    f1 = File('Blah', s, mime_type='text/plain')
+    f2 = File('Blah', s1, type_='text/plain')
     for f in (f1, f2):
         assert f.name == 'Blah'
         assert f._metadata['size'] == 14
         assert f.size == 14
-        assert f._type == 'text/plain'
 
 
-def test_create_with_url(): # type: () -> None
-    f = File.create_with_url('xxx', 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png', meta_data={})
+def test_create_with_url():  # type: () -> None
+    f = File.create_with_url('xxx', u'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png', meta_data={})
     assert f.url == 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png'
 
 
-def test_create_without_data(): # type: () -> None
+def test_create_without_data():  # type: () -> None
     f = File.create_without_data('a123')
     assert f.id == 'a123'
 
 
-def test_acl(): # type: () -> None
+def test_acl():  # type: () -> None
     acl_ = ACL()
     f = File('Blah', buffer_type(b'xxx'))
     assert_raises(TypeError, f.set_acl, 'a')
@@ -65,29 +64,36 @@ def test_acl(): # type: () -> None
 
 
 @with_setup(setup_func)
-def test_save(): # type: () -> None
-    f = File('Blah', buffer_type(b'xxx'))
+def test_save():  # type: () -> None
+    user = leancloud.User()
+    user.login('user1_name', 'password')
+
+    f = File('Blah.txt', buffer_type(b'xxx'))
     f.save()
+
+    assert f.owner_id == user.id
     assert f.id
-    assert f.name == 'Blah'
+    assert f.name == 'Blah.txt'
+    assert f.mime_type == 'text/plain'
+    assert not f.url.endswith('.')
 
 
 @with_setup(setup_func)
-def test_save_external(): # type: () -> None
+def test_save_external():  # type: () -> None
     f = File.create_with_url('lenna.jpg', 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     f.save()
     assert f.id
 
 
 @raises(ValueError)
-def test_thumbnail_url_erorr(): # type: () -> None
+def test_thumbnail_url_erorr():  # type: () -> None
     f = File.create_with_url('xx', '')
     f.get_thumbnail_url(100, 100)
 
 
 @with_setup(setup_func)
 @raises(ValueError)
-def test_thumbnail_size_erorr(): # type: () -> None
+def test_thumbnail_size_erorr():  # type: () -> None
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     b = buffer_type(r.content)
     f = File('Lenna2.jpg', b)
@@ -99,7 +105,7 @@ def test_thumbnail_size_erorr(): # type: () -> None
 
 
 @with_setup(setup_func)
-def test_thumbnail(): # type: () -> None
+def test_thumbnail():  # type: () -> None
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     b = buffer_type(r.content)
     f = File('Lenna2.jpg', b)
@@ -111,7 +117,7 @@ def test_thumbnail(): # type: () -> None
 
 
 @with_setup(setup_func)
-def test_destroy(): # type: () -> None
+def test_destroy():  # type: () -> None
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     b = buffer_type(r.content)
     f = File('Lenna2.jpg', b)
@@ -121,7 +127,7 @@ def test_destroy(): # type: () -> None
 
 
 @with_setup(setup_func)
-def test_fetch(): # type: () -> None
+def test_fetch():  # type: () -> None
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     b = buffer_type(r.content)
     f = File('Lenna2.jpg', b)
@@ -138,6 +144,6 @@ def test_fetch(): # type: () -> None
     f.destroy()
 
 
-def test_checksum(): # type: () -> None
+def test_checksum():  # type: () -> None
     f = File('Blah', open('tests/sample_text.txt', 'rb'))
     assert f._metadata['_checksum'] == 'd0588d95e45eed70745ffabdf0b18acd'
