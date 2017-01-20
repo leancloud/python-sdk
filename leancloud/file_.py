@@ -15,6 +15,7 @@ import requests
 
 import leancloud
 from leancloud import client
+from leancloud import utils
 from leancloud._compat import PY2
 from leancloud._compat import string_types
 from leancloud._compat import file_type
@@ -28,7 +29,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 class File(object):
     _class_name = '_File'  # walks like a leancloud.Object
 
-    def __init__(self, name, data=None, mime_type=None, type_=None):
+    def __init__(self, name='', data=None, mime_type=None, type_=None):
         self._name = name
         self.id = None
         self._url = None
@@ -81,6 +82,10 @@ class File(object):
             checksum = hashlib.md5()
             checksum.update(self._source.getvalue())
             self._metadata['_checksum'] = checksum.hexdigest()
+
+    @utils.classproperty
+    def query(cls):
+        return leancloud.Query(cls)
 
     @classmethod
     def create_with_url(cls, name, url, meta_data=None, mime_type=None, type_=None):

@@ -174,3 +174,11 @@ def sign_hook(hook_name, master_key, timestamp):
                     to_bytes('{0}:{1}'.format(hook_name, timestamp)),
                     hashlib.sha1).hexdigest()
     return '{0},{1}'.format(timestamp, sign)
+
+
+class classproperty(object):
+    def __init__(self, f):
+        self.f = f
+
+    def __get__(self, obj, owner):
+        return self.f(owner)
