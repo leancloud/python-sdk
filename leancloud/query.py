@@ -10,6 +10,7 @@ import warnings
 import leancloud
 from leancloud import client
 from leancloud import utils
+from leancloud.file_ import File
 from leancloud.object_ import Object
 from leancloud.errors import LeanCloudError
 from leancloud.errors import LeanCloudWarning
@@ -72,9 +73,12 @@ class Query(object):
         :type query_class: string_types or leancloud.ObjectMeta
         """
         if isinstance(query_class, string_types):
-            query_class = Object.extend(query_class)
+            if query_class in ('File', '_File'):
+                query_class = File
+            else:
+                query_class = Object.extend(query_class)
 
-        if (not isinstance(query_class, (type, class_types))) or (not issubclass(query_class, Object)):
+        if not isinstance(query_class, (type, class_types)) or not issubclass(query_class, (File, Object)):
             raise ValueError('Query takes string or LeanCloud Object')
 
         self._query_class = query_class

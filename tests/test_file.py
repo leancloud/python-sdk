@@ -6,9 +6,9 @@ from __future__ import print_function
 
 import os
 
-from nose.tools import with_setup # type: ignore
-from nose.tools import assert_raises # type: ignore
-from nose.tools import raises # type: ignore
+from nose.tools import with_setup  # type: ignore
+from nose.tools import assert_raises  # type: ignore
+from nose.tools import raises  # type: ignore
 
 import requests
 
@@ -76,6 +76,18 @@ def test_save():  # type: () -> None
     assert f.name == 'Blah.txt'
     assert f.mime_type == 'text/plain'
     assert not f.url.endswith('.')
+
+
+@with_setup(setup_func)
+def test_query():  # type: () -> None
+    files = leancloud.Query('File').find()
+    for f in files:
+        assert isinstance(f, File)
+        assert f.url
+        assert f.name
+        assert f.metadata
+
+    assert isinstance(leancloud.File.query.first(), File)
 
 
 @with_setup(setup_func)
