@@ -7,8 +7,8 @@ from __future__ import print_function
 import os
 import re
 import io
-import random
 import hashlib
+import uuid
 import warnings
 
 import requests
@@ -244,9 +244,7 @@ class File(object):
             self._metadata = server_data.get('metaData')
 
     def _get_file_token(self):
-        def hex_octet():
-            return hex(int(0x10000 * (1 + random.random())))[-4:]
-        key = ''.join(hex_octet() for _ in range(4))
+        key = uuid.uuid4().hex
         if self.extension:
             key = '{0}.{1}'.format(key, self.extension)
         data = {
