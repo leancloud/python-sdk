@@ -139,6 +139,25 @@ def test_destroy():  # type: () -> None
 
 
 @with_setup(setup_func)
+def test_file_callback():  # type: () -> None
+    d = {}
+
+    def noop(token, *args, **kwargs):
+        d['token'] = token
+
+    f = File('xxx', buffer_type(b'xxx'))
+    f._save_to_s3 = noop
+    f._save_to_qiniu = noop
+    f._save_to_qcloud = noop
+    f.save()
+    f._save_callback(d['token'], False)
+
+    # time.sleep(3)
+    # File should be deleted by API server
+    # assert_raises(leancloud.LeanCloudError, File.query().get, f.id)
+
+
+@with_setup(setup_func)
 def test_fetch():  # type: () -> None
     r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
     b = buffer_type(r.content)

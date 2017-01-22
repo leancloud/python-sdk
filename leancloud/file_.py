@@ -9,7 +9,9 @@ import re
 import io
 import hashlib
 import uuid
+import logging
 import warnings
+import threading
 
 import requests
 
@@ -24,6 +26,8 @@ from leancloud.errors import LeanCloudError
 from leancloud.errors import LeanCloudWarning
 
 __author__ = 'asaka <lan@leancloud.rocks>'
+
+logger = logging.getLogger(__name__)
 
 
 class File(object):
@@ -168,21 +172,25 @@ class File(object):
         if response.status_code != 200:
             raise LeanCloudError(1, "the file is not sucessfully destroyed")
 
-    def _save_to_qiniu(self, uptoken, key):
+    def _save_to_qiniu(self, token, key):
         import qiniu
         self._source.seek(0)
-        ret, info = qiniu.put_data(uptoken, key, self._source)
+        ret, info = qiniu.put_data(token, key, self._source)
         self._source.seek(0)
 
         if info.status_code != 200:
+            self._save_callback(token, False)
             raise LeanCloudError(1, 'the file is not saved, qiniu status code: {0}'.format(info.status_code))
+        self._save_callback(token, True)
 
-    def _save_to_s3(self, upload_url):
+    def _save_to_s3(self, token, upload_url):
         self._source.seek(0)
         response = requests.put(upload_url, data=self._source.getvalue(), headers={'Content-Type': self.mime_type})
         if response.status_code != 200:
+            self._save_callback(token, False)
             raise LeanCloudError(1, 'The file is not successfully saved to S3')
         self._source.seek(0)
+        self._save_callback(token, True)
 
     def _save_external(self):
         data = {
@@ -203,9 +211,9 @@ class File(object):
         else:
             raise ValueError
 
-    def _save_to_qcloud(self, uptoken, upload_url):
+    def _save_to_qcloud(self, token, upload_url):
         headers = {
-            'Authorization': uptoken,
+            'Authorization': token,
         }
         self._source.seek(0)
         data = {
@@ -216,7 +224,22 @@ class File(object):
         self._source.seek(0)
         info = response.json()
         if info['code'] != 0:
+            self._save_callback(token, False)
             raise LeanCloudError(1, 'this file is not saved, qcloud cos status code: {}'.format(info['code']))
+        self._save_callback(token, True)
+
+    def _save_callback(self, token, successed):
+        if not token:
+            return
+        def f():
+            try:
+                client.post('/fileCallback', {
+                    'token': token,
+                    'result': successed,
+                })
+            except LeanCloudError as e:
+                logger.warning('call file callback failed, error: %s', e)
+        threading.Thread(target=f).start()
 
     def save(self):
         if self._url and self.metadata.get('__source') == 'external':
@@ -231,7 +254,7 @@ class File(object):
             elif content['provider'] == 'qcloud':
                 self._save_to_qcloud(content['token'], content['upload_url'])
             elif content['provider'] == 's3':
-                self._save_to_s3(content['upload_url'])
+                self._save_to_s3(content.get('token'), content['upload_url'])
             else:
                 raise RuntimeError('The provider field in the fetched content is empty')
             self._update_data(content)
