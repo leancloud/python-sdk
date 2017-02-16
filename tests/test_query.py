@@ -239,6 +239,20 @@ def test_skip(): # type: () -> None
     assert q._skip == 5
 
 
+@with_setup(make_setup_func())
+def test_size_equal_to():  # type: () -> None
+    TestClass = leancloud.Object.extend('TestSizeEqualTo')
+    obj1 = TestClass(a=[1, 2, 3])
+    obj1.save()
+    obj2 = TestClass(a=[1, 2, 3, 4, 5])
+    obj2.save()
+    result = Query(TestClass).size_equal_to('a', 3).find()
+    assert len(result) == 1
+    assert result[0].id == obj1.id
+    obj1.destroy()
+    obj2.destroy()
+
+
 def test_limit(): # type: () -> None
     q = Query(GameScore)
     q.limit(121)
@@ -254,9 +268,6 @@ def test_limit_error(): # type: () -> None
 def test_cloud_query(): # type: () -> None
     q = Query(GameScore)
     result = q.do_cloud_query('select count(*), * from GameScore where score<11', ['score'])
-#     results = result.results
-#     assert all(obj in game_scores for obj in results)
-#     assert all(obj in results for obj in game_scores)
     assert result.count == 10
     assert result.class_name == 'GameScore'
 
