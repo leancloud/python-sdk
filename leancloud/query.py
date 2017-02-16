@@ -278,6 +278,17 @@ class Query(object):
         self._where[key] = utils.encode(value)
         return self
 
+    def size_equal_to(self, key, size):
+        """
+        增加查询条件，限制查询结果指定数组字段长度与查询值相同
+
+        :param key: 查询条件数组字段名
+        :param size: 查询条件值
+        :rtype: Query
+        """
+        self._add_condition(key, "$size", size)
+        return self
+
     def _add_condition(self, key, condition, value):
         if not self._where.get(key):
             self._where[key] = {}
