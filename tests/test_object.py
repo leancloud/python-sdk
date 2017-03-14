@@ -339,3 +339,16 @@ def test_modify_class_name(): # type: () -> None
 
     plato.destroy()
     aristotle.destroy()
+
+
+@with_setup(setup_func)
+def test_create_without_data():  # type: () -> None
+    Foo = Object.extend('Foo')
+    foo1 = Foo(aNumber=2)
+    foo1.save()
+    foo2 = Foo.create_without_data(foo1.id)
+    foo2.set('aNumber', 3)
+    foo2.save()
+    assert foo1.id == foo2.id
+    assert Foo.query.get(foo1.id).get('aNumber') == 3
+    foo1.destroy()
