@@ -5,7 +5,10 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+from datetime import datetime
+from datetime import timedelta
 
+from dateutil import tz
 from nose.tools import with_setup # type: ignore
 from nose.tools import ok_ # type: ignore
 from nose.tools import eq_ # type: ignore
@@ -352,3 +355,19 @@ def test_create_without_data():  # type: () -> None
     assert foo1.id == foo2.id
     assert Foo.query.get(foo1.id).get('aNumber') == 3
     foo1.destroy()
+
+
+@with_setup(setup_func)
+def test_time_zone():
+    TestTimeZone = Object.extend('TestTimeZone')
+    now = datetime.now()
+    obj = TestTimeZone()
+    obj.set('date', now)
+    obj.save()
+
+    obj = TestTimeZone.query.get(obj.id)
+    assert(obj.created_at.tzinfo == tz.tzlocal())
+    assert(obj.updated_at.tzinfo == tz.tzlocal())
+    assert(obj.get('date').tzinfo == tz.tzlocal())
+
+    obj.destroy()
