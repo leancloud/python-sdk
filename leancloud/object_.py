@@ -319,9 +319,12 @@ class Object(with_metaclass(ObjectMeta, object)):
                 self.id = server_data[key]
             else:
                 if isinstance(server_data[key], string_types):
-                    dt = iso8601.parse_date(server_data[key])
+                    dt = utils.decode(key, {
+                        '__type': 'Date',
+                        'iso': server_data[key]
+                    })
                 elif server_data[key]['__type'] == 'Date':
-                    dt = iso8601.parse_date(server_data[key]['iso'])
+                    dt = utils.decode(key, server_data)
                 else:
                     raise TypeError('Invalid date type')
                 server_data[key] = dt
