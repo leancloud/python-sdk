@@ -10,31 +10,61 @@ import threading
 
 import requests
 
+from leancloud import utils
+
 
 class AppRouter(object):
-    def __init__(self, app_id):
+    def __init__(self, app_id, region):
+        self.hosts = {}
         self.session = requests.Session()
         self.lock = threading.Lock()
         self.app_id = app_id
-        self.api_server = None
         self.expired_at = 0
-
-    def get(self):
-        if self.api_server is not None and self.expired_at > time.time():
-            return self.api_server
+        if region == 'US':
+            self.hosts['api'] = 'us-api.leancloud.cn'
+            self.hosts['engine'] = 'us-api.leancloud.cn'
+            self.hosts['stats'] = 'us-api.leancloud.cn'
+            self.hosts['push'] = 'us-api.leancloud.cn'
+        elif region == 'CN':
+            if app_id.endswith('-9Nh9j0Va'):
+                self.hosts['api'] = 'e1-api.leancloud.cn'
+                self.hosts['engine'] = 'e1-api.leancloud.cn'
+                self.hosts['stats'] = 'e1-api.leancloud.cn'
+                self.hosts['push'] = 'e1-api.leancloud.cn'
+            else:
+                prefix = app_id[:8].lower()
+                self.hosts['api'] = '{}.api.lncld.net'.format(prefix)
+                self.hosts['engine'] = '{}.engine.lncld.net'.format(prefix)
+                self.hosts['stats'] = '{}.stats.lncld.net'.format(prefix)
+                self.hosts['push'] = '{}.push.lncld.net'.format(prefix)
         else:
-            with self.lock:
-                return self.refresh()
+            raise RuntimeError('invalid region: {}'.format(region))
+
+    def get(self, type_):
+        with self.lock:
+            expired = time.time() > self.expired_at
+            is_expired = False
+            if expired:
+                self.expired_at += 600
+                is_expired = True
+        if is_expired:
+            self.refresh()
+            threading.Thread(target=self.refresh).start()
+        with self.lock:
+            return self.hosts[type_]
 
     def refresh(self):
-        url = 'https://app-router.leancloud.cn/1/route?appId={}'.format(self.app_id)
+        url = 'https://app-router.leancloud.cn/2/route?appId={}'.format(self.app_id)
         try:
-            result = self.session.get(url).json()
-            self.update(result)
-            return result['api_server']
+            result = self.session.get(url, timeout=5).json()
+            with self.lock:
+                self.update(result)
         except Exception as e:
-            print('refresh app router failed: ', e, file=sys.stderr)
+            print('refresh app router failed:', e, file=sys.stderr)
 
     def update(self, content):
-        self.api_server = content['api_server']
+        self.hosts['api'] = content['api_server']
+        self.hosts['engine'] = content['engine_server']
+        self.hosts['stats'] = content['stats_server']
+        self.hosts['push'] = content['push_server']
         self.expired_at = time.time() + content['ttl']

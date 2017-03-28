@@ -8,8 +8,8 @@ import os
 import json
 import datetime
 
-from werkzeug.wrappers import Request #type: ignore
-from wsgi_intercept import requests_intercept, add_wsgi_intercept #type: ignore
+from werkzeug.wrappers import Request  # type: ignore
+from wsgi_intercept import requests_intercept, add_wsgi_intercept  # type: ignore
 
 import leancloud
 from leancloud import client
@@ -36,60 +36,5 @@ def test_use_master_key(): # type: () -> None
     assert client.USE_MASTER_KEY is False
 
 
-# def test_get_base_url():
-#     leancloud.use_https(False)
-#     assert client.get_base_url().startswith('http://')
-#     leancloud.use_https(True)
-#     assert client.get_base_url().startswith('https://')
-
-
 def test_get_server_time(): # type: () -> None
     assert type(client.get_server_time()) == datetime.datetime
-
-
-def test_redirect_region(): # type: () -> None
-    if client.REGION == 'US':
-        # US region server doesn't support app router now
-        return
-    # setup
-    old_app_router = client.app_router
-    client.app_router = AppRouter('test_app_id')
-    requests_intercept.install()
-
-    def fake_app_router(environ, start_response):
-        assert environ['PATH_INFO'] == '/1/route'
-        start_response('200 OK', [('Content-Type', 'application/json')])
-        return [json.dumps({
-            'api_server': 'fake-redirect-server',
-            'ttl': 3600,
-        }).encode('utf-8')]
-
-    host, port = 'app-router.leancloud.cn', 443
-    add_wsgi_intercept(host, port, lambda: fake_app_router)
-
-    def fake_redirect_server(environ, start_response):
-        start_response('307', [('Content-Type', 'application/json')])
-        return [json.dumps({
-            'api_server': 'fake-api-server',
-            'ttl': 3600,
-        }).encode('utf-8')]
-
-    host, port = 'fake-redirect-server', 443
-    add_wsgi_intercept(host, port, lambda: fake_redirect_server)
-
-
-    def fake_api_server(environ, start_response):
-        start_response('200', [('Content-Type', 'application/json')])
-        return [json.dumps({
-            'result': 42,
-        }).encode('utf-8')]
-
-    host, port = 'fake-api-server', 443
-    add_wsgi_intercept(host, port, lambda: fake_api_server)
-
-    # test
-    assert client.get('/redirectme').json()['result'] == 42
-
-    # teardown
-    client.app_router = old_app_router
-    requests_intercept.uninstall()
