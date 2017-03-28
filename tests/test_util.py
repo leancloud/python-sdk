@@ -92,6 +92,21 @@ def test_util(): # type: () -> None
     assert callback.count == 2
 
 
+def test_throttle():  # type: () -> None
+    env = {'life': 0}
+    @utils.throttle(seconds=1)
+    def plus_one_second():
+        env['life'] += 1
+
+    plus_one_second()
+    plus_one_second()
+    plus_one_second()
+    eq_(env['life'], 1)
+    time.sleep(2)
+    plus_one_second()
+    eq_(env['life'], 2)
+
+
 def test_sign_hook(): # type: () -> None
     sign = utils.sign_hook('__before_for_TestClass', 'test-master-key', '1453711871302')
     eq_(sign, '1453711871302,f10c9dd65da84b564f1b9a8b57df4a07774bc77b')

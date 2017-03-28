@@ -8,6 +8,8 @@ import os
 import json
 import time
 import hashlib
+import functools
+
 import requests
 
 import leancloud
@@ -33,11 +35,6 @@ app_router = None
 session = requests.Session()
 request_hooks = {}
 
-SERVER_URLS = {
-    'CN': 'api.leancloud.cn',
-    'US': 'us-api.leancloud.cn',
-}
-
 SERVER_VERSION = '1.1'
 
 TIMEOUT_SECONDS = 15
@@ -62,6 +59,7 @@ def init(app_id, app_key=None, master_key=None):
 
 
 def need_init(func):
+    @functools.wraps(func)
     def new_func(*args, **kwargs):
         if APP_ID is None:
             raise RuntimeError('LeanCloud SDK must be initialized')
@@ -93,27 +91,31 @@ def need_init(func):
     return new_func
 
 
-def get_base_url():
+def get_url(part):
     # try to use the base URL from environ
     url = os.environ.get('LC_API_SERVER') or os.environ.get('LEANCLOUD_API_SERVER')
     if url:
-        return '{}/{}'.format(url, SERVER_VERSION)
+        return '{}/{}{}'.format(url, SERVER_VERSION, part)
 
-    if REGION == 'US':
-        # use the hard coded base URL if region is US
-        host = SERVER_URLS[REGION]
+    global app_router
+    if app_router is None:
+        app_router = AppRouter(APP_ID, REGION)
+
+    if part.startswith('/push') or part.startswith('/installations'):
+        host = app_router.get('push')
+    elif part.startswith('/collect'):
+        host = app_router.get('stats')
+    elif part.startswith('/functions') or part.startswith('/call'):
+        host = app_router.get('engine')
     else:
-        # use base URL from app router
-        global app_router
-        if app_router is None:
-            app_router = AppRouter(APP_ID)
-        host = app_router.get()
+        host = app_router.get('api')
     r = {
         'schema': 'https' if USE_HTTPS else 'http',
         'version': SERVER_VERSION,
         'host': host,
+        'part': part,
     }
-    return '{schema}://{host}/{version}'.format(**r)
+    return '{schema}://{host}/{version}{part}'.format(**r)
 
 
 def use_production(flag):
@@ -139,20 +141,8 @@ def use_master_key(flag=True):
     USE_MASTER_KEY = True
 
 
-# def use_https(flag=True):
-#     """是否启用 HTTPS 和 LeanCloud 存储服务器通讯。
-#     默认启用，在 LeanEngine 环境下关闭可以大幅提高 LeanCloud 存储服务查询性能。
-#
-#     :type flag: bool
-#     """
-#     global USE_HTTPS
-#     if not flag:
-#         USE_HTTPS = False
-#     else:
-#         USE_HTTPS = True
-
-
 def check_error(func):
+    @functools.wraps(func)
     def new_func(*args, **kwargs):
         response = func(*args, **kwargs)
         assert isinstance(response, requests.Response)
@@ -168,22 +158,8 @@ def check_error(func):
     return new_func
 
 
-def region_redirect(func):
-    def new_func(*args, **kwargs):
-        response = func(*args, **kwargs)
-        if response.status_code == 307:
-            # we are requests another region's API server, and it told us to request another API server
-            content = response.json()
-            if app_router:
-                app_router.update(content)
-                response = func(*args, **kwargs)
-        return response
-
-    return new_func
-
-
 def use_region(region):
-    if region not in SERVER_URLS:
+    if region not in ('CN', 'US'):
         raise ValueError('currently no nodes in the region')
 
     global REGION
@@ -191,9 +167,8 @@ def use_region(region):
 
 
 def get_server_time():
-    response = session.get(get_base_url() + '/date')
-    content = json.loads(response.text)
-    return utils.decode('iso', content)
+    response = check_error(session.get)(get_url('/date'), timeout=TIMEOUT_SECONDS)
+    return utils.decode('iso', response.json())
 
 
 def get_app_info():
@@ -205,7 +180,6 @@ def get_app_info():
 
 
 @need_init
-@region_redirect
 @check_error
 def get(url, params=None, headers=None):
     if not params:
@@ -215,7 +189,7 @@ def get(url, params=None, headers=None):
             if isinstance(v, dict):
                 params[k] = json.dumps(v, separators=(',', ':'))
     response = session.get(
-        get_base_url() + url,
+        get_url(url),
         headers=headers,
         params=params,
         timeout=TIMEOUT_SECONDS,
@@ -225,11 +199,10 @@ def get(url, params=None, headers=None):
 
 
 @need_init
-@region_redirect
 @check_error
 def post(url, params, headers=None):
     response = session.post(
-        get_base_url() + url,
+        get_url(url),
         headers=headers,
         data=json.dumps(params, separators=(',', ':')),
         timeout=TIMEOUT_SECONDS,
@@ -239,11 +212,10 @@ def post(url, params, headers=None):
 
 
 @need_init
-@region_redirect
 @check_error
 def put(url, params, headers=None):
     response = session.put(
-        get_base_url() + url,
+        get_url(url),
         headers=headers,
         data=json.dumps(params, separators=(',', ':')),
         timeout=TIMEOUT_SECONDS,
@@ -253,11 +225,10 @@ def put(url, params, headers=None):
 
 
 @need_init
-@region_redirect
 @check_error
 def delete(url, params=None, headers=None):
     response = session.delete(
-        get_base_url() + url,
+        get_url(url),
         headers=headers,
         data=json.dumps(params, separators=(',', ':')),
         timeout=TIMEOUT_SECONDS,

@@ -425,9 +425,9 @@ def test_on_login(): # type: () -> None
     assert response.ok
 
 
-def test_bigquery(): # type: () -> None
-    @engine.on_bigquery('end')
-    def on_bigquery_end(ok, data):
+def test_insight(): # type: () -> None
+    @engine.on_insight('end')
+    def on_insight_end(ok, data):
         assert ok is False
         assert data == {
             "id": u"job id",
