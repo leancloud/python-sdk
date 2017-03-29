@@ -15,10 +15,11 @@ from leancloud import utils
 
 class AppRouter(object):
     def __init__(self, app_id, region):
+        self.app_id = app_id
+        self.region = region
         self.hosts = {}
         self.session = requests.Session()
         self.lock = threading.Lock()
-        self.app_id = app_id
         self.expired_at = 0
         if region == 'US':
             self.hosts['api'] = 'us-api.leancloud.cn'
@@ -41,16 +42,14 @@ class AppRouter(object):
             raise RuntimeError('invalid region: {}'.format(region))
 
     def get(self, type_):
+        if self.region == 'US':
+            # US region dose not support app router stuff
+            return self.hosts[type_]
+
         with self.lock:
-            expired = time.time() > self.expired_at
-            is_expired = False
-            if expired:
+            if time.time() > self.expired_at:
                 self.expired_at += 600
-                is_expired = True
-        if is_expired:
-            self.refresh()
-            threading.Thread(target=self.refresh).start()
-        with self.lock:
+                threading.Thread(target=self.refresh).start()
             return self.hosts[type_]
 
     def refresh(self):
