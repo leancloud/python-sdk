@@ -4,10 +4,14 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import requests
 import os
+import warnings
+
+import requests
+
 import leancloud
 
+warnings.filterwarnings("ignore")
 requests.packages.urllib3.disable_warnings()
 
 
