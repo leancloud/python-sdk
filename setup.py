@@ -37,7 +37,7 @@ setup(
     test_suite='nose.collector',
     install_requires=install_requires,
     extras_require={
-        'dev': ['sphinx'],
+        'dev': ['sphinx', 'sphinx_rtd_theme'],
         'test': ['nose', 'wsgi_intercept', 'flask'],
     }
 )
