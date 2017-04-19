@@ -105,3 +105,57 @@ def verify_sms_code(phone_number, code):
     }
     leancloud.client.post('/verifySmsCode/{0}'.format(code), params=params)
     return True
+
+
+class Captcha(object):
+    """
+    表示图形验证码
+    """
+    def __init__(self, token, url):
+        self.token = token
+        self.url = url
+
+    def verify(self, code):
+        """
+        验证用户输入与图形验证码是否匹配
+
+        :params code: 用户填写的验证码
+        """
+        return verify_captcha(self.token, code)
+
+
+def request_captcha(size=None, width=None, height=None, ttl=None):
+    """
+    请求生成新的图形验证码
+
+    :return: Captcha
+    """
+    params = {
+        'size': size,
+        'width': width,
+        'height': height,
+        'ttl': ttl,
+    }
+    for k, v in params.items():
+        if v is None:
+            params.pop(k)
+
+    response = leancloud.client.get('/requestCaptcha', params)
+    content = response.json()
+    return Captcha(content['captcha_token'], content['captcha_url'])
+
+
+def verify_captcha(token, code):
+    """
+    验证用户输入与图形验证码是否匹配
+
+    :params token: 图形验证码对应的 token
+    :params code: 用户填写的验证码
+    :return: validate token
+    """
+    params = {
+        'captcha_token': token,
+        'captcha_code': code,
+    }
+    response = leancloud.client.post('/verifyCaptcha', params)
+    return response.json()['validate_token']
