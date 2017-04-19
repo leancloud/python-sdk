@@ -61,6 +61,12 @@ class User(Object):
 
     @classmethod
     def become(cls, session_token):
+        """
+        通过 session token 获取用户对象
+
+        :param session_token: 用户的 session token
+        :return: leancloud.User
+        """
         response = client.get('/users/me', params={'session_token': session_token})
         content = response.json()
         user = cls()

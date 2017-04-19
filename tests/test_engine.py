@@ -10,6 +10,7 @@ import json
 import requests
 import typing
 
+import six
 from wsgi_intercept import requests_intercept
 from wsgi_intercept import add_wsgi_intercept
 
@@ -465,6 +466,22 @@ def test_request_sms_code(): # type: () -> None
             pass
         else:
             raise e
+
+
+def test_captcha():  # type: () -> None
+    try:
+        captcha = cloudfunc.request_captcha(size=3, height=100)
+    except LeanCloudError as e:
+        assert e.code == 119  # captcha flag is disabled
+        return
+    assert captcha.token
+    assert captcha.url
+    return
+    # test captcha by human:
+    print(captcha.url)
+    code = six.moves.input('code: ')
+    result = captcha.verify(code)
+    print(result)
 
 
 def test_current_user(): # type: () -> None

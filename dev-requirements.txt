@@ -7,3 +7,4 @@ wsgi-intercept
 nose
 flask
 sphinx_rtd_theme
+six
