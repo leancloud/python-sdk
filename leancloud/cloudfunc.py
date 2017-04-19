@@ -65,13 +65,17 @@ rpc.remote = rpc
 rpc.local = _rpc_in_local
 
 
-def request_sms_code(phone_number, idd='+86', sms_type='sms', template=None, params=None):
+def request_sms_code(phone_number, idd='+86', sms_type='sms',
+                     validate_token=None, template=None, sign=None,
+                     params=None):
     """
     请求发送手机验证码
 
     :param phone_number: 需要验证的手机号码
     :param idd: 号码的所在地国家代码，默认为中国（+86）
     :param sms_type: 验证码发送方式，'voice' 为语音，'sms' 为短信
+    :param template: 模版名称
+    :param sign: 短信签名名称
     :return: None
     """
     if not isinstance(phone_number, string_types):
@@ -85,6 +89,12 @@ def request_sms_code(phone_number, idd='+86', sms_type='sms', template=None, par
 
     if template is not None:
         params['template'] = template
+
+    if sign is not None:
+        params['sign'] = sign
+
+    if validate_token is not None:
+        params['validate_token'] = validate_token
 
     if params is not None:
         data.update(params)
