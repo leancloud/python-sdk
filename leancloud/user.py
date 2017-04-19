@@ -310,13 +310,17 @@ class User(Object):
         client.post('/requestEmailVerify', params)
 
     @classmethod
-    def request_mobile_phone_verify(cls, phone_number):
+    def request_mobile_phone_verify(cls, phone_number, validate_token=None):
         params = {'mobilePhoneNumber': phone_number}
+        if validate_token is not None:
+            params['validate_token'] = validate_token
         client.post('/requestMobilePhoneVerify', params)
 
     @classmethod
-    def request_password_reset_by_sms_code(cls, phone_number):
+    def request_password_reset_by_sms_code(cls, phone_number, validate_token=None):
         params = {'mobilePhoneNumber': phone_number}
+        if validate_token is not None:
+            params['validate_token'] = validate_token
         client.post('/requestPasswordResetBySmsCode', params)
 
     @classmethod
@@ -329,6 +333,8 @@ class User(Object):
         client.post('/verfyMobilePhone/' + sms_code, {})
 
     @classmethod
-    def request_login_sms_code(cls, phone_number):
+    def request_login_sms_code(cls, phone_number, validate_token=None):
         params = {'mobilePhoneNumber': phone_number}
+        if validate_token is not None:
+            params['validate_token'] = validate_token
         client.post('/requestLoginSmsCode', params)
