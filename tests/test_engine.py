@@ -11,6 +11,7 @@ import requests
 import typing
 
 import six
+from nose.tools import assert_equal
 from wsgi_intercept import requests_intercept
 from wsgi_intercept import add_wsgi_intercept
 
@@ -472,7 +473,7 @@ def test_captcha():  # type: () -> None
     try:
         captcha = cloudfunc.request_captcha(size=3, height=100)
     except LeanCloudError as e:
-        assert e.code == 119  # captcha flag is disabled
+        assert_equal(e.code, 119)  # captcha flag is disabled
         return
     assert captcha.token
     assert captcha.url
