@@ -4,8 +4,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from .._compat import PY3
+
 import os
-import sys
+
 
 from werkzeug.wrappers import Request
 from werkzeug.utils import redirect
@@ -14,7 +16,6 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 is_prod = True if os.environ.get('LEANCLOUD_APP_ENV') == 'production' else False
-is_py3 = True if sys.version_info.major == 3 else False
 
 class HttpsRedirectMiddleware(object):
     def __init__(self, wsgi_app):
@@ -25,7 +26,7 @@ class HttpsRedirectMiddleware(object):
         if is_prod and request.headers.get('X-Forwarded-Proto') != 'https':
             url = 'https://{0}{1}'.format(request.host, request.path)
             if request.query_string:
-                if is_py3:
+                if PY3:
                     url += '?{0}'.format(request.query_string.decode())
                 else:
                     url += '?{0}'.format(request.query_string)
