@@ -146,9 +146,7 @@ def request_captcha(size=None, width=None, height=None, ttl=None):
         'height': height,
         'ttl': ttl,
     }
-    for k, v in params.items():
-        if v is None:
-            params.pop(k)
+    params = {k: v for k, v in params.items() if v is not None}
 
     response = leancloud.client.get('/requestCaptcha', params)
     content = response.json()
