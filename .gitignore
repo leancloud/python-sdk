@@ -91,3 +91,6 @@ ENV/
 
 # LeanCloud settings
 .leancloud/
+
+# IDE-config
+.idea
