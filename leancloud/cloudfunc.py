@@ -131,7 +131,7 @@ class Captcha(object):
 
         :params code: 用户填写的验证码
         """
-        return verify_captcha(self.token, code)
+        return verify_captcha(code, self.token)
 
 
 def request_captcha(size=None, width=None, height=None, ttl=None):
@@ -153,12 +153,12 @@ def request_captcha(size=None, width=None, height=None, ttl=None):
     return Captcha(content['captcha_token'], content['captcha_url'])
 
 
-def verify_captcha(token, code):
+def verify_captcha(code, token):
     """
     验证用户输入与图形验证码是否匹配
 
-    :params token: 图形验证码对应的 token
     :params code: 用户填写的验证码
+    :params token: 图形验证码对应的 token
     :return: validate token
     """
     params = {
