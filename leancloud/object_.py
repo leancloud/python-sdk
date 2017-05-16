@@ -31,18 +31,18 @@ object_class_map = {}
 
 class ObjectMeta(type):
     def __new__(cls, name, bases, attrs):
-        # let user define their class_name at subclass-creation stage
-        class_name = attrs.pop('class_name', None)
-        if class_name:
-            name = class_name
-
         cached_class = object_class_map.get(name)
         if cached_class:
             return cached_class
 
         super_new = super(ObjectMeta, cls).__new__
 
-        if name == 'User':
+        # let user define their class_name at subclass-creation stage
+        class_name = attrs.pop('class_name', None)
+
+        if class_name:
+            attrs['_class_name'] = class_name
+        elif name == 'User':
             attrs['_class_name'] = '_User'
         elif name == 'Installation':
             attrs['_class_name'] = '_Installation'
