@@ -472,6 +472,8 @@ def test_request_sms_code(): # type: () -> None
 def test_captcha():  # type: () -> None
     if leancloud.client.REGION == 'US':
         return
+    if leancloud.client.APP_ID.endswith('-9Nh9j0Va'):
+        return
     try:
         captcha = cloudfunc.request_captcha(size=3, height=100)
     except LeanCloudError as e:
