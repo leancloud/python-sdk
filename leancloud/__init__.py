@@ -23,6 +23,7 @@ from .client import init
 from .client import use_master_key
 from .client import use_production
 from .client import use_region
+from .conversation import Conversation
 from .engine import Engine
 from .engine import LeanEngineError
 from .engine.https_redirect_middleware import HttpsRedirectMiddleware

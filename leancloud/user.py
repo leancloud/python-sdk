@@ -11,7 +11,7 @@ from leancloud import client
 from leancloud._compat import string_types
 from leancloud.errors import LeanCloudError
 from leancloud.query import FriendshipQuery
-from leancloud.query import Object
+from leancloud.object_ import Object
 from leancloud.relation import Relation
 
 __author__ = 'asaka'

@@ -50,6 +50,8 @@ class ObjectMeta(type):
             attrs['_class_name'] = '_Notification'
         elif name == 'Role':
             attrs['_class_name'] = '_Role'
+        elif name == 'Conversation':
+            attrs['_class_name'] = '_Conversation'
         else:
             attrs['_class_name'] = name
 
