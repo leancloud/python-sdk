@@ -9,12 +9,16 @@ install_requires = [
     'arrow',
     'iso8601',
     'qiniu',
-    'requests',
+    'requests>=2.12.1',
     'werkzeug',
 ]
 
 if sys.version_info < (3, 5, 0):
     install_requires.append('typing')
+
+if sys.version_info < (2, 7, 9):
+    install_requires.append('pyOpenSSL')
+    install_requires.append('idna')
 
 setup(
     name='leancloud-sdk',
