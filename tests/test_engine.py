@@ -500,7 +500,7 @@ def test_current_user(): # type: () -> None
 
     @engine.define
     def current_user():
-        user = engine.current_user
+        user = engine.current.user
         TestCurrentUser = leancloud.Object.extend('TestCurrentUser')
         o = TestCurrentUser()
         o.set('user', user)
@@ -524,7 +524,7 @@ def test_current_user(): # type: () -> None
 
     @engine.before_save('Xxx')
     def before_xxx_save(xxx):
-        assert engine.current_user.get('username') == saved_user.get('username')
+        assert engine.current.user.get('username') == saved_user.get('username')
 
     response = requests.post(url + '/__engine/1/functions/Xxx/beforeSave', headers={
         'x-avoscloud-application-id': TEST_APP_ID,

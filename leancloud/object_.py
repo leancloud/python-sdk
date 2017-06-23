@@ -7,7 +7,6 @@ from __future__ import print_function
 import time
 import copy
 import json
-import warnings
 
 import iso8601
 from werkzeug import LocalProxy
@@ -83,19 +82,9 @@ class Object(with_metaclass(ObjectMeta, object)):
         self._attributes = {}
         self.created_at = None
         self.updated_at = None
-        self._fetch_when_save = False
 
         for k, v in iteritems(attrs):
             self.set(k, v)
-
-    @property
-    def fetch_when_save(self):
-        return self._fetch_when_save
-
-    @fetch_when_save.setter
-    def fetch_when_save(self, value):
-        warnings.warn('leancloud.Object.fetch_when_save is deprecated, please use leancloud.Object.save with param fetch_when_save instead.', leancloud.errors.LeanCloudWarning);
-        self._fetch_when_save = value
 
     @classmethod
     def extend(cls, name):
@@ -171,11 +160,6 @@ class Object(with_metaclass(ObjectMeta, object)):
         ids = ','.join(ids)
         client.delete('/classes/{0}/{1}'.format(objs[0]._class_name, ids))
 
-    @property
-    def attributes(self):
-        warnings.warn('leancloud.Object.attributes should not be used any more, please use get or set instead', leancloud.errors.LeanCloudWarning)
-        return self._attributes
-
     def dump(self):
         obj = self._dump()
         obj.pop('__type')
@@ -227,8 +211,6 @@ class Object(with_metaclass(ObjectMeta, object)):
             self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
         data = self._dump_save()
-        if fetch_when_save is None:
-            fetch_when_save = self.fetch_when_save
         fetch_when_save = 'true' if fetch_when_save else 'false'
 
         if self.is_new():
