@@ -37,12 +37,10 @@ def test_basic():  # type: () -> None
         s1.write('blah blah blah')
     else:
         s1 = s
-    f1 = File('Blah', s, mime_type='text/plain')
-    f2 = File('Blah', s1, type_='text/plain')
-    for f in (f1, f2):
-        assert f.name == 'Blah'
-        assert f._metadata['size'] == 14
-        assert f.size == 14
+    f = File('Blah', s, mime_type='text/plain')
+    assert f.name == 'Blah'
+    assert f._metadata['size'] == 14
+    assert f.size == 14
 
 
 def test_create_with_url():  # type: () -> None

@@ -51,7 +51,7 @@ def test_query_relation(): # type: () -> None
 
     album = leancloud.Query('Album').get(album.id)
     relation = album.relation('band')
-    bands = relation.query().find()
+    bands = relation.query.find()
     assert band1.id in [x.id for x in bands]
     assert band2.id in [x.id for x in bands]
 
