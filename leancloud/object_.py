@@ -321,9 +321,12 @@ class Object(with_metaclass(ObjectMeta, object)):
                 self.id = server_data[key]
             else:
                 if isinstance(server_data[key], string_types):
-                    dt = iso8601.parse_date(server_data[key])
+                    dt = utils.decode(key, {
+                        '__type': 'Date',
+                        'iso': server_data[key]
+                    })
                 elif server_data[key]['__type'] == 'Date':
-                    dt = iso8601.parse_date(server_data[key]['iso'])
+                    dt = utils.decode(key, server_data)
                 else:
                     raise TypeError('Invalid date type')
                 server_data[key] = dt
@@ -481,13 +484,22 @@ class Object(with_metaclass(ObjectMeta, object)):
     def _dump_save(self):
         return {k:v.dump() for k,v in iteritems(self._changes)}
 
-    def fetch(self):
+    def fetch(self, select=None, include=None):
         """
         从服务器获取当前对象所有的值，如果与本地值不同，将会覆盖本地的值。
 
         :return: 当前对象
         """
-        response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), {})
+        data = {}
+        if select:
+            if not isinstance(select, (list, tuple)):
+                raise TypeError('select parameter must be a list or a tuple')
+            data['keys'] = ','.join(select)
+        if include:
+            if not isinstance(include, (list, tuple)):
+                raise TypeError('include parameter must be a list or a tuple')
+            data['include'] = ','.join(include)
+        response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), data)
         self._update_data(response.json())
 
     def is_new(self):
