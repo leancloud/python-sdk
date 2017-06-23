@@ -5,7 +5,6 @@ from __future__ import division
 from __future__ import print_function
 
 import json
-import warnings
 
 import leancloud
 from leancloud import client
@@ -90,10 +89,6 @@ class Query(object):
         self._extra = {}
         self._order = []
         self._select = []
-
-    def __call__(self):
-        warnings.warn('leancloud.Relation.query now is a property, please don\'t call it as a function', LeanCloudWarning)
-        return self
 
     @classmethod
     def or_(cls, *queries):
@@ -399,10 +394,6 @@ class Query(object):
         self._add_condition(key, '$exists', True)
         return self
 
-    def does_not_exists(self, key):
-        warnings.warn('the query does_not_exists is deprecated, please use does_not_exist instead', LeanCloudWarning)
-        return self.does_not_exist(key)
-
     def does_not_exist(self, key):
         """
         增加查询条件，限制查询结果对象不包含指定字段
@@ -462,10 +453,6 @@ class Query(object):
         dumped['className'] = query._query_class._class_name
         self._add_condition(key, '$notInQuery', dumped)
         return self
-
-    def matched_key_in_query(self, key, query_key, query):
-        warnings.warn('the query matched_key_in_query is deprecated, please use matches_key_in_query', LeanCloudWarning)
-        return self.matches_key_in_query(key, query_key, query)
 
     def matches_key_in_query(self, key, query_key, query):
         """

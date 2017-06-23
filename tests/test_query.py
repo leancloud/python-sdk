@@ -311,7 +311,7 @@ def test_contains_all(): # type: () -> None
 
 @with_setup(make_setup_func())
 def test_exist_and_does_not_exists(): # type: () -> None
-    assert Query(GameScore).does_not_exists('oops').find()
+    assert Query(GameScore).does_not_exist('oops').find()
     result = Query(GameScore).exists('playerName').find()
     assert len(result) == 10
 

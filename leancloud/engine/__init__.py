@@ -2,7 +2,6 @@
 
 import sys
 import json
-import warnings
 
 from werkzeug.wrappers import Request
 from werkzeug.wrappers import Response
@@ -70,11 +69,6 @@ class Engine(object):
         if request.path.startswith('/1/call') or request.path.startswith('/1.1/call'):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
-
-    @property
-    def current_user(self):
-        warnings.warn('Engine.current_user is deprecated, please use Engine.current.user instead', leancloud.LeanCloudWarning)
-        return user
 
     def wrap(self, wsgi_app):
         if leanengine.root_engine:

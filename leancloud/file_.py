@@ -10,7 +10,6 @@ import io
 import hashlib
 import uuid
 import logging
-import warnings
 import threading
 
 import requests
@@ -33,7 +32,7 @@ logger = logging.getLogger(__name__)
 class File(object):
     _class_name = '_File'  # walks like a leancloud.Object
 
-    def __init__(self, name='', data=None, mime_type=None, type_=None):
+    def __init__(self, name='', data=None, mime_type=None):
         self._name = name
         self.id = None
         self._url = None
@@ -44,10 +43,6 @@ class File(object):
         }
         if self.current_user and self.current_user != None:  # NOQA: self.current_user may be a thread_local object
             self._metadata['owner'] = self.current_user.id
-
-        if type_ is not None:
-            warnings.warn(LeanCloudWarning('optional param `type_` is deprecated, please use `mime_type` instead'))
-            mime_type = type_
 
         pattern = re.compile('\.([^.]*)$')
         extension = pattern.findall(name)
@@ -92,11 +87,7 @@ class File(object):
         return leancloud.Query(cls)
 
     @classmethod
-    def create_with_url(cls, name, url, meta_data=None, mime_type=None, type_=None):
-        if type_ is not None:
-            warnings.warn('optional param `type_` is deprecated, please use `mime_type` instead')
-            mime_type = type_
-
+    def create_with_url(cls, name, url, meta_data=None, mime_type=None):
         f = File(name, None, mime_type)
         if meta_data:
             f._metadata.update(meta_data)
