@@ -76,10 +76,7 @@ class LeanEngineApplication(object):
 
     def __call__(self, environ, start_response):
         self.process_session(environ)
-        request = environ['leanengine.request']
-
-        response = self.dispatch_request(request)
-
+        response = self.dispatch_request(environ)
         return response(environ, start_response)
 
     @classmethod
@@ -114,7 +111,9 @@ class LeanEngineApplication(object):
 
         context.local.user = None
 
-    def dispatch_request(self, request):
+    def dispatch_request(self, environ):
+        request = environ['leanengine.request']
+        app_params = environ['_app_params']
         adapter = self.url_map.bind_to_environ(request.environ)
         try:
             endpoint, values = adapter.match()
@@ -126,22 +125,22 @@ class LeanEngineApplication(object):
 
         try:
             if endpoint == 'cloud_function':
-                result = {'result': dispatch_cloud_func(decode_object=False, **values)}
+                result = {'result': dispatch_cloud_func(app_params, decode_object=False, **values)}
             elif endpoint == 'rpc_function':
-                result = {'result': dispatch_cloud_func(decode_object=True, **values)}
+                result = {'result': dispatch_cloud_func(app_params, decode_object=True, **values)}
             elif endpoint == 'cloud_hook':
-                result = dispatch_cloud_hook(**values)
+                result = dispatch_cloud_hook(app_params, **values)
             elif endpoint == 'on_verified':
-                result = {'result': dispatch_on_verified(**values)}
+                result = {'result': dispatch_on_verified(app_params, **values)}
             elif endpoint == 'on_login':
-                result = {'result': dispatch_on_login(**values)}
+                result = {'result': dispatch_on_login(app_params, **values)}
             elif endpoint == 'ops_meta_data':
                 from .authorization import MASTER_KEY
                 if request.environ.get('_app_params', {}).get('master_key') != MASTER_KEY:
                     raise LeanEngineError(code=401, message='Unauthorized.')
                 result = {'result': dispatch_ops_meta_data()}
             elif endpoint == 'on_bigquery':
-                result = {'result': dispatch_on_bigquery(**values)}
+                result = {'result': dispatch_on_bigquery(app_params, **values)}
             else:
                 raise ValueError    # impossible
             return Response(json.dumps(result), mimetype='application/json')
@@ -190,16 +189,16 @@ def register_cloud_func(func_or_func_name):
     return func
 
 
-def dispatch_cloud_func(func_name, decode_object, params):
+def dispatch_cloud_func(app_params, func_name, decode_object, params):
     # let's check realtime hook sign first
     realtime_hook_funcs = [
         '_messageReceived', '_receiversOffline', '_messageSent', '_conversationStart', '_conversationStarted',
         '_conversationAdd', '_conversationRemove', '_conversationUpdate'
     ]
-    from .authorization import MASTER_KEY
-    sign = params.pop('__sign', '')
+    from .authorization import HOOK_KEY
     if func_name in realtime_hook_funcs:
-        if not utils.verify_hook_sign(func_name, MASTER_KEY, sign):
+        current_hook_key = app_params.get('hook_key')
+        if not current_hook_key or current_hook_key != HOOK_KEY:
             raise LeanEngineError(code=401, message='Unauthorized.')
 
     # delete all keys in params which starts with low dash.
@@ -249,7 +248,11 @@ before_delete = functools.partial(register_cloud_hook, hook_name='beforeDelete')
 after_delete = functools.partial(register_cloud_hook, hook_name='afterDelete')
 
 
-def dispatch_cloud_hook(class_name, hook_name, params):
+def dispatch_cloud_hook(app_params, class_name, hook_name, params):
+    from .authorization import HOOK_KEY
+    current_hook_key = app_params.get('hook_key')
+    if not current_hook_key or current_hook_key != HOOK_KEY:
+        raise LeanEngineError(code=401, message='Unauthorized.')
     hook_name = hook_name_mapping[hook_name] + class_name
     if hook_name not in _cloud_codes:
         raise NotAcceptable
@@ -299,11 +302,11 @@ def register_on_verified(verify_type):
     return new_func
 
 
-def dispatch_on_verified(verify_type, params):
+def dispatch_on_verified(app_params, verify_type, params):
     func_name = '__on_verified_' + verify_type
-    from .authorization import MASTER_KEY
-    sign = params.get('object', {}).pop('__sign', '')
-    if not utils.verify_hook_sign(func_name, MASTER_KEY, sign):
+    from .authorization import HOOK_KEY
+    hook_key = app_params.get('hook_key')
+    if not hook_key or hook_key != HOOK_KEY:
         raise LeanEngineError(code=401, message='Unauthorized.')
 
     user = leancloud.User()
@@ -323,10 +326,10 @@ def register_on_login(func):
     _cloud_codes[func_name] = func
 
 
-def dispatch_on_login(params):
-    from .authorization import MASTER_KEY
-    sign = params.get('object', {}).pop('__sign', '')
-    if not utils.verify_hook_sign('__on_login__User', MASTER_KEY, sign):
+def dispatch_on_login(app_params, params):
+    from .authorization import HOOK_KEY
+    current_hook_key = app_params.get('hook_key')
+    if not current_hook_key or current_hook_key != HOOK_KEY:
         raise LeanEngineError(code=401, message='Unauthorized.')
 
     func = _cloud_codes.get('__on_login__User')
@@ -356,15 +359,15 @@ def register_on_bigquery(event):
     return inner_func
 
 
-def dispatch_on_bigquery(event, params):
+def dispatch_on_bigquery(app_params, event, params):
     if event == 'onComplete':
         func_name = '__on_complete_bigquery_job'
     else:
         return
 
-    from .authorization import MASTER_KEY
-    sign = params.pop('__sign', '')
-    if not utils.verify_hook_sign(func_name, MASTER_KEY, sign):
+    from .authorization import HOOK_KEY
+    current_hook_key = app_params.get('hook_key')
+    if not current_hook_key or current_hook_key != HOOK_KEY:
         raise LeanEngineError(code=401, message='Unauthorized.')
 
     func = _cloud_codes.get(func_name)

@@ -27,9 +27,9 @@ class Notification(Object):
         response = client.get('/tables/Notifications/{0}'.format(self.id))
         self._update_data(response.json())
 
-
-    def save(self):
+    def save(self, *args, **kwargs):
         raise LeanCloudError(code=1, error='Notification does not support modify')
+
 
 def send(data, channels=None, push_time=None, expiration_time=None, expiration_interval=None, where=None, cql=None):
     """
