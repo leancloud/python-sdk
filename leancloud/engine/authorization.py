@@ -11,9 +11,10 @@ from leancloud._compat import to_native
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
-APP_ID = os.environ.get('LC_APP_ID')
-APP_KEY = os.environ.get('LC_APP_KEY')
-MASTER_KEY = os.environ.get('LC_APP_MASTER_KEY')
+APP_ID = os.environ.get('LEANCLOUD_APP_ID')
+APP_KEY = os.environ.get('LEANCLOUD_APP_KEY')
+MASTER_KEY = os.environ.get('LEANCLOUD_APP_MASTER_KEY')
+HOOK_KEY = os.environ.get('LEANCLOUD_APP_HOOK_KEY')
 
 
 _ENABLE_TEST = False
@@ -61,6 +62,7 @@ class AuthorizationMiddleware(object):
             or request.headers.get('x-lc-session')
         master_key = request.headers.get('x-uluru-master-key')\
             or request.headers.get('x-avoscloud-master-key')
+        hook_key = request.headers.get('x-lc-hook-key')
 
         if app_key and ',master' in app_key:
             master_key, _ = app_key.split(',')
@@ -88,6 +90,7 @@ class AuthorizationMiddleware(object):
             'key': app_key,
             'master_key': master_key,
             'session_token': session_token,
+            'hook_key': hook_key,
         }
 
     @classmethod

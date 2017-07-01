@@ -30,6 +30,7 @@ env = None  # type: typing.Dict[str, str]
 TEST_APP_ID = os.environ['APP_ID']
 TEST_APP_KEY = os.environ['APP_KEY']
 TEST_MASTER_KEY = os.environ['MASTER_KEY']
+TEST_HOOK_KEY = os.environ['HOOK_KEY']
 sign_by_app_key = generate_request(TEST_APP_KEY)
 sign_by_master_key = generate_request(TEST_MASTER_KEY, True)
 
@@ -68,6 +69,7 @@ def setup():
     authorization.APP_ID = TEST_APP_ID
     authorization.APP_KEY = TEST_APP_KEY
     authorization.MASTER_KEY = TEST_MASTER_KEY
+    authorization.HOOK_KEY = TEST_HOOK_KEY
 
     requests_intercept.install()
     add_wsgi_intercept(host, port, make_app)
@@ -268,9 +270,9 @@ def test_realtime_cloud_func(): # type: () -> None
     def _messageReceived():
         pass
     try:
-        cloudfunc.run.local('_messageReceived', __sign='321,xxx')
+        cloudfunc.run.local('_messageReceived')
     except leancloud.LeanEngineError as e:
-        assert e.code == 401
+        assert_equal(e.code, 401)
     else:
         raise AssertionError
     response = requests.post(url + '/__engine/1/functions/_messageReceived', headers={
@@ -279,9 +281,6 @@ def test_realtime_cloud_func(): # type: () -> None
     }, json={'foo': ['bar', 'baz'], '__sign': '123,xxx'})
     assert response.status_code == 401
 
-    timestamp = int(time.time() * 1000)
-    cloudfunc.run.local('_messageReceived', __sign=leancloud.utils.sign_hook('_messageReceived', TEST_MASTER_KEY, timestamp))
-
 
 def test_on_verified(): # type: () -> None
     @engine.on_verified('sms')
@@ -289,19 +288,19 @@ def test_on_verified(): # type: () -> None
         assert isinstance(user, leancloud.User)
         assert user.id == 'xxx'
 
-    timestamp = int(time.time() * 1000)
     response = requests.post(url + '/__engine/1/functions/onVerified/sms', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-lc-hook-key': 'invalid-hook-key',
     }, json={'object': {'__sign': '123,xxx'}})
-    assert response.status_code == 401
+    assert_equal(response.status_code, 401)
     response = requests.post(url + '/__engine/1/functions/onVerified/sms', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-lc-hook-key': TEST_HOOK_KEY,
     }, json={
         'object': {
             'objectId': 'xxx',
-            '__sign': leancloud.utils.sign_hook('__on_verified_sms', TEST_MASTER_KEY, timestamp),
         },
     })
     assert response.ok
@@ -347,7 +346,6 @@ def test_rpc_call(): # type: () -> None
     objs[0].destroy()
 
 
-
 def test_before_save_hook(): # type: () -> None
     @engine.before_save('HookObject')
     def before_hook_object_save(obj):
@@ -359,6 +357,7 @@ def test_before_save_hook(): # type: () -> None
     }, headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-lc-hook-key': TEST_HOOK_KEY,
     })
     assert response.ok
     assert response.json()['beforeSaveHookInserted'] == True
@@ -376,6 +375,7 @@ def test_after_save_hook(): # type: () -> None
     }, headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-lc-hook-key': TEST_HOOK_KEY,
     })
     assert response.ok
     assert response.json() == {'result': 'ok'}
@@ -391,6 +391,7 @@ def test_before_update_hook(): # type: () -> None
     }, headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-lc-hook-key': TEST_HOOK_KEY,
     })
     assert response.ok
 
@@ -405,6 +406,7 @@ def test_before_delete_hook(): # type: () -> None
     }, headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-lc-hook-key': TEST_HOOK_KEY,
     })
     assert response.ok
     assert response.json() == {}
@@ -415,14 +417,12 @@ def test_on_login(): # type: () -> None
     def on_login(user):
         assert isinstance(user, leancloud.User)
 
-    timestamp = int(time.time() * 1000)
     response = requests.post(url + '/__engine/1.1/functions/_User/onLogin', json={
-        'object': {
-            '__sign': leancloud.utils.sign_hook('__on_login__User', TEST_MASTER_KEY, timestamp),
-        },
+        'object': {},
     }, headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-lc-hook-key': TEST_HOOK_KEY,
     })
     assert response.ok
 
@@ -437,15 +437,14 @@ def test_insight(): # type: () -> None
             "message": u"当  status 为 ERROR 时的错误消息"
         }
 
-    timestamp = int(time.time() * 1000)
     response = requests.post(url + '/__engine/1/functions/BigQuery/onComplete', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-lc-hook-key': TEST_HOOK_KEY,
     }, json={
         "id": u"job id",
         "status": u"OK/ERROR",
         "message": u"当  status 为 ERROR 时的错误消息",
-        '__sign': leancloud.utils.sign_hook('__on_complete_bigquery_job', TEST_MASTER_KEY, timestamp),
     })
     assert response.ok
 
@@ -519,6 +518,7 @@ def test_current_user(): # type: () -> None
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
         'x-avoscloud-session-token': session_token,
+        'x-lc-hook-key': TEST_HOOK_KEY,
     })
     assert response.status_code == 200
 
@@ -529,8 +529,9 @@ def test_current_user(): # type: () -> None
     response = requests.post(url + '/__engine/1/functions/Xxx/beforeSave', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
+        'x-lc-hook-key': TEST_HOOK_KEY,
     }, json={'object': {}, 'user': {'username': saved_user.get('username')}})
-    assert response.status_code == 200
+    assert_equal(response.status_code, 200)
 
     # cleanup
     saved_user.destroy()

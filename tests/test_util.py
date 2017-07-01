@@ -105,10 +105,3 @@ def test_throttle():  # type: () -> None
     time.sleep(2)
     plus_one_second()
     eq_(env['life'], 2)
-
-
-def test_sign_hook(): # type: () -> None
-    sign = utils.sign_hook('__before_for_TestClass', 'test-master-key', '1453711871302')
-    eq_(sign, '1453711871302,f10c9dd65da84b564f1b9a8b57df4a07774bc77b')
-    sign = utils.sign_hook('__before_for_TestClass', 'test-master-key', int(time.time()) * 1000)
-    leancloud.engine.utils.verify_hook_sign('__before_for_TestClass', 'test-master-key', sign)
