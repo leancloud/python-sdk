@@ -18,11 +18,12 @@ class CORSMiddleware(object):
         'X-Uluru-Application-Production',
         'X-Uluru-Client-Version',
         'X-Uluru-Session-Token',
+        'X-LC-Hook-Key',
         'X-LC-Id',
         'X-LC-Key',
+        'X-LC-Prod',
         'X-LC-Session',
         'X-LC-Sign',
-        'X-LC-Prod',
         'X-LC-UA',
     ])
     ALLOW_METHODS = ', '.join(['PUT', 'GET', 'POST', 'DELETE', 'OPTIONS'])
