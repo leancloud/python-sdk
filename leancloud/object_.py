@@ -4,12 +4,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import time
 import copy
 import json
 
-import iso8601
-from werkzeug import LocalProxy
+from werkzeug.local import LocalProxy
 
 import leancloud
 from leancloud import utils
@@ -80,6 +78,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         self._class_name = self._class_name  # for IDE
         self._changes = {}
         self._attributes = {}
+        self._flags = {}
         self.created_at = None
         self.updated_at = None
 
@@ -152,13 +151,32 @@ class Object(with_metaclass(ObjectMeta, object)):
         """
         if not objs:
             return
-        if not all(x._class_name == objs[0]._class_name for x in objs):
-            raise ValueError("destroy_all requires the argument object list's _class_names must be the same")
         if any(x.is_new() for x in objs):
             raise ValueError("Could not destroy unsaved object")
-        ids = {x.id for x in objs}
-        ids = ','.join(ids)
-        client.delete('/classes/{0}/{1}'.format(objs[0]._class_name, ids))
+
+        dumped_objs = []
+        for obj in objs:
+            dumped_obj = {
+                'method': 'DELETE',
+                'path': '/{0}/classes/{1}/{2}'.format(client.SERVER_VERSION, obj._class_name, obj.id),
+                'body': obj._flags,
+            }
+            dumped_objs.append(dumped_obj)
+
+        response = client.post('/batch', params={'requests': dumped_objs}).json()
+
+        errors = []
+        for idx, obj in enumerate(objs):
+            content = response[idx]
+            error = content.get('error')
+            if error:
+                errors.append(leancloud.LeanCloudError(error.get('code'), error.get('error')))
+
+        if errors:
+            # TODO: how to raise list of errors?
+            # raise MultipleValidationErrors(errors)
+            # add test
+            raise errors[0]
 
     def dump(self):
         obj = self._dump()
@@ -186,7 +204,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         """
         if not self.id:
             return
-        client.delete('/classes/{0}/{1}'.format(self._class_name, self.id))
+        client.delete('/classes/{0}/{1}'.format(self._class_name, self.id), self._flags)
 
     def save(self, where=None, fetch_when_save=None):
         """
@@ -464,7 +482,9 @@ class Object(with_metaclass(ObjectMeta, object)):
         self.set(self._attributes, unset=True)
 
     def _dump_save(self):
-        return {k:v.dump() for k,v in iteritems(self._changes)}
+        data = {k: v.dump() for k, v in iteritems(self._changes)}
+        data.update(self._flags)
+        return data
 
     def fetch(self, select=None, include=None):
         """
@@ -515,18 +535,29 @@ class Object(with_metaclass(ObjectMeta, object)):
         return self.set('ACL', acl)
 
     def disable_before_hook(self):
-        master_key = client.get_app_info().get('master_key')
-        if not master_key:
-            raise ValueError('disable_before_hook need LeanCloud master key')
-        timestamp = int(time.time() * 1000)
-        return self.set('__before', utils.sign_hook('__before_for_' + self._class_name, master_key, timestamp))
+        hook_key = client.get_app_info().get('hook_key')
+        if not hook_key:
+            raise ValueError('disable_before_hook need LeanCloud hook key')
+        self.ignore_hook('beforeSave')
+        self.ignore_hook('beforeUpdate')
+        self.ignore_hook('beforeDelete')
+        return self
 
     def disable_after_hook(self):
-        master_key = client.get_app_info().get('master_key')
-        if not master_key:
-            raise ValueError('disable_before_hook need LeanCloud master key')
-        timestamp = int(time.time() * 1000)
-        return self.set('__after', utils.sign_hook('__after_for_' + self._class_name, master_key, timestamp))
+        hook_key = client.get_app_info().get('hook_key')
+        if not hook_key:
+            raise ValueError('`disable_before_hook` need LeanCloud hook key')
+        self.ignore_hook('afterSave')
+        self.ignore_hook('afterUpdate')
+        self.ignore_hook('afterDelete')
+        return self
+
+    def ignore_hook(self, hook_name):
+        if hook_name not in {'beforeSave', 'afterSave', 'beforeUpdate', 'afterUpdate', 'beforeDelete', 'afterDelete'}:
+            raise ValueError('invalid hook name: ' + hook_name)
+        if '__ignore_hooks' not in self._flags:
+            self._flags['__ignore_hooks'] = []
+        self._flags['__ignore_hooks'].append(hook_name)
 
     def _update_data(self, server_data):
         self._merge_metadata(server_data)
