@@ -4,7 +4,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-
 from werkzeug import http
 from werkzeug.wrappers import Request
 from werkzeug.contrib.securecookie import SecureCookie
@@ -30,8 +29,12 @@ class CookieSessionMiddleware(object):
     :type excluded_paths: list
     :param fetch_user: 处理请求时是否要从存储服务获取用户数据，如果为 false 的话，leancloud.User.get_current() 获取到的用户数据上除了 session_token 之外没有任何其他数据，需要自己调用 fetch() 来获取。为 true 的话，会自动在用户对象上调用 fetch()，这样将会产生一次数据存储的 API 调用。默认为 false
     :type fetch_user: bool
+    :param expires: 设置 cookie 的 expires
+    :type expires: int or datetime
+    :param max_age: 设置 cookie 的 max_age，单位为秒
+    :type max_age: int
     """
-    def __init__(self, app, secret, name='leancloud:session', excluded_paths=None, fetch_user=False):
+    def __init__(self, app, secret, name='leancloud:session', excluded_paths=None, fetch_user=False, expires=None, max_age=None):
         if not secret:
             raise RuntimeError('secret is required')
         self.fetch_user = fetch_user
@@ -45,6 +48,8 @@ class CookieSessionMiddleware(object):
             '/1/call/',
             '/1.1/call/',
         ]
+        self.expires = expires
+        self.max_age = max_age
         if excluded_paths:
             self.excluded_paths += excluded_paths
 
@@ -89,5 +94,6 @@ class CookieSessionMiddleware(object):
             'uid': user.id,
             'session_token': user.get_session_token(),
         }, self.secret)
-        raw = http.dump_cookie(self.name, cookie.serialize())
+        raw = http.dump_cookie(self.name, cookie.serialize(),
+                               expires=self.expires, max_age=self.max_age)
         headers.append(('Set-Cookie', raw))
