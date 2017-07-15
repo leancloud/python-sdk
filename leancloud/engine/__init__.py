@@ -32,12 +32,15 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class Engine(object):
-    def __init__(self, wsgi_app):
+    def __init__(self, wsgi_app=None):
         self.current = current
         self.origin_app = wsgi_app
-        self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(LeanEngineApplication())))
+        self.app = LeanEngineApplication()
+        self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(self.app)))
 
     def __call__(self, environ, start_response):
+        if not self.origin_app:
+            raise ValueError("Please use engine.wrap to wrap wsgi function")
         request = Request(environ)
         environ['leanengine.request'] = request  # cache werkzeug request for other middlewares
 
@@ -56,35 +59,43 @@ class Engine(object):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 
+    def wrap(self, wsgi_app):
+        self.origin_app = wsgi_app
+
+    def register(self, engine):
+        if not isinstance(engine, Engine):
+            raise ValueError("Please specify an Engine instance")
+        self.app.update_cloud_codes(engine.app.cloud_codes)
+
     def define(self, *args, **kwargs):
-        return register_cloud_func(*args, **kwargs)
+        return register_cloud_func(self.app.cloud_codes, *args, **kwargs)
 
     def on_verified(self, *args, **kwargs):
-        return register_on_verified(*args, **kwargs)
+        return register_on_verified(self.app.cloud_codes, *args, **kwargs)
 
     def on_login(self, *args, **kwargs):
-        return register_on_login(*args, **kwargs)
+        return register_on_login(self.app.cloud_codes, *args, **kwargs)
 
     def before_save(self, *args, **kwargs):
-        return before_save(*args, **kwargs)
+        return before_save(self.app.cloud_codes, *args, **kwargs)
 
     def after_save(self, *args, **kwargs):
-        return after_save(*args, **kwargs)
+        return after_save(self.app.cloud_codes, *args, **kwargs)
 
     def before_update(self, *args, **kwargs):
-        return before_update(*args, **kwargs)
+        return before_update(self.app.cloud_codes, *args, **kwargs)
 
     def after_update(self, *args, **kwargs):
-        return after_update(*args, **kwargs)
+        return after_update(self.app.cloud_codes, *args, **kwargs)
 
     def before_delete(self, *args, **kwargs):
-        return before_delete(*args, **kwargs)
+        return before_delete(self.app.cloud_codes, *args, **kwargs)
 
     def after_delete(self, *args, **kwargs):
-        return after_delete(*args, **kwargs)
+        return after_delete(self.app.cloud_codes, *args, **kwargs)
 
     def on_insight(self, *args, **kwargs):
-        return register_on_bigquery(*args, **kwargs)
+        return register_on_bigquery(self.app.cloud_codes, *args, **kwargs)
 
     def run(self, *args, **kwargs):
         return run_simple(*args, **kwargs)

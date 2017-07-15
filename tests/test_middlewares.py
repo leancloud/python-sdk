@@ -55,7 +55,7 @@ def test_cookie_session_middleware():
     user._update_data(FAKE_USER_DATA)
     user_module.thread_locals.current_user = user
 
-    app = CookieSessionMiddleware(application, b'wtf!')
+    app = CookieSessionMiddleware(application, b'wtf!', expires=3600, max_age=3600)
     add_wsgi_intercept(HOST, PORT, lambda: app)
 
     response = requests.get(URL)
@@ -71,5 +71,12 @@ def test_cookie_session_middleware():
     del user_module.thread_locals.current_user
     response = requests.get(URL + '/logout', cookies=response.cookies)
     assert 'leancloud:session' not in response.cookies
+
+    # TODO: try not using for..in to get cookie
+    for cookie in response.cookies:
+        if cookie.name == "leancloud:session":
+            assert cookie.expires
+            assert cookie.max_age
+            break
 
     remove_wsgi_intercept()
