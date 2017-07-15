@@ -24,6 +24,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
+HOOK_KEY = None
 USE_PRODUCTION = '1'
 USE_HTTPS = True
 # 兼容老版本，如果 USE_MASTER_KEY 为 None ，并且 MASTER_KEY 不为 None，则使用 MASTER_KEY
@@ -40,7 +41,7 @@ SERVER_VERSION = '1.1'
 TIMEOUT_SECONDS = 15
 
 
-def init(app_id, app_key=None, master_key=None):
+def init(app_id, app_key=None, master_key=None, hook_key=None):
     """初始化 LeanCloud 的 AppId / AppKey / MasterKey
 
     :type app_id: string_types
@@ -49,13 +50,19 @@ def init(app_id, app_key=None, master_key=None):
     :param app_key: 应用的 Application Key
     :type master_key: None or string_types
     :param master_key: 应用的 Master Key
+    :param hook_key: application's hook key
+    :type hook_key: None or string_type
     """
     if (not app_key) and (not master_key):
         raise RuntimeError('app_key or master_key must be specified')
-    global APP_ID, APP_KEY, MASTER_KEY
+    global APP_ID, APP_KEY, MASTER_KEY, HOOK_KEY
     APP_ID = app_id
     APP_KEY = app_key
     MASTER_KEY = master_key
+    if hook_key:
+        HOOK_KEY = hook_key
+    else:
+        HOOK_KEY = os.environ.get('LEANCLOUD_APP_HOOK_KEY')
 
 
 def need_init(func):
@@ -176,6 +183,7 @@ def get_app_info():
         'app_id': APP_ID,
         'app_key': APP_KEY,
         'master_key': MASTER_KEY,
+        'hook_key': HOOK_KEY,
     }
 
 
