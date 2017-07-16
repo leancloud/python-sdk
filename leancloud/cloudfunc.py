@@ -6,7 +6,7 @@ from __future__ import print_function
 
 import leancloud
 from leancloud import utils
-from leancloud.engine import global_cloud_codes
+from leancloud.engine.leanengine import global_cloud_codes
 from leancloud._compat import string_types
 
 
