@@ -6,7 +6,7 @@ from __future__ import print_function
 
 import leancloud
 from leancloud import utils
-from leancloud.engine import _global_cloud_codes
+from leancloud.engine import global_cloud_codes
 from leancloud._compat import string_types
 
 
@@ -28,7 +28,7 @@ def run(_cloud_func_name, **params):
 
 
 def _run_in_local(_cloud_func_name, **params):
-    result = leancloud.engine.leanengine.dispatch_cloud_func(_global_cloud_codes, {}, _cloud_func_name, False, params)
+    result = leancloud.engine.leanengine.dispatch_cloud_func(global_cloud_codes, {}, _cloud_func_name, False, params)
     return utils.decode(None, result)
 
 
@@ -58,7 +58,7 @@ def rpc(_cloud_rpc_name, **params):
 
 
 def _rpc_in_local(_cloud_rpc_name, **params):
-    result = leancloud.engine.leanengine.dispatch_cloud_func(_global_cloud_codes, {}, _cloud_rpc_name, True, params)
+    result = leancloud.engine.leanengine.dispatch_cloud_func(global_cloud_codes, {}, _cloud_rpc_name, True, params)
     return utils.decode(None, result)
 
 
