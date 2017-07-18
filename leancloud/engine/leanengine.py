@@ -4,24 +4,22 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import sys
+import functools
 import json
 import logging
+import sys
 import traceback
-import functools
 
-import leancloud
-from werkzeug.wrappers import Response
-from werkzeug.routing import Map
-from werkzeug.routing import Rule
 from werkzeug.exceptions import HTTPException
 from werkzeug.exceptions import NotAcceptable
+from werkzeug.routing import Map
+from werkzeug.routing import Rule
+from werkzeug.wrappers import Response
 
-from . import context
-from . import utils
-from leancloud._compat import to_native
+import leancloud
 from leancloud._compat import string_types
-
+from leancloud._compat import to_native
+from . import context
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -41,7 +39,8 @@ class LeanEngineError(Exception):
 
 
 class LeanEngineApplication(object):
-    def __init__(self):
+    def __init__(self, fetch_user):
+        self.fetch_user = fetch_user
         self.url_map = Map([
             Rule('/__engine/1/functions/<func_name>', endpoint='cloud_function'),
             Rule('/__engine/1.1/functions/<func_name>', endpoint='cloud_function'),
@@ -79,8 +78,7 @@ class LeanEngineApplication(object):
         response = self.dispatch_request(environ)
         return response(environ, start_response)
 
-    @classmethod
-    def process_session(cls, environ):
+    def process_session(self, environ):
         request = environ['leanengine.request']
         context.local.current = context.Current()
         context.local.current.meta = {
@@ -89,10 +87,11 @@ class LeanEngineApplication(object):
 
         if environ['_app_params']['session_token'] not in (None, ''):
             session_token = environ['_app_params']['session_token']
-            user = leancloud.User.become(session_token)
-            context.local.current.user = user
+            if self.fetch_user:
+                user = leancloud.User.become(session_token)
+                context.local.current.user = user
+                context.local.user = user
             context.local.current.session_token = session_token
-            context.local.user = user
             return
 
         try:
