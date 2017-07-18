@@ -33,10 +33,20 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class Engine(object):
-    def __init__(self, wsgi_app):
+    """
+    LeanEngine middleware.
+    """
+    def __init__(self, wsgi_app, fetch_user=True):
+        """
+        LeanEngine middleware constructor.
+
+        :param wsgi_app: wsgi callable
+        :param fetch_user: should fetch user's data from server while processing session token.
+        :type fetch_user: bool
+        """
         self.current = current
         self.origin_app = wsgi_app
-        self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(LeanEngineApplication())))
+        self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(LeanEngineApplication(fetch_user=fetch_user))))
 
     def __call__(self, environ, start_response):
         request = Request(environ)
