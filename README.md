@@ -16,7 +16,7 @@ or
 easy_install leancloud-sdk
 ```
 
-Maybe you need the `sudo` prefix depends on you OS environment.
+Maybe you need the `sudo` prefix depends on your OS environment.
 
 ## Generate API document
 
