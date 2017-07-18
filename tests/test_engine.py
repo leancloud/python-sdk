@@ -9,6 +9,7 @@ import time
 import json
 import requests
 import typing
+import warnings
 
 import six
 from nose.tools import assert_equal
@@ -20,8 +21,8 @@ from leancloud import Engine
 from leancloud import cloudfunc
 from leancloud.engine import authorization
 from leancloud import LeanCloudError
+from leancloud.errors import LeanCloudWarning
 from .request_generator import generate_request
-
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -546,3 +547,13 @@ def test_engine_register(): # type: () -> None
     })
     assert response.ok
 
+def test_engine_wrap(): # type: () -> None
+    def temp_app(environ, start_response):
+        start_response('200 OK', [('Content-Type', 'text/plain')])
+        return [b'testing']
+    with warnings.catch_warnings(record=True) as w:
+        engine.wrap(temp_app)
+        assert issubclass(w[-1].category, LeanCloudWarning)
+    response = requests.get(url)
+    assert response.ok
+    assert response.content == b'testing'

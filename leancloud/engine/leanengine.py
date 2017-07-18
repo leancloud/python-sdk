@@ -160,12 +160,11 @@ class LeanEngineApplication(object):
             )
 
     def update_cloud_codes(self, engine_cloud_codes):
-        # using _global_cloud_codes to avoid that func_name is already registerd
-        insert_cloud_codes = dict(
-            set(engine_cloud_codes.items()) - set(self.cloud_codes.items()).intersection(set(engine_cloud_codes.items()))
-        )
-        self.cloud_codes.update(insert_cloud_codes)
-
+        already_register_func_name = set(self.cloud_codes.keys()).intersection(set(engine_cloud_codes.keys()))
+        if already_register_func_name:
+            is_are = "is" if len(already_register_func_name) == 1 else "are"
+            raise RuntimeError("cloud function: {0} {1} already registerd.".format(",".join(already_register_func_name), is_are))
+        self.cloud_codes.update(engine_cloud_codes)
 
 hook_name_mapping = {
     'beforeSave': '__before_save_for_',
@@ -176,16 +175,15 @@ hook_name_mapping = {
     'afterDelete': '__after_delete_for_',
 }
 
-_global_cloud_codes = {}
+root_engine = None
 
 def register_cloud_func(_cloud_codes, func_or_func_name):
     if isinstance(func_or_func_name, string_types):
         func_name = func_or_func_name
         def inner_func(func):
-            if func_name in _global_cloud_codes:
+            if func_name in _cloud_codes:
                 raise RuntimeError('cloud function: {0} is already registered'.format(func_name))
             _cloud_codes[func_name] = func
-            _global_cloud_codes[func_name] = func
             return func
         return inner_func
 
@@ -194,7 +192,6 @@ def register_cloud_func(_cloud_codes, func_or_func_name):
     if func_name in _global_cloud_codes:
         raise RuntimeError('cloud function: {0} is already registered'.format(func_name))
     _cloud_codes[func_name] = func
-    _global_cloud_codes[func_name] = func
     return func
 
 
@@ -235,12 +232,11 @@ def register_cloud_hook(_cloud_codes, class_name, hook_name):
     # hack the hook name
     hook_name = hook_name_mapping[hook_name] + class_name
 
-    if hook_name in _global_cloud_codes:
+    if hook_name in _cloud_codes:
         raise RuntimeError('cloud hook {0} on class {1} is already registered'.format(hook_name, class_name))
 
     def new_func(func):
         _cloud_codes[hook_name] = func
-        _global_cloud_codes[hook_name] = func
     return new_func
 
 
@@ -305,10 +301,9 @@ def register_on_verified(_cloud_codes, verify_type):
     func_name = '__on_verified_{0}'.format(verify_type)
 
     def new_func(func):
-        if func_name in _global_cloud_codes:
+        if func_name in _cloud_codes:
             raise RuntimeError('on verified is already registered')
         _cloud_codes[func_name] = func
-        _global_cloud_codes[func_name] = func
     return new_func
 
 
@@ -331,10 +326,9 @@ def dispatch_on_verified(_cloud_codes, app_params, verify_type, params):
 def register_on_login(_cloud_codes, func):
     func_name = '__on_login__User'
 
-    if func_name in _global_cloud_codes:
+    if func_name in _cloud_codes:
         raise RuntimeError('on login is already registered')
     _cloud_codes[func_name] = func
-    _global_cloud_codes[func_name] = func
 
 
 def dispatch_on_login(_cloud_codes, app_params, params):
@@ -364,10 +358,9 @@ def register_on_bigquery(_cloud_codes, event):
         raise RuntimeError('event not support')
 
     def inner_func(func):
-        if func_name in _global_cloud_codes:
+        if func_name in _cloud_codes:
             raise RuntimeError('on bigquery is already registered')
         _cloud_codes[func_name] = func
-        _global_cloud_codes[func_name] = func
     return inner_func
 
 

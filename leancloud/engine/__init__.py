@@ -27,6 +27,9 @@ from .leanengine import register_on_bigquery
 from .leanengine import register_on_login
 from .leanengine import register_on_verified
 from .leanengine import user
+from .leanengine import root_engine
+from ..errors import LeanCloudWarning
+import warnings
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -34,13 +37,15 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 class Engine(object):
     def __init__(self, wsgi_app=None):
         self.current = current
+        if wsgi_app:
+            root_engine = self
         self.origin_app = wsgi_app
         self.app = LeanEngineApplication()
         self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(self.app)))
 
     def __call__(self, environ, start_response):
         if not self.origin_app:
-            raise ValueError("Please use engine.wrap to wrap wsgi function")
+            raise TypeError("Please use engine.wrap to wrap wsgi function")
         request = Request(environ)
         environ['leanengine.request'] = request  # cache werkzeug request for other middlewares
 
@@ -60,11 +65,15 @@ class Engine(object):
         return self.origin_app(environ, start_response)
 
     def wrap(self, wsgi_app):
+        if root_engine:
+            warnings.warn("Overwrite previous wsgi_app.")
+        root_engine = self
         self.origin_app = wsgi_app
+        return self
 
     def register(self, engine):
         if not isinstance(engine, Engine):
-            raise ValueError("Please specify an Engine instance")
+            raise TypeError("Please specify an Engine instance")
         self.app.update_cloud_codes(engine.app.cloud_codes)
 
     def define(self, *args, **kwargs):
