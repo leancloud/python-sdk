@@ -46,7 +46,7 @@ class Engine(object):
         :type fetch_user: bool
         """
         self.current = current
-        if not wsgi_app:
+        if wsgi_app:
             global root_engine
             root_engine = self
         self.origin_app = wsgi_app
