@@ -37,7 +37,7 @@ class Engine(object):
     """
     LeanEngine middleware.
     """
-    def __init__(self, wsgi_app, fetch_user=True):
+    def __init__(self, wsgi_app=None, fetch_user=True):
         """
         LeanEngine middleware constructor.
 
