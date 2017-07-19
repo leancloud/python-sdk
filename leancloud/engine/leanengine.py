@@ -174,7 +174,8 @@ hook_name_mapping = {
     'afterDelete': '__after_delete_for_',
 }
 
-root_engine = None
+# use list instead of engine instance to avoid namespace problem.
+root_engine = [None]
 
 def register_cloud_func(_cloud_codes, func_or_func_name):
     if isinstance(func_or_func_name, string_types):

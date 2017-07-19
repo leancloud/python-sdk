@@ -28,9 +28,9 @@ def run(_cloud_func_name, **params):
 
 
 def _run_in_local(_cloud_func_name, **params):
-    if not root_engine:
+    if not root_engine[0]:
         return
-    result = leancloud.engine.leanengine.dispatch_cloud_func(root_engine.cloud_codes, {}, _cloud_func_name, False, params)
+    result = leancloud.engine.leanengine.dispatch_cloud_func(root_engine[0].app.cloud_codes, {}, _cloud_func_name, False, params)
     return utils.decode(None, result)
 
 
@@ -60,9 +60,9 @@ def rpc(_cloud_rpc_name, **params):
 
 
 def _rpc_in_local(_cloud_rpc_name, **params):
-    if not root_engine:
+    if not root_engine[0]:
         return
-    result = leancloud.engine.leanengine.dispatch_cloud_func(root_engine.cloud_codes, {}, _cloud_rpc_name, True, params)
+    result = leancloud.engine.leanengine.dispatch_cloud_func(root_engine[0].app.cloud_codes, {}, _cloud_rpc_name, True, params)
     return utils.decode(None, result)
 
 

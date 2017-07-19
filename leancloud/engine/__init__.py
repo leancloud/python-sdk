@@ -47,8 +47,7 @@ class Engine(object):
         """
         self.current = current
         if wsgi_app:
-            global root_engine
-            root_engine = self
+            root_engine[0] = self
         self.origin_app = wsgi_app
         self.app = LeanEngineApplication(fetch_user=fetch_user)
         self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(self.app)))
@@ -78,10 +77,9 @@ class Engine(object):
         return user
 
     def wrap(self, wsgi_app):
-        global root_engine
-        if root_engine:
-            warnings.warn("Overwrite previous wsgi_app.", leancloud.LeanCloudWarning)
-        root_engine = self
+        # if root_engine[0]:
+        #     warnings.warn("Overwrite previous wsgi_app.", leancloud.LeanCloudWarning)
+        root_engine[0] = self
         self.origin_app = wsgi_app
         return self
 
