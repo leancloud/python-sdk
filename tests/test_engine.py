@@ -47,16 +47,8 @@ def app(environ, start_response):
 
 
 engine = Engine(app)
-
-
-def make_app():
-    return engine
-
-
 host, port = 'localhost', 80
 url = 'http://{0}:{1}/'.format(host, port)
-
-
 HookObject = leancloud.Object.extend('HookObject')
 
 
@@ -73,7 +65,7 @@ def setup():
     authorization.HOOK_KEY = TEST_HOOK_KEY
 
     requests_intercept.install()
-    add_wsgi_intercept(host, port, make_app)
+    add_wsgi_intercept(host, port, lambda: engine)
 
     @engine.define
     def hello(**params):

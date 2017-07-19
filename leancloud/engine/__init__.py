@@ -2,6 +2,7 @@
 
 import sys
 import json
+import warnings
 
 from werkzeug.wrappers import Request
 from werkzeug.wrappers import Response
@@ -28,24 +29,31 @@ from .leanengine import register_on_login
 from .leanengine import register_on_verified
 from .leanengine import user
 from .leanengine import root_engine
-from ..errors import LeanCloudWarning
-import warnings
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
 
 class Engine(object):
-    def __init__(self, wsgi_app=None):
+    """
+    LeanEngine middleware.
+    """
+    def __init__(self, wsgi_app, fetch_user=True):
+        """
+        LeanEngine middleware constructor.
+
+        :param wsgi_app: wsgi callable
+        :param fetch_user: should fetch user's data from server while processing session token.
+        :type fetch_user: bool
+        """
         self.current = current
-        if wsgi_app:
+        if not wsgi_app:
+            global root_engine
             root_engine = self
         self.origin_app = wsgi_app
-        self.app = LeanEngineApplication()
+        self.app = LeanEngineApplication(fetch_user=fetch_user)
         self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(self.app)))
 
     def __call__(self, environ, start_response):
-        if not self.origin_app:
-            raise TypeError("Please use engine.wrap to wrap wsgi function")
         request = Request(environ)
         environ['leanengine.request'] = request  # cache werkzeug request for other middlewares
 
@@ -64,9 +72,15 @@ class Engine(object):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 
+    @property
+    def current_user(self):
+        warnings.warn('Engine.current_user is deprecated, please use Engine.current.user instead', leancloud.LeanCloudWarning)
+        return user
+
     def wrap(self, wsgi_app):
+        global root_engine
         if root_engine:
-            warnings.warn("Overwrite previous wsgi_app.")
+            warnings.warn("Overwrite previous wsgi_app.", leancloud.LeanCloudWarning)
         root_engine = self
         self.origin_app = wsgi_app
         return self
@@ -75,6 +89,11 @@ class Engine(object):
         if not isinstance(engine, Engine):
             raise TypeError("Please specify an Engine instance")
         self.app.update_cloud_codes(engine.app.cloud_codes)
+
+    @staticmethod
+    def on_bigquery(*args, **kwargs):
+        warnings.warn('on_bigquery is deprecated, please use on_insight instead', leancloud.LeanCloudWarning)
+        return register_on_bigquery(*args, **kwargs)
 
     def define(self, *args, **kwargs):
         return register_cloud_func(self.app.cloud_codes, *args, **kwargs)
