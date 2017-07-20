@@ -79,6 +79,12 @@ def setup():
 def teardown():
     requests_intercept.uninstall()
 
+def test_ping(): # type: () -> None
+    response = requests.get(url + '/__engine/1/ping', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    })
+    assert response.ok
 
 def test_lean_engine_error():
     err = leancloud.LeanEngineError(233, 'llllleancloud')
@@ -564,6 +570,12 @@ def test_engine_wrap(): # type: () -> None
     def temp_app(environ, start_response):
         start_response('200 OK', [('Content-Type', 'text/plain')])
         return [b'testing']
+    try:
+        engine.wrap(temp_app)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("rewriting wsgi_app isn't permitted.")
     leanengine.root_engine = None # for passing RuntimeError.
     engine.wrap(temp_app)
     response = requests.get(url)
