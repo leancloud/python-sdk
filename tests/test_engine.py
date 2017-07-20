@@ -9,6 +9,7 @@ import time
 import json
 import requests
 import typing
+import warnings
 
 import six
 from nose.tools import assert_equal
@@ -20,8 +21,8 @@ from leancloud import Engine
 from leancloud import cloudfunc
 from leancloud.engine import authorization
 from leancloud import LeanCloudError
+from leancloud.errors import LeanCloudWarning
 from .request_generator import generate_request
-
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -522,3 +523,27 @@ def test_current_user(): # type: () -> None
 
     # cleanup
     saved_user.destroy()
+
+def test_engine_register(): # type: () -> None
+    temp_engine = Engine()
+
+    @temp_engine.define
+    def testing():
+        return "testing"
+
+    engine.register(temp_engine)
+
+    response = requests.post(url + '/__engine/1/functions/testing', headers={
+        'x-avoscloud-application-id': TEST_APP_ID,
+        'x-avoscloud-application-key': TEST_APP_KEY,
+    })
+    assert response.ok
+
+def test_engine_wrap(): # type: () -> None
+    def temp_app(environ, start_response):
+        start_response('200 OK', [('Content-Type', 'text/plain')])
+        return [b'testing']
+    engine.wrap(temp_app)
+    response = requests.get(url)
+    assert response.ok
+    assert response.content == b'testing'

@@ -20,7 +20,6 @@ class CookieSessionMiddleware(object):
     使用此中间件之后，在处理 web 请求中调用了 `leancloud.User.login()` 方法登录成功后，
     会将此用户 session token 写入到 cookie 中。
     后续此次会话都可以通过 `leancloud.User.get_current()` 获取到此用户对象。
-
     :param secret: 对保存在 cookie 中的用户 session token 进行签名时需要的 key，可使用任意方法随机生成，请不要泄漏
     :type secret: str
     :param name: 在 cookie 中保存的 session token 的 key 的名称，默认为 "leancloud:session"
