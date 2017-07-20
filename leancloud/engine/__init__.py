@@ -9,6 +9,7 @@ from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
 
 import leancloud
+import leanengine
 from .authorization import AuthorizationMiddleware
 from .cookie_session import CookieSessionMiddleware
 from .cors import CORSMiddleware
@@ -28,7 +29,6 @@ from .leanengine import register_on_bigquery
 from .leanengine import register_on_login
 from .leanengine import register_on_verified
 from .leanengine import user
-from .leanengine import root_engine
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -47,8 +47,7 @@ class Engine(object):
         """
         self.current = current
         if wsgi_app:
-            global root_engine
-            root_engine = self
+            leanengine.root_engine = self
         self.origin_app = wsgi_app
         self.app = LeanEngineApplication(fetch_user=fetch_user)
         self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(self.app)))
@@ -79,9 +78,9 @@ class Engine(object):
 
     def wrap(self, wsgi_app):
         global root_engine
-        if root_engine:
+        if leanengine.root_engine:
             warnings.warn("Overwrite previous wsgi_app.", leancloud.LeanCloudWarning)
-        root_engine = self
+        leanengine.root_engine = self
         self.origin_app = wsgi_app
         return self
 
