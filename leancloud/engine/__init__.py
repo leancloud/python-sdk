@@ -71,6 +71,11 @@ class Engine(object):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 
+    @property
+    def current_user(self):
+        warnings.warn('Engine.current_user is deprecated, please use Engine.current.user instead', leancloud.LeanCloudWarning)
+        return user
+
     def wrap(self, wsgi_app):
         if leanengine.root_engine:
             warnings.warn("Overwrite previous wsgi_app.", leancloud.LeanCloudWarning)
@@ -91,6 +96,10 @@ class Engine(object):
 
     def on_login(self, *args, **kwargs):
         return register_on_login(self.app.cloud_codes, *args, **kwargs)
+
+    def on_bigquery(self, *args, **kwargs):
+        warnings.warn('on_bigquery is deprecated, please use on_insight instead', leancloud.LeanCloudWarning)
+        return register_on_bigquery(self.app.cloud_codes, *args, **kwargs)
 
     def before_save(self, *args, **kwargs):
         return before_save(self.app.cloud_codes, *args, **kwargs)
