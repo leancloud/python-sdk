@@ -9,6 +9,7 @@ from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
 
 import leancloud
+from . import leanengine
 from .authorization import AuthorizationMiddleware
 from .cookie_session import CookieSessionMiddleware
 from .cors import CORSMiddleware
@@ -36,17 +37,20 @@ class Engine(object):
     """
     LeanEngine middleware.
     """
-    def __init__(self, wsgi_app, fetch_user=True):
+    def __init__(self, wsgi_app=None, fetch_user=True):
         """
         LeanEngine middleware constructor.
 
         :param wsgi_app: wsgi callable
-        :param fetch_user: should fetch user's data from server while processing session token.
+        :param fetch_user: should fetch user's data from server while prNoneocessing session token.
         :type fetch_user: bool
         """
         self.current = current
+        if wsgi_app:
+            leanengine.root_engine = self
         self.origin_app = wsgi_app
-        self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(LeanEngineApplication(fetch_user=fetch_user))))
+        self.app = LeanEngineApplication(fetch_user=fetch_user)
+        self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(self.app)))
 
     def __call__(self, environ, start_response):
         request = Request(environ)
@@ -67,45 +71,47 @@ class Engine(object):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 
-    @property
-    def current_user(self):
-        warnings.warn('Engine.current_user is deprecated, please use Engine.current.user instead', leancloud.LeanCloudWarning)
-        return user
+    def wrap(self, wsgi_app):
+        if leanengine.root_engine:
+            warnings.warn("Overwrite previous wsgi_app.", leancloud.LeanCloudWarning)
+        leanengine.root_engine = self
+        self.origin_app = wsgi_app
+        return self
 
-    @staticmethod
-    def on_bigquery(*args, **kwargs):
-        warnings.warn('on_bigquery is deprecated, please use on_insight instead', leancloud.LeanCloudWarning)
-        return register_on_bigquery(*args, **kwargs)
+    def register(self, engine):
+        if not isinstance(engine, Engine):
+            raise TypeError("Please specify an Engine instance")
+        self.app.update_cloud_codes(engine.app.cloud_codes)
 
     def define(self, *args, **kwargs):
-        return register_cloud_func(*args, **kwargs)
+        return register_cloud_func(self.app.cloud_codes, *args, **kwargs)
 
     def on_verified(self, *args, **kwargs):
-        return register_on_verified(*args, **kwargs)
+        return register_on_verified(self.app.cloud_codes, *args, **kwargs)
 
     def on_login(self, *args, **kwargs):
-        return register_on_login(*args, **kwargs)
+        return register_on_login(self.app.cloud_codes, *args, **kwargs)
 
     def before_save(self, *args, **kwargs):
-        return before_save(*args, **kwargs)
+        return before_save(self.app.cloud_codes, *args, **kwargs)
 
     def after_save(self, *args, **kwargs):
-        return after_save(*args, **kwargs)
+        return after_save(self.app.cloud_codes, *args, **kwargs)
 
     def before_update(self, *args, **kwargs):
-        return before_update(*args, **kwargs)
+        return before_update(self.app.cloud_codes, *args, **kwargs)
 
     def after_update(self, *args, **kwargs):
-        return after_update(*args, **kwargs)
+        return after_update(self.app.cloud_codes, *args, **kwargs)
 
     def before_delete(self, *args, **kwargs):
-        return before_delete(*args, **kwargs)
+        return before_delete(self.app.cloud_codes, *args, **kwargs)
 
     def after_delete(self, *args, **kwargs):
-        return after_delete(*args, **kwargs)
+        return after_delete(self.app.cloud_codes, *args, **kwargs)
 
     def on_insight(self, *args, **kwargs):
-        return register_on_bigquery(*args, **kwargs)
+        return register_on_bigquery(self.app.cloud_codes, *args, **kwargs)
 
     def run(self, *args, **kwargs):
         return run_simple(*args, **kwargs)

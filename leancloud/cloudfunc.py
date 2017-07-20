@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import leancloud
 from leancloud import utils
+from leancloud.engine import leanengine
 from leancloud._compat import string_types
 
 
@@ -15,7 +16,6 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 def run(_cloud_func_name, **params):
     """
     调用 LeanEngine 上的远程代码
-
     :param name: 需要调用的远程 Cloud Code 的名称
     :type name: string_types
     :param params: 调用参数
@@ -27,7 +27,9 @@ def run(_cloud_func_name, **params):
 
 
 def _run_in_local(_cloud_func_name, **params):
-    result = leancloud.engine.leanengine.dispatch_cloud_func({}, _cloud_func_name, False, params)
+    if not leanengine.root_engine:
+        return
+    result = leanengine.dispatch_cloud_func(leanengine.root_engine.app.cloud_codes, {}, _cloud_func_name, False, params)
     return utils.decode(None, result)
 
 
@@ -39,7 +41,6 @@ def rpc(_cloud_rpc_name, **params):
     """
     调用 LeanEngine 上的远程代码
     与cloudfunc.run 类似，但是允许传入 leancloud.Object 作为参数，也允许传入 leancloud.Object 作为结果
-
     :param name: 需要调用的远程 Cloud Code 的名称
     :type name: basestring
     :param params: 调用参数
@@ -57,7 +58,9 @@ def rpc(_cloud_rpc_name, **params):
 
 
 def _rpc_in_local(_cloud_rpc_name, **params):
-    result = leancloud.engine.leanengine.dispatch_cloud_func({}, _cloud_rpc_name, True, params)
+    if not leanengine.root_engine:
+        return
+    result = leanengine.dispatch_cloud_func(leanengine.root_engine.app.cloud_codes, {}, _cloud_rpc_name, True, params)
     return utils.decode(None, result)
 
 
@@ -70,7 +73,6 @@ def request_sms_code(phone_number, idd='+86', sms_type='sms',
                      params=None):
     """
     请求发送手机验证码
-
     :param phone_number: 需要验证的手机号码
     :param idd: 号码的所在地国家代码，默认为中国（+86）
     :param sms_type: 验证码发送方式，'voice' 为语音，'sms' 为短信
@@ -105,7 +107,6 @@ def request_sms_code(phone_number, idd='+86', sms_type='sms',
 def verify_sms_code(phone_number, code):
     """
     获取到手机验证码之后，验证验证码是否正确。如果验证失败，抛出异常。
-
     :param phone_number: 需要验证的手机号码
     :param code: 接受到的验证码
     :return: None
@@ -128,7 +129,6 @@ class Captcha(object):
     def verify(self, code):
         """
         验证用户输入与图形验证码是否匹配
-
         :params code: 用户填写的验证码
         """
         return verify_captcha(code, self.token)
@@ -137,7 +137,6 @@ class Captcha(object):
 def request_captcha(size=None, width=None, height=None, ttl=None):
     """
     请求生成新的图形验证码
-
     :return: Captcha
     """
     params = {
@@ -156,7 +155,6 @@ def request_captcha(size=None, width=None, height=None, ttl=None):
 def verify_captcha(code, token):
     """
     验证用户输入与图形验证码是否匹配
-
     :params code: 用户填写的验证码
     :params token: 图形验证码对应的 token
     :return: validate token
