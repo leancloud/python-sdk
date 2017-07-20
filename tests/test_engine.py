@@ -238,6 +238,15 @@ def test_register_cloud_func(): # type: () -> None
         assert params == {"foo": ["bar", "baz"]}
         return 'pong'
 
+    try:
+        @engine.define
+        def ping():
+            pass
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("registering same func_name isn't permitted.")
+
     response = requests.post(url + '/__engine/1/functions/ping', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
@@ -537,6 +546,13 @@ def test_engine_register(): # type: () -> None
         return "testing"
 
     engine.register(temp_engine)
+
+    try:
+        engine.register(temp_engine) # check if it will raise RuntimeError
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("check if it will raise RuntimeError")
 
     response = requests.post(url + '/__engine/1/functions/testing', headers={
         'x-avoscloud-application-id': TEST_APP_ID,
