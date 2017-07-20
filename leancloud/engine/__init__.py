@@ -2,7 +2,6 @@
 
 import sys
 import json
-import warnings
 
 from werkzeug.wrappers import Request
 from werkzeug.wrappers import Response
@@ -71,11 +70,6 @@ class Engine(object):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 
-    @property
-    def current_user(self):
-        warnings.warn('Engine.current_user is deprecated, please use Engine.current.user instead', leancloud.LeanCloudWarning)
-        return user
-
     def wrap(self, wsgi_app):
         global root_engine
         if leanengine.root_engine:
@@ -88,11 +82,6 @@ class Engine(object):
         if not isinstance(engine, Engine):
             raise TypeError("Please specify an Engine instance")
         self.app.update_cloud_codes(engine.app.cloud_codes)
-
-    @staticmethod
-    def on_bigquery(*args, **kwargs):
-        warnings.warn('on_bigquery is deprecated, please use on_insight instead', leancloud.LeanCloudWarning)
-        return register_on_bigquery(*args, **kwargs)
 
     def define(self, *args, **kwargs):
         return register_cloud_func(self.app.cloud_codes, *args, **kwargs)
