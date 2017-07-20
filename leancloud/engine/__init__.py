@@ -9,7 +9,7 @@ from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
 
 import leancloud
-import leanengine
+from . import leanengine
 from .authorization import AuthorizationMiddleware
 from .cookie_session import CookieSessionMiddleware
 from .cors import CORSMiddleware
