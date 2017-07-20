@@ -72,6 +72,7 @@ class LeanEngineApplication(object):
             Rule('/1/functions/_ops/metadatas', endpoint='ops_meta_data'),
             Rule('/1.1/functions/_ops/metadatas', endpoint='ops_meta_data'),
         ])
+        self.cloud_codes = {}
 
     def __call__(self, environ, start_response):
         self.process_session(environ)
@@ -124,22 +125,22 @@ class LeanEngineApplication(object):
 
         try:
             if endpoint == 'cloud_function':
-                result = {'result': dispatch_cloud_func(app_params, decode_object=False, **values)}
+                result = {'result': dispatch_cloud_func(self.cloud_codes, app_params, decode_object=False, **values)}
             elif endpoint == 'rpc_function':
-                result = {'result': dispatch_cloud_func(app_params, decode_object=True, **values)}
+                result = {'result': dispatch_cloud_func(self.cloud_codes, app_params, decode_object=True, **values)}
             elif endpoint == 'cloud_hook':
-                result = dispatch_cloud_hook(app_params, **values)
+                result = dispatch_cloud_hook(self.cloud_codes, app_params, **values)
             elif endpoint == 'on_verified':
-                result = {'result': dispatch_on_verified(app_params, **values)}
+                result = {'result': dispatch_on_verified(self.cloud_codes, app_params, **values)}
             elif endpoint == 'on_login':
-                result = {'result': dispatch_on_login(app_params, **values)}
+                result = {'result': dispatch_on_login(self.cloud_codes, app_params, **values)}
             elif endpoint == 'ops_meta_data':
                 from .authorization import MASTER_KEY
                 if request.environ.get('_app_params', {}).get('master_key') != MASTER_KEY:
                     raise LeanEngineError(code=401, message='Unauthorized.')
-                result = {'result': dispatch_ops_meta_data()}
+                result = {'result': dispatch_ops_meta_data(self.cloud_codes)}
             elif endpoint == 'on_bigquery':
-                result = {'result': dispatch_on_bigquery(app_params, **values)}
+                result = {'result': dispatch_on_bigquery(self.cloud_codes, app_params, **values)}
             else:
                 raise ValueError    # impossible
             return Response(json.dumps(result), mimetype='application/json')
@@ -157,6 +158,12 @@ class LeanEngineApplication(object):
                 mimetype='application/json'
             )
 
+    def update_cloud_codes(self, engine_cloud_codes):
+        already_register_func_name = set(self.cloud_codes.keys()).intersection(set(engine_cloud_codes.keys()))
+        if already_register_func_name:
+            is_are = "is" if len(already_register_func_name) == 1 else "are"
+            raise RuntimeError("cloud function: {0} {1} already registerd.".format(",".join(already_register_func_name), is_are))
+        self.cloud_codes.update(engine_cloud_codes)
 
 hook_name_mapping = {
     'beforeSave': '__before_save_for_',
@@ -167,10 +174,9 @@ hook_name_mapping = {
     'afterDelete': '__after_delete_for_',
 }
 
-_cloud_codes = {}
+root_engine = None
 
-
-def register_cloud_func(func_or_func_name):
+def register_cloud_func(_cloud_codes, func_or_func_name):
     if isinstance(func_or_func_name, string_types):
         func_name = func_or_func_name
         def inner_func(func):
@@ -188,7 +194,7 @@ def register_cloud_func(func_or_func_name):
     return func
 
 
-def dispatch_cloud_func(app_params, func_name, decode_object, params):
+def dispatch_cloud_func(_cloud_codes, app_params, func_name, decode_object, params):
     # let's check realtime hook sign first
     realtime_hook_funcs = [
         '_messageReceived', '_receiversOffline', '_messageSent', '_conversationStart', '_conversationStarted',
@@ -221,7 +227,7 @@ def dispatch_cloud_func(app_params, func_name, decode_object, params):
     return result
 
 
-def register_cloud_hook(class_name, hook_name):
+def register_cloud_hook(_cloud_codes, class_name, hook_name):
     # hack the hook name
     hook_name = hook_name_mapping[hook_name] + class_name
 
@@ -230,7 +236,6 @@ def register_cloud_hook(class_name, hook_name):
 
     def new_func(func):
         _cloud_codes[hook_name] = func
-
     return new_func
 
 
@@ -247,7 +252,7 @@ before_delete = functools.partial(register_cloud_hook, hook_name='beforeDelete')
 after_delete = functools.partial(register_cloud_hook, hook_name='afterDelete')
 
 
-def dispatch_cloud_hook(app_params, class_name, hook_name, params):
+def dispatch_cloud_hook(_cloud_codes, app_params, class_name, hook_name, params):
     from .authorization import HOOK_KEY
     current_hook_key = app_params.get('hook_key')
     if not current_hook_key or current_hook_key != HOOK_KEY:
@@ -288,7 +293,7 @@ def dispatch_cloud_hook(app_params, class_name, hook_name, params):
         return obj.dump()
 
 
-def register_on_verified(verify_type):
+def register_on_verified(_cloud_codes, verify_type):
     if verify_type not in set(['sms', 'email']):
         raise RuntimeError('verify_type must be sms or email')
 
@@ -301,7 +306,7 @@ def register_on_verified(verify_type):
     return new_func
 
 
-def dispatch_on_verified(app_params, verify_type, params):
+def dispatch_on_verified(_cloud_codes, app_params, verify_type, params):
     func_name = '__on_verified_' + verify_type
     from .authorization import HOOK_KEY
     hook_key = app_params.get('hook_key')
@@ -317,7 +322,7 @@ def dispatch_on_verified(app_params, verify_type, params):
     return func(user)
 
 
-def register_on_login(func):
+def register_on_login(_cloud_codes, func):
     func_name = '__on_login__User'
 
     if func_name in _cloud_codes:
@@ -325,7 +330,7 @@ def register_on_login(func):
     _cloud_codes[func_name] = func
 
 
-def dispatch_on_login(app_params, params):
+def dispatch_on_login(_cloud_codes, app_params, params):
     from .authorization import HOOK_KEY
     current_hook_key = app_params.get('hook_key')
     if not current_hook_key or current_hook_key != HOOK_KEY:
@@ -341,11 +346,11 @@ def dispatch_on_login(app_params, params):
     return func(user)
 
 
-def dispatch_ops_meta_data():
+def dispatch_ops_meta_data(_cloud_codes):
     return list(_cloud_codes.keys())
 
 
-def register_on_bigquery(event):
+def register_on_bigquery(_cloud_codes, event):
     if event == 'end':
         func_name = '__on_complete_bigquery_job'
     else:
@@ -358,7 +363,7 @@ def register_on_bigquery(event):
     return inner_func
 
 
-def dispatch_on_bigquery(app_params, event, params):
+def dispatch_on_bigquery(_cloud_codes, app_params, event, params):
     if event == 'onComplete':
         func_name = '__on_complete_bigquery_job'
     else:
