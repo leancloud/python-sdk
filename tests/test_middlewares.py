@@ -12,7 +12,7 @@ from wsgi_intercept import requests_intercept
 
 from leancloud import user as user_module
 from leancloud.engine.cookie_session import CookieSessionMiddleware
-
+from leancloud.engine import https_redirect_middleware
 
 HOST, PORT = 'localhost', 80
 URL = 'http://{}:{}/'.format(HOST, PORT)
@@ -78,5 +78,17 @@ def test_cookie_session_middleware():
             assert cookie.expires
             assert cookie.max_age
             break
+
+    remove_wsgi_intercept()
+
+def test_https_redirect_middleware():
+    https_redirect_middleware.is_prod = True
+    app = https_redirect_middleware.HttpsRedirectMiddleware(application)
+    add_wsgi_intercept(HOST, PORT, lambda: app)
+
+    response = requests.get(url=URL, allow_redirects=False)
+
+    assert response.is_redirect == True
+    assert response.next.url[:5] == "https"
 
     remove_wsgi_intercept()
