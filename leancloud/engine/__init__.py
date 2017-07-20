@@ -78,7 +78,7 @@ class Engine(object):
 
     def wrap(self, wsgi_app):
         if leanengine.root_engine:
-            warnings.warn("Overwrite previous wsgi_app.", leancloud.LeanCloudWarning)
+            raise RuntimeError("It's forbidden that overwriting wsgi_func.")
         leanengine.root_engine = self
         self.origin_app = wsgi_app
         return self
