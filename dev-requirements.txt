@@ -1,5 +1,5 @@
 arrow==0.10.0
-iso8601
+iso8601==0.1.12
 qiniu
 requests
 werkzeug
