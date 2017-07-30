@@ -1,4 +1,4 @@
-arrow
+arrow==0.10.0
 iso8601
 qiniu
 requests
