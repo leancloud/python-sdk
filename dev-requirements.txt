@@ -1,6 +1,6 @@
 arrow==0.10.0
 iso8601==0.1.12
-qiniu
+qiniu==7.1.4
 requests
 werkzeug
 wsgi-intercept
