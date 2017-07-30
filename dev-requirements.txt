@@ -2,7 +2,7 @@ arrow==0.10.0
 iso8601==0.1.12
 qiniu==7.1.4
 requests==2.18.2
-werkzeug
+werkzeug==0.12.2
 wsgi-intercept
 nose
 flask
