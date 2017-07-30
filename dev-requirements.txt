@@ -1,7 +1,7 @@
 arrow==0.10.0
 iso8601==0.1.12
 qiniu==7.1.4
-requests
+requests==2.18.2
 werkzeug
 wsgi-intercept
 nose
