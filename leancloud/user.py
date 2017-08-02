@@ -29,6 +29,10 @@ class User(Object):
     def get_session_token(self):
         return self._session_token
 
+    @property
+    def session_token(self):
+        return self._session_token
+
     def _merge_metadata(self, attrs):
         if 'sessionToken' in attrs:
             self._session_token = attrs.pop('sessionToken')

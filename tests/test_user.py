@@ -167,7 +167,7 @@ def test_update_user(): # type: () -> None
 def test_user_become(): # type: () -> None
     existed_user = User()
     existed_user.login('user1_name', 'password')
-    session_token = existed_user.get_session_token()
+    session_token = existed_user.session_token
     user = User.become(session_token)
     assert user.get('username') == existed_user.get('username')
 
