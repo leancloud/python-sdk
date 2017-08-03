@@ -1,3 +1,11 @@
+## [1.13.0] - 2017-08-4
+### Added
+- leancloud.Engine#wrap
+- leancloud.Engine#register
+- support leanengine hook key
+- add fetch_user param in leancloud.Engine constructor
+- support setting expires and max_age in CookieSessionMiddleware
+
 ## [1.12.0] - 2017-06-05
 ### Added
 - Captcha related API
