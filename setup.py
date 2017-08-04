@@ -21,7 +21,7 @@ if sys.version_info < (2, 7, 9):
     install_requires.append('idna')
 
 setup(
-    name='leancloud-sdk',
+    name='leancloud',
     version='1.13.0',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
