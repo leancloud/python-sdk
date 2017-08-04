@@ -22,6 +22,14 @@ class Role(leancloud.Object):
             acl.set_public_read_access(True)
         self.set_acl(acl)
 
+    @property
+    def name(self):
+        return self.get('name')
+
+    @name.setter
+    def name(self, name):
+        return self.set('name', name)
+
     def get_name(self):
         """
         获取 Role 的 name，等同于 role.get('name')
@@ -34,11 +42,19 @@ class Role(leancloud.Object):
         """
         return self.set('name', name)
 
+    @property
+    def users(self):
+        return self.relation('users')
+
     def get_users(self):
         """
         获取当前 Role 下所有绑定的用户。
         """
         return self.relation('users')
+
+    @property
+    def roles(self):
+        return self.relation('roles')
 
     def get_roles(self):
         return self.relation('roles')
