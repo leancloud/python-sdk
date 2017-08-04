@@ -31,12 +31,16 @@ def test_init(): # type: () -> None
     assert role
     assert role.get_name() == 'xxx'
     assert role.get_acl() == acl
+    assert role.users
+    assert role.roles
 
 
 def test_init_with_default_acl(): # type: () -> None
     role = leancloud.Role('qux')
     assert role
     assert role.get_name() == 'qux'
+    role.name = 'quux'
+    assert role.name == 'quux'
     acl = role.get_acl()
     assert acl.dump() == {'*': {'read': True}}
 
