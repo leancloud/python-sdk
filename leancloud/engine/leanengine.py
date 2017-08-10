@@ -11,6 +11,7 @@ import logging
 import sys
 import traceback
 
+import six
 from werkzeug.exceptions import HTTPException
 from werkzeug.exceptions import NotAcceptable
 from werkzeug.routing import Map
@@ -18,7 +19,6 @@ from werkzeug.routing import Rule
 from werkzeug.wrappers import Response
 
 import leancloud
-from leancloud._compat import string_types
 from leancloud._compat import to_native
 from . import context
 
@@ -32,7 +32,7 @@ current = context.local('current')
 
 class LeanEngineError(Exception):
     def __init__(self, code=400, message='error'):
-        if isinstance(code, string_types):
+        if isinstance(code, six.string_types):
             message = code
             code = 400
         self.code = code
@@ -178,7 +178,7 @@ hook_name_mapping = {
 root_engine = None
 
 def register_cloud_func(_cloud_codes, func_or_func_name):
-    if isinstance(func_or_func_name, string_types):
+    if isinstance(func_or_func_name, six.string_types):
         func_name = func_or_func_name
         def inner_func(func):
             if func_name in _cloud_codes:

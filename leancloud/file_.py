@@ -13,17 +13,14 @@ import uuid
 import logging
 import threading
 
+import six
 import requests
 
 import leancloud
 from leancloud import client
 from leancloud import utils
-from leancloud._compat import PY2
-from leancloud._compat import string_types
 from leancloud._compat import file_type
-from leancloud._compat import buffer_type
 from leancloud.errors import LeanCloudError
-from leancloud.errors import LeanCloudWarning
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -61,9 +58,11 @@ class File(object):
         elif isinstance(data, file_type):
             data.seek(0, os.SEEK_SET)
             self._source = io.BytesIO(data.read())
-        elif isinstance(data, buffer_type):
+        elif isinstance(data, memoryview):
             self._source = io.BytesIO(data)
-        elif PY2:
+        elif six.PY2 and isinstance(data, buffer):
+            self._source = io.BytesIO(data)
+        elif six.PY2:
             import cStringIO
             import StringIO
             if isinstance(data, (cStringIO.OutputType, StringIO.StringIO)):
@@ -93,7 +92,7 @@ class File(object):
         if meta_data:
             f._metadata.update(meta_data)
 
-        if isinstance(url, string_types):
+        if isinstance(url, six.string_types):
             f._url = url
         else:
             raise ValueError('url must be a str / unicode')

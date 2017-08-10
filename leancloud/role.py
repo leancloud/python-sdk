@@ -7,8 +7,9 @@ from __future__ import unicode_literals
 
 import re
 
+import six
+
 import leancloud
-from leancloud._compat import string_types
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -63,7 +64,7 @@ class Role(leancloud.Object):
     def validate(self, attrs):
         if 'name' in attrs and attrs['name'] != self.get_name():
             new_name = attrs['name']
-            if not isinstance(new_name, string_types):
+            if not isinstance(new_name, six.string_types):
                 raise TypeError('role name must be string_types')
             r = re.compile('^[0-9a-zA-Z\-_]+$')
             if not r.match(new_name):

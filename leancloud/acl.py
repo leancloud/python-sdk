@@ -5,8 +5,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import six
+
 import leancloud
-from leancloud._compat import string_types
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -77,27 +78,27 @@ class ACL(object):
     def set_role_read_access(self, role, allowed):
         if isinstance(role, leancloud.Role):
             role = role.get_name()
-        if not isinstance(role, string_types):
+        if not isinstance(role, six.string_types):
             raise TypeError('role must be a leancloud.Role or str')
         self.set_read_access('role:{0}'.format(role), allowed)
 
     def get_role_read_access(self, role):
         if isinstance(role, leancloud.Role):
             role = role.get_name()
-        if not isinstance(role, string_types):
+        if not isinstance(role, six.string_types):
             raise TypeError('role must be a leancloud.Role or str')
         return self.get_read_access('role:{0}'.format(role))
 
     def set_role_write_access(self, role, allowed):
         if isinstance(role, leancloud.Role):
             role = role.get_name()
-        if not isinstance(role, string_types):
+        if not isinstance(role, six.string_types):
             raise TypeError('role must be a leancloud.Role or str')
         self.set_write_access('role:{0}'.format(role), allowed)
 
     def get_role_write_access(self, role):
         if isinstance(role, leancloud.Role):
             role = role.get_name()
-        if not isinstance(role, string_types):
+        if not isinstance(role, six.string_types):
             raise TypeError('role must be a leancloud.Role or str')
         return self.get_write_access('role:{0}'.format(role))
