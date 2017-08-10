@@ -3,8 +3,11 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import json
+
+import six
 
 import leancloud
 from leancloud import client
@@ -12,7 +15,6 @@ from leancloud import utils
 from leancloud.file_ import File
 from leancloud.object_ import Object
 from leancloud.errors import LeanCloudError
-from leancloud.errors import LeanCloudWarning
 from leancloud._compat import string_types
 from leancloud._compat import class_types
 
@@ -516,6 +518,7 @@ class Query(object):
         :param value: 需要查询的字符串
         :rtype: Query
         """
+        value = value if isinstance(value, six.text_type) else value.decode('utf-8')
         self._add_condition(key, '$regex', '^' + self._quote(value))
         return self
 
@@ -527,6 +530,7 @@ class Query(object):
         :param value: 需要查询的字符串
         :rtype: Query
         """
+        value = value if isinstance(value, six.text_type) else value.decode('utf-8')
         self._add_condition(key, '$regex', self._quote(value) + '$')
         return self
 

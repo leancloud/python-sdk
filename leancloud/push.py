@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import arrow
 import dateutil.tz as tz
@@ -20,8 +21,7 @@ class Installation(Object):
 
 
 class Notification(Object):
-
-    def fetch(self):
+    def fetch(self, *args, **kwargs):
         """同步服务器的 Notification 数据
         """
         response = client.get('/tables/Notifications/{0}'.format(self.id))
