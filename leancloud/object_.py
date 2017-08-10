@@ -8,17 +8,13 @@ from __future__ import unicode_literals
 import copy
 import json
 
+import six
 from werkzeug.local import LocalProxy
 
 import leancloud
 from leancloud import utils
 from leancloud import client
 from leancloud import operation
-from leancloud._compat import with_metaclass
-from leancloud._compat import PY2
-from leancloud._compat import text_type
-from leancloud._compat import string_types
-from leancloud._compat import iteritems
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -67,7 +63,7 @@ class ObjectMeta(type):
         return leancloud.Query(cls)
 
 
-class Object(with_metaclass(ObjectMeta, object)):
+class Object(six.with_metaclass(ObjectMeta, object)):
     def __init__(self, **attrs):
         """
         创建一个新的 leancloud.Object
@@ -83,7 +79,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         self.created_at = None
         self.updated_at = None
 
-        for k, v in iteritems(attrs):
+        for k, v in six.iteritems(attrs):
             self.set(k, v)
 
     @classmethod
@@ -96,7 +92,8 @@ class Object(with_metaclass(ObjectMeta, object)):
         :return: 派生的子类
         :rtype: ObjectMeta
         """
-        if PY2 and isinstance(name, text_type):
+        if six.PY2 and isinstance(name, six.text_type):
+            # In python2, class name must be a python2 str.
             name = name.encode('utf-8')
         return type(name, (cls,), {})
 
@@ -187,7 +184,7 @@ class Object(with_metaclass(ObjectMeta, object)):
 
     def _dump(self):
         obj = copy.deepcopy(self._attributes)
-        for k, v in iteritems(obj):
+        for k, v in six.iteritems(obj):
             obj[k] = utils.encode(v)
 
         if self.id is not None:
@@ -321,7 +318,7 @@ class Object(with_metaclass(ObjectMeta, object)):
             if key == 'objectId':
                 self.id = server_data[key]
             else:
-                if isinstance(server_data[key], string_types):
+                if isinstance(server_data[key], six.string_types):
                     dt = utils.decode(key, {
                         '__type': 'Date',
                         'iso': server_data[key]
@@ -483,7 +480,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         self.set(self._attributes, unset=True)
 
     def _dump_save(self):
-        data = {k: v.dump() for k, v in iteritems(self._changes)}
+        data = {k: v.dump() for k, v in six.iteritems(self._changes)}
         data.update(self._flags)
         return data
 
@@ -562,7 +559,7 @@ class Object(with_metaclass(ObjectMeta, object)):
 
     def _update_data(self, server_data):
         self._merge_metadata(server_data)
-        for key, value in iteritems(server_data):
+        for key, value in six.iteritems(server_data):
             self._attributes[key] = utils.decode(key, value)
         self._changes = {}
 

@@ -8,8 +8,9 @@ from __future__ import unicode_literals
 
 import threading
 
+import six
+
 from leancloud import client
-from leancloud._compat import string_types
 from leancloud.errors import LeanCloudError
 from leancloud.query import FriendshipQuery
 from leancloud.object_ import Object
@@ -42,7 +43,7 @@ class User(Object):
 
     @classmethod
     def create_follower_query(cls, user_id):
-        if not user_id or not isinstance(user_id, string_types):
+        if not user_id or not isinstance(user_id, six.string_types):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Follower')
         query.equal_to('user', User.create_without_data(user_id))
@@ -50,7 +51,7 @@ class User(Object):
 
     @classmethod
     def create_followee_query(cls, user_id):
-        if not user_id or not isinstance(user_id, string_types):
+        if not user_id or not isinstance(user_id, six.string_types):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Followee')
         query.equal_to('user', User.create_without_data(user_id))

@@ -13,13 +13,13 @@ from datetime import datetime
 from datetime import timedelta
 
 import arrow
+import six
 import iso8601
 from werkzeug import LocalProxy
 import dateutil.tz as tz
 
 import leancloud
 from leancloud import operation
-from leancloud._compat import iteritems
 from leancloud._compat import to_bytes
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -72,7 +72,7 @@ def encode(value, disallow_objects=False, dump_objects=False):
         return [encode(x, disallow_objects, dump_objects) for x in value]
 
     if isinstance(value, dict):
-        return dict([(k, encode(v, disallow_objects, dump_objects)) for k, v in iteritems(value)])
+        return dict([(k, encode(v, disallow_objects, dump_objects)) for k, v in six.iteritems(value)])
 
     return value
 
@@ -88,7 +88,7 @@ def decode(key, value):
         return value
 
     if '__type' not in value:
-        return dict([(k, decode(k, v)) for k, v in iteritems(value)])
+        return dict([(k, decode(k, v)) for k, v in six.iteritems(value)])
 
     _type = value['__type']
 
@@ -160,7 +160,7 @@ def traverse_object(obj, callback, seen=None):
         return callback(obj)
 
     if isinstance(obj, dict):
-        for key, child in iteritems(obj):
+        for key, child in six.iteritems(obj):
             new_child = traverse_object(child, callback, seen)
             if new_child:
                 obj[key] = new_child

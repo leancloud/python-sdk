@@ -11,11 +11,11 @@ import time
 import hashlib
 import functools
 
+import six
 import requests
 
 import leancloud
 from leancloud import utils
-from leancloud._compat import iteritems
 from leancloud._compat import to_bytes
 from leancloud.app_router import AppRouter
 
@@ -194,7 +194,7 @@ def get(url, params=None, headers=None):
     if not params:
         params = {}
     else:
-        for k, v in iteritems(params):
+        for k, v in six.iteritems(params):
             if isinstance(v, dict):
                 params[k] = json.dumps(v, separators=(',', ':'))
     response = session.get(

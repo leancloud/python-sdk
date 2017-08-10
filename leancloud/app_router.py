@@ -11,8 +11,6 @@ import threading
 
 import requests
 
-from leancloud import utils
-
 
 class AppRouter(object):
     def __init__(self, app_id, region):
