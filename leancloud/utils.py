@@ -3,10 +3,9 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import copy
-import json
-import gzip
 import hashlib
 import hmac
 import functools
@@ -20,7 +19,6 @@ import dateutil.tz as tz
 
 import leancloud
 from leancloud import operation
-from leancloud._compat import BytesIO
 from leancloud._compat import iteritems
 from leancloud._compat import to_bytes
 

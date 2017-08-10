@@ -1,9 +1,12 @@
 # coding: utf-8
 
-import time
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import hashlib
 
-import leancloud
 from leancloud._compat import to_bytes
 
 __author__ = 'asaka <lan@leancloud.rocks>'
