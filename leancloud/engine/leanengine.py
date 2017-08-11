@@ -19,7 +19,6 @@ from werkzeug.routing import Rule
 from werkzeug.wrappers import Response
 
 import leancloud
-from leancloud._compat import to_native
 from . import context
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -97,7 +96,7 @@ class LeanEngineApplication(object):
             return
 
         try:
-            data = json.loads(to_native(request.get_data()))
+            data = json.loads(request.get_data(as_text=True))
         except ValueError:
             context.local.user = None
             return
@@ -121,7 +120,7 @@ class LeanEngineApplication(object):
         except HTTPException as e:
             return e
 
-        params = to_native(request.get_data())
+        params = request.get_data(as_text=True)
         values['params'] = json.loads(params) if params != '' else {}
 
         try:

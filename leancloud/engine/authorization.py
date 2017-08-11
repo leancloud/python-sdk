@@ -8,10 +8,10 @@ from __future__ import unicode_literals
 import os
 import json
 
+import six
 from werkzeug.wrappers import Response
 
 from . import utils
-from leancloud._compat import to_native
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -104,7 +104,7 @@ class AuthorizationMiddleware(object):
         if (not request.content_type) or ('text/plain' not in request.content_type):
             return
 
-        body = json.loads(to_native(request.data))
+        body = json.loads(request.get_data(as_text=True))
 
         environ['_app_params']['id'] = body.get('_ApplicationId')
         environ['_app_params']['key'] = body.get('_ApplicationKey')
