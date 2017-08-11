@@ -6,8 +6,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import copy
-import hashlib
-import hmac
 import functools
 from datetime import datetime
 from datetime import timedelta
@@ -20,7 +18,6 @@ import dateutil.tz as tz
 
 import leancloud
 from leancloud import operation
-from leancloud._compat import to_bytes
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -167,13 +164,6 @@ def traverse_object(obj, callback, seen=None):
         return callback(obj)
 
     return callback(obj)
-
-
-def sign_hook(hook_name, master_key, timestamp):
-    sign = hmac.new(to_bytes(master_key),
-                    to_bytes('{0}:{1}'.format(hook_name, timestamp)),
-                    hashlib.sha1).hexdigest()
-    return '{0},{1}'.format(timestamp, sign)
 
 
 class throttle(object):
