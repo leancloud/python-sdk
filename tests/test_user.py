@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import io
 import random
 
 from nose.tools import with_setup # type: ignore
@@ -14,7 +15,6 @@ from leancloud import User
 from leancloud import Query
 from leancloud import File
 from leancloud.errors import LeanCloudError
-from leancloud._compat import buffer_type
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -98,7 +98,7 @@ def test_login(): # type: () -> None
 def test_file_field(): # type: () -> None
     user = User()
     user.login('user1_name', 'password')
-    user.set('xxxxx', File('xxx.txt', buffer_type(b'qqqqq')))
+    user.set('xxxxx', File('xxx.txt', io.BytesIO(b'qqqqq')))
     user.save()
 
     q = Query(User)
