@@ -19,7 +19,6 @@ import requests
 import leancloud
 from leancloud import client
 from leancloud import utils
-from leancloud._compat import file_type
 from leancloud.errors import LeanCloudError
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -55,24 +54,30 @@ class File(object):
             self._source = None
         elif isinstance(data, io.BytesIO):
             self._source = data
-        elif isinstance(data, file_type):
+        elif isinstance(data, io.IOBase):
+            # this may be Python3 file.
+            data.seek(0, os.SEEK_SET)
+            self._source = io.BytesIO(data.read())
+        elif six.PY2 and isinstance(data, file):
             data.seek(0, os.SEEK_SET)
             self._source = io.BytesIO(data.read())
         elif isinstance(data, memoryview):
+            # TODO: deprecated memoryview type constructor
             self._source = io.BytesIO(data)
         elif six.PY2 and isinstance(data, buffer):
+            # TODO: deprecated buffer type constructor
             self._source = io.BytesIO(data)
         elif six.PY2:
             import cStringIO
             import StringIO
-            if isinstance(data, (cStringIO.OutputType, StringIO.StringIO)):
+            if isinstance(data, (cStringIO.InputType, StringIO.StringIO)):
                 data.seek(0, os.SEEK_SET)
                 self._source = io.BytesIO(data.getvalue())
             else:
-                raise TypeError('data must be a StringIO / buffer / file instance')
+                raise TypeError('data must be a StringIO / io.BytesIO / file instance')
 
         else:
-            raise TypeError('data must be a StringIO / buffer / file instance')
+            raise TypeError('data must be a StringIO / io.BytesIO / file instance')
 
         if self._source:
             self._source.seek(0, os.SEEK_END)
