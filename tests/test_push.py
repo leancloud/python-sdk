@@ -43,7 +43,7 @@ def test_basic_push():  # type: () -> None
     }
     query = leancloud.Query('_Installation').equal_to('objectId', 'xxx')
     notification = push.send(data, where=query, push_time=datetime.now())
-    time.sleep(1)  # notification write may have delay
+    time.sleep(5)  # notification write may have delay
     notification.fetch()
     assert(notification.id)
 
