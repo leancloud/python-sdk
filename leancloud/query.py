@@ -84,6 +84,7 @@ class Query(object):
 
         self._where = {}
         self._include = []
+        self._include_acl = None
         self._limit = -1
         self._skip = 0
         self._extra = {}
@@ -160,6 +161,8 @@ class Query(object):
             params['include'] = ','.join(self._include)
         if self._select:
             params['keys'] = ','.join(self._select)
+        if self._include_acl is not None:
+            params['returnACL'] = json.dumps(self._include_acl)
         if self._limit >= 0:
             params['limit'] = self._limit
         if self._skip > 0:
@@ -263,6 +266,17 @@ class Query(object):
         if n > 1000:
             raise ValueError('limit only accept number less than or equal to 1000')
         self._limit = n
+        return self
+
+    def include_acl(self, value=True):
+        """
+        设置查询结果的对象，是否包含 ACL 字段。需要在控制台选项中开启对应选项才能生效。
+
+        :param value: 是否包含 ACL，默认为 True
+        :type value: bool
+        :rtype: Query
+        """
+        self._include_acl = value
         return self
 
     def equal_to(self, key, value):
