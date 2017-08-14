@@ -84,6 +84,11 @@ def decode(key, value):
     if not isinstance(value, dict):
         return value
 
+    if key == 'ACL':
+        if isinstance(value, leancloud.ACL):
+            return value
+        return leancloud.ACL(value)
+
     if '__type' not in value:
         return dict([(k, decode(k, v)) for k, v in six.iteritems(value)])
 
@@ -115,11 +120,6 @@ def decode(key, value):
 
     if _type == 'GeoPoint':
         return leancloud.GeoPoint(latitude=value['latitude'], longitude=value['longitude'])
-
-    if key == 'ACL':
-        if isinstance(value, leancloud.ACL):
-            return value
-        return leancloud.ACL(value)
 
     if _type == 'Relation':
         relation = leancloud.Relation(None, key)
