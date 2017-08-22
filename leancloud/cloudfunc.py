@@ -167,3 +167,7 @@ def verify_captcha(code, token):
     }
     response = leancloud.client.post('/verifyCaptcha', params)
     return response.json()['validate_token']
+
+
+def get_server_time():
+    return leancloud.client.get_server_time()
