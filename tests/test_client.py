@@ -6,7 +6,6 @@ from __future__ import print_function
 
 import os
 import json
-import datetime
 
 from werkzeug.wrappers import Request  # type: ignore
 from wsgi_intercept import requests_intercept, add_wsgi_intercept  # type: ignore
@@ -34,7 +33,3 @@ def test_use_master_key(): # type: () -> None
     assert client.USE_MASTER_KEY is True
     leancloud.use_master_key(False)
     assert client.USE_MASTER_KEY is False
-
-
-def test_get_server_time(): # type: () -> None
-    assert type(client.get_server_time()) == datetime.datetime

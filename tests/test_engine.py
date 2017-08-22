@@ -9,6 +9,7 @@ import time
 import json
 import requests
 import typing
+from datetime import datetime
 
 import six
 from nose.tools import assert_equal
@@ -470,6 +471,10 @@ def test_request_sms_code(): # type: () -> None
             pass
         else:
             raise e
+
+
+def test_get_server_time():  # type: () -> None
+    assert type(leancloud.client.get_server_time()) == datetime
 
 
 def test_captcha():  # type: () -> None
