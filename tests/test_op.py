@@ -4,6 +4,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from nose.tools import assert_equal
+
 import leancloud
 from leancloud import Object
 from leancloud import operation # type:ignore
@@ -29,6 +31,7 @@ def test_increment(): # type: () -> None
     assert isinstance(new, operation.Increment)
     assert new.amount == 3
 
+
 def test_apply_relation_op(): # type: () -> None
     album = leancloud.Object.create("Album",
                                     objectId="abc001",
@@ -50,3 +53,16 @@ def test_apply_relation_op(): # type: () -> None
     val = op._apply(relation)
     assert isinstance(val, leancloud.Relation)
     val._ensure_parent_and_key(album, "band")
+
+
+def test_bit_op():  # type: () -> None
+    unset = operation.Unset()
+
+    add_ = operation.BitAnd(123)
+    assert_equal(add_._merge(unset).value, 0)
+
+    or_ = operation.BitOr(321)
+    assert_equal(or_._merge(unset).value, 321)
+
+    xor = operation.BitOr(321)
+    assert_equal(xor._merge(unset).value, 321)

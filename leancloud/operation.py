@@ -92,6 +92,87 @@ class Increment(BaseOp):
         return old + self.amount
 
 
+class BitAnd(BaseOp):
+    def __init__(self, value):
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    def dump(self):
+        return {
+            '__op': 'BitAnd',
+            'value': self.value,
+        }
+
+    def _merge(self, previous):
+        if not previous:
+            return self
+        if isinstance(previous, Unset):
+            return Set(0)
+        if isinstance(previous, Set):
+            return Set(previous.value & self.value)
+        raise TypeError('invalid op')
+
+    def _apply(self, old, obj=None, key=None):
+        return old & self.value
+
+
+class BitOr(BaseOp):
+    def __init__(self, value):
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    def dump(self):
+        return {
+            '__op': 'BitOr',
+            'value': self.value,
+        }
+
+    def _merge(self, previous):
+        if not previous:
+            return self
+        if isinstance(previous, Unset):
+            return Set(self.value)
+        if isinstance(previous, Set):
+            return Set(previous.value | self.value)
+        raise TypeError('invalid op')
+
+    def _apply(self, old, obj=None, key=None):
+        return old | self.value
+
+
+class BitXor(BaseOp):
+    def __init__(self, value):
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    def dump(self):
+        return {
+            '__op': 'BitXor',
+            'value': self.value,
+        }
+
+    def _merge(self, previous):
+        if not previous:
+            return self
+        if isinstance(previous, Unset):
+            return Set(self.value)
+        if isinstance(previous, Set):
+            return Set(previous.value ^ self.value)
+        raise TypeError('invalid op')
+
+    def _apply(self, old, obj=None, key=None):
+        return old ^ self.value
+
+
 class Add(BaseOp):
     def __init__(self, objects):
         if not isinstance(objects, (list, tuple)):

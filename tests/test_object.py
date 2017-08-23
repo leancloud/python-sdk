@@ -12,6 +12,7 @@ from dateutil import tz
 from nose.tools import with_setup # type: ignore
 from nose.tools import ok_ # type: ignore
 from nose.tools import eq_ # type: ignore
+from nose.tools import assert_equal  # type: ignore
 from nose.tools import assert_raises # type: ignore
 
 import leancloud
@@ -113,6 +114,26 @@ def test_increment(): # type: () -> None
     album.set('foo', 1)
     album.increment('foo', 1)
     assert album.get('foo') == 2
+
+
+@with_setup(setup_func)
+def test_bit_operation():  # type: () -> None
+    album = Album()
+    album.set('flags', 0b0)
+    album.bit_and('flags', 0b1)
+    assert_equal(album.get('flags'), 0b0)
+    album.save()
+    assert_equal(album.get('flags'), 0b0)
+
+    album.bit_or('flags', 0b1)
+    assert_equal(album.get('flags'), 0b1)
+    album.save()
+    assert_equal(album.get('flags'), 0b1)
+
+    album.bit_xor('flags', 0b10)
+    assert_equal(album.get('flags'), 0b11)
+    album.save()
+    assert_equal(album.get('flags'), 0b11)
 
 
 @with_setup(setup_func)
