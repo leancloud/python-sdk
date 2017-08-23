@@ -415,7 +415,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
             if not isinstance(v, operation.BaseOp):
                 v = operation.Set(v)
 
-            self._attributes[k] = v._apply(self._attributes.get(k),self, k)
+            self._attributes[k] = v._apply(self._attributes.get(k), self, k)
             if self._attributes[k] == operation._UNSET:
                 del self._attributes[k]
             self._changes[k] = v._merge(self._changes.get(k))
@@ -470,6 +470,15 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         :return: 当前对象
         """
         return self.set(attr, operation.Remove([item]))
+
+    def bit_and(self, attr, value):
+        return self.set(attr, operation.BitAnd(value))
+
+    def bit_or(self, attr, value):
+        return self.set(attr, operation.BitOr(value))
+
+    def bit_xor(self, attr, value):
+        return self.set(attr, operation.BitXor(value))
 
     def clear(self):
         """
