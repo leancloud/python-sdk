@@ -96,7 +96,7 @@ class Conversation(Object):
         :param message: 消息内容
         :param to_clients: 接受者 id，只在系统会话中生效
         :param transient: 是否以暂态形式发送消息
-        :param puhs_data: 推送消息内容，参考：https://url.leanapp.cn/pushData
+        :param push_data: 推送消息内容，参考：https://url.leanapp.cn/pushData
         """
         if isinstance(message, dict):
             message = json.dumps(message)
