@@ -46,6 +46,8 @@ class ObjectMeta(type):
             attrs['_class_name'] = '_Role'
         elif name == 'Conversation':
             attrs['_class_name'] = '_Conversation'
+        elif name == 'SysMessage':
+            attrs['_class_name'] = '_SysMessage'
         else:
             attrs['_class_name'] = name
 
