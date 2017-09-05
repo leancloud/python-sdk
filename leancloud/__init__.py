@@ -32,6 +32,7 @@ from .errors import LeanCloudError
 from .errors import LeanCloudWarning
 from .file_ import File
 from .geo_point import GeoPoint
+from .message import Message
 from .object_ import Object
 from .push import Installation
 from .query import FriendshipQuery
