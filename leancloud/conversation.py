@@ -110,7 +110,7 @@ class Conversation(Object):
             params['to_peers'] = to_clients
         if push_data:
             params['push_data'] = push_data
-        client.post('/rtm/messages', params=params)
+        client.post('/rtm/messages', params=params).json()
 
     def broadcast(self, from_client, message, valid_till=None, push_data=None):
         """
