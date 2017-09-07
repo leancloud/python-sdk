@@ -8,7 +8,7 @@ here = path.abspath(path.dirname(__file__))
 install_requires = [
     'arrow',
     'iso8601',
-    'qiniu',
+    'qiniu<=7.1.4',
     'requests>=2.12.1',
     'werkzeug',
 ]
