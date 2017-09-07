@@ -1,6 +1,6 @@
 arrow
 iso8601
-qiniu
+qiniu<=7.1.4
 requests
 werkzeug
 wsgi-intercept
