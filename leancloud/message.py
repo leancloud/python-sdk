@@ -44,16 +44,23 @@ class Message(object):
             yield msg
 
     @classmethod
-    def find_by_conversation(cls, conversation_id, client=None, limit=None, reversed=None, after_time=None, after_message_id=None):
-        # type: (str, Optional[str], Optional[int], Optional[bool], Optional[Union[datetime, float]], Optional[str]) -> List[Message]
+    def find_by_conversation(cls, conversation_id, limit=None, reversed=None, after_time=None, after_message_id=None):
+        # type: (str, Optional[int], Optional[bool], Optional[Union[datetime, float]], Optional[str]) -> List[Message]
+        """获取某个对话中的聊天记录
+
+        :param conversation_id: 对话 id
+        :param limit: 返回条数限制，可选，服务端默认 100 条，最大 1000 条
+        :param reversed: 以默认排序相反的方向返回结果，服务端默认为 False
+        :param after_time: 查询起始的时间戳，返回小于这个时间(不包含)的记录，服务端默认是当前时间
+        :param after_message_id: 起始的消息 id，使用时必须加上对应消息的时间 after_time 参数，一起作为查询的起点
+        :return: 符合条件的聊天记录
+        """
         query_params = {}  # type: Dict[str, Any]
         query_params['convid'] = conversation_id
         if limit is not None:
             query_params['limit'] = limit
         if reversed is not None:
             query_params['reversed'] = reversed
-        if client is not None:
-            query_params['peerid'] = client
         if isinstance(after_time, datetime):
             query_params['max_ts'] = after_time.timestamp() * 1000
         elif isinstance(after_time, six.integer_types) or isinstance(after_time, float):
@@ -65,6 +72,14 @@ class Message(object):
     @classmethod
     def find_by_client(cls, from_client, limit=None, after_time=None, after_message_id=None):
         # type: (str, Optional[int], Optional[Union[datetime, float]], Optional[str]) -> List[Message]
+        """获取某个 client 的聊天记录
+
+        :param from_client: 要获取聊天记录的 client id
+        :param limit: 返回条数限制，可选，服务端默认 100 条，最大 1000 条
+        :param after_time: 查询起始的时间戳，返回小于这个时间(不包含)的记录，服务端默认是当前时间
+        :param after_message_id: 起始的消息 id，使用时必须加上对应消息的时间 after_time 参数，一起作为查询的起点
+        :return: 符合条件的聊天记录
+        """
         query_params = {}  # type: Dict[str, Any]
         query_params['from'] = from_client
         if limit is not None:
@@ -80,6 +95,13 @@ class Message(object):
     @classmethod
     def find_all(cls, limit=None, after_time=None, after_message_id=None):
         # type: (Optional[int], Optional[Union[datetime, float]], Optional[str]) -> List[Message]
+        """获取应用全部聊天记录
+
+        :param limit: 返回条数限制，可选，服务端默认 100 条，最大 1000 条
+        :param after_time: 查询起始的时间戳，返回小于这个时间(不包含)的记录，服务端默认是当前时间
+        :param after_message_id: 起始的消息 id，使用时必须加上对应消息的时间 after_time 参数，一起作为查询的起点
+        :return: 符合条件的聊天记录
+        """
         query_params = {}  # type: Dict[str, Any]
         if limit is not None:
             query_params['limit'] = limit
