@@ -39,6 +39,7 @@ from .query import FriendshipQuery
 from .query import Query
 from .relation import Relation
 from .role import Role
+from .status import Status
 from .sys_message import SysMessage
 from .user import User
 
@@ -61,6 +62,7 @@ __all__ = [
     'Query',
     'Relation',
     'Role',
+    'Status',
     'SysMessage',
     'User',
     'client',
