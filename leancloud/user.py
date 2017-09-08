@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 
 import threading
+from typing import Optional
 
 import six
 
@@ -58,7 +59,7 @@ class User(Object):
         return query
 
     @classmethod
-    def get_current(cls):
+    def get_current(cls):  # type: () -> Optional[User]
         return getattr(thread_locals, 'current_user', None)
 
     @classmethod
