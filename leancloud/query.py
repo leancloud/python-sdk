@@ -178,6 +178,9 @@ class Query(object):
     def _process_result(self, obj):
         return obj
 
+    def _do_request(self, params):
+        return client.get('/classes/{0}'.format(self._query_class._class_name), params).json()
+
     def first(self):
         """
         根据查询获取最多一个对象。
@@ -188,7 +191,7 @@ class Query(object):
         """
         params = self.dump()
         params['limit'] = 1
-        content = client.get('/classes/{0}'.format(self._query_class._class_name), params).json()
+        content = self._do_request(params)
         results = content['results']
         if not results:
             raise LeanCloudError(101, 'Object not found')
@@ -216,7 +219,7 @@ class Query(object):
 
         :rtype: list
         """
-        content = client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()).json()
+        content = self._do_request(self.dump())
 
         objs = []
         for result in content['results']:
@@ -243,8 +246,8 @@ class Query(object):
         params = self.dump()
         params['limit'] = 0
         params['count'] = 1
-        response = client.get('/classes/{0}'.format(self._query_class._class_name), params)
-        return response.json()['count']
+        content = self._do_request(params)
+        return content['count']
 
     def skip(self, n):
         """
