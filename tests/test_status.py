@@ -9,10 +9,10 @@ import os
 import time
 
 from nose.tools import assert_equal
-from nose.tools import assert_true
 
 import leancloud
 from leancloud import Status
+from leancloud import InboxQuery
 
 
 def setup():
@@ -59,10 +59,20 @@ def test_send_private_status():
     status.destroy()
 
 
-def test_count_():
+def test_statuses_count():
     status = Status(image='http://www.example.com', message='hello world!')
     status.send_private_status(leancloud.User.get_current())
+    time.sleep(1)  # wait server to sync
     result = Status.count_unread_statuses(leancloud.User.get_current(), 'private')
     assert_equal(result.total, 1)
     assert_equal(result.unread, 1)
     status.destroy()
+
+
+def test_inbox_query():
+    status = Status(image='http://www.example.com', message='hello world!')
+    status.send_private_status(leancloud.User.get_current())
+    time.sleep(1)  # wait server to sync
+    saved = InboxQuery().inbox_type('private').owner(leancloud.User.get_current()).first()
+    assert_equal(saved.get('image'), status.get('image'))
+    assert_equal(saved.id, status.id)

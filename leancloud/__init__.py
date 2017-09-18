@@ -39,6 +39,7 @@ from .query import FriendshipQuery
 from .query import Query
 from .relation import Relation
 from .role import Role
+from .status import InboxQuery
 from .status import Status
 from .sys_message import SysMessage
 from .user import User
@@ -55,6 +56,7 @@ __all__ = [
     'FriendshipQuery',
     'GeoPoint',
     'HttpsRedirectMiddleware',
+    'InboxQuery',
     'Installation',
     'LeanCloudError',
     'LeanEngineError',
