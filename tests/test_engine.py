@@ -18,7 +18,7 @@ from wsgi_intercept import add_wsgi_intercept
 
 import leancloud
 from leancloud import Engine
-from leancloud import cloudfunc
+from leancloud import cloud
 from leancloud.engine import authorization
 from leancloud.engine import leanengine
 from leancloud import LeanCloudError
@@ -262,7 +262,7 @@ def test_register_cloud_func(): # type: () -> None
     assert response.json() == {u'result': u'pong'}
 
     # test run in local
-    assert cloudfunc.run.local('ping', foo=['bar', 'baz']) == 'pong'
+    assert cloud.run.local('ping', foo=['bar', 'baz']) == 'pong'
 
 
 def test_cloud_func_name_alias(): # type: () -> None
@@ -279,7 +279,7 @@ def test_realtime_cloud_func(): # type: () -> None
     def _messageReceived():
         pass
     try:
-        cloudfunc.run.local('_messageReceived')
+        cloud.run.local('_messageReceived')
     except leancloud.LeanEngineError as e:
         assert_equal(e.code, 401)
     else:
@@ -322,7 +322,7 @@ def test_rpc_call(): # type: () -> None
         result = leancloud.Object.create('Xxx', foo=['bar', 'baz'])
         return result
 
-    obj = cloudfunc.rpc.local('rpc_unsaved')
+    obj = cloud.rpc.local('rpc_unsaved')
     assert isinstance(obj, leancloud.Object)
     assert obj.get('foo') == ['bar', 'baz']
 
@@ -333,7 +333,7 @@ def test_rpc_call(): # type: () -> None
         result.save()
         return result
 
-    obj = cloudfunc.rpc.local('rpc_saved')
+    obj = cloud.rpc.local('rpc_saved')
     assert isinstance(obj, leancloud.Object)
     assert obj.get('foo') == ['bar', 'baz']
     obj.destroy()
@@ -348,7 +348,7 @@ def test_rpc_call(): # type: () -> None
         objs[0].save()
         return objs
 
-    objs = cloudfunc.rpc.local('rpc_list')
+    objs = cloud.rpc.local('rpc_list')
     assert isinstance(objs, list)
     assert objs[0].get('foo') == ['bar']
     assert objs[1].get('foo') == ['baz']
@@ -457,14 +457,14 @@ def test_insight(): # type: () -> None
 
 
 def test_client(): # type: () -> None
-    assert cloudfunc.run('add', a=1, b=2) == 3
+    assert cloud.run('add', a=1, b=2) == 3
 
 
 def test_request_sms_code(): # type: () -> None
     if leancloud.client.REGION == 'US':
         return
     try:
-        cloudfunc.request_sms_code('13111111111')
+        cloud.request_sms_code('13111111111')
     except LeanCloudError as e:
         # 短信发送过于频繁或者欠费或者关闭短信功能
         if e.code in (601, 160, 119):
@@ -483,7 +483,7 @@ def test_captcha():  # type: () -> None
     if leancloud.client.APP_ID.endswith('-9Nh9j0Va'):
         return
     try:
-        captcha = cloudfunc.request_captcha(size=3, height=100)
+        captcha = cloud.request_captcha(size=3, height=100)
     except LeanCloudError as e:
         assert_equal(e.code, 119)  # captcha flag is disabled
         return
