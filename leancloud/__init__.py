@@ -17,8 +17,9 @@ logger = logging.getLogger('iso8601.iso8601')
 logger.setLevel(logging.CRITICAL)
 
 from . import client
-from . import push
+from . import cloud
 from . import cloudfunc
+from . import push
 from .acl import ACL
 from .client import init
 from .client import use_master_key
@@ -68,6 +69,7 @@ __all__ = [
     'SysMessage',
     'User',
     'client',
+    'cloud',
     'cloudfunc',
     'init',
     'push',

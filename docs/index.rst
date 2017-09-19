@@ -136,10 +136,10 @@ leancloud.push
   :undoc-members:
   :show-inheritance:
 
-leancloud.cloudfunc
+leancloud.cloud
 ===================
 
-.. automodule:: leancloud.cloudfunc
+.. automodule:: leancloud.cloud
   :members:
   :undoc-members:
   :show-inheritance:
