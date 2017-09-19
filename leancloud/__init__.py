@@ -7,6 +7,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import sys
 import logging
@@ -31,17 +32,21 @@ from .errors import LeanCloudError
 from .errors import LeanCloudWarning
 from .file_ import File
 from .geo_point import GeoPoint
+from .message import Message
 from .object_ import Object
 from .push import Installation
 from .query import FriendshipQuery
 from .query import Query
 from .relation import Relation
 from .role import Role
+from .status import InboxQuery
+from .status import Status
+from .sys_message import SysMessage
 from .user import User
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
-__version__ = '1.12.0'
+__version__ = '2.0.0'
 
 
 __all__ = [
@@ -51,6 +56,7 @@ __all__ = [
     'FriendshipQuery',
     'GeoPoint',
     'HttpsRedirectMiddleware',
+    'InboxQuery',
     'Installation',
     'LeanCloudError',
     'LeanEngineError',
@@ -58,6 +64,8 @@ __all__ = [
     'Query',
     'Relation',
     'Role',
+    'Status',
+    'SysMessage',
     'User',
     'client',
     'cloudfunc',

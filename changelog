@@ -1,3 +1,27 @@
+## [2.0.0] - 2017-08-05
+### Added
+- leancloud.User.session_token property
+### Fixed
+- invalid timezone on leancloud.Object#created_at and leancloud.Object#updated_at
+- leancloud.Query#get using get ACL permission, not find
+### Removed
+- leancloud.Engine#current_user (use leancloud.Engine#current.user instead)
+- type_ param in leancloud.File constructor (use mime_type instead)
+- type_ param in leancloud.File.create_with_url (use mime_type instead)
+- leancloud.Object#fetch_when_save property (use fetch_when_save param in leancloud.Object#save function instead)
+- leancloud.Object#attribute property
+- leancloud.Relation#query not is a property, not a function
+- leancloud.Query#does_not_exists (use leancloud.Query#does_not_exist instead)
+- leancloud.Query#matched_key_in_query (use leancloud.Query#matches_key_in_query instead)
+
+## [1.13.0] - 2017-08-04
+### Added
+- leancloud.Engine#wrap
+- leancloud.Engine#register
+- support leanengine hook key
+- add fetch_user param in leancloud.Engine constructor
+- support setting expires and max_age in CookieSessionMiddleware
+
 ## [1.12.0] - 2017-06-05
 ### Added
 - Captcha related API

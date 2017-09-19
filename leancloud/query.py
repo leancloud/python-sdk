@@ -3,9 +3,11 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import json
-import warnings
+
+import six
 
 import leancloud
 from leancloud import client
@@ -13,9 +15,6 @@ from leancloud import utils
 from leancloud.file_ import File
 from leancloud.object_ import Object
 from leancloud.errors import LeanCloudError
-from leancloud.errors import LeanCloudWarning
-from leancloud._compat import string_types
-from leancloud._compat import class_types
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -72,28 +71,25 @@ class Query(object):
         :param query_class: 要查询的 class 名称或者对象
         :type query_class: string_types or leancloud.ObjectMeta
         """
-        if isinstance(query_class, string_types):
+        if isinstance(query_class, six.string_types):
             if query_class in ('File', '_File'):
                 query_class = File
             else:
                 query_class = Object.extend(query_class)
 
-        if not isinstance(query_class, (type, class_types)) or not issubclass(query_class, (File, Object)):
+        if not isinstance(query_class, (type, six.class_types)) or not issubclass(query_class, (File, Object)):
             raise ValueError('Query takes string or LeanCloud Object')
 
         self._query_class = query_class
 
         self._where = {}
         self._include = []
+        self._include_acl = None
         self._limit = -1
         self._skip = 0
         self._extra = {}
         self._order = []
         self._select = []
-
-    def __call__(self):
-        warnings.warn('leancloud.Relation.query now is a property, please don\'t call it as a function', LeanCloudWarning)
-        return self
 
     @classmethod
     def or_(cls, *queries):
@@ -165,6 +161,8 @@ class Query(object):
             params['include'] = ','.join(self._include)
         if self._select:
             params['keys'] = ','.join(self._select)
+        if self._include_acl is not None:
+            params['returnACL'] = json.dumps(self._include_acl)
         if self._limit >= 0:
             params['limit'] = self._limit
         if self._skip > 0:
@@ -180,6 +178,9 @@ class Query(object):
     def _process_result(self, obj):
         return obj
 
+    def _do_request(self, params):
+        return client.get('/classes/{0}'.format(self._query_class._class_name), params).json()
+
     def first(self):
         """
         根据查询获取最多一个对象。
@@ -190,7 +191,7 @@ class Query(object):
         """
         params = self.dump()
         params['limit'] = 1
-        content = client.get('/classes/{0}'.format(self._query_class._class_name), params).json()
+        content = self._do_request(params)
         results = content['results']
         if not results:
             raise LeanCloudError(101, 'Object not found')
@@ -206,8 +207,11 @@ class Query(object):
         :return: 查询结果
         :rtype: Object
         """
-        self.equal_to('objectId', object_id)
-        return self.first()
+        if not object_id:
+            raise LeanCloudError(code=101, error='Object not found.')
+        obj = self._query_class.create_without_data(object_id)
+        obj.fetch(select=self._select, include=self._include)
+        return obj
 
     def find(self):
         """
@@ -215,7 +219,7 @@ class Query(object):
 
         :rtype: list
         """
-        content = client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()).json()
+        content = self._do_request(self.dump())
 
         objs = []
         for result in content['results']:
@@ -242,8 +246,8 @@ class Query(object):
         params = self.dump()
         params['limit'] = 0
         params['count'] = 1
-        response = client.get('/classes/{0}'.format(self._query_class._class_name), params)
-        return response.json()['count']
+        content = self._do_request(params)
+        return content['count']
 
     def skip(self, n):
         """
@@ -265,6 +269,17 @@ class Query(object):
         if n > 1000:
             raise ValueError('limit only accept number less than or equal to 1000')
         self._limit = n
+        return self
+
+    def include_acl(self, value=True):
+        """
+        设置查询结果的对象，是否包含 ACL 字段。需要在控制台选项中开启对应选项才能生效。
+
+        :param value: 是否包含 ACL，默认为 True
+        :type value: bool
+        :rtype: Query
+        """
+        self._include_acl = value
         return self
 
     def equal_to(self, key, value):
@@ -396,10 +411,6 @@ class Query(object):
         self._add_condition(key, '$exists', True)
         return self
 
-    def does_not_exists(self, key):
-        warnings.warn('the query does_not_exists is deprecated, please use does_not_exist instead', LeanCloudWarning)
-        return self.does_not_exist(key)
-
     def does_not_exist(self, key):
         """
         增加查询条件，限制查询结果对象不包含指定字段
@@ -420,7 +431,7 @@ class Query(object):
         :param multi_line: 查询是否匹配多行，默认不匹配
         :rtype: Query
         """
-        if not isinstance(regex, string_types):
+        if not isinstance(regex, six.string_types):
             raise TypeError('matched only accept str or unicode')
         self._add_condition(key, '$regex', regex)
         modifiers = ''
@@ -459,10 +470,6 @@ class Query(object):
         dumped['className'] = query._query_class._class_name
         self._add_condition(key, '$notInQuery', dumped)
         return self
-
-    def matched_key_in_query(self, key, query_key, query):
-        warnings.warn('the query matched_key_in_query is deprecated, please use matches_key_in_query', LeanCloudWarning)
-        return self.matches_key_in_query(key, query_key, query)
 
     def matches_key_in_query(self, key, query_key, query):
         """
@@ -526,6 +533,7 @@ class Query(object):
         :param value: 需要查询的字符串
         :rtype: Query
         """
+        value = value if isinstance(value, six.text_type) else value.decode('utf-8')
         self._add_condition(key, '$regex', '^' + self._quote(value))
         return self
 
@@ -537,6 +545,7 @@ class Query(object):
         :param value: 需要查询的字符串
         :rtype: Query
         """
+        value = value if isinstance(value, six.text_type) else value.decode('utf-8')
         self._add_condition(key, '$regex', self._quote(value) + '$')
         return self
 

@@ -3,24 +3,18 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
-import time
 import copy
 import json
-import warnings
 
-import iso8601
-from werkzeug import LocalProxy
+import six
+from werkzeug.local import LocalProxy
 
 import leancloud
 from leancloud import utils
 from leancloud import client
 from leancloud import operation
-from leancloud._compat import with_metaclass
-from leancloud._compat import PY2
-from leancloud._compat import text_type
-from leancloud._compat import string_types
-from leancloud._compat import iteritems
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -52,6 +46,8 @@ class ObjectMeta(type):
             attrs['_class_name'] = '_Role'
         elif name == 'Conversation':
             attrs['_class_name'] = '_Conversation'
+        elif name == 'SysMessage':
+            attrs['_class_name'] = '_SysMessage'
         else:
             attrs['_class_name'] = name
 
@@ -69,7 +65,7 @@ class ObjectMeta(type):
         return leancloud.Query(cls)
 
 
-class Object(with_metaclass(ObjectMeta, object)):
+class Object(six.with_metaclass(ObjectMeta, object)):
     def __init__(self, **attrs):
         """
         创建一个新的 leancloud.Object
@@ -81,21 +77,12 @@ class Object(with_metaclass(ObjectMeta, object)):
         self._class_name = self._class_name  # for IDE
         self._changes = {}
         self._attributes = {}
+        self._flags = {}
         self.created_at = None
         self.updated_at = None
-        self._fetch_when_save = False
 
-        for k, v in iteritems(attrs):
+        for k, v in six.iteritems(attrs):
             self.set(k, v)
-
-    @property
-    def fetch_when_save(self):
-        return self._fetch_when_save
-
-    @fetch_when_save.setter
-    def fetch_when_save(self, value):
-        warnings.warn('leancloud.Object.fetch_when_save is deprecated, please use leancloud.Object.save with param fetch_when_save instead.', leancloud.errors.LeanCloudWarning);
-        self._fetch_when_save = value
 
     @classmethod
     def extend(cls, name):
@@ -107,7 +94,8 @@ class Object(with_metaclass(ObjectMeta, object)):
         :return: 派生的子类
         :rtype: ObjectMeta
         """
-        if PY2 and isinstance(name, text_type):
+        if six.PY2 and isinstance(name, six.text_type):
+            # In python2, class name must be a python2 str.
             name = name.encode('utf-8')
         return type(name, (cls,), {})
 
@@ -163,18 +151,32 @@ class Object(with_metaclass(ObjectMeta, object)):
         """
         if not objs:
             return
-        if not all(x._class_name == objs[0]._class_name for x in objs):
-            raise ValueError("destroy_all requires the argument object list's _class_names must be the same")
         if any(x.is_new() for x in objs):
             raise ValueError("Could not destroy unsaved object")
-        ids = {x.id for x in objs}
-        ids = ','.join(ids)
-        client.delete('/classes/{0}/{1}'.format(objs[0]._class_name, ids))
 
-    @property
-    def attributes(self):
-        warnings.warn('leancloud.Object.attributes should not be used any more, please use get or set instead', leancloud.errors.LeanCloudWarning)
-        return self._attributes
+        dumped_objs = []
+        for obj in objs:
+            dumped_obj = {
+                'method': 'DELETE',
+                'path': '/{0}/classes/{1}/{2}'.format(client.SERVER_VERSION, obj._class_name, obj.id),
+                'body': obj._flags,
+            }
+            dumped_objs.append(dumped_obj)
+
+        response = client.post('/batch', params={'requests': dumped_objs}).json()
+
+        errors = []
+        for idx, obj in enumerate(objs):
+            content = response[idx]
+            error = content.get('error')
+            if error:
+                errors.append(leancloud.LeanCloudError(error.get('code'), error.get('error')))
+
+        if errors:
+            # TODO: how to raise list of errors?
+            # raise MultipleValidationErrors(errors)
+            # add test
+            raise errors[0]
 
     def dump(self):
         obj = self._dump()
@@ -184,7 +186,7 @@ class Object(with_metaclass(ObjectMeta, object)):
 
     def _dump(self):
         obj = copy.deepcopy(self._attributes)
-        for k, v in iteritems(obj):
+        for k, v in six.iteritems(obj):
             obj[k] = utils.encode(v)
 
         if self.id is not None:
@@ -202,7 +204,7 @@ class Object(with_metaclass(ObjectMeta, object)):
         """
         if not self.id:
             return
-        client.delete('/classes/{0}/{1}'.format(self._class_name, self.id))
+        client.delete('/classes/{0}/{1}'.format(self._class_name, self.id), self._flags)
 
     def save(self, where=None, fetch_when_save=None):
         """
@@ -227,8 +229,6 @@ class Object(with_metaclass(ObjectMeta, object)):
             self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
         data = self._dump_save()
-        if fetch_when_save is None:
-            fetch_when_save = self.fetch_when_save
         fetch_when_save = 'true' if fetch_when_save else 'false'
 
         if self.is_new():
@@ -320,10 +320,13 @@ class Object(with_metaclass(ObjectMeta, object)):
             if key == 'objectId':
                 self.id = server_data[key]
             else:
-                if isinstance(server_data[key], string_types):
-                    dt = iso8601.parse_date(server_data[key])
+                if isinstance(server_data[key], six.string_types):
+                    dt = utils.decode(key, {
+                        '__type': 'Date',
+                        'iso': server_data[key]
+                    })
                 elif server_data[key]['__type'] == 'Date':
-                    dt = iso8601.parse_date(server_data[key]['iso'])
+                    dt = utils.decode(key, server_data)
                 else:
                     raise TypeError('Invalid date type')
                 server_data[key] = dt
@@ -414,7 +417,7 @@ class Object(with_metaclass(ObjectMeta, object)):
             if not isinstance(v, operation.BaseOp):
                 v = operation.Set(v)
 
-            self._attributes[k] = v._apply(self._attributes.get(k),self, k)
+            self._attributes[k] = v._apply(self._attributes.get(k), self, k)
             if self._attributes[k] == operation._UNSET:
                 del self._attributes[k]
             self._changes[k] = v._merge(self._changes.get(k))
@@ -470,6 +473,15 @@ class Object(with_metaclass(ObjectMeta, object)):
         """
         return self.set(attr, operation.Remove([item]))
 
+    def bit_and(self, attr, value):
+        return self.set(attr, operation.BitAnd(value))
+
+    def bit_or(self, attr, value):
+        return self.set(attr, operation.BitOr(value))
+
+    def bit_xor(self, attr, value):
+        return self.set(attr, operation.BitXor(value))
+
     def clear(self):
         """
         将当前对象所有字段全部移除。
@@ -479,15 +491,26 @@ class Object(with_metaclass(ObjectMeta, object)):
         self.set(self._attributes, unset=True)
 
     def _dump_save(self):
-        return {k:v.dump() for k,v in iteritems(self._changes)}
+        data = {k: v.dump() for k, v in six.iteritems(self._changes)}
+        data.update(self._flags)
+        return data
 
-    def fetch(self):
+    def fetch(self, select=None, include=None):
         """
         从服务器获取当前对象所有的值，如果与本地值不同，将会覆盖本地的值。
 
         :return: 当前对象
         """
-        response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), {})
+        data = {}
+        if select:
+            if not isinstance(select, (list, tuple)):
+                raise TypeError('select parameter must be a list or a tuple')
+            data['keys'] = ','.join(select)
+        if include:
+            if not isinstance(include, (list, tuple)):
+                raise TypeError('include parameter must be a list or a tuple')
+            data['include'] = ','.join(include)
+        response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), data)
         self._update_data(response.json())
 
     def is_new(self):
@@ -521,22 +544,33 @@ class Object(with_metaclass(ObjectMeta, object)):
         return self.set('ACL', acl)
 
     def disable_before_hook(self):
-        master_key = client.get_app_info().get('master_key')
-        if not master_key:
-            raise ValueError('disable_before_hook need LeanCloud master key')
-        timestamp = int(time.time() * 1000)
-        return self.set('__before', utils.sign_hook('__before_for_' + self._class_name, master_key, timestamp))
+        hook_key = client.get_app_info().get('hook_key')
+        if not hook_key:
+            raise ValueError('disable_before_hook need LeanCloud hook key')
+        self.ignore_hook('beforeSave')
+        self.ignore_hook('beforeUpdate')
+        self.ignore_hook('beforeDelete')
+        return self
 
     def disable_after_hook(self):
-        master_key = client.get_app_info().get('master_key')
-        if not master_key:
-            raise ValueError('disable_before_hook need LeanCloud master key')
-        timestamp = int(time.time() * 1000)
-        return self.set('__after', utils.sign_hook('__after_for_' + self._class_name, master_key, timestamp))
+        hook_key = client.get_app_info().get('hook_key')
+        if not hook_key:
+            raise ValueError('`disable_before_hook` need LeanCloud hook key')
+        self.ignore_hook('afterSave')
+        self.ignore_hook('afterUpdate')
+        self.ignore_hook('afterDelete')
+        return self
+
+    def ignore_hook(self, hook_name):
+        if hook_name not in {'beforeSave', 'afterSave', 'beforeUpdate', 'afterUpdate', 'beforeDelete', 'afterDelete'}:
+            raise ValueError('invalid hook name: ' + hook_name)
+        if '__ignore_hooks' not in self._flags:
+            self._flags['__ignore_hooks'] = []
+        self._flags['__ignore_hooks'].append(hook_name)
 
     def _update_data(self, server_data):
         self._merge_metadata(server_data)
-        for key, value in iteritems(server_data):
+        for key, value in six.iteritems(server_data):
             self._attributes[key] = utils.decode(key, value)
         self._changes = {}
 

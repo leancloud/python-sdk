@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import functools
 import json
@@ -10,6 +11,7 @@ import logging
 import sys
 import traceback
 
+import six
 from werkzeug.exceptions import HTTPException
 from werkzeug.exceptions import NotAcceptable
 from werkzeug.routing import Map
@@ -17,8 +19,6 @@ from werkzeug.routing import Rule
 from werkzeug.wrappers import Response
 
 import leancloud
-from leancloud._compat import string_types
-from leancloud._compat import to_native
 from . import context
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -31,7 +31,7 @@ current = context.local('current')
 
 class LeanEngineError(Exception):
     def __init__(self, code=400, message='error'):
-        if isinstance(code, string_types):
+        if isinstance(code, six.string_types):
             message = code
             code = 400
         self.code = code
@@ -96,7 +96,7 @@ class LeanEngineApplication(object):
             return
 
         try:
-            data = json.loads(to_native(request.get_data()))
+            data = json.loads(request.get_data(as_text=True))
         except ValueError:
             context.local.user = None
             return
@@ -120,7 +120,7 @@ class LeanEngineApplication(object):
         except HTTPException as e:
             return e
 
-        params = to_native(request.get_data())
+        params = request.get_data(as_text=True)
         values['params'] = json.loads(params) if params != '' else {}
 
         try:
@@ -177,7 +177,7 @@ hook_name_mapping = {
 root_engine = None
 
 def register_cloud_func(_cloud_codes, func_or_func_name):
-    if isinstance(func_or_func_name, string_types):
+    if isinstance(func_or_func_name, six.string_types):
         func_name = func_or_func_name
         def inner_func(func):
             if func_name in _cloud_codes:

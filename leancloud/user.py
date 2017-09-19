@@ -3,12 +3,15 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 
 import threading
+from typing import Optional
+
+import six
 
 from leancloud import client
-from leancloud._compat import string_types
 from leancloud.errors import LeanCloudError
 from leancloud.query import FriendshipQuery
 from leancloud.object_ import Object
@@ -29,6 +32,10 @@ class User(Object):
     def get_session_token(self):
         return self._session_token
 
+    @property
+    def session_token(self):
+        return self._session_token
+
     def _merge_metadata(self, attrs):
         if 'sessionToken' in attrs:
             self._session_token = attrs.pop('sessionToken')
@@ -37,7 +44,7 @@ class User(Object):
 
     @classmethod
     def create_follower_query(cls, user_id):
-        if not user_id or not isinstance(user_id, string_types):
+        if not user_id or not isinstance(user_id, six.string_types):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Follower')
         query.equal_to('user', User.create_without_data(user_id))
@@ -45,14 +52,14 @@ class User(Object):
 
     @classmethod
     def create_followee_query(cls, user_id):
-        if not user_id or not isinstance(user_id, string_types):
+        if not user_id or not isinstance(user_id, six.string_types):
             raise TypeError('invalid user_id: {0}'.format(user_id))
         query = FriendshipQuery('_Followee')
         query.equal_to('user', User.create_without_data(user_id))
         return query
 
     @classmethod
-    def get_current(cls):
+    def get_current(cls):  # type: () -> Optional[User]
         return getattr(thread_locals, 'current_user', None)
 
     @classmethod

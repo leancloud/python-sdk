@@ -9,6 +9,7 @@ import random
 from datetime import datetime
 
 from nose.tools import eq_
+from nose.tools import assert_equal
 from nose.tools import with_setup
 from nose.tools import raises
 
@@ -211,6 +212,22 @@ def test_or_and_query(): # type: () -> None
 
 
 @with_setup(make_setup_func())
+def test_query_acl():  # type: () -> None
+    TestACLObject = leancloud.Object.extend('TestACLObject')
+    o = TestACLObject(content='xxx')
+    acl = leancloud.ACL()
+    acl.set_public_read_access(True)
+    acl.set_public_write_access(True)
+    acl.set_write_access('xxxxx', True)
+    o.set_acl(acl)
+    o.save()
+    acl_data = o.get_acl().dump()
+    o = TestACLObject.query.include_acl().equal_to('objectId', o.id).first()
+    assert_equal(acl_data, o.get_acl().dump())
+    o.destroy()
+
+
+@with_setup(make_setup_func())
 def test_multiple_order(): # type: () -> None
     MultipleOrderObject = leancloud.Object.extend('MultipleOrderObject')
     for obj in Query(MultipleOrderObject).find():
@@ -311,7 +328,7 @@ def test_contains_all(): # type: () -> None
 
 @with_setup(make_setup_func())
 def test_exist_and_does_not_exists(): # type: () -> None
-    assert Query(GameScore).does_not_exists('oops').find()
+    assert Query(GameScore).does_not_exist('oops').find()
     result = Query(GameScore).exists('playerName').find()
     assert len(result) == 10
 

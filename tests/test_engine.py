@@ -9,6 +9,7 @@ import time
 import json
 import requests
 import typing
+from datetime import datetime
 
 import six
 from nose.tools import assert_equal
@@ -57,7 +58,7 @@ def setup():
     leancloud.client.APP_ID = None
     leancloud.client.APP_KEY = None
     leancloud.client.MASTER_KEY = None
-    leancloud.init(TEST_APP_ID, TEST_APP_KEY, TEST_MASTER_KEY)
+    leancloud.init(TEST_APP_ID, TEST_APP_KEY, TEST_MASTER_KEY, TEST_HOOK_KEY)
     authorization._ENABLE_TEST = True
     authorization.APP_ID = TEST_APP_ID
     authorization.APP_KEY = TEST_APP_KEY
@@ -357,7 +358,6 @@ def test_rpc_call(): # type: () -> None
 def test_before_save_hook(): # type: () -> None
     @engine.before_save('HookObject')
     def before_hook_object_save(obj):
-        assert obj.has('__before')
         obj.set('beforeSaveHookInserted', True)
 
     response = requests.post(url + '/__engine/1/functions/HookObject/beforeSave', json={
@@ -370,13 +370,12 @@ def test_before_save_hook(): # type: () -> None
     assert response.ok
     assert response.json()['beforeSaveHookInserted'] == True
     assert response.json()['clientValue'] == 'blah'
-    assert '__before' in response.json()
 
 
 def test_after_save_hook(): # type: () -> None
     @engine.after_save('HookObject')
     def after_hook_object_save(obj):
-        assert obj.has('__after')
+        pass
 
     response = requests.post(url + '/__engine/1/functions/HookObject/afterSave', json={
         'object': {'clientValue': 'blah'}
@@ -458,14 +457,12 @@ def test_insight(): # type: () -> None
 
 
 def test_client(): # type: () -> None
-    leancloud.init(os.environ['APP_ID'], os.environ['APP_KEY'])
     assert cloudfunc.run('add', a=1, b=2) == 3
 
 
 def test_request_sms_code(): # type: () -> None
     if leancloud.client.REGION == 'US':
         return
-    leancloud.init(os.environ['APP_ID'], master_key=os.environ['MASTER_KEY'])
     try:
         cloudfunc.request_sms_code('13111111111')
     except LeanCloudError as e:
@@ -474,6 +471,10 @@ def test_request_sms_code(): # type: () -> None
             pass
         else:
             raise e
+
+
+def test_get_server_time():  # type: () -> None
+    assert type(leancloud.client.get_server_time()) == datetime
 
 
 def test_captcha():  # type: () -> None
@@ -497,7 +498,6 @@ def test_captcha():  # type: () -> None
 
 
 def test_current_user(): # type: () -> None
-    leancloud.init(os.environ['APP_ID'], master_key=os.environ['MASTER_KEY'])
     saved_user = leancloud.User()
     saved_user.set('username', 'user{0}'.format(int(time.time())))
     saved_user.set('password', 'password')
@@ -507,7 +507,7 @@ def test_current_user(): # type: () -> None
 
     @engine.define
     def current_user():
-        user = engine.current_user
+        user = engine.current.user
         TestCurrentUser = leancloud.Object.extend('TestCurrentUser')
         o = TestCurrentUser()
         o.set('user', user)
@@ -532,7 +532,7 @@ def test_current_user(): # type: () -> None
 
     @engine.before_save('Xxx')
     def before_xxx_save(xxx):
-        assert engine.current_user.get('username') == saved_user.get('username')
+        assert engine.current.user.get('username') == saved_user.get('username')
 
     response = requests.post(url + '/__engine/1/functions/Xxx/beforeSave', headers={
         'x-avoscloud-application-id': TEST_APP_ID,

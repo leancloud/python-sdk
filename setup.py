@@ -8,7 +8,7 @@ here = path.abspath(path.dirname(__file__))
 install_requires = [
     'arrow',
     'iso8601',
-    'qiniu',
+    'qiniu<=7.1.4',
     'requests>=2.12.1',
     'werkzeug',
 ]
@@ -21,8 +21,8 @@ if sys.version_info < (2, 7, 9):
     install_requires.append('idna')
 
 setup(
-    name='leancloud-sdk',
-    version='1.12.0',
+    name='leancloud',
+    version='2.0.0',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
     author='asaka',

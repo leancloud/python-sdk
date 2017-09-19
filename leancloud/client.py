@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import os
 import json
@@ -10,12 +11,11 @@ import time
 import hashlib
 import functools
 
+import six
 import requests
 
 import leancloud
 from leancloud import utils
-from leancloud._compat import iteritems
-from leancloud._compat import to_bytes
 from leancloud.app_router import AppRouter
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -24,6 +24,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
+HOOK_KEY = None
 USE_PRODUCTION = '1'
 USE_HTTPS = True
 # 兼容老版本，如果 USE_MASTER_KEY 为 None ，并且 MASTER_KEY 不为 None，则使用 MASTER_KEY
@@ -40,7 +41,7 @@ SERVER_VERSION = '1.1'
 TIMEOUT_SECONDS = 15
 
 
-def init(app_id, app_key=None, master_key=None):
+def init(app_id, app_key=None, master_key=None, hook_key=None):
     """初始化 LeanCloud 的 AppId / AppKey / MasterKey
 
     :type app_id: string_types
@@ -49,13 +50,19 @@ def init(app_id, app_key=None, master_key=None):
     :param app_key: 应用的 Application Key
     :type master_key: None or string_types
     :param master_key: 应用的 Master Key
+    :param hook_key: application's hook key
+    :type hook_key: None or string_type
     """
     if (not app_key) and (not master_key):
         raise RuntimeError('app_key or master_key must be specified')
-    global APP_ID, APP_KEY, MASTER_KEY
+    global APP_ID, APP_KEY, MASTER_KEY, HOOK_KEY
     APP_ID = app_id
     APP_KEY = app_key
     MASTER_KEY = master_key
+    if hook_key:
+        HOOK_KEY = hook_key
+    else:
+        HOOK_KEY = os.environ.get('LEANCLOUD_APP_HOOK_KEY')
 
 
 def need_init(func):
@@ -71,7 +78,7 @@ def need_init(func):
             'User-Agent': 'AVOS Cloud python-{0} SDK'.format(leancloud.__version__),
         }
         md5sum = hashlib.md5()
-        current_time = str(int(time.time() * 1000))
+        current_time = six.text_type(int(time.time() * 1000))
         if (USE_MASTER_KEY is None and MASTER_KEY) or USE_MASTER_KEY is True:
             # md5sum.update(current_time + MASTER_KEY)
             # headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
@@ -80,7 +87,7 @@ def need_init(func):
             # In python 2.x, you can feed this object with arbitrary
             # strings using the update() method, but in python 3.x,
             # you should feed with bytes-like objects.
-            md5sum.update(to_bytes(current_time + APP_KEY))
+            md5sum.update((current_time + APP_KEY).encode('utf-8'))
             headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time
 
         user = leancloud.User.get_current()
@@ -176,6 +183,7 @@ def get_app_info():
         'app_id': APP_ID,
         'app_key': APP_KEY,
         'master_key': MASTER_KEY,
+        'hook_key': HOOK_KEY,
     }
 
 
@@ -185,7 +193,7 @@ def get(url, params=None, headers=None):
     if not params:
         params = {}
     else:
-        for k, v in iteritems(params):
+        for k, v in six.iteritems(params):
             if isinstance(v, dict):
                 params[k] = json.dumps(v, separators=(',', ':'))
     response = session.get(

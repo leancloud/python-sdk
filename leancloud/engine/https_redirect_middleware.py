@@ -3,8 +3,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
-from .._compat import to_native
+from __future__ import unicode_literals
 
 import os
 
@@ -24,10 +23,7 @@ class HttpsRedirectMiddleware(object):
     def __call__(self, environ, start_response):
         request = Request(environ)
         if is_prod and request.headers.get('X-Forwarded-Proto') != 'https':
-            url = 'https://{0}{1}'.format(request.host, request.path)
-            if request.query_string:
-                url += '?{0}'.format(to_native(request.query_string))
-
+            url = 'https://{0}{1}'.format(request.host, request.full_path)
             return redirect(url)(environ, start_response)
 
         return self.origin_app(environ, start_response)

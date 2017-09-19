@@ -3,11 +3,13 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
+
+import six
 
 import leancloud
 from leancloud import utils
 from leancloud.engine import leanengine
-from leancloud._compat import string_types
 
 
 __author__ = 'asaka <lan@leancloud.rocks>'
@@ -80,7 +82,7 @@ def request_sms_code(phone_number, idd='+86', sms_type='sms',
     :param sign: 短信签名名称
     :return: None
     """
-    if not isinstance(phone_number, string_types):
+    if not isinstance(phone_number, six.string_types):
         raise TypeError('phone_number must be a string')
 
     data = {
@@ -165,3 +167,7 @@ def verify_captcha(code, token):
     }
     response = leancloud.client.post('/verifyCaptcha', params)
     return response.json()['validate_token']
+
+
+def get_server_time():
+    return leancloud.client.get_server_time()

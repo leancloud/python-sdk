@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import os
 import re
@@ -10,20 +11,15 @@ import io
 import hashlib
 import uuid
 import logging
-import warnings
 import threading
 
+import six
 import requests
 
 import leancloud
 from leancloud import client
 from leancloud import utils
-from leancloud._compat import PY2
-from leancloud._compat import string_types
-from leancloud._compat import file_type
-from leancloud._compat import buffer_type
 from leancloud.errors import LeanCloudError
-from leancloud.errors import LeanCloudWarning
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -33,7 +29,7 @@ logger = logging.getLogger(__name__)
 class File(object):
     _class_name = '_File'  # walks like a leancloud.Object
 
-    def __init__(self, name='', data=None, mime_type=None, type_=None):
+    def __init__(self, name='', data=None, mime_type=None):
         self._name = name
         self.id = None
         self._url = None
@@ -44,10 +40,6 @@ class File(object):
         }
         if self.current_user and self.current_user != None:  # NOQA: self.current_user may be a thread_local object
             self._metadata['owner'] = self.current_user.id
-
-        if type_ is not None:
-            warnings.warn(LeanCloudWarning('optional param `type_` is deprecated, please use `mime_type` instead'))
-            mime_type = type_
 
         pattern = re.compile('\.([^.]*)$')
         extension = pattern.findall(name)
@@ -62,22 +54,30 @@ class File(object):
             self._source = None
         elif isinstance(data, io.BytesIO):
             self._source = data
-        elif isinstance(data, file_type):
+        elif isinstance(data, io.IOBase):
+            # this may be Python3 file.
             data.seek(0, os.SEEK_SET)
             self._source = io.BytesIO(data.read())
-        elif isinstance(data, buffer_type):
+        elif six.PY2 and isinstance(data, file):
+            data.seek(0, os.SEEK_SET)
+            self._source = io.BytesIO(data.read())
+        elif isinstance(data, memoryview):
+            # TODO: deprecated memoryview type constructor
             self._source = io.BytesIO(data)
-        elif PY2:
+        elif six.PY2 and isinstance(data, buffer):
+            # TODO: deprecated buffer type constructor
+            self._source = io.BytesIO(data)
+        elif six.PY2:
             import cStringIO
             import StringIO
-            if isinstance(data, (cStringIO.OutputType, StringIO.StringIO)):
+            if isinstance(data, (cStringIO.InputType, StringIO.StringIO)):
                 data.seek(0, os.SEEK_SET)
                 self._source = io.BytesIO(data.getvalue())
             else:
-                raise TypeError('data must be a StringIO / buffer / file instance')
+                raise TypeError('data must be a StringIO / io.BytesIO / file instance')
 
         else:
-            raise TypeError('data must be a StringIO / buffer / file instance')
+            raise TypeError('data must be a StringIO / io.BytesIO / file instance')
 
         if self._source:
             self._source.seek(0, os.SEEK_END)
@@ -92,16 +92,12 @@ class File(object):
         return leancloud.Query(cls)
 
     @classmethod
-    def create_with_url(cls, name, url, meta_data=None, mime_type=None, type_=None):
-        if type_ is not None:
-            warnings.warn('optional param `type_` is deprecated, please use `mime_type` instead')
-            mime_type = type_
-
+    def create_with_url(cls, name, url, meta_data=None, mime_type=None):
         f = File(name, None, mime_type)
         if meta_data:
             f._metadata.update(meta_data)
 
-        if isinstance(url, string_types):
+        if isinstance(url, six.string_types):
             f._url = url
         else:
             raise ValueError('url must be a str / unicode')

@@ -3,26 +3,21 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import copy
-import json
-import gzip
-import hashlib
-import hmac
 import functools
 from datetime import datetime
 from datetime import timedelta
 
 import arrow
+import six
 import iso8601
 from werkzeug import LocalProxy
 import dateutil.tz as tz
 
 import leancloud
 from leancloud import operation
-from leancloud._compat import BytesIO
-from leancloud._compat import iteritems
-from leancloud._compat import to_bytes
 
 __author__ = 'asaka <lan@leancloud.rocks>'
 
@@ -74,7 +69,7 @@ def encode(value, disallow_objects=False, dump_objects=False):
         return [encode(x, disallow_objects, dump_objects) for x in value]
 
     if isinstance(value, dict):
-        return dict([(k, encode(v, disallow_objects, dump_objects)) for k, v in iteritems(value)])
+        return dict([(k, encode(v, disallow_objects, dump_objects)) for k, v in six.iteritems(value)])
 
     return value
 
@@ -89,8 +84,13 @@ def decode(key, value):
     if not isinstance(value, dict):
         return value
 
+    if key == 'ACL':
+        if isinstance(value, leancloud.ACL):
+            return value
+        return leancloud.ACL(value)
+
     if '__type' not in value:
-        return dict([(k, decode(k, v)) for k, v in iteritems(value)])
+        return dict([(k, decode(k, v)) for k, v in six.iteritems(value)])
 
     _type = value['__type']
 
@@ -120,11 +120,6 @@ def decode(key, value):
 
     if _type == 'GeoPoint':
         return leancloud.GeoPoint(latitude=value['latitude'], longitude=value['longitude'])
-
-    if key == 'ACL':
-        if isinstance(value, leancloud.ACL):
-            return value
-        return leancloud.ACL(value)
 
     if _type == 'Relation':
         relation = leancloud.Relation(None, key)
@@ -162,20 +157,13 @@ def traverse_object(obj, callback, seen=None):
         return callback(obj)
 
     if isinstance(obj, dict):
-        for key, child in iteritems(obj):
+        for key, child in six.iteritems(obj):
             new_child = traverse_object(child, callback, seen)
             if new_child:
                 obj[key] = new_child
         return callback(obj)
 
     return callback(obj)
-
-
-def sign_hook(hook_name, master_key, timestamp):
-    sign = hmac.new(to_bytes(master_key),
-                    to_bytes('{0}:{1}'.format(hook_name, timestamp)),
-                    hashlib.sha1).hexdigest()
-    return '{0},{1}'.format(timestamp, sign)
 
 
 class throttle(object):
