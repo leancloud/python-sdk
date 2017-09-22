@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 import os
 import json
 
-import six
 from werkzeug.wrappers import Response
 
 from . import utils

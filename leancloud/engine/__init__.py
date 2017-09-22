@@ -7,12 +7,14 @@ from __future__ import unicode_literals
 
 import sys
 import json
+import warnings
 
 from werkzeug.wrappers import Request
 from werkzeug.wrappers import Response
 from werkzeug.serving import run_simple
 
 import leancloud
+from . import utils
 from . import leanengine
 from .authorization import AuthorizationMiddleware
 from .cookie_session import CookieSessionMiddleware
@@ -61,7 +63,7 @@ class Engine(object):
         environ['leanengine.request'] = request  # cache werkzeug request for other middlewares
 
         if request.path in ('/__engine/1/ping', '/__engine/1.1/ping/'):
-            start_response('200 OK', [('Content-Type', 'application/json')])
+            start_response(utils.to_native('200 OK'), [(utils.to_native('Content-Type'), utils.to_native('application/json'))])
             version = sys.version_info
             return Response(json.dumps({
                 'version': leancloud.__version__,
