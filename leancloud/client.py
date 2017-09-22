@@ -73,26 +73,25 @@ def need_init(func):
 
         headers = {
             'Content-Type': 'application/json;charset=utf-8',
-            'X-AVOSCloud-Application-Id': APP_ID,
-            'X-AVOSCloud-Application-Production': USE_PRODUCTION,
+            'X-LC-Id': APP_ID,
+            'X-LC-Prod': USE_PRODUCTION,
             'User-Agent': 'AVOS Cloud python-{0} SDK'.format(leancloud.__version__),
         }
         md5sum = hashlib.md5()
         current_time = six.text_type(int(time.time() * 1000))
         if (USE_MASTER_KEY is None and MASTER_KEY) or USE_MASTER_KEY is True:
-            # md5sum.update(current_time + MASTER_KEY)
-            # headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
-            headers['X-AVOSCloud-Master-Key'] = MASTER_KEY
+            md5sum.update((current_time + MASTER_KEY).encode('utf-8'))
+            headers['X-LC-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
         else:
             # In python 2.x, you can feed this object with arbitrary
             # strings using the update() method, but in python 3.x,
             # you should feed with bytes-like objects.
             md5sum.update((current_time + APP_KEY).encode('utf-8'))
-            headers['X-AVOSCloud-Request-Sign'] = md5sum.hexdigest() + ',' + current_time
+            headers['X-LC-Sign'] = md5sum.hexdigest() + ',' + current_time
 
         user = leancloud.User.get_current()
         if user:
-            headers['X-AVOSCloud-Session-Token'] = user._session_token
+            headers['X-LC-Session'] = user._session_token
 
         return func(headers=headers, *args, **kwargs)
     return new_func
