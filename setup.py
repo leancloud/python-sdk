@@ -22,7 +22,7 @@ if sys.version_info < (2, 7, 9):
 
 setup(
     name='leancloud',
-    version='2.1.1',
+    version='2.1.2',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
     author='asaka',
