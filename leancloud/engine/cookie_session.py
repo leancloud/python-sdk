@@ -9,6 +9,7 @@ from werkzeug import http
 from werkzeug.wrappers import Request
 from werkzeug.contrib.securecookie import SecureCookie
 
+from . import utils
 from leancloud.user import User
 
 
@@ -97,4 +98,4 @@ class CookieSessionMiddleware(object):
         }, self.secret)
         raw = http.dump_cookie(self.name, cookie.serialize(),
                                expires=self.expires, max_age=self.max_age)
-        headers.append(('Set-Cookie', raw))
+        headers.append((utils.to_native('Set-Cookie'), raw))
