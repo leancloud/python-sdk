@@ -90,7 +90,7 @@ class CookieSessionMiddleware(object):
             cookies = http.parse_cookie(environ)
             if self.name in cookies:
                 raw = http.dump_cookie(self.name, '', expires=1)
-                headers.append(('Set-Cookie', raw))
+                headers.append((utils.to_native('Set-Cookie'), raw))
             return
         cookie = SecureCookie({
             'uid': user.id,
