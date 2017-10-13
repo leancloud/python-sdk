@@ -331,9 +331,9 @@ class User(Object):
         client.post('/requestPasswordResetBySmsCode', params)
 
     @classmethod
-    def reset_password_by_sms_code(cls, phone_number, new_password):
+    def reset_password_by_sms_code(cls, sms_code, new_password):
         params = {'password': new_password}
-        client.post("resetPasswordBySmsCode", params)
+        client.put("/resetPasswordBySmsCode/" + sms_code, params)
 
     @classmethod
     def verify_mobile_phone_number(cls, sms_code):
