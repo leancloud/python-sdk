@@ -291,11 +291,11 @@ def test_request_password_reset_by_sms_code(): # type: () -> None
 @with_setup(get_setup_func())
 def test_reset_password_by_sms_code(): # type: () -> None
     try:
-        User.reset_password_by_sms_code('1861111' + str(random.randrange(1000, 9999)), "password")
+        User.reset_password_by_sms_code(str(random.randrange(100000, 999999)), "password")
     except LeanCloudError as e:
-        if e.code != 1:
+        if e.code != 603:
             raise e
-        
+
 
 @with_setup(get_setup_func())
 def test_request_login_sms_code(): # type: () -> None
