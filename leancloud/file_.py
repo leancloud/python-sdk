@@ -227,6 +227,7 @@ class File(object):
     def _save_callback(self, token, successed):
         if not token:
             return
+
         def f():
             try:
                 client.post('/fileCallback', {

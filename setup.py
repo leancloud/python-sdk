@@ -8,6 +8,7 @@ here = path.abspath(path.dirname(__file__))
 install_requires = [
     'arrow',
     'iso8601',
+    'six>=1.11.0',
     'qiniu<=7.1.4',
     'requests>=2.12.1',
     'werkzeug',
@@ -43,6 +44,6 @@ setup(
     install_requires=install_requires,
     extras_require={
         'dev': ['sphinx', 'sphinx_rtd_theme'],
-        'test': ['nose', 'wsgi_intercept', 'flask', 'six>=1.9.0'],
+        'test': ['nose', 'wsgi_intercept', 'flask'],
     }
 )
