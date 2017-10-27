@@ -1,3 +1,7 @@
+## [2.1.5] - 2017-10-27
+### Fixed
+- add dependency for `six`
+
 ## [2.1.4] - 2017-10-13
 ### Fixed
 - reset_password_by_sms_code now works properly, thanks rickyfunfun<151266405@qq.com> for the patch
