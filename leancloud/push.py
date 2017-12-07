@@ -50,7 +50,7 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     :param data: 推送给设备的具体信息，详情查看 https://leancloud.cn/docs/push_guide.html#消息内容_Data
     :rtype: Notification
     """
-    if push_time and expiration_time:
+    if expiration_time_interval and expiration_time:
         raise TypeError('Both expiration_time and expiration_time_interval can\'t be set')
 
     params = {
