@@ -1,0 +1,26 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[dev-packages]
+
+wsgi-intercept = "*"
+nose = "*"
+sphinx-rtd-theme = "*"
+flask = "*"
+
+
+[packages]
+
+arrow = "*"
+"iso8601" = "*"
+six = ">=1.11.0"
+qiniu = "<=7.1.4"
+requests = ">=2.12.1"
+werkzeug = "*"
+typing = { version = "*", markers = "python_version < '3.5.0'" }
+pyopenssl = { version = "*", markers = "python_version < '2.7.9'" }
+idna = { version = "*", markers = "python_version < '2.7.9'" }
