@@ -51,6 +51,7 @@ class File(object):
         self._mime_type = mime_type
 
         if data is None:
+            self._source = None
             return
 
         try:
