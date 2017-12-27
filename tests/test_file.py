@@ -33,10 +33,17 @@ def test_basic():  # type: () -> None
         assert f.name == 'Blah'
         assert f._metadata['size'] == 14
         assert f.size == 14
+        assert f._metadata['_checksum'] == '55e562bfee2bde4f9e71b8885eb5e303'
 
     b = b'blah blah blah'
     fn(io.BytesIO(b))
     fn(memoryview(b))
+
+    import tempfile
+    f = tempfile.SpooledTemporaryFile()
+    f.write(b)
+    fn(f)
+
     if six.PY2:
         import StringIO
         import cStringIO
