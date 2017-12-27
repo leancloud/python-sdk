@@ -56,6 +56,7 @@ class File(object):
         try:
             data.read
             data.tell
+            data.seek(0, os.SEEK_END)
             data.seek(0, os.SEEK_SET)
         except Exception:
             if (six.PY3 and isinstance(data, (memoryview, bytes))) or \
@@ -64,10 +65,7 @@ class File(object):
             elif data.read:
                 data = io.BytesIO(data.read())
             else:
-                raise Exception('Do not know how to handle data, accepts file like object or bytes')
-
-        data.seek(0, os.SEEK_END)
-        self._metadata['size'] = data.tell()
+                raise TypeError('Do not know how to handle data, accepts file like object or bytes')
 
         data.seek(0, os.SEEK_SET)
         checksum = hashlib.md5()
@@ -78,6 +76,8 @@ class File(object):
             checksum.update(chunk)
 
         self._metadata['_checksum'] = checksum.hexdigest()
+        self._metadata['size'] = data.tell()
+
         data.seek(0, os.SEEK_SET)
 
         self._source = data
