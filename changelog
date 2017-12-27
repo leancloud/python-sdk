@@ -1,3 +1,7 @@
+## [2.1.7] - 2017-12-27
+### Fixed
+- Minor crash bug introduced by 2.1.6 fix
+
 ## [2.1.6] - 2017-12-27
 ### Fixed
 - leancloud.File should accept any file like object
