@@ -176,7 +176,7 @@ class File(object):
 
     def _save_to_s3(self, token, upload_url):
         self._source.seek(0)
-        response = requests.put(upload_url, data=self._source.getvalue(), headers={'Content-Type': self.mime_type})
+        response = requests.put(upload_url, data=self._source, headers={'Content-Type': self.mime_type})
         if response.status_code != 200:
             self._save_callback(token, False)
             raise LeanCloudError(1, 'The file is not successfully saved to S3')
