@@ -51,41 +51,36 @@ class File(object):
         self._mime_type = mime_type
 
         if data is None:
-            self._source = None
-        elif isinstance(data, io.BytesIO):
-            self._source = data
-        elif isinstance(data, io.IOBase):
-            # this may be Python3 file.
+            return
+
+        try:
+            data.read
+            data.tell
             data.seek(0, os.SEEK_SET)
-            self._source = io.BytesIO(data.read())
-        elif six.PY2 and isinstance(data, file):
-            data.seek(0, os.SEEK_SET)
-            self._source = io.BytesIO(data.read())
-        elif isinstance(data, memoryview):
-            # TODO: deprecated memoryview type constructor
-            self._source = io.BytesIO(data)
-        elif six.PY2 and isinstance(data, buffer):
-            # TODO: deprecated buffer type constructor
-            self._source = io.BytesIO(data)
-        elif six.PY2:
-            import cStringIO
-            import StringIO
-            if isinstance(data, (cStringIO.InputType, StringIO.StringIO)):
-                data.seek(0, os.SEEK_SET)
-                self._source = io.BytesIO(data.getvalue())
+        except Exception:
+            if (six.PY3 and isinstance(data, (memoryview, bytes))) or \
+               (six.PY2 and isinstance(data, (buffer, memoryview, str))):
+                data = io.BytesIO(data)
+            elif data.read:
+                data = io.BytesIO(data.read())
             else:
-                raise TypeError('data must be a StringIO / io.BytesIO / file instance')
+                raise Exception('Do not know how to handle data, accepts file like object or bytes')
 
-        else:
-            raise TypeError('data must be a StringIO / io.BytesIO / file instance')
+        data.seek(0, os.SEEK_END)
+        self._metadata['size'] = data.tell()
 
-        if self._source:
-            self._source.seek(0, os.SEEK_END)
-            self._metadata['size'] = self._source.tell()
-            self._source.seek(0, os.SEEK_SET)
-            checksum = hashlib.md5()
-            checksum.update(self._source.getvalue())
-            self._metadata['_checksum'] = checksum.hexdigest()
+        data.seek(0, os.SEEK_SET)
+        checksum = hashlib.md5()
+        while True:
+            chunk = data.read(4096)
+            if not chunk:
+                break
+            checksum.update(chunk)
+
+        self._metadata['_checksum'] = checksum.hexdigest()
+        data.seek(0, os.SEEK_SET)
+
+        self._source = data
 
     @utils.classproperty
     def query(cls):
