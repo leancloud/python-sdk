@@ -1,3 +1,7 @@
+## [2.1.6] - 2017-12-27
+### Fixed
+- leancloud.File should accept any file like object
+
 ## [2.1.5] - 2017-10-27
 ### Fixed
 - add dependency for `six`
