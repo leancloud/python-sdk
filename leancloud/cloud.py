@@ -86,9 +86,8 @@ def request_sms_code(phone_number, idd='+86', sms_type='sms',
         raise TypeError('phone_number must be a string')
 
     data = {
-        'mobilePhoneNumber': phone_number,
+        'mobilePhoneNumber': idd + phone_number,
         'smsType': sms_type,
-        'IDD': idd,
     }
 
     if template is not None:
