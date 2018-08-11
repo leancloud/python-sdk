@@ -91,13 +91,13 @@ def request_sms_code(phone_number, idd='+86', sms_type='sms',
     }
 
     if template is not None:
-        params['template'] = template
+        data['template'] = template
 
     if sign is not None:
-        params['sign'] = sign
+        data['sign'] = sign
 
     if validate_token is not None:
-        params['validate_token'] = validate_token
+        data['validate_token'] = validate_token
 
     if params is not None:
         data.update(params)
