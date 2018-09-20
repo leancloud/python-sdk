@@ -12,6 +12,7 @@ install_requires = [
     'qiniu<=7.1.4',
     'requests>=2.12.1',
     'werkzeug',
+    'gevent>=1.0.2,<2.0.0'
 ]
 
 if sys.version_info < (3, 5, 0):
