@@ -64,9 +64,9 @@ class Message(object):
         if reversed is not None:
             query_params['reversed'] = reversed
         if isinstance(before_time, datetime):
-            query_params['max_ts'] = before_time.timestamp() * 1000
+            query_params['max_ts'] = round(before_time.timestamp() * 1000)
         elif isinstance(before_time, six.integer_types) or isinstance(before_time, float):
-            query_params['max_ts'] = before_time * 1000
+            query_params['max_ts'] = round(before_time * 1000)
         if before_message_id is not None:
             query_params['msgid'] = before_message_id
         return list(cls._find(query_params))
@@ -87,9 +87,9 @@ class Message(object):
         if limit is not None:
             query_params['limit'] = limit
         if isinstance(before_time, datetime):
-            query_params['max_ts'] = before_time.timestamp() * 1000
+            query_params['max_ts'] =  round(before_time.timestamp() * 1000)
         elif isinstance(before_time, six.integer_types) or isinstance(before_time, float):
-            query_params['max_ts'] = before_time * 1000
+            query_params['max_ts'] = round(before_time * 1000)
         if before_message_id is not None:
             query_params['msgid'] = before_message_id
         return list(cls._find(query_params))
@@ -108,9 +108,9 @@ class Message(object):
         if limit is not None:
             query_params['limit'] = limit
         if isinstance(before_time, datetime):
-            query_params['max_ts'] = before_time.timestamp() * 1000
+            query_params['max_ts'] = round(before_time.timestamp() * 1000)
         elif isinstance(before_time, six.integer_types) or isinstance(before_time, float):
-            query_params['max_ts'] = before_time * 1000
+            query_params['max_ts'] = round(before_time * 1000)
         if before_message_id is not None:
             query_params['msgid'] = before_message_id
         return list(cls._find(query_params))
