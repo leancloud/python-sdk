@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import os
 import sys
 import json
 import warnings
@@ -125,6 +126,33 @@ class Engine(object):
 
     def run(self, *args, **kwargs):
         return run_simple(*args, **kwargs)
+
+    def start(self):
+        from gevent.pywsgi import WSGIServer
+
+        if not hasattr(leancloud, 'APP_ID'):
+            APP_ID = os.environ['LEANCLOUD_APP_ID']
+            APP_KEY = os.environ['LEANCLOUD_APP_KEY']
+            MASTER_KEY = os.environ['LEANCLOUD_APP_MASTER_KEY']
+            HOOK_KEY = os.environ['LEANCLOUD_APP_HOOK_KEY']
+            PORT = int(os.environ.get('LEANCLOUD_APP_PORT'))
+            leancloud.init(APP_ID, app_key=APP_KEY, master_key=MASTER_KEY, hook_key=HOOK_KEY)
+
+        def application(environ, start_response):
+            start_response('200 OK'.encode('utf-8'), [('Content-Type'.encode('utf-8'), 'text/plain'.encode('utf-8'))])
+            return 'This is a LeanEngine application.'
+
+        class NopLogger(object):
+            def write(self, s):
+                pass
+
+        app = self.wrap(application)
+        self.server = WSGIServer(('', PORT), app, log=NopLogger())
+        print('LeanEngine Cloud Functions app is running, port:', PORT)
+        self.server.serve_forever()
+
+    def stop(self):
+        self.server.stop()
 
 
 __all__ = [
