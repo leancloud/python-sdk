@@ -19,7 +19,7 @@ arrow = "*"
 "iso8601" = "*"
 six = ">=1.11.0"
 qiniu = "<=7.1.4"
-requests = ">=2.12.1"
+requests = ">=2.20.0"
 werkzeug = "*"
 gevent = ">=1.0.2,<2.0.0"
 typing = { version = "*", markers = "python_version < '3.5.0'" }
