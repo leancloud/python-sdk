@@ -75,6 +75,9 @@ class CookieSessionMiddleware(object):
 
         session = SecureCookie.unserialize(cookie, self.secret)
 
+        if 'session_token' not in session:
+            return
+
         if not self.fetch_user:
             user = User()
             user._session_token = session['session_token']
