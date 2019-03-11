@@ -20,31 +20,26 @@ class AppRouter(object):
         self.session = requests.Session()
         self.lock = threading.Lock()
         self.expired_at = 0
+        
+        prefix = app_id[:8].lower()
+        domain = 'lncld.net'
+
         if region == 'US':
-            self.hosts['api'] = 'us-api.leancloud.cn'
-            self.hosts['engine'] = 'us-api.leancloud.cn'
-            self.hosts['stats'] = 'us-api.leancloud.cn'
-            self.hosts['push'] = 'us-api.leancloud.cn'
+            domain = 'lncldglobal.com'
         elif region == 'CN':
             if app_id.endswith('-9Nh9j0Va'):
-                self.hosts['api'] = 'e1-api.leancloud.cn'
-                self.hosts['engine'] = 'e1-api.leancloud.cn'
-                self.hosts['stats'] = 'e1-api.leancloud.cn'
-                self.hosts['push'] = 'e1-api.leancloud.cn'
+                domain = 'lncldapi.com'
             else:
-                prefix = app_id[:8].lower()
-                self.hosts['api'] = '{}.api.lncld.net'.format(prefix)
-                self.hosts['engine'] = '{}.engine.lncld.net'.format(prefix)
-                self.hosts['stats'] = '{}.stats.lncld.net'.format(prefix)
-                self.hosts['push'] = '{}.push.lncld.net'.format(prefix)
+                domain = 'lncld.net'
         else:
             raise RuntimeError('invalid region: {}'.format(region))
 
-    def get(self, type_):
-        if self.region == 'US':
-            # US region dose not support app router stuff
-            return self.hosts[type_]
+        self.hosts['api'] = '{}.api.{}'.format(prefix, domain)
+        self.hosts['engine'] = '{}.engine.{}'.format(prefix, domain)
+        self.hosts['stats'] = '{}.stats.{}'.format(prefix, domain)
+        self.hosts['push'] = '{}.push.{}'.format(prefix, domain)
 
+    def get(self, type_):
         with self.lock:
             if time.time() > self.expired_at:
                 self.expired_at += 600

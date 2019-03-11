@@ -173,12 +173,15 @@ def test_fetch():  # type: () -> None
     f.save()
     fetched = File.create_without_data(f.id)
     fetched.fetch()
+
+    normalized_f_url = f.url.split('/')[-1]
+    normalized_fetched_url = f.url.split('/')[-1]
+
     assert fetched.id == f.id
     assert fetched.metadata == f.metadata
     assert fetched.name == f.name
-    assert fetched.url == f.url
     assert fetched.size == f.size
-    assert fetched.url == f.url
+    assert fetched.url == f.url or normalized_fetched_url == normalized_f_url
     f.destroy()
 
 
