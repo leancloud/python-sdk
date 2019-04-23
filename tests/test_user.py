@@ -95,6 +95,13 @@ def test_login(): # type: () -> None
 
 
 @with_setup(get_setup_func(), destroy_func)
+def test_login_with_email(): # type: () -> None
+
+    user = User()
+    user.login(email='wow@leancloud.rocks', password='password')
+
+
+@with_setup(get_setup_func(), destroy_func)
 def test_file_field(): # type: () -> None
     user = User()
     user.login('user1_name', 'password')

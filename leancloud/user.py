@@ -130,14 +130,19 @@ class User(Object):
 
         self.save(make_current=True)
 
-    def login(self, username=None, password=None):
+    def login(self, username=None, password=None, email=None):
         """
-        登陆用户。如果用户名和密码正确，服务器会返回用户的 sessionToken 。
+        登录用户。如果用户名和密码正确，服务器会返回用户的 sessionToken 。
         """
         if username:
             self.set('username', username)
         if password:
             self.set('password', password)
+        if email:
+            self.set('email', email)
+        # 同时传入 username、email、password 的情况下，这三个字段会一起发给后端。
+        # 这时后端会忽略 email，等价于只传 username 和 password。
+        # 这里的 login 函数的实现依赖后端的这一行为，没有校验 username 和 email 中调用者传入且仅传入了其中一个参数。
         response = client.post('/login', params=self.dump())
         content = response.json()
         self._update_data(content)
