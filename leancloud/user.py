@@ -132,7 +132,11 @@ class User(Object):
 
     def login(self, username=None, password=None, email=None):
         """
-        登录用户。如果用户名和密码正确，服务器会返回用户的 sessionToken 。
+        登录用户。成功登录后，服务器会返回用户的 sessionToken 。
+
+        :param username: 用户名
+        :param email: 邮箱地址（username 和 email 这两个参数必须传入一个且仅能传入一个）
+        :param password: 用户密码
         """
         if username:
             self.set('username', username)
