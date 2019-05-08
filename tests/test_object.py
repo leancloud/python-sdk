@@ -237,7 +237,9 @@ def test_fetch(): # type: () -> None
     album.save()
 
     album_1 = Album.create_without_data(album.id)
+    assert album_1.is_existed() is False
     album_1.fetch(include=['parent'], select=['name', 'parent'])
+    assert album_1.is_existed() is True
     assert album_1.get('parent').get('name') == 'Nightwish'
     assert not album_1.has('title')
 
@@ -250,6 +252,11 @@ def test_has(): # type: () -> None
     album.set('foo', 'bar')
     assert album.has('foo') is True
     assert album.has('bar') is False
+
+
+def test_existence(): # type: () -> None
+    album = Album()
+    assert album.is_existed() is False
 
 
 def test_get_set_acl(): # type: () -> None
