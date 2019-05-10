@@ -74,7 +74,11 @@ class File(object):
             chunk = data.read(4096)
             if not chunk:
                 break
-            checksum.update(chunk)
+
+            try:
+                checksum.update(chunk)
+            except TypeError:
+                checksum.update(chunk.encode('utf-8'))
 
         self._metadata['_checksum'] = checksum.hexdigest()
         self._metadata['size'] = data.tell()
@@ -164,10 +168,39 @@ class File(object):
         if response.status_code != 200:
             raise LeanCloudError(1, "the file is not sucessfully destroyed")
 
+    def _save_to_qiniu_internal_py3(self, token, key):
+        from qiniu.services.storage.uploader import crc32, _form_put, put_data
+        from qiniu.config import _BLOCK_SIZE
+
+        final_data = ''
+        while True:
+            tmp_data = self._source.read(_BLOCK_SIZE)
+            if len(tmp_data) == 0:
+                break
+            elif len(final_data) == 0:
+                final_data = tmp_data
+            else:
+                final_data += tmp_data
+        else:
+            final_data = self._source.data
+
+        crc = crc32(final_data)
+        return _form_put(
+            token, key,
+            final_data, None,
+            self.mime_type, crc
+        )
+
     def _save_to_qiniu(self, token, key):
-        import qiniu
         self._source.seek(0)
-        ret, info = qiniu.put_data(token, key, self._source)
+
+        if six.PY3:
+            # use patched put_data implementation for py3k
+            ret, info = self._save_to_qiniu_internal_py3(token, key)
+        else:
+            import qiniu
+            # use put_data implementation provided by qiniu-sdk
+            ret, info = qiniu.put_data(token, key, self._source)
         self._source.seek(0)
 
         if info.status_code != 200:
