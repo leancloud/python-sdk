@@ -1,3 +1,11 @@
+## [2.1.11] - 2019-05-10
+### Fixed
+- Error -1 when uploading large files to Qiniu
+- TypeError in py3k when uploading files to Qiniu using BytesIO / StringIO
+- Upgraded urlib3 to 1.24.3 (CVE-2019-11324)
+### Added
+- email argument for User.login
+
 ## [2.1.10] - 2019-03-18
 ### Changed
 - Upgrade Qiniu SDK
