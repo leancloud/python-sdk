@@ -26,6 +26,8 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 logger = logging.getLogger(__name__)
 
 
+DEFAULT_TIMEOUT = 30
+
 class File(object):
     _class_name = '_File'  # walks like a leancloud.Object
 
@@ -35,6 +37,7 @@ class File(object):
         self._url = None
         self._acl = None
         self.current_user = leancloud.User.get_current()
+        self.timeout = 30
         self._metadata = {
             'owner': 'unknown'
         }
@@ -82,6 +85,11 @@ class File(object):
 
         self._metadata['_checksum'] = checksum.hexdigest()
         self._metadata['size'] = data.tell()
+
+        # 3.5MB, 1Mbps * 30s
+        # increase timeout
+        if self._metadata['size'] > 3750000:
+            self.timeout = self.timeout * int(self._metadata['size'] / 3750000)
 
         data.seek(0, os.SEEK_SET)
 
@@ -194,11 +202,13 @@ class File(object):
     def _save_to_qiniu(self, token, key):
         self._source.seek(0)
 
+        import qiniu
+        qiniu.set_default(connection_timeout=self.timeout)
+
         if six.PY3:
             # use patched put_data implementation for py3k
             ret, info = self._save_to_qiniu_internal_py3(token, key)
         else:
-            import qiniu
             # use put_data implementation provided by qiniu-sdk
             ret, info = qiniu.put_data(token, key, self._source)
         self._source.seek(0)
