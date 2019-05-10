@@ -517,12 +517,21 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         """
         判断当前对象是否已经保存至服务器。
 
+        该方法为 SDK 内部使用（save 调用此方法 dispatch 保存操作为 REST API 的 POST 和 PUT 请求）。
+        查询对象是否在服务器上存在请使用 is_existed 方法。
+
+
         :rtype: bool
         """
         return False if self.id else True
 
     def is_existed(self):
-        return bool(self.id)
+        """
+        判断当前对象是否在服务器上已经存在。
+
+        :rtype: bool
+        """
+        return self.has("createdAt")
 
     def get_acl(self):
         """

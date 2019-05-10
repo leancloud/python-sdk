@@ -169,6 +169,9 @@ def test_basic_query(): # type: () -> None
     # get
     GameScore.query.get(game_score.id)
 
+    # get nonexist
+    assert GameScore.query.get("NonexistentID").is_existed() is False
+
     # count
     eq_(GameScore.query.count(), 10)
 
