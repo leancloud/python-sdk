@@ -394,7 +394,7 @@ def test_before_update_hook(): # type: () -> None
         assert obj.updated_keys == ['clientValue']
 
     response = requests.post(url + '/__engine/1/functions/HookObject/beforeUpdate', json={
-        'object': {'clientValue': 'blah', '__updateKeys': ['clientValue']}
+        'object': {'clientValue': 'blah', '_updatedKeys': ['clientValue']}
     }, headers={
         'x-avoscloud-application-id': TEST_APP_ID,
         'x-avoscloud-application-key': TEST_APP_KEY,
