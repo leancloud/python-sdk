@@ -177,7 +177,7 @@ class File(object):
             raise LeanCloudError(1, "the file is not sucessfully destroyed")
 
     def _save_to_qiniu_internal_py3(self, token, key):
-        from qiniu.services.storage.uploader import crc32, _form_put, put_data
+        from qiniu.services.storage.uploader import crc32, _form_put
         from qiniu.config import _BLOCK_SIZE
 
         final_data = ''
@@ -189,8 +189,6 @@ class File(object):
                 final_data = tmp_data
             else:
                 final_data += tmp_data
-        else:
-            final_data = self._source.data
 
         crc = crc32(final_data)
         return _form_put(
