@@ -23,7 +23,6 @@ from . import push
 from .acl import ACL
 from .client import init
 from .client import use_master_key
-from .client import use_production
 from .client import use_region
 from .conversation import Conversation
 from .engine import Engine
@@ -74,7 +73,6 @@ __all__ = [
     'init',
     'push',
     'use_master_key',
-    'use_production',
     'use_region',
 ]
 

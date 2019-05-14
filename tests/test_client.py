@@ -19,11 +19,17 @@ __author__ = 'asaka'
 
 
 def test_use_production(): # type: () -> None
-    assert client.USE_PRODUCTION == '1'
-    leancloud.use_production(False)
-    assert client.USE_PRODUCTION == '0'
-    leancloud.use_production(True)
-    assert client.USE_PRODUCTION == '1'
+    assert client.is_prod() == '1'
+    os.environ['LEANCLOUD_APP_ENV'] = 'stage'
+    assert client.is_prod() == '0'
+    os.environ['LEANCLOUD_APP_ENV'] = 'production'
+    assert client.is_prod() == '1'
+
+    os.environ['LEANCLOUD_APP_ENV'] = 'development'
+    os.environ['LEAN_CLI_HAVE_STAGING'] = 'true'
+    assert client.is_prod() == '0'
+    os.environ['LEAN_CLI_HAVE_STAGING'] = 'false'
+    assert client.is_prod() == '1'
 
 
 def test_use_master_key(): # type: () -> None

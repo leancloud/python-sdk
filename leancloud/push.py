@@ -57,7 +57,7 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
         'data': data,
     }
 
-    if client.USE_PRODUCTION == '0':
+    if client.is_prod() == '0':
         params['prod'] = 'dev'
 
     if channels:

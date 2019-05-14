@@ -25,15 +25,6 @@ APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
 HOOK_KEY = None
-if os.getenv('LEANCLOUD_APP_ENV') == 'production':
-    USE_PRODUCTION = '1'
-elif os.getenv('LEANCLOUD_APP_ENV') == 'stage':
-    USE_PRODUCTION = '0'
-else:  # probably on local machine
-    if os.getenv('LEAN_CLI_HAVE_STAGING') == 'true':
-        USE_PRODUCTION = '0'
-    else:  # free trial instance only
-        USE_PRODUCTION = '1'
 
 USE_HTTPS = True
 # 兼容老版本，如果 USE_MASTER_KEY 为 None ，并且 MASTER_KEY 不为 None，则使用 MASTER_KEY
@@ -48,6 +39,18 @@ request_hooks = {}
 SERVER_VERSION = '1.1'
 
 TIMEOUT_SECONDS = 15
+
+
+def is_prod():
+    if os.getenv('LEANCLOUD_APP_ENV') == 'production':
+        return '1'
+    elif os.getenv('LEANCLOUD_APP_ENV') == 'stage':
+        return '0'
+    else:  # probably on local machine
+        if os.getenv('LEAN_CLI_HAVE_STAGING') == 'true':
+            return '0'
+        else:  # free trial instance only
+            return '1'
 
 
 def init(app_id, app_key=None, master_key=None, hook_key=None):
@@ -83,7 +86,7 @@ def need_init(func):
         headers = {
             'Content-Type': 'application/json;charset=utf-8',
             'X-LC-Id': APP_ID,
-            'X-LC-Prod': USE_PRODUCTION,
+            'X-LC-Prod': is_prod(),
             'User-Agent': 'AVOS Cloud python-{0} SDK'.format(leancloud.__version__),
         }
         md5sum = hashlib.md5()
@@ -131,14 +134,6 @@ def get_url(part):
         'part': part,
     }
     return '{schema}://{host}/{version}{part}'.format(**r)
-
-
-def use_production(flag):
-    """调用生产环境 / 开发环境的 cloud func / cloud hook
-    默认调用生产环境。
-    """
-    global USE_PRODUCTION
-    USE_PRODUCTION = '1' if flag else '0'
 
 
 def use_master_key(flag=True):
