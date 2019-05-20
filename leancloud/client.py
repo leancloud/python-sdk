@@ -25,7 +25,16 @@ APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
 HOOK_KEY = None
-USE_PRODUCTION = '1'
+if os.getenv('LEANCLOUD_APP_ENV') == 'production':
+    USE_PRODUCTION = '1'
+elif os.getenv('LEANCLOUD_APP_ENV') == 'stage':
+    USE_PRODUCTION = '0'
+else:  # probably on local machine
+    if os.getenv('LEAN_CLI_HAVE_STAGING') == 'true':
+        USE_PRODUCTION = '0'
+    else:  # free trial instance only
+        USE_PRODUCTION = '1'
+
 USE_HTTPS = True
 # 兼容老版本，如果 USE_MASTER_KEY 为 None ，并且 MASTER_KEY 不为 None，则使用 MASTER_KEY
 # 否则依据 USE_MASTER_KEY 来决定是否使用 MASTER_KEY
