@@ -264,8 +264,8 @@ def dispatch_cloud_hook(_cloud_codes, app_params, class_name, hook_name, params)
     obj = leancloud.Object.create(class_name)
     obj._update_data(params['object'])
 
-    if '__updateKeys' in params['object']:
-       obj.updated_keys = params['object']['__updateKeys']
+    if '_updatedKeys' in params['object']:
+       obj.updated_keys = params['object']['_updatedKeys']
 
     if hook_name.startswith('__before'):
         if obj.has('__before'):
