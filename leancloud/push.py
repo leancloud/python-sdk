@@ -31,6 +31,13 @@ class Notification(Object):
         raise LeanCloudError(code=1, error='Notification does not support modify')
 
 
+def _encode_time(time):
+    tzinfo = time.tzinfo
+    if tzinfo is None:
+        tzinfo = tz.tzlocal()
+    return arrow.get(time, tzinfo).to('utc').format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z'
+
+
 def send(data, channels=None, push_time=None, expiration_time=None, expiration_interval=None, where=None, cql=None):
     """
     发送推送消息。返回结果为此条推送对应的 _Notification 表中的对象，但是如果需要使用其中的数据，需要调用 fetch() 方法将数据同步至本地。
@@ -63,12 +70,9 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     if channels:
         params['channels'] = channels
     if push_time:
-        tzinfo = push_time.tzinfo
-        if tzinfo is None:
-            tzinfo = tz.tzlocal()
-        params['push_time'] = arrow.get(push_time, tzinfo).to('utc').format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z'
+        params['push_time'] = _encode_time(push_time)
     if expiration_time:
-        params['expiration_time'] = expiration_time.isoformat()
+        params['expiration_time'] = _encode_time(expiration_time)
     if expiration_interval:
         params['expiration_interval'] = expiration_interval
     if where:

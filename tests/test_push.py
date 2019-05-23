@@ -6,7 +6,7 @@ from __future__ import print_function
 
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from nose.tools import with_setup  # type: ignore
 
@@ -42,7 +42,9 @@ def test_basic_push():  # type: () -> None
         }
     }
     query = leancloud.Query('_Installation').equal_to('objectId', 'xxx')
-    notification = push.send(data, where=query, push_time=datetime.now())
+    now = datetime.now()
+    two_hours_later = now + timedelta(hours=2)
+    notification = push.send(data, where=query, push_time=now, expiration_time=two_hours_later)
     time.sleep(5)  # notification write may have delay
     notification.fetch()
     assert(notification.id)
