@@ -25,10 +25,10 @@ def setup_func():
 
 @with_setup(setup_func)
 def test_basic_push():  # type: () -> None
-    instanlation = leancloud.Installation()
-    instanlation.set('deviceType', 'ios')
-    instanlation.set('deviceToken', 'xxx')
-    instanlation.save()
+    installation = leancloud.Installation()
+    installation.set('deviceType', 'ios')
+    installation.set('deviceToken', 'xxx')
+    installation.save()
 
     data = {
         "alert": {
@@ -47,7 +47,7 @@ def test_basic_push():  # type: () -> None
     notification = push.send(data, where=query, push_time=now, expiration_time=two_hours_later)
     time.sleep(5)  # notification write may have delay
     notification.fetch()
-    assert(notification.id)
+    assert notification.id
 
     try:
         notification.save()
