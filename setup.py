@@ -10,7 +10,8 @@ install_requires = [
     'iso8601',
     'six>=1.11.0',
     'qiniu>=7.1.4,<7.2.4',
-    'requests>=2.12.1',
+    'requests>=2.20.0,<2.22.0',
+    'urllib3>=1.24.3,<1.25.0'
     'werkzeug',
     'gevent>=1.0.2,<2.0.0'
 ]
