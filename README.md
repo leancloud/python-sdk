@@ -7,13 +7,13 @@ LeanCloud Python SDK
 ## Install
 
 ```bash
-pip install leancloud-sdk
+pip install leancloud
 ```
 
 or
 
 ```
-easy_install leancloud-sdk
+easy_install leancloud
 ```
 
 Maybe you need the `sudo` prefix depends on your OS environment.
