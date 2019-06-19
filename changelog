@@ -1,3 +1,7 @@
+## [2.1.13] - 2019-06-19
+### Fixed
+- dependency issues with requests and urllib3
+
 ## [2.1.12] - 2019-05-24
 ### Fixed
 - Push: expiration_time
