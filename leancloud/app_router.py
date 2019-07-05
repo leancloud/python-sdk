@@ -29,6 +29,8 @@ class AppRouter(object):
         elif region == 'CN':
             if app_id.endswith('-9Nh9j0Va'):
                 domain = 'lncldapi.com'
+            elif app_id.endswith('-MdYXbMMI'):
+                domain = 'lncldglobal.com'
             else:
                 domain = 'lncld.net'
         else:
