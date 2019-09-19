@@ -326,7 +326,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
                         'iso': server_data[key]
                     })
                 elif server_data[key]['__type'] == 'Date':
-                    dt = utils.decode(key, server_data)
+                    dt = utils.decode(key, server_data[key])
                 else:
                     raise TypeError('Invalid date type')
                 server_data[key] = dt
