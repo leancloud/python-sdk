@@ -342,7 +342,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
             raise TypeError('acl must be a ACL')
         return True
 
-    def get(self, attr, deafult=None):
+    def get(self, attr, default=None, deafult=None):
         """
         获取对象字段的值
 
@@ -350,7 +350,10 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         :type attr: string_types
         :return: 字段值
         """
-        return self._attributes.get(attr, deafult)
+        # for backward compatibility
+        if (deafult is not None) and (default is None):
+            default = deafult
+        return self._attributes.get(attr, default)
 
     def relation(self, attr):
         """
