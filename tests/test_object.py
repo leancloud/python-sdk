@@ -96,9 +96,15 @@ def test_get(): # type: () -> None
     assert album.get('foo') == 'bar'
 
 
-def test_get_deafult(): # type: () -> None
+def test_get_default(): # type: () -> None
     album = Album()
     assert album.get('foo', 'bar') == 'bar'
+    assert album.get('foo', default='bar') == 'bar'
+    # for backward compatibility
+    assert album.get('foo', deafult='bar') == 'bar'
+    assert album.get('foo', 'bar', deafult='foobar') == 'bar'
+    assert album.get('foo', deafult='foobar', default='bar') == 'bar'
+
 
 
 def test_unset(): # type: () -> None
