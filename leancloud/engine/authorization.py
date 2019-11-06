@@ -17,6 +17,7 @@ __author__ = 'asaka <lan@leancloud.rocks>'
 
 APP_ID = os.environ.get('LEANCLOUD_APP_ID')
 APP_KEY = os.environ.get('LEANCLOUD_APP_KEY')
+ANDX_KEY = os.environ.get('LEANCLOUD_APP_ANDX_KEY')
 MASTER_KEY = os.environ.get('LEANCLOUD_APP_MASTER_KEY')
 HOOK_KEY = os.environ.get('LEANCLOUD_APP_HOOK_KEY')
 
@@ -44,7 +45,7 @@ class AuthorizationMiddleware(object):
         }), status=401, mimetype='application/json')
         if app_params['id'] is None:
             return unauth_response(environ, start_response)
-        if (APP_ID == app_params['id']) and (app_params['key'] in [MASTER_KEY, APP_KEY]):
+        if (APP_ID == app_params['id']) and (app_params['key'] in [MASTER_KEY, APP_KEY, ANDX_KEY]):
             return self.app(environ, start_response)
         if (APP_ID == app_params['id']) and (app_params['master_key'] == MASTER_KEY):
             return self.app(environ, start_response)
@@ -82,10 +83,13 @@ class AuthorizationMiddleware(object):
                 # key = MASTER_KEY if len(request_sign) == 3 and request_sign[2] == 'master' else APP_KEY
                 # if sign == utils.sign_by_key(timestamp, key):
                 #     app_key = key
-                if (len(request_sign) == 3)\
-                        and (request_sign[2] == 'master')\
-                        and (sign == utils.sign_by_key(timestamp, MASTER_KEY)):
-                    master_key = MASTER_KEY
+                if len(request_sign) == 3:
+                    if ((request_sign[2] == 'master')\
+                            and (sign == utils.sign_by_key(timestamp, MASTER_KEY))):
+                        master_key = MASTER_KEY
+                    elif ((request_sign[2] == 'ax-sig-1')\
+                            and (sign == utils.sign_by_key(timestamp, ANDX_KEY))):
+                        app_key = ANDX_KEY
                 elif sign == utils.sign_by_key(timestamp, APP_KEY):
                     app_key = APP_KEY
 
