@@ -38,7 +38,7 @@ def _encode_time(time):
     return arrow.get(time, tzinfo).to('utc').format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z'
 
 
-def send(data, channels=None, push_time=None, expiration_time=None, expiration_interval=None, where=None, cql=None):
+def send(data, channels=None, push_time=None, expiration_time=None, expiration_interval=None, where=None, cql=None, flow_control=None):
     """
     发送推送消息。返回结果为此条推送对应的 _Notification 表中的对象，但是如果需要使用其中的数据，需要调用 fetch() 方法将数据同步至本地。
 
@@ -56,6 +56,8 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     :type cql: string_types
     :param data: 推送给设备的具体信息，详情查看 https://leancloud.cn/docs/push_guide.html#消息内容_Data
     :rtype: Notification
+    :param flow_control: 不为 None 时开启平滑推送，值为每秒推送的目标终端用户数。开启时指定低于 1000 的值，按 1000 计。
+    :type: flow_control: int
     """
     if expiration_interval and expiration_time:
         raise TypeError('Both expiration_time and expiration_interval can\'t be set')
@@ -79,6 +81,10 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
         params['where'] = where.dump().get('where', {})
     if cql:
         params['cql'] = cql
+    # Do not change this to `if flow_control`, because 0 is falsy in Python,
+    # but `flow_control = 0` will enable smooth push, and it is in fact equivlent to `flow_control = 1000`.
+    if flow_control is not None:
+        params['flow_control'] = flow_control
 
     result = client.post('/push', params=params).json()
 
