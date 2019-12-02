@@ -29,7 +29,7 @@ make html
 
 1. Edit `changelog` and `setup.py` (`version`).
 2. Commit them and add a new tag. Then publish a new release at GitHub.
-3. Publish the package at at PyPI with following commands:
+3. Publish the package at PyPI with following commands:
 
 ```sh
 python3 -m pip install --user --upgrade setuptools wheel
