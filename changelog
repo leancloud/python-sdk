@@ -1,3 +1,8 @@
+## [2.3.0] - 2019-12-02
+### Added
+- support for Android Key (`LEANCLOUD_APP_ANDX_KEY`) in LeanEngine
+- push.send: new param `flow_control`
+
 ## [2.2.0] - 2019-10-24
 ### Added
 - _clientOnline and _clientOffline hooks
