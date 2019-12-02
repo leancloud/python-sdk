@@ -44,7 +44,8 @@ def test_basic_push():  # type: () -> None
     query = leancloud.Query('_Installation').equal_to('objectId', 'xxx')
     now = datetime.now()
     two_hours_later = now + timedelta(hours=2)
-    notification = push.send(data, where=query, push_time=now, expiration_time=two_hours_later)
+    notification = push.send(data, where=query, push_time=now, expiration_time=two_hours_later, flow_control=0)
+    # flow_control = 0 <=> flow_control = 1000 by rest api design
     time.sleep(5)  # notification write may have delay
     notification.fetch()
     assert notification.id
