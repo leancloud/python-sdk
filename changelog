@@ -10,8 +10,6 @@
 - fix _merge_metadata by @jinke18
 - typo in object_.get parameter
 
-### Fixed
-
 ## [2.1.14] - 2019-07-05
 ### Fixed
 - dependency issues with requests and werkzeug
