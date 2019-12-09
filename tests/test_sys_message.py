@@ -26,8 +26,10 @@ def setup():
 
 
 def test_sys_message():
+    conv = Conversation('testConversation', is_system=True)
+    conv.save()
     msg = SysMessage()
-    msg.set('conv', Conversation.create_without_data('testconversationid'))
+    msg.set('conv', conv)
     msg.set('bin', False)
     msg.set('msgId', 'testmsgid')
     msg.set('from', 'testfromclient')
