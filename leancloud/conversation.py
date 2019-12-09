@@ -86,6 +86,13 @@ class Conversation(Object):
         """
         return self.get('tr')
 
+    @property
+    def is_unique(self):
+        """
+        是否为 unique 会话。
+        """
+        return self.get('unique')
+
     def add_member(self, client_id):
         """
         将指定参与者加入会话。
