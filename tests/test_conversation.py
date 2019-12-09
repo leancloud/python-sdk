@@ -46,7 +46,11 @@ def test_members():
     conv.save()
 
     conv = Conversation.query.get(conv.id)
-    assert_equal(conv.members, ['xxx', 'qqq'])
+    assert_equal(set(conv.members), set(['xxx', 'qqq']))
+    conv.add_member('aaa')
+    conv.save()
+    conv = Conversation.query.get(conv.id)
+    assert_equal(set(conv.members), set(['xxx', 'qqq', 'aaa']))
     conv.destroy()
 
 
