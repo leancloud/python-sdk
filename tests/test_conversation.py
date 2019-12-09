@@ -27,6 +27,7 @@ def test_create_conversation():
     conv = Conversation('testConversation')
     conv.save()
     assert conv.id
+    assert conv.is_unique
     assert not conv.is_system
     assert not conv.is_transient
     conv.destroy()
@@ -36,6 +37,7 @@ def test_create_conversation():
     assert conv.id
     assert conv.is_system
     assert conv.is_transient
+    assert not conv.is_unique
     conv.destroy()
 
 
