@@ -22,16 +22,20 @@ class Conversation(Object):
     """
     :param name: 会话名称
     :param is_system: 是否系统会话
-    :param is_transient: 是否暂态对话
+    :param is_transient: 是否暂态会话
+    :param is_unique: 是否重用成员相同的会话（暂停会话不支持此参数）
     """
-    def __init__(self, name=None, is_system=False, is_transient=False):
+    def __init__(self, name=None, is_system=False, is_transient=False, is_unique=True):
         super(Conversation, self).__init__()
         if name:
             self.set('name', name)
         if is_system:
             self.set('sys', True)
+
         if is_transient:
             self.set('tr', True)
+        else:
+            self.set('unique', is_unique)
 
     @property
     def name(self):
@@ -81,6 +85,13 @@ class Conversation(Object):
         是否为暂态会话。
         """
         return self.get('tr')
+
+    @property
+    def is_unique(self):
+        """
+        是否为 unique 会话。
+        """
+        return self.get('unique')
 
     def add_member(self, client_id):
         """
