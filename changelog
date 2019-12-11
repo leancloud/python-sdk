@@ -1,3 +1,7 @@
+## [2.4.0] - 2019-12-11
+### Added
+- creating conversations supports `is_unique`
+
 ## [2.3.0] - 2019-12-02
 ### Added
 - support for Android Key (`LEANCLOUD_APP_ANDX_KEY`) in LeanEngine
