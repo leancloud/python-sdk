@@ -27,12 +27,12 @@ def test_create_conversation():
     conv = Conversation('testConversation')
     conv.save()
     assert conv.id
-    assert conv.is_unique
+    assert not conv.is_unique
     assert not conv.is_system
     assert not conv.is_transient
     conv.destroy()
 
-    conv = Conversation('testConversation', is_system=True, is_transient=True)
+    conv = Conversation('testConversation', is_system=True, is_transient=True, is_unique=True)
     conv.save()
     assert conv.id
     assert conv.is_system
@@ -40,6 +40,17 @@ def test_create_conversation():
     assert not conv.is_unique
     conv.destroy()
 
+    conv = Conversation('testConversation', is_unique=True)
+    conv.save()
+    assert conv.id
+    assert conv.is_unique
+    conv.destroy()
+
+    conv = Conversation('testConversation', is_unique=False)
+    conv.save()
+    assert conv.id
+    assert not conv.is_unique
+    conv.destroy()
 
 def test_members():
     conv = Conversation('test')
