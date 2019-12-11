@@ -25,7 +25,7 @@ class Conversation(Object):
     :param is_transient: 是否暂态会话
     :param is_unique: 是否重用成员相同的会话（暂停会话不支持此参数）
     """
-    def __init__(self, name=None, is_system=False, is_transient=False, is_unique=True):
+    def __init__(self, name=None, is_system=False, is_transient=False, is_unique=None):
         super(Conversation, self).__init__()
         if name:
             self.set('name', name)
@@ -35,7 +35,8 @@ class Conversation(Object):
         if is_transient:
             self.set('tr', True)
         else:
-            self.set('unique', is_unique)
+            if is_unique is not None:
+                self.set('unique', is_unique)
 
     @property
     def name(self):
