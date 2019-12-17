@@ -1,3 +1,7 @@
+## [2.5.0] - 2019-12-16
+### Added
+- _rtmClientSign hook
+
 ## [2.4.0] - 2019-12-11
 ### Added
 - creating conversations supports `is_unique`
