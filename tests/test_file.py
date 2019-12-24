@@ -14,7 +14,7 @@ from nose.tools import assert_raises  # type: ignore
 from nose.tools import raises  # type: ignore
 
 import leancloud
-from leancloud import File
+from leancloud import File, LeanCloudError
 from leancloud import ACL
 
 __author__ = 'asaka'
@@ -73,7 +73,16 @@ def test_acl():  # type: () -> None
 @with_setup(setup_func)
 def test_save():  # type: () -> None
     user = leancloud.User()
-    user.login('user1_name', 'password')
+    name = 'user1_name'
+    passwd = 'password'
+    try:
+        user.login(name, passwd)
+    except LeanCloudError as e:
+        if e.code == 211:
+            user.set_username(name)
+            user.set_password(passwd)
+            user.sign_up()
+            user.login(name, passwd)
 
     f = File('Blah.txt', open('tests/sample_text.txt', 'rb'))
     f.save()
