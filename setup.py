@@ -12,7 +12,7 @@ install_requires = [
     'qiniu>=7.1.4,<7.2.4',
     'requests>=2.20.0,<=2.22.0',
     'urllib3>=1.24.3,<=1.25.3',
-    'werkzeug',
+    'Werkzeug>=0.11.11,<1.0.0',
     'gevent>=1.0.2,<2.0.0'
 ]
 
