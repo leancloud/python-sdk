@@ -263,7 +263,7 @@ def test_request_password_reset(): # type: () -> None
         User.request_password_reset('wow@leancloud.rocks')
     except LeanCloudError as e:
         assert u'请不要往同一个邮件地址发送太多邮件。' in e.error \
-            or 'Too many emails sent to the same email address' in str(e)
+            or 'Too many emails' in str(e)
 
 
 @with_setup(get_setup_func())
@@ -273,8 +273,8 @@ def test_request_email_verify(): # type: () -> None
     except LeanCloudError as e:
         assert '邮件验证功能' in str(e) \
             or '请不要往同一个邮件地址发送太多邮件' in str(e) \
-            or 'Too many emails sent to the same email address' in str(e)\
-            or 'Please enable verifying user email option in application settings' in str(e)
+            or 'Too many emails' in str(e)\
+            or 'Please enable the option to verify user emails in application settings.' in str(e)
 
 
 @with_setup(get_setup_func())

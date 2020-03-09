@@ -25,6 +25,27 @@ cd docs
 make html
 ```
 
+## Run Tests
+
+Configure the following environment variables:
+
+- `APP_ID`
+- `APP_KEY`
+- `MASTER_KEY`
+- `USE_REGION`
+
+Install dependencies:
+
+```sh
+pip install -e .'[test]'
+```
+
+Run tests:
+
+```sh
+nosetests
+```
+
 ## Release a New Version
 
 1. Edit `changelog` and `setup.py` (`version`).
