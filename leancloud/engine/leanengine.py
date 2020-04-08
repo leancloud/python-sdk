@@ -198,8 +198,8 @@ def dispatch_cloud_func(_cloud_codes, app_params, func_name, decode_object, para
     # let's check realtime hook sign first
     realtime_hook_funcs = [
         '_messageReceived', '_receiversOffline', '_messageSent', '_conversationStart', '_conversationStarted',
-        '_conversationAdd', '_conversationRemove', '_conversationUpdate', '_clientOnline', '_clientOffline',
-        '_rtmClientSign'
+        '_conversationAdd', '_conversationAdded', '_conversationRemove', '_conversationRemoved', '_conversationUpdate',
+        '_clientOnline', '_clientOffline', '_rtmClientSign',
     ]
     from .authorization import HOOK_KEY
     if func_name in realtime_hook_funcs:
