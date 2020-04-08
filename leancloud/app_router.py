@@ -49,7 +49,7 @@ class AppRouter(object):
             return self.hosts[type_]
 
     def refresh(self):
-        url = 'https://app-router.leancloud.cn/2/route?appId={}'.format(self.app_id)
+        url = 'https://app-router.com/2/route?appId={}'.format(self.app_id)
         try:
             result = self.session.get(url, timeout=5).json()
             with self.lock:
