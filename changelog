@@ -1,3 +1,7 @@
+## [2.6.0] - 2020-04-09
+### Added
+- `_conversationAdded` and `_conversationRemoved` hooks
+
 ## [2.5.1] - 2020-03-10
 ### Fixed
 - dependency issues with werkzeug
