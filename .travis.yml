@@ -1,19 +1,14 @@
 language: python
 
-matrix:
-  include:
-    - python: "2.7"
-      env:
-        - APP_ID=8FfQwpvihLHK4htqmtEvkNrv
-        - APP_KEY=eE9tNOcCiWoMHM1phxY41rAz
-        - MASTER_KEY=75zAjEJSj7lifKQqKSTryae9
-        - USE_REGION=US
-    - python: "3.5"
-      env:
-        - APP_ID=AjQYwoIyObTeEkD16v1eCq55
-        - APP_KEY=AJpoJrqy1aliyXvcs0SwWrsy
-        - MASTER_KEY=Uk6DT2Mc2kCACvLyi3PU60p3
-        - USE_REGION=US
+python:
+  - 2.7
+  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8
+
+env:
+  - APP_ID=8FfQwpvihLHK4htqmtEvkNrv APP_KEY=eE9tNOcCiWoMHM1phxY41rAz MASTER_KEY=75zAjEJSj7lifKQqKSTryae9 USE_REGION=US
 
 sudo: false
 
@@ -28,5 +23,4 @@ after_success:
   - codecov
 
 notifications:
-  webhooks: https://hook.bearychat.com/=bw52Y/travis/a6614ed1ce835ba1f88a78bd1810a51b
   email: false
