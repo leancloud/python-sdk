@@ -8,10 +8,7 @@ python:
   - 3.8
 
 env:
-  - APP_ID=8FfQwpvihLHK4htqmtEvkNrv
-  - APP_KEY=eE9tNOcCiWoMHM1phxY41rAz
-  - MASTER_KEY=75zAjEJSj7lifKQqKSTryae9
-  - USE_REGION=US
+  - APP_ID=8FfQwpvihLHK4htqmtEvkNrv APP_KEY=eE9tNOcCiWoMHM1phxY41rAz MASTER_KEY=75zAjEJSj7lifKQqKSTryae9 USE_REGION=US
 
 sudo: false
 
