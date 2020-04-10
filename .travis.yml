@@ -8,7 +8,9 @@ matrix:
         - APP_KEY=eE9tNOcCiWoMHM1phxY41rAz
         - MASTER_KEY=75zAjEJSj7lifKQqKSTryae9
         - USE_REGION=US
-    - python: "3.5"
+    - python:
+      - "3.5"
+      - "3.6"
       env:
         - APP_ID=AjQYwoIyObTeEkD16v1eCq55
         - APP_KEY=AJpoJrqy1aliyXvcs0SwWrsy
