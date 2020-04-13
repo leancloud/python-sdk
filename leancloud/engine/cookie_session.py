@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from werkzeug import http
 from werkzeug.wrappers import Request
-from werkzeug.contrib.securecookie import SecureCookie
+from secure_cookie.cookie import SecureCookie
 
 from . import utils
 from leancloud.user import User

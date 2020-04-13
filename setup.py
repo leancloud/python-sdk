@@ -13,6 +13,7 @@ install_requires = [
     'requests>=2.20.0,<=2.22.0',
     'urllib3>=1.24.3,<=1.25.3',
     'Werkzeug>=1.0.0',
+    'secure-cookie>=0.1.0,<1.0.0',
     'gevent>=1.0.2,<2.0.0'
 ]
 
