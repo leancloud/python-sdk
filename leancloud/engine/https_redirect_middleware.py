@@ -22,7 +22,8 @@ class HttpsRedirectMiddleware(object):
 
     def __call__(self, environ, start_response):
         request = Request(environ)
-        if is_prod and request.headers.get('X-Forwarded-Proto') != 'https':
+        engine_health = '/1.1/functions/_ops/metadatas'
+        if is_prod and request.path != engine_health and request.headers.get('X-Forwarded-Proto') != 'https':
             url = 'https://{0}{1}'.format(request.host, request.full_path)
             return redirect(url)(environ, start_response)
 
