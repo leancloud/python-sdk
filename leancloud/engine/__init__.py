@@ -50,7 +50,8 @@ class Engine(object):
         LeanEngine middleware constructor.
 
         :param wsgi_app: wsgi callable
-        :param fetch_user: should fetch user's data from server while prNoneocessing session token.
+        :param fetch_user:
+               should fetch user's data from server while prNoneocessing session token.
         :type fetch_user: bool
         """
         self.current = current

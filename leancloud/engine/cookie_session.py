@@ -27,9 +27,15 @@ class CookieSessionMiddleware(object):
     :type secret: str
     :param name: 在 cookie 中保存的 session token 的 key 的名称，默认为 "leancloud:session"
     :type name: str
-    :param excluded_paths: 指定哪些 URL path 不处理 session token，比如在处理静态文件的 URL path 上不进行处理，防止无谓的性能浪费
+    :param excluded_paths:
+           指定哪些 URL path 不处理 session token，比如在处理静态文件的 URL path 上不进行处理，防止无谓的性能浪费
     :type excluded_paths: list
-    :param fetch_user: 处理请求时是否要从存储服务获取用户数据，如果为 false 的话，leancloud.User.get_current() 获取到的用户数据上除了 session_token 之外没有任何其他数据，需要自己调用 fetch() 来获取。为 true 的话，会自动在用户对象上调用 fetch()，这样将会产生一次数据存储的 API 调用。默认为 false
+    :param fetch_user: 处理请求时是否要从存储服务获取用户数据，
+           如果为 false 的话，
+           leancloud.User.get_current() 获取到的用户数据上除了 session_token 之外没有任何其他数据，
+           需要自己调用 fetch() 来获取。
+           为 true 的话，会自动在用户对象上调用 fetch()，这样将会产生一次数据存储的 API 调用。
+           默认为 false
     :type fetch_user: bool
     :param expires: 设置 cookie 的 expires
     :type expires: int or datetime
@@ -107,7 +113,7 @@ class CookieSessionMiddleware(object):
                 headers.append((utils.to_native("Set-Cookie"), raw))
             return
         cookie = SecureCookie(
-            {"uid": user.id, "session_token": user.get_session_token(),}, self.secret
+            {"uid": user.id, "session_token": user.get_session_token()}, self.secret
         )
         raw = http.dump_cookie(
             self.name, cookie.serialize(), expires=self.expires, max_age=self.max_age

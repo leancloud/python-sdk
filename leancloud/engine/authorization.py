@@ -92,7 +92,10 @@ class AuthorizationMiddleware(object):
                 request_sign = request_sign.split(",") if request_sign else []
                 sign = request_sign[0].lower()
                 timestamp = request_sign[1]
-                # key = MASTER_KEY if len(request_sign) == 3 and request_sign[2] == 'master' else APP_KEY
+                # if len(request_sign) == 3 and request_sign[2] == 'master':
+                #     key = MASTER_KEY
+                # else:
+                #     APP_KEY
                 # if sign == utils.sign_by_key(timestamp, key):
                 #     app_key = key
                 if len(request_sign) == 3:
