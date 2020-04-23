@@ -284,7 +284,7 @@ class File(object):
 
         def f():
             try:
-                client.post("/fileCallback", {"token": token, "result": successed,})
+                client.post("/fileCallback", {"token": token, "result": successed})
             except LeanCloudError as e:
                 logger.warning("call file callback failed, error: %s", e)
 
