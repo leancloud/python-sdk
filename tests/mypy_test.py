@@ -4,6 +4,7 @@ import os
 import re
 import tempfile
 
+
 # this script should be excuted under python_SDK/tests
 def main():
     file_list = [

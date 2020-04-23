@@ -193,7 +193,7 @@ def test_full_dump():  # type: ignore
     album.set("band", band)
     assert album._dump() == {
         "className": "Album",
-        "band": {"className": "Band", "__type": "Pointer", "objectId": None,},
+        "band": {"className": "Band", "__type": "Pointer", "objectId": None},
         "__type": "Object",
         "title": "Nightwish",
     }

@@ -52,4 +52,4 @@ def test_role_query():  # type: () -> None
     role.save()
 
     eq_(leancloud.Query(leancloud.Role).count(), 1)
-    eq_(leancloud.Query(leancloud.Role).find()[0].get_name(), role.get_name())  # type: ignore
+    eq_(leancloud.Query(leancloud.Role).find()[0].get_name(), role.get_name())

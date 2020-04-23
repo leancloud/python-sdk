@@ -143,7 +143,7 @@ def test_followee_query():  # type: () -> None
     assert query._friendship_tag == "followee"
     assert query.dump() == {
         "where": {
-            "user": {"__type": "Pointer", "className": "_User", "objectId": "1",},
+            "user": {"__type": "Pointer", "className": "_User", "objectId": "1"},
         },
     }
 

@@ -156,7 +156,7 @@ def test_app_params_4():  # type: () -> None
 def test_app_params_5():  # type: () -> None
     requests.get(
         url + "/__engine/1/functions/hello",
-        headers={"x-avoscloud-application-id": "foo", "x-avoscloud-master-key": "bar",},
+        headers={"x-avoscloud-application-id": "foo", "x-avoscloud-master-key": "bar"},
     )
     env = authorization.current_environ
     assert env["_app_params"]["id"] == "foo"
@@ -166,7 +166,7 @@ def test_app_params_5():  # type: () -> None
 def test_short_app_params_1():  # type: () -> None
     requests.get(
         url + "/__engine/1/functions/hello",
-        headers={"x-lc-id": "foo", "x-lc-key": "bar", "x-lc-session": "baz",},
+        headers={"x-lc-id": "foo", "x-lc-key": "bar", "x-lc-session": "baz"},
     )
     env = authorization.current_environ
     assert env["_app_params"]["id"] == "foo"
@@ -178,7 +178,7 @@ def test_short_app_params_1():  # type: () -> None
 def test_short_app_params_2():  # type: () -> None
     requests.get(
         url + "/__engine/1/functions/hello",
-        headers={"x-lc-id": "foo", "x-lc-key": "bar,master", "x-lc-session": "baz",},
+        headers={"x-lc-id": "foo", "x-lc-key": "bar,master", "x-lc-session": "baz"},
     )
     env = authorization.current_environ
     assert env["_app_params"]["id"] == "foo"
@@ -208,7 +208,7 @@ def test_short_app_params_4():  # type: () -> None
 def test_body_params():  # type: () -> None
     requests.get(
         url + "/__engine/1/functions/hello",
-        headers={"Content-Type": "text/plain",},
+        headers={"Content-Type": "text/plain"},
         data=json.dumps(
             {
                 "_ApplicationId": "foo",
@@ -240,7 +240,7 @@ def test_authorization_1():  # type: () -> None
 def test_authorization_2():  # type: () -> None
     response = requests.get(
         url + "/__engine/1/functions/hello",
-        headers={"x-lc-id": TEST_APP_ID, "x-lc-key": TEST_MASTER_KEY,},
+        headers={"x-lc-id": TEST_APP_ID, "x-lc-key": TEST_MASTER_KEY},
     )
     assert response.ok
     assert response.json() == {u"result": u"hello"}
@@ -346,7 +346,7 @@ def test_on_verified():  # type: () -> None
             "x-avoscloud-application-key": TEST_APP_KEY,
             "x-lc-hook-key": TEST_HOOK_KEY,
         },
-        json={"object": {"objectId": "xxx",},},
+        json={"object": {"objectId": "xxx"}},
     )
     assert response.ok
 
@@ -470,7 +470,7 @@ def test_on_login():  # type: () -> None
 
     response = requests.post(
         url + "/__engine/1.1/functions/_User/onLogin",
-        json={"object": {},},
+        json={"object": {}},
         headers={
             "x-avoscloud-application-id": TEST_APP_ID,
             "x-avoscloud-application-key": TEST_APP_KEY,
