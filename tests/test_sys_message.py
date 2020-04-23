@@ -19,24 +19,21 @@ def setup():
     leancloud.client.APP_ID = None
     leancloud.client.APP_KEY = None
     leancloud.client.MASTER_KEY = None
-    leancloud.init(
-        os.environ['APP_ID'],
-        master_key=os.environ['MASTER_KEY']
-    )
+    leancloud.init(os.environ["APP_ID"], master_key=os.environ["MASTER_KEY"])
 
 
 def test_sys_message():
-    conv = Conversation('testConversation', is_system=True)
+    conv = Conversation("testConversation", is_system=True)
     conv.save()
     msg = SysMessage()
-    msg.set('conv', conv)
-    msg.set('bin', False)
-    msg.set('msgId', 'testmsgid')
-    msg.set('from', 'testfromclient')
-    msg.set('fromIp', '0.0.0.0')
-    msg.set('data', '{"_lctext":"test!","_lctype":-1}')
-    msg.set('timestamp', 1503908409224)
-    msg.set('ackAt', 1503908409237)
+    msg.set("conv", conv)
+    msg.set("bin", False)
+    msg.set("msgId", "testmsgid")
+    msg.set("from", "testfromclient")
+    msg.set("fromIp", "0.0.0.0")
+    msg.set("data", '{"_lctext":"test!","_lctype":-1}')
+    msg.set("timestamp", 1503908409224)
+    msg.set("ackAt", 1503908409237)
     msg.save()
 
     savedMsg = SysMessage.query.get(msg.id)

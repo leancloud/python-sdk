@@ -17,29 +17,27 @@ import leancloud
 from leancloud import File, LeanCloudError
 from leancloud import ACL
 
-__author__ = 'asaka'
+__author__ = "asaka"
 
 
 def setup_func():
-    leancloud.init(
-        os.environ['APP_ID'],
-        master_key=os.environ['MASTER_KEY']
-    )
+    leancloud.init(os.environ["APP_ID"], master_key=os.environ["MASTER_KEY"])
 
 
 def test_basic():  # type: () -> None
     def fn(s):
-        f = File('Blah', s, mime_type='text/plain')
-        assert f.name == 'Blah'
-        assert f._metadata['size'] == 14
+        f = File("Blah", s, mime_type="text/plain")
+        assert f.name == "Blah"
+        assert f._metadata["size"] == 14
         assert f.size == 14
-        assert f._metadata['_checksum'] == '55e562bfee2bde4f9e71b8885eb5e303'
+        assert f._metadata["_checksum"] == "55e562bfee2bde4f9e71b8885eb5e303"
 
-    b = b'blah blah blah'
+    b = b"blah blah blah"
     fn(io.BytesIO(b))
     fn(memoryview(b))
 
     import tempfile
+
     f = tempfile.SpooledTemporaryFile()
     f.write(b)
     fn(f)
@@ -47,25 +45,30 @@ def test_basic():  # type: () -> None
     if six.PY2:
         import StringIO
         import cStringIO
+
         fn(StringIO.StringIO(b))
         fn(cStringIO.StringIO(b))
         fn(buffer(b))
 
 
 def test_create_with_url():  # type: () -> None
-    f = File.create_with_url('xxx', u'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png', meta_data={})
-    assert f.url == 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png'
+    f = File.create_with_url(
+        "xxx",
+        u"http://i1.wp.com/leancloud.cn/images/static/default-avatar.png",
+        meta_data={},
+    )
+    assert f.url == "http://i1.wp.com/leancloud.cn/images/static/default-avatar.png"
 
 
 def test_create_without_data():  # type: () -> None
-    f = File.create_without_data('a123')
-    assert f.id == 'a123'
+    f = File.create_without_data("a123")
+    assert f.id == "a123"
 
 
 def test_acl():  # type: () -> None
     acl_ = ACL()
-    f = File('Blah', io.BytesIO(b'xxx'))
-    assert_raises(TypeError, f.set_acl, 'a')
+    f = File("Blah", io.BytesIO(b"xxx"))
+    assert_raises(TypeError, f.set_acl, "a")
     f.set_acl(acl_)
     assert f.get_acl() == acl_
 
@@ -73,8 +76,8 @@ def test_acl():  # type: () -> None
 @with_setup(setup_func)
 def test_save():  # type: () -> None
     user = leancloud.User()
-    name = 'user1_name'
-    passwd = 'password'
+    name = "user1_name"
+    passwd = "password"
     try:
         user.login(name, passwd)
     except LeanCloudError as e:
@@ -84,19 +87,19 @@ def test_save():  # type: () -> None
             user.sign_up()
             user.login(name, passwd)
 
-    f = File('Blah.txt', open('tests/sample_text.txt', 'rb'))
+    f = File("Blah.txt", open("tests/sample_text.txt", "rb"))
     f.save()
 
     assert f.owner_id == user.id
     assert f.id
-    assert f.name == 'Blah.txt'
-    assert f.mime_type == 'text/plain'
-    assert not f.url.endswith('.')
+    assert f.name == "Blah.txt"
+    assert f.mime_type == "text/plain"
+    assert not f.url.endswith(".")
 
 
 @with_setup(setup_func)
 def test_query():  # type: () -> None
-    files = leancloud.Query('File').find()
+    files = leancloud.Query("File").find()
     for f in files:
         assert isinstance(f, File)
         assert f.url
@@ -108,23 +111,25 @@ def test_query():  # type: () -> None
 
 @with_setup(setup_func)
 def test_save_external():  # type: () -> None
-    f = File.create_with_url('lenna.jpg', 'http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
+    f = File.create_with_url(
+        "lenna.jpg", "http://i1.wp.com/leancloud.cn/images/static/default-avatar.png"
+    )
     f.save()
     assert f.id
 
 
 @raises(ValueError)
 def test_thumbnail_url_erorr():  # type: () -> None
-    f = File.create_with_url('xx', '')
+    f = File.create_with_url("xx", "")
     f.get_thumbnail_url(100, 100)
 
 
 @with_setup(setup_func)
 @raises(ValueError)
 def test_thumbnail_size_erorr():  # type: () -> None
-    r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
+    r = requests.get("http://i1.wp.com/leancloud.cn/images/static/default-avatar.png")
     b = io.BytesIO(r.content)
-    f = File('Lenna2.jpg', b)
+    f = File("Lenna2.jpg", b)
     f.save()
     assert f.id
 
@@ -134,21 +139,21 @@ def test_thumbnail_size_erorr():  # type: () -> None
 
 @with_setup(setup_func)
 def test_thumbnail():  # type: () -> None
-    r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
+    r = requests.get("http://i1.wp.com/leancloud.cn/images/static/default-avatar.png")
     b = io.BytesIO(r.content)
-    f = File('Lenna2.jpg', b)
+    f = File("Lenna2.jpg", b)
     f.save()
     assert f.id
 
     url = f.get_thumbnail_url(100, 100)
-    assert url.endswith('?imageView/2/w/100/h/100/q/100/format/png')
+    assert url.endswith("?imageView/2/w/100/h/100/q/100/format/png")
 
 
 @with_setup(setup_func)
 def test_destroy():  # type: () -> None
-    r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
+    r = requests.get("http://i1.wp.com/leancloud.cn/images/static/default-avatar.png")
     b = io.BytesIO(r.content)
-    f = File('Lenna2.jpg', b)
+    f = File("Lenna2.jpg", b)
     f.save()
     assert f.id
     f.destroy()
@@ -159,14 +164,14 @@ def test_file_callback():  # type: () -> None
     d = {}
 
     def noop(token, *args, **kwargs):
-        d['token'] = token
+        d["token"] = token
 
-    f = File('xxx', io.BytesIO(b'xxx'))
+    f = File("xxx", io.BytesIO(b"xxx"))
     f._save_to_s3 = noop
     f._save_to_qiniu = noop
     f._save_to_qcloud = noop
     f.save()
-    f._save_callback(d['token'], False)
+    f._save_callback(d["token"], False)
 
     # time.sleep(3)
     # File should be deleted by API server
@@ -175,16 +180,16 @@ def test_file_callback():  # type: () -> None
 
 @with_setup(setup_func)
 def test_fetch():  # type: () -> None
-    r = requests.get('http://i1.wp.com/leancloud.cn/images/static/default-avatar.png')
+    r = requests.get("http://i1.wp.com/leancloud.cn/images/static/default-avatar.png")
     b = io.BytesIO(r.content)
-    f = File('Lenna2.jpg', b)
-    f.metadata['foo'] = 'bar'
+    f = File("Lenna2.jpg", b)
+    f.metadata["foo"] = "bar"
     f.save()
     fetched = File.create_without_data(f.id)
     fetched.fetch()
 
-    normalized_f_url = f.url.split('/')[-1]
-    normalized_fetched_url = f.url.split('/')[-1]
+    normalized_f_url = f.url.split("/")[-1]
+    normalized_fetched_url = f.url.split("/")[-1]
 
     assert fetched.id == f.id
     assert fetched.metadata == f.metadata
@@ -195,5 +200,5 @@ def test_fetch():  # type: () -> None
 
 
 def test_checksum():  # type: () -> None
-    f = File('Blah', open('tests/sample_text.txt', 'rb'))
-    assert f._metadata['_checksum'] == 'd0588d95e45eed70745ffabdf0b18acd'
+    f = File("Blah", open("tests/sample_text.txt", "rb"))
+    assert f._metadata["_checksum"] == "d0588d95e45eed70745ffabdf0b18acd"
