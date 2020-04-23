@@ -45,7 +45,7 @@ class File(object):
         ):  # NOQA: self.current_user may be a thread_local object
             self._metadata["owner"] = self.current_user.id
 
-        pattern = re.compile("\.([^.]*)$")
+        pattern = re.compile(r"\.([^.]*)$")
         extension = pattern.findall(name)
         if extension:
             self.extension = extension[0].lower()

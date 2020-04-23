@@ -10,7 +10,7 @@ def main():
     file_list = [
         f
         for f in os.listdir(".")
-        if re.search("^test_.*\.py$", f) and f != ("test_mypy.py" or "test_engine.py")
+        if re.search(r"^test_.*\.py$", f) and f != ("test_mypy.py" or "test_engine.py")
     ]
     temp_dir = tempfile.gettempdir()
 

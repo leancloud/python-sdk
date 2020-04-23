@@ -66,7 +66,7 @@ class Role(leancloud.Object):
             new_name = attrs["name"]
             if not isinstance(new_name, six.string_types):
                 raise TypeError("role name must be string_types")
-            r = re.compile("^[0-9a-zA-Z\-_]+$")
+            r = re.compile(r"^[0-9a-zA-Z\-_]+$")
             if not r.match(new_name):
                 raise TypeError("""
                 role's name can only contain alphanumeric characters, _, -, and spaces.
