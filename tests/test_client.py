@@ -5,15 +5,9 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import json
-
-from werkzeug.wrappers import Request  # type: ignore
-from wsgi_intercept import requests_intercept, add_wsgi_intercept  # type: ignore
 
 import leancloud
 from leancloud import client
-from leancloud.app_router import AppRouter  # type: ignore
-
 
 __author__ = "asaka"
 

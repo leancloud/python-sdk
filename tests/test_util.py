@@ -8,10 +8,9 @@ import time
 
 from nose.tools import eq_
 
-import leancloud
-from leancloud import Object
 from leancloud import ACL
 from leancloud import GeoPoint
+from leancloud import Object
 from leancloud import utils
 
 __author__ = "asaka <lan@leancloud.rocks>"

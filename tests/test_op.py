@@ -7,7 +7,6 @@ from __future__ import print_function
 from nose.tools import assert_equal
 
 import leancloud
-from leancloud import Object
 from leancloud import operation  # type:ignore
 
 __author__ = "asaka <lan@leancloud.rocks>"

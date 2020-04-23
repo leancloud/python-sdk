@@ -6,14 +6,13 @@ from __future__ import print_function
 
 import os
 from datetime import datetime
-from datetime import timedelta
 
 from dateutil import tz
-from nose.tools import with_setup  # type: ignore
-from nose.tools import ok_  # type: ignore
-from nose.tools import eq_  # type: ignore
 from nose.tools import assert_equal  # type: ignore
 from nose.tools import assert_raises  # type: ignore
+from nose.tools import eq_  # type: ignore
+from nose.tools import ok_  # type: ignore
+from nose.tools import with_setup  # type: ignore
 
 import leancloud
 from leancloud import Object
