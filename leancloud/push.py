@@ -91,7 +91,8 @@ def send(
     if cql:
         params["cql"] = cql
     # Do not change this to `if flow_control`, because 0 is falsy in Python,
-    # but `flow_control = 0` will enable smooth push, and it is in fact equivlent to `flow_control = 1000`.
+    # but `flow_control = 0` will enable smooth push,
+    # and it is in fact equivlent to `flow_control = 1000`.
     if flow_control is not None:
         params["flow_control"] = flow_control
 

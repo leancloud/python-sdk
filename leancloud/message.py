@@ -52,13 +52,14 @@ class Message(object):
         before_time=None,
         before_message_id=None,
     ):
-        # type: (str, Optional[int], Optional[bool], Optional[Union[datetime, float]], Optional[str]) -> List[Message]
+        # type: (str, Optional[int], Optional[bool], Optional[Union[datetime, float]], Optional[str]) -> List[Message]  # noqa: E501
         """获取某个对话中的聊天记录
 
         :param conversation_id: 对话 id
         :param limit: 返回条数限制，可选，服务端默认 100 条，最大 1000 条
         :param reversed: 以默认排序(查找更老的历史消息)相反的方向返回结果（也即从某条消息记录开始查找更新的消息），服务端默认为 False
-                         如果 reversed = True，则 before_time/before_message_id 转变成最老的消息的时间戳和 message_id，
+                         如果 reversed = True，
+                         则 before_time/before_message_id 转变成最老的消息的时间戳和 message_id，
                          否则还是指最新的消息的时间戳和 message_id。
         :param before_time: 查询起始的时间戳，返回小于这个时间(不包含)的记录，服务端默认是当前时间
         :param before_message_id: 起始的消息 id，使用时必须加上对应消息的时间 before_time 参数，一起作为查询的起点
@@ -84,7 +85,7 @@ class Message(object):
     def find_by_client(
         cls, from_client, limit=None, before_time=None, before_message_id=None
     ):
-        # type: (str, Optional[int], Optional[Union[datetime, float]], Optional[str]) -> List[Message]
+        # type: (str, Optional[int], Optional[Union[datetime, float]], Optional[str]) -> List[Message]  # noqa: E501
         """获取某个 client 的聊天记录
 
         :param from_client: 要获取聊天记录的 client id
@@ -109,7 +110,7 @@ class Message(object):
 
     @classmethod
     def find_all(cls, limit=None, before_time=None, before_message_id=None):
-        # type: (Optional[int], Optional[Union[datetime, float]], Optional[str]) -> List[Message]
+        # type: (Optional[int], Optional[Union[datetime, float]], Optional[str]) -> List[Message]  # noqa: E501
         """获取应用全部聊天记录
 
         :param limit: 返回条数限制，可选，服务端默认 100 条，最大 1000 条
