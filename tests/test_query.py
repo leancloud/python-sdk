@@ -388,14 +388,6 @@ def test_matches_key_in_query():  # type: () -> None
 
 
 @with_setup(make_setup_func(), match_key_setup)
-def test_matches_key_in_query():  # type: () -> None
-    q1 = Query(A).equal_to("age", 1)
-    q2 = Query(B)
-    result = q2.matches_key_in_query("work_year", "age", q1).find()
-    assert len(result) == 5
-
-
-@with_setup(make_setup_func(), match_key_setup)
 def test_does_not_match_key_in_query():  # type: () -> None
     q1 = Query(A).equal_to("age", 1)
     q2 = Query(B)
