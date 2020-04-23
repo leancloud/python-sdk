@@ -406,7 +406,7 @@ def test_before_save_hook():  # type: () -> None
         },
     )
     assert response.ok
-    assert response.json()["beforeSaveHookInserted"] == True
+    assert response.json()["beforeSaveHookInserted"] is True
     assert response.json()["clientValue"] == "blah"
 
 

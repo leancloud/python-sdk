@@ -89,7 +89,7 @@ def test_https_redirect_middleware():
 
     response = requests.get(url=URL, allow_redirects=False)
 
-    assert response.is_redirect == True
+    assert response.is_redirect is True
     assert response.next.url[:5] == "https"
 
     remove_wsgi_intercept()
