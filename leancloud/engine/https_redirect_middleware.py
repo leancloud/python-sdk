@@ -11,10 +11,11 @@ import os
 from werkzeug.wrappers import Request
 from werkzeug.utils import redirect
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
-is_prod = True if os.environ.get('LEANCLOUD_APP_ENV') == 'production' else False
+is_prod = True if os.environ.get("LEANCLOUD_APP_ENV") == "production" else False
+
 
 class HttpsRedirectMiddleware(object):
     def __init__(self, wsgi_app):
@@ -22,9 +23,13 @@ class HttpsRedirectMiddleware(object):
 
     def __call__(self, environ, start_response):
         request = Request(environ)
-        engine_health = '/1.1/functions/_ops/metadatas'
-        if is_prod and request.path != engine_health and request.headers.get('X-Forwarded-Proto') != 'https':
-            url = 'https://{0}{1}'.format(request.host, request.full_path)
+        engine_health = "/1.1/functions/_ops/metadatas"
+        if (
+            is_prod
+            and request.path != engine_health
+            and request.headers.get("X-Forwarded-Proto") != "https"
+        ):
+            url = "https://{0}{1}".format(request.host, request.full_path)
             return redirect(url)(environ, start_response)
 
         return self.origin_app(environ, start_response)
