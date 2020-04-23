@@ -25,82 +25,85 @@ class Conversation(Object):
     :param is_transient: 是否暂态会话
     :param is_unique: 是否重用成员相同的会话（暂停会话不支持此参数）
     """
+
     def __init__(self, name=None, is_system=False, is_transient=False, is_unique=None):
         super(Conversation, self).__init__()
         if name:
-            self.set('name', name)
+            self.set("name", name)
         if is_system:
-            self.set('sys', True)
+            self.set("sys", True)
 
         if is_transient:
-            self.set('tr', True)
+            self.set("tr", True)
         else:
             if is_unique is not None:
-                self.set('unique', is_unique)
+                self.set("unique", is_unique)
 
     @property
     def name(self):
         """
         获取此会话名称。
         """
-        return self.get('name')
+        return self.get("name")
 
     @property
     def creator(self):
         """
         获取此会话创建者。
         """
-        return self.get('c')
+        return self.get("c")
 
     @property
     def last_message_read_at(self):
         """
         获取此会话最后一条已读消息时间。
         """
-        return self.get('lm')
+        return self.get("lm")
 
     @property
     def members(self):
         """
         获取此会话所有参与者。
         """
-        return self.get('m')
+        return self.get("m")
 
     @property
     def muted_members(self):
         """
         获取所有将此会话设置为静音的参与者。
         """
-        return self.get('mu')
+        return self.get("mu")
 
     @property
     def is_system(self):
         """
         是否为系统会话。
         """
-        return self.get('sys')
+        return self.get("sys")
 
     @property
     def is_transient(self):
         """
         是否为暂态会话。
         """
-        return self.get('tr')
+        return self.get("tr")
 
     @property
     def is_unique(self):
         """
         是否为 unique 会话。
         """
-        return self.get('unique')
+        return self.get("unique")
 
     def add_member(self, client_id):
         """
         将指定参与者加入会话。
         """
-        return self.add('m', client_id)
+        return self.add("m", client_id)
 
-    def send(self, from_client, message, to_clients=None, transient=False, push_data=None):
+    def send(
+        self, from_client, message, to_clients=None, transient=False, push_data=None
+    ):
         """
         在指定会话中发送消息。
 
@@ -113,16 +116,16 @@ class Conversation(Object):
         if isinstance(message, dict):
             message = json.dumps(message)
         params = {
-            'from_peer': from_client,
-            'conv_id': self.id,
-            'transient': transient,
-            'message': message,
+            "from_peer": from_client,
+            "conv_id": self.id,
+            "transient": transient,
+            "message": message,
         }
         if to_clients:
-            params['to_peers'] = to_clients
+            params["to_peers"] = to_clients
         if push_data:
-            params['push_data'] = push_data
-        client.post('/rtm/messages', params=params).json()
+            params["push_data"] = push_data
+        client.post("/rtm/messages", params=params).json()
 
     def broadcast(self, from_client, message, valid_till=None, push_data=None):
         """
@@ -136,14 +139,14 @@ class Conversation(Object):
         if isinstance(message, dict):
             message = json.dumps(message)
         params = {
-            'from_peer': from_client,
-            'conv_id': self.id,
-            'message': message,
+            "from_peer": from_client,
+            "conv_id": self.id,
+            "message": message,
         }
         if push_data:
-            params['push_data'] = push_data
+            params["push_data"] = push_data
         if valid_till:
             if isinstance(valid_till, datetime):
                 valid_till = arrow.get(valid_till).datetime
-            params['valid_till'] = valid_till
-        client.post('/rtm/broadcast', params=params).json()
+            params["valid_till"] = valid_till
+        client.post("/rtm/broadcast", params=params).json()

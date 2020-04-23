@@ -17,7 +17,7 @@ from leancloud import client
 from leancloud import operation
 
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 object_class_map = {}
@@ -32,24 +32,24 @@ class ObjectMeta(type):
         super_new = super(ObjectMeta, cls).__new__
 
         # let user define their class_name at subclass-creation stage
-        class_name = attrs.pop('class_name', None)
+        class_name = attrs.pop("class_name", None)
 
         if class_name:
-            attrs['_class_name'] = class_name
-        elif name == 'User':
-            attrs['_class_name'] = '_User'
-        elif name == 'Installation':
-            attrs['_class_name'] = '_Installation'
-        elif name == 'Notification':
-            attrs['_class_name'] = '_Notification'
-        elif name == 'Role':
-            attrs['_class_name'] = '_Role'
-        elif name == 'Conversation':
-            attrs['_class_name'] = '_Conversation'
-        elif name == 'SysMessage':
-            attrs['_class_name'] = '_SysMessage'
+            attrs["_class_name"] = class_name
+        elif name == "User":
+            attrs["_class_name"] = "_User"
+        elif name == "Installation":
+            attrs["_class_name"] = "_Installation"
+        elif name == "Notification":
+            attrs["_class_name"] = "_Notification"
+        elif name == "Role":
+            attrs["_class_name"] = "_Role"
+        elif name == "Conversation":
+            attrs["_class_name"] = "_Conversation"
+        elif name == "SysMessage":
+            attrs["_class_name"] = "_SysMessage"
         else:
-            attrs['_class_name'] = name
+            attrs["_class_name"] = name
 
         object_class = super_new(cls, name, bases, attrs)
         object_class_map[name] = object_class
@@ -96,7 +96,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         """
         if six.PY2 and isinstance(name, six.text_type):
             # In python2, class name must be a python2 str.
-            name = name.encode('utf-8')
+            name = name.encode("utf-8")
         return type(name, (cls,), {})
 
     @classmethod
@@ -124,7 +124,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         :rtype: Object
         """
         if cls is Object:
-            raise RuntimeError('can not call create_without_data on leancloud.Object')
+            raise RuntimeError("can not call create_without_data on leancloud.Object")
         obj = cls()
         obj.id = id_
         return obj
@@ -157,20 +157,24 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         dumped_objs = []
         for obj in objs:
             dumped_obj = {
-                'method': 'DELETE',
-                'path': '/{0}/classes/{1}/{2}'.format(client.SERVER_VERSION, obj._class_name, obj.id),
-                'body': obj._flags,
+                "method": "DELETE",
+                "path": "/{0}/classes/{1}/{2}".format(
+                    client.SERVER_VERSION, obj._class_name, obj.id
+                ),
+                "body": obj._flags,
             }
             dumped_objs.append(dumped_obj)
 
-        response = client.post('/batch', params={'requests': dumped_objs}).json()
+        response = client.post("/batch", params={"requests": dumped_objs}).json()
 
         errors = []
         for idx, obj in enumerate(objs):
             content = response[idx]
-            error = content.get('error')
+            error = content.get("error")
             if error:
-                errors.append(leancloud.LeanCloudError(error.get('code'), error.get('error')))
+                errors.append(
+                    leancloud.LeanCloudError(error.get("code"), error.get("error"))
+                )
 
         if errors:
             # TODO: how to raise list of errors?
@@ -180,8 +184,8 @@ class Object(six.with_metaclass(ObjectMeta, object)):
 
     def dump(self):
         obj = self._dump()
-        obj.pop('__type')
-        obj.pop('className')
+        obj.pop("__type")
+        obj.pop("className")
         return obj
 
     def _dump(self):
@@ -190,10 +194,10 @@ class Object(six.with_metaclass(ObjectMeta, object)):
             obj[k] = utils.encode(v)
 
         if self.id is not None:
-            obj['objectId'] = self.id
+            obj["objectId"] = self.id
 
-        obj['__type'] = 'Object'
-        obj['className'] = self._class_name
+        obj["__type"] = "Object"
+        obj["className"] = self._class_name
         return obj
 
     def destroy(self):
@@ -204,7 +208,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         """
         if not self.id:
             return
-        client.delete('/classes/{0}/{1}'.format(self._class_name, self.id), self._flags)
+        client.delete("/classes/{0}/{1}".format(self._class_name, self.id), self._flags)
 
     def save(self, where=None, fetch_when_save=None):
         """
@@ -214,13 +218,17 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         :rtype: None
         """
         if where and not isinstance(where, leancloud.Query):
-            raise TypeError('where param type should be leancloud.Query, got %s', type(where))
+            raise TypeError(
+                "where param type should be leancloud.Query, got %s", type(where)
+            )
 
         if where and where._query_class._class_name != self._class_name:
-            raise TypeError('where param\'s class name not equal to the current object\'s class name')
+            raise TypeError(
+                "where param's class name not equal to the current object's class name"
+            )
 
         if where and self.is_new():
-            raise TypeError('where params works only when leancloud.Object is saved')
+            raise TypeError("where params works only when leancloud.Object is saved")
 
         unsaved_children = []
         unsaved_files = []
@@ -229,14 +237,23 @@ class Object(six.with_metaclass(ObjectMeta, object)):
             self._deep_save(unsaved_children, unsaved_files, exclude=self._attributes)
 
         data = self._dump_save()
-        fetch_when_save = 'true' if fetch_when_save else 'false'
+        fetch_when_save = "true" if fetch_when_save else "false"
 
         if self.is_new():
-            response = client.post('/classes/{0}?fetchWhenSave={1}'.format(self._class_name, fetch_when_save), data)
+            response = client.post(
+                "/classes/{0}?fetchWhenSave={1}".format(
+                    self._class_name, fetch_when_save
+                ),
+                data,
+            )
         else:
-            url = '/classes/{0}/{1}?fetchWhenSave={2}'.format(self._class_name, self.id, fetch_when_save)
+            url = "/classes/{0}/{1}?fetchWhenSave={2}".format(
+                self._class_name, self.id, fetch_when_save
+            )
             if where:
-                url += '&where=' + json.dumps(where.dump()['where'], separators=(',', ':'))
+                url += "&where=" + json.dumps(
+                    where.dump()["where"], separators=(",", ":")
+                )
             response = client.put(url, data)
 
         self._update_data(response.json())
@@ -253,29 +270,33 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         dumped_objs = []
         for obj in unsaved_children:
             if obj.id is None:
-                method = 'POST'
-                path = '/{0}/classes/{1}'.format(client.SERVER_VERSION, obj._class_name)
+                method = "POST"
+                path = "/{0}/classes/{1}".format(client.SERVER_VERSION, obj._class_name)
             else:
-                method = 'PUT'
-                path = '/{0}/classes/{1}/{2}'.format(client.SERVER_VERSION, obj._class_name, obj.id)
+                method = "PUT"
+                path = "/{0}/classes/{1}/{2}".format(
+                    client.SERVER_VERSION, obj._class_name, obj.id
+                )
             body = obj._dump_save()
             dumped_obj = {
-                'method': method,
-                'path': path,
-                'body': body,
+                "method": method,
+                "path": path,
+                "body": body,
             }
             dumped_objs.append(dumped_obj)
 
-        response = client.post('/batch', params={'requests': dumped_objs}).json()
+        response = client.post("/batch", params={"requests": dumped_objs}).json()
 
         errors = []
         for idx, obj in enumerate(unsaved_children):
             content = response[idx]
-            error = content.get('error')
+            error = content.get("error")
             if error:
-                errors.append(leancloud.LeanCloudError(error.get('code'), error.get('error')))
+                errors.append(
+                    leancloud.LeanCloudError(error.get("code"), error.get("error"))
+                )
             else:
-                obj._update_data(content['success'])
+                obj._update_data(content["success"])
 
         if errors:
             # TODO: how to raise list of errors?
@@ -285,7 +306,6 @@ class Object(six.with_metaclass(ObjectMeta, object)):
 
     @classmethod
     def _find_unsaved_children(cls, obj, children, files):
-
         def callback(o):
             if isinstance(o, Object):
                 if o.is_dirty():
@@ -300,7 +320,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         utils.traverse_object(obj, callback)
 
     def is_dirty(self, attr=None):
-        #consider renaming to is_changed?
+        # consider renaming to is_changed?
         if attr:
             return attr in self._changes
         else:
@@ -308,38 +328,35 @@ class Object(six.with_metaclass(ObjectMeta, object)):
 
     def _to_pointer(self):
         return {
-            '__type': 'Pointer',
-            'className': self._class_name,
-            'objectId': self.id,
+            "__type": "Pointer",
+            "className": self._class_name,
+            "objectId": self.id,
         }
 
     def _merge_metadata(self, server_data):
-        for key in ('objectId', 'createdAt', 'updatedAt'):
+        for key in ("objectId", "createdAt", "updatedAt"):
             if server_data.get(key) is None:
                 continue
-            if key == 'objectId':
+            if key == "objectId":
                 self.id = server_data[key]
             else:
                 if isinstance(server_data[key], six.string_types):
-                    dt = utils.decode(key, {
-                        '__type': 'Date',
-                        'iso': server_data[key]
-                    })
-                elif server_data[key]['__type'] == 'Date':
+                    dt = utils.decode(key, {"__type": "Date", "iso": server_data[key]})
+                elif server_data[key]["__type"] == "Date":
                     dt = utils.decode(key, server_data[key])
                 else:
-                    raise TypeError('Invalid date type')
+                    raise TypeError("Invalid date type")
                 server_data[key] = dt
-                if key == 'createdAt':
+                if key == "createdAt":
                     self.created_at = dt
-                elif key == 'updatedAt':
+                elif key == "updatedAt":
                     self.updated_at = dt
                 else:
                     raise TypeError
 
     def validate(self, attrs):
-        if 'ACL' in attrs and not isinstance(attrs['ACL'], leancloud.ACL):
-            raise TypeError('acl must be a ACL')
+        if "ACL" in attrs and not isinstance(attrs["ACL"], leancloud.ACL):
+            raise TypeError("acl must be a ACL")
         return True
 
     def get(self, attr, default=None, deafult=None):
@@ -367,7 +384,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         value = self.get(attr)
         if value is not None:
             if not isinstance(value, leancloud.Relation):
-                raise TypeError('field %s is not Relation'.format(attr))
+                raise TypeError("field %s is not Relation".format(attr))
             value._ensure_parent_and_key(self, attr)
             return value
         return leancloud.Relation(self, attr)
@@ -507,13 +524,15 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         data = {}
         if select:
             if not isinstance(select, (list, tuple)):
-                raise TypeError('select parameter must be a list or a tuple')
-            data['keys'] = ','.join(select)
+                raise TypeError("select parameter must be a list or a tuple")
+            data["keys"] = ",".join(select)
         if include:
             if not isinstance(include, (list, tuple)):
-                raise TypeError('include parameter must be a list or a tuple')
-            data['include'] = ','.join(include)
-        response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), data)
+                raise TypeError("include parameter must be a list or a tuple")
+            data["include"] = ",".join(include)
+        response = client.get(
+            "/classes/{0}/{1}".format(self._class_name, self.id), data
+        )
         self._update_data(response.json())
 
     def is_new(self):
@@ -543,7 +562,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         :return: 当前对象的 ACL
         :rtype: leancloud.ACL
         """
-        return self.get('ACL')
+        return self.get("ACL")
 
     def set_acl(self, acl):
         """
@@ -553,32 +572,39 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         :return: 当前对象
         """
 
-        return self.set('ACL', acl)
+        return self.set("ACL", acl)
 
     def disable_before_hook(self):
-        hook_key = client.get_app_info().get('hook_key')
+        hook_key = client.get_app_info().get("hook_key")
         if not hook_key:
-            raise ValueError('disable_before_hook need LeanCloud hook key')
-        self.ignore_hook('beforeSave')
-        self.ignore_hook('beforeUpdate')
-        self.ignore_hook('beforeDelete')
+            raise ValueError("disable_before_hook need LeanCloud hook key")
+        self.ignore_hook("beforeSave")
+        self.ignore_hook("beforeUpdate")
+        self.ignore_hook("beforeDelete")
         return self
 
     def disable_after_hook(self):
-        hook_key = client.get_app_info().get('hook_key')
+        hook_key = client.get_app_info().get("hook_key")
         if not hook_key:
-            raise ValueError('`disable_before_hook` need LeanCloud hook key')
-        self.ignore_hook('afterSave')
-        self.ignore_hook('afterUpdate')
-        self.ignore_hook('afterDelete')
+            raise ValueError("`disable_before_hook` need LeanCloud hook key")
+        self.ignore_hook("afterSave")
+        self.ignore_hook("afterUpdate")
+        self.ignore_hook("afterDelete")
         return self
 
     def ignore_hook(self, hook_name):
-        if hook_name not in {'beforeSave', 'afterSave', 'beforeUpdate', 'afterUpdate', 'beforeDelete', 'afterDelete'}:
-            raise ValueError('invalid hook name: ' + hook_name)
-        if '__ignore_hooks' not in self._flags:
-            self._flags['__ignore_hooks'] = []
-        self._flags['__ignore_hooks'].append(hook_name)
+        if hook_name not in {
+            "beforeSave",
+            "afterSave",
+            "beforeUpdate",
+            "afterUpdate",
+            "beforeDelete",
+            "afterDelete",
+        }:
+            raise ValueError("invalid hook name: " + hook_name)
+        if "__ignore_hooks" not in self._flags:
+            self._flags["__ignore_hooks"] = []
+        self._flags["__ignore_hooks"].append(hook_name)
 
     def _update_data(self, server_data):
         self._merge_metadata(server_data)
@@ -591,4 +617,5 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         def inner_decorator(cls):
             cls._class_name = arg
             return cls
+
         return inner_decorator

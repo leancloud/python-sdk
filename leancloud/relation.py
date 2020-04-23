@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import leancloud
 from leancloud import operation
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 class Relation(object):
@@ -38,9 +38,9 @@ class Relation(object):
             self.key = key
 
         if self.parent != parent:
-            raise TypeError('relation retrieved from two different object')
+            raise TypeError("relation retrieved from two different object")
         if self.key != key:
-            raise TypeError('relation retrieved from two different object')
+            raise TypeError("relation retrieved from two different object")
 
     def add(self, *obj_or_objs):
         """
@@ -50,7 +50,7 @@ class Relation(object):
         """
         objs = obj_or_objs
         if not isinstance(obj_or_objs, (list, tuple)):
-            objs = (obj_or_objs, )
+            objs = (obj_or_objs,)
         change = operation.Relation(objs, ())
         self.parent.set(self.key, change)
         self.target_class_name = change._target_class_name
@@ -64,16 +64,13 @@ class Relation(object):
         """
         objs = obj_or_objs
         if not isinstance(obj_or_objs, (list, tuple)):
-            objs = (obj_or_objs, )
+            objs = (obj_or_objs,)
         change = operation.Relation((), objs)
         self.parent.set(self.key, change)
         self.target_class_name = change._target_class_name
 
     def dump(self):
-        return {
-            '__type': 'Relation',
-            'className': self.target_class_name
-        }
+        return {"__type": "Relation", "className": self.target_class_name}
 
     @property
     def query(self):
@@ -86,12 +83,12 @@ class Relation(object):
         if self.target_class_name is None:
             target_class = leancloud.Object.extend(self.parent._class_name)
             query = leancloud.Query(target_class)
-            query._extra['redirectClassNameForKey'] = self.key
+            query._extra["redirectClassNameForKey"] = self.key
         else:
             target_class = leancloud.Object.extend(self.target_class_name)
             query = leancloud.Query(target_class)
 
-        query._add_condition('$relatedTo', 'object', self.parent._to_pointer())
-        query._add_condition('$relatedTo', 'key', self.key)
+        query._add_condition("$relatedTo", "object", self.parent._to_pointer())
+        query._add_condition("$relatedTo", "key", self.key)
 
         return query

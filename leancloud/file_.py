@@ -21,35 +21,36 @@ from leancloud import client
 from leancloud import utils
 from leancloud.errors import LeanCloudError
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 logger = logging.getLogger(__name__)
 
 
 DEFAULT_TIMEOUT = 30
 
-class File(object):
-    _class_name = '_File'  # walks like a leancloud.Object
 
-    def __init__(self, name='', data=None, mime_type=None):
+class File(object):
+    _class_name = "_File"  # walks like a leancloud.Object
+
+    def __init__(self, name="", data=None, mime_type=None):
         self._name = name
         self.id = None
         self._url = None
         self._acl = None
         self.current_user = leancloud.User.get_current()
         self.timeout = 30
-        self._metadata = {
-            'owner': 'unknown'
-        }
-        if self.current_user and self.current_user != None:  # NOQA: self.current_user may be a thread_local object
-            self._metadata['owner'] = self.current_user.id
+        self._metadata = {"owner": "unknown"}
+        if (
+            self.current_user and self.current_user != None
+        ):  # NOQA: self.current_user may be a thread_local object
+            self._metadata["owner"] = self.current_user.id
 
-        pattern = re.compile('\.([^.]*)$')
+        pattern = re.compile("\.([^.]*)$")
         extension = pattern.findall(name)
         if extension:
             self.extension = extension[0].lower()
         else:
-            self.extension = ''
+            self.extension = ""
 
         self._mime_type = mime_type
 
@@ -63,13 +64,16 @@ class File(object):
             data.seek(0, os.SEEK_END)
             data.seek(0, os.SEEK_SET)
         except Exception:
-            if (six.PY3 and isinstance(data, (memoryview, bytes))) or \
-               (six.PY2 and isinstance(data, (buffer, memoryview, str))):
+            if (six.PY3 and isinstance(data, (memoryview, bytes))) or (
+                six.PY2 and isinstance(data, (buffer, memoryview, str))
+            ):
                 data = io.BytesIO(data)
             elif data.read:
                 data = io.BytesIO(data.read())
             else:
-                raise TypeError('Do not know how to handle data, accepts file like object or bytes')
+                raise TypeError(
+                    "Do not know how to handle data, accepts file like object or bytes"
+                )
 
         data.seek(0, os.SEEK_SET)
         checksum = hashlib.md5()
@@ -81,15 +85,15 @@ class File(object):
             try:
                 checksum.update(chunk)
             except TypeError:
-                checksum.update(chunk.encode('utf-8'))
+                checksum.update(chunk.encode("utf-8"))
 
-        self._metadata['_checksum'] = checksum.hexdigest()
-        self._metadata['size'] = data.tell()
+        self._metadata["_checksum"] = checksum.hexdigest()
+        self._metadata["size"] = data.tell()
 
         # 3.5MB, 1Mbps * 30s
         # increase timeout
-        if self._metadata['size'] > 3750000:
-            self.timeout = self.timeout * int(self._metadata['size'] / 3750000)
+        if self._metadata["size"] > 3750000:
+            self.timeout = self.timeout * int(self._metadata["size"] / 3750000)
 
         data.seek(0, os.SEEK_SET)
 
@@ -108,14 +112,14 @@ class File(object):
         if isinstance(url, six.string_types):
             f._url = url
         else:
-            raise ValueError('url must be a str / unicode')
+            raise ValueError("url must be a str / unicode")
 
-        f._metadata['__source'] = 'external'
+        f._metadata["__source"] = "external"
         return f
 
     @classmethod
     def create_without_data(cls, object_id):
-        f = File('')
+        f = File("")
         f.id = object_id
         return f
 
@@ -124,7 +128,7 @@ class File(object):
 
     def set_acl(self, acl):
         if not isinstance(acl, leancloud.ACL):
-            raise TypeError('acl must be a leancloud.ACL instance')
+            raise TypeError("acl must be a leancloud.ACL instance")
         self._acl = acl
 
     @property
@@ -145,34 +149,38 @@ class File(object):
 
     @property
     def size(self):
-        return self._metadata['size']
+        return self._metadata["size"]
 
     @property
     def owner_id(self):
-        return self._metadata['owner']
+        return self._metadata["owner"]
 
     @property
     def metadata(self):
         return self._metadata
 
-    def get_thumbnail_url(self, width, height, quality=100, scale_to_fit=True, fmt='png'):
+    def get_thumbnail_url(
+        self, width, height, quality=100, scale_to_fit=True, fmt="png"
+    ):
         if not self._url:
-            raise ValueError('invalid url')
+            raise ValueError("invalid url")
 
         if width < 0 or height < 0:
-            raise ValueError('invalid height or width params')
+            raise ValueError("invalid height or width params")
 
         if quality > 100 or quality <= 0:
-            raise ValueError('quality must between 0 and 100')
+            raise ValueError("quality must between 0 and 100")
 
         mode = 2 if scale_to_fit else 1
 
-        return self.url + '?imageView/{0}/w/{1}/h/{2}/q/{3}/format/{4}'.format(mode, width, height, quality, fmt)
+        return self.url + "?imageView/{0}/w/{1}/h/{2}/q/{3}/format/{4}".format(
+            mode, width, height, quality, fmt
+        )
 
     def destroy(self):
         if not self.id:
             return False
-        response = client.delete('/files/{0}'.format(self.id))
+        response = client.delete("/files/{0}".format(self.id))
         if response.status_code != 200:
             raise LeanCloudError(1, "the file is not sucessfully destroyed")
 
@@ -180,7 +188,7 @@ class File(object):
         from qiniu.services.storage.uploader import crc32, _form_put
         from qiniu.config import _BLOCK_SIZE
 
-        final_data = ''
+        final_data = ""
         while True:
             tmp_data = self._source.read(_BLOCK_SIZE)
             if len(tmp_data) == 0:
@@ -191,16 +199,13 @@ class File(object):
                 final_data += tmp_data
 
         crc = crc32(final_data)
-        return _form_put(
-            token, key,
-            final_data, None,
-            self.mime_type, crc
-        )
+        return _form_put(token, key, final_data, None, self.mime_type, crc)
 
     def _save_to_qiniu(self, token, key):
         self._source.seek(0)
 
         import qiniu
+
         qiniu.set_default(connection_timeout=self.timeout)
 
         if six.PY3:
@@ -213,52 +218,64 @@ class File(object):
 
         if info.status_code != 200:
             self._save_callback(token, False)
-            raise LeanCloudError(1, 'the file is not saved, qiniu status code: {0}'.format(info.status_code))
+            raise LeanCloudError(
+                1,
+                "the file is not saved, qiniu status code: {0}".format(
+                    info.status_code
+                ),
+            )
         self._save_callback(token, True)
 
     def _save_to_s3(self, token, upload_url):
         self._source.seek(0)
-        response = requests.put(upload_url, data=self._source, headers={'Content-Type': self.mime_type})
+        response = requests.put(
+            upload_url, data=self._source, headers={"Content-Type": self.mime_type}
+        )
         if response.status_code != 200:
             self._save_callback(token, False)
-            raise LeanCloudError(1, 'The file is not successfully saved to S3')
+            raise LeanCloudError(1, "The file is not successfully saved to S3")
         self._source.seek(0)
         self._save_callback(token, True)
 
     def _save_external(self):
         data = {
-            'name': self._name,
-            'ACL': self._acl,
-            'metaData': self._metadata,
-            'mime_type': self.mime_type,
-            'url': self._url,
+            "name": self._name,
+            "ACL": self._acl,
+            "metaData": self._metadata,
+            "mime_type": self.mime_type,
+            "url": self._url,
         }
-        response = client.post('/files/{0}'.format(self._name), data)
+        response = client.post("/files/{0}".format(self._name), data)
         content = response.json()
 
-        self._name = content['name']
-        self._url = content['url']
-        self.id = content['objectId']
-        if 'size' in content:
-            self._metadata['size'] = content['size']
+        self._name = content["name"]
+        self._url = content["url"]
+        self.id = content["objectId"]
+        if "size" in content:
+            self._metadata["size"] = content["size"]
         else:
             raise ValueError
 
     def _save_to_qcloud(self, token, upload_url):
         headers = {
-            'Authorization': token,
+            "Authorization": token,
         }
         self._source.seek(0)
         data = {
-            'op': 'upload',
-            'filecontent': self._source.read(),
+            "op": "upload",
+            "filecontent": self._source.read(),
         }
         response = requests.post(upload_url, headers=headers, files=data)
         self._source.seek(0)
         info = response.json()
-        if info['code'] != 0:
+        if info["code"] != 0:
             self._save_callback(token, False)
-            raise LeanCloudError(1, 'this file is not saved, qcloud cos status code: {}'.format(info['code']))
+            raise LeanCloudError(
+                1,
+                "this file is not saved, qcloud cos status code: {}".format(
+                    info["code"]
+                ),
+            )
         self._save_callback(token, True)
 
     def _save_callback(self, token, successed):
@@ -267,63 +284,61 @@ class File(object):
 
         def f():
             try:
-                client.post('/fileCallback', {
-                    'token': token,
-                    'result': successed,
-                })
+                client.post("/fileCallback", {"token": token, "result": successed,})
             except LeanCloudError as e:
-                logger.warning('call file callback failed, error: %s', e)
+                logger.warning("call file callback failed, error: %s", e)
+
         threading.Thread(target=f).start()
 
     def save(self):
-        if self._url and self.metadata.get('__source') == 'external':
+        if self._url and self.metadata.get("__source") == "external":
             self._save_external()
         elif not self._source:
             pass
         else:
             content = self._get_file_token()
-            self._mime_type = content['mime_type']
-            if content['provider'] == 'qiniu':
-                self._save_to_qiniu(content['token'], content['key'])
-            elif content['provider'] == 'qcloud':
-                self._save_to_qcloud(content['token'], content['upload_url'])
-            elif content['provider'] == 's3':
-                self._save_to_s3(content.get('token'), content['upload_url'])
+            self._mime_type = content["mime_type"]
+            if content["provider"] == "qiniu":
+                self._save_to_qiniu(content["token"], content["key"])
+            elif content["provider"] == "qcloud":
+                self._save_to_qcloud(content["token"], content["upload_url"])
+            elif content["provider"] == "s3":
+                self._save_to_s3(content.get("token"), content["upload_url"])
             else:
-                raise RuntimeError('The provider field in the fetched content is empty')
+                raise RuntimeError("The provider field in the fetched content is empty")
             self._update_data(content)
 
     def _update_data(self, server_data):
-        if 'objectId' in server_data:
-            self.id = server_data.get('objectId')
-        if 'name' in server_data:
-            self._name = server_data.get('name')
-        if 'url' in server_data:
-            self._url = server_data.get('url')
-        if 'mime_type' in server_data:
-            self._mime_type = server_data['mime_type']
-        if 'metaData' in server_data:
-            self._metadata = server_data.get('metaData')
+        if "objectId" in server_data:
+            self.id = server_data.get("objectId")
+        if "name" in server_data:
+            self._name = server_data.get("name")
+        if "url" in server_data:
+            self._url = server_data.get("url")
+        if "mime_type" in server_data:
+            self._mime_type = server_data["mime_type"]
+        if "metaData" in server_data:
+            self._metadata = server_data.get("metaData")
 
     def _get_file_token(self):
         key = uuid.uuid4().hex
         if self.extension:
-            key = '{0}.{1}'.format(key, self.extension)
+            key = "{0}.{1}".format(key, self.extension)
         data = {
-            'name': self._name,
-            'key': key,
-            'ACL': self._acl,
-            'mime_type': self.mime_type,
-            'metaData': self._metadata,
+            "name": self._name,
+            "key": key,
+            "ACL": self._acl,
+            "mime_type": self.mime_type,
+            "metaData": self._metadata,
         }
-        response = client.post('/fileTokens', data)
+        response = client.post("/fileTokens", data)
         content = response.json()
-        self.id = content['objectId']
-        self._url = content['url']
-        content['key'] = key
+        self.id = content["objectId"]
+        self._url = content["url"]
+        content["key"] = key
         return content
 
     def fetch(self):
-        response = client.get('/files/{0}'.format(self.id))
+        response = client.get("/files/{0}".format(self.id))
         content = response.json()
         self._update_data(content)

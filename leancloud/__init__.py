@@ -13,7 +13,7 @@ import sys
 import logging
 import warnings
 
-logger = logging.getLogger('iso8601.iso8601')
+logger = logging.getLogger("iso8601.iso8601")
 logger.setLevel(logging.CRITICAL)
 
 from . import client
@@ -46,36 +46,36 @@ from .sys_message import SysMessage
 from .user import User
 
 
-__author__ = 'asaka <lan@leancloud.rocks>'
-__version__ = '2.1.9'
+__author__ = "asaka <lan@leancloud.rocks>"
+__version__ = "2.1.9"
 
 
 __all__ = [
-    'ACL',
-    'Engine',
-    'File',
-    'FriendshipQuery',
-    'GeoPoint',
-    'HttpsRedirectMiddleware',
-    'InboxQuery',
-    'Installation',
-    'LeanCloudError',
-    'LeanEngineError',
-    'Object',
-    'Query',
-    'Relation',
-    'Role',
-    'Status',
-    'SysMessage',
-    'User',
-    'client',
-    'cloud',
-    'cloudfunc',
-    'init',
-    'push',
-    'use_master_key',
-    'use_production',
-    'use_region',
+    "ACL",
+    "Engine",
+    "File",
+    "FriendshipQuery",
+    "GeoPoint",
+    "HttpsRedirectMiddleware",
+    "InboxQuery",
+    "Installation",
+    "LeanCloudError",
+    "LeanEngineError",
+    "Object",
+    "Query",
+    "Relation",
+    "Role",
+    "Status",
+    "SysMessage",
+    "User",
+    "client",
+    "cloud",
+    "cloudfunc",
+    "init",
+    "push",
+    "use_master_key",
+    "use_production",
+    "use_region",
 ]
 
 
@@ -83,8 +83,8 @@ version_info = sys.version_info
 
 
 if version_info.major == 2 and version_info.minor < 7:
-    warnings.warn('Python2 version less than 7 is not supported', LeanCloudWarning)
+    warnings.warn("Python2 version less than 7 is not supported", LeanCloudWarning)
 
 
 if version_info.minor == 3 and version_info.minor < 4:
-    warnings.warn('Python3 version less than 4 is not supported', LeanCloudWarning)
+    warnings.warn("Python3 version less than 4 is not supported", LeanCloudWarning)

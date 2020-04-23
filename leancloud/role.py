@@ -11,7 +11,7 @@ import six
 
 import leancloud
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 class Role(leancloud.Object):
@@ -26,48 +26,50 @@ class Role(leancloud.Object):
 
     @property
     def name(self):
-        return self.get('name')
+        return self.get("name")
 
     @name.setter
     def name(self, name):
-        return self.set('name', name)
+        return self.set("name", name)
 
     def get_name(self):
         """
         获取 Role 的 name，等同于 role.get('name')
         """
-        return self.get('name')
+        return self.get("name")
 
     def set_name(self, name):
         """
         为 Role 设置 name，等同于 role.set('name', name)
         """
-        return self.set('name', name)
+        return self.set("name", name)
 
     @property
     def users(self):
-        return self.relation('users')
+        return self.relation("users")
 
     def get_users(self):
         """
         获取当前 Role 下所有绑定的用户。
         """
-        return self.relation('users')
+        return self.relation("users")
 
     @property
     def roles(self):
-        return self.relation('roles')
+        return self.relation("roles")
 
     def get_roles(self):
-        return self.relation('roles')
+        return self.relation("roles")
 
     def validate(self, attrs):
-        if 'name' in attrs and attrs['name'] != self.get_name():
-            new_name = attrs['name']
+        if "name" in attrs and attrs["name"] != self.get_name():
+            new_name = attrs["name"]
             if not isinstance(new_name, six.string_types):
-                raise TypeError('role name must be string_types')
-            r = re.compile('^[0-9a-zA-Z\-_]+$')
+                raise TypeError("role name must be string_types")
+            r = re.compile("^[0-9a-zA-Z\-_]+$")
             if not r.match(new_name):
-                raise TypeError('role\'s name can only contain alphanumeric characters, _, -, and spaces.')
+                raise TypeError(
+                    "role's name can only contain alphanumeric characters, _, -, and spaces."
+                )
 
         return super(Role, self).validate(attrs)

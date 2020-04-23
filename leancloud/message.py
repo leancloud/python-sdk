@@ -37,14 +37,21 @@ class Message(object):
 
     @classmethod
     def _find(cls, query_params):  # type: (dict) -> Generator[Message, None, None]
-        content = client.get('/rtm/messages/history', params=query_params).json()
+        content = client.get("/rtm/messages/history", params=query_params).json()
         for data in content:
             msg = cls()
             msg._update_data(data)
             yield msg
 
     @classmethod
-    def find_by_conversation(cls, conversation_id, limit=None, reversed=None, before_time=None, before_message_id=None):
+    def find_by_conversation(
+        cls,
+        conversation_id,
+        limit=None,
+        reversed=None,
+        before_time=None,
+        before_message_id=None,
+    ):
         # type: (str, Optional[int], Optional[bool], Optional[Union[datetime, float]], Optional[str]) -> List[Message]
         """获取某个对话中的聊天记录
 
@@ -58,21 +65,25 @@ class Message(object):
         :return: 符合条件的聊天记录
         """
         query_params = {}  # type: Dict[str, Any]
-        query_params['convid'] = conversation_id
+        query_params["convid"] = conversation_id
         if limit is not None:
-            query_params['limit'] = limit
+            query_params["limit"] = limit
         if reversed is not None:
-            query_params['reversed'] = reversed
+            query_params["reversed"] = reversed
         if isinstance(before_time, datetime):
-            query_params['max_ts'] = round(before_time.timestamp() * 1000)
-        elif isinstance(before_time, six.integer_types) or isinstance(before_time, float):
-            query_params['max_ts'] = round(before_time * 1000)
+            query_params["max_ts"] = round(before_time.timestamp() * 1000)
+        elif isinstance(before_time, six.integer_types) or isinstance(
+            before_time, float
+        ):
+            query_params["max_ts"] = round(before_time * 1000)
         if before_message_id is not None:
-            query_params['msgid'] = before_message_id
+            query_params["msgid"] = before_message_id
         return list(cls._find(query_params))
 
     @classmethod
-    def find_by_client(cls, from_client, limit=None, before_time=None, before_message_id=None):
+    def find_by_client(
+        cls, from_client, limit=None, before_time=None, before_message_id=None
+    ):
         # type: (str, Optional[int], Optional[Union[datetime, float]], Optional[str]) -> List[Message]
         """获取某个 client 的聊天记录
 
@@ -83,15 +94,17 @@ class Message(object):
         :return: 符合条件的聊天记录
         """
         query_params = {}  # type: Dict[str, Any]
-        query_params['from'] = from_client
+        query_params["from"] = from_client
         if limit is not None:
-            query_params['limit'] = limit
+            query_params["limit"] = limit
         if isinstance(before_time, datetime):
-            query_params['max_ts'] =  round(before_time.timestamp() * 1000)
-        elif isinstance(before_time, six.integer_types) or isinstance(before_time, float):
-            query_params['max_ts'] = round(before_time * 1000)
+            query_params["max_ts"] = round(before_time.timestamp() * 1000)
+        elif isinstance(before_time, six.integer_types) or isinstance(
+            before_time, float
+        ):
+            query_params["max_ts"] = round(before_time * 1000)
         if before_message_id is not None:
-            query_params['msgid'] = before_message_id
+            query_params["msgid"] = before_message_id
         return list(cls._find(query_params))
 
     @classmethod
@@ -106,23 +119,25 @@ class Message(object):
         """
         query_params = {}  # type: Dict[str, Any]
         if limit is not None:
-            query_params['limit'] = limit
+            query_params["limit"] = limit
         if isinstance(before_time, datetime):
-            query_params['max_ts'] = round(before_time.timestamp() * 1000)
-        elif isinstance(before_time, six.integer_types) or isinstance(before_time, float):
-            query_params['max_ts'] = round(before_time * 1000)
+            query_params["max_ts"] = round(before_time.timestamp() * 1000)
+        elif isinstance(before_time, six.integer_types) or isinstance(
+            before_time, float
+        ):
+            query_params["max_ts"] = round(before_time * 1000)
         if before_message_id is not None:
-            query_params['msgid'] = before_message_id
+            query_params["msgid"] = before_message_id
         return list(cls._find(query_params))
 
     def _update_data(self, server_data):  # type: (dict) -> None
-        self.bin = server_data.get('bin')
-        self.conversation_id = server_data.get('conv-id')
-        self.data = server_data.get('data')
-        self.from_client = server_data.get('from')
-        self.from_ip = server_data.get('from-ip')
-        self.is_conversation = server_data.get('is-conv')
-        self.is_room = server_data.get('is-room')
-        self.message_id = server_data.get('msg-id')
-        self.timestamp = server_data.get('timestamp', 0) / 1000
-        self.to = server_data.get('to')
+        self.bin = server_data.get("bin")
+        self.conversation_id = server_data.get("conv-id")
+        self.data = server_data.get("data")
+        self.from_client = server_data.get("from")
+        self.from_ip = server_data.get("from-ip")
+        self.is_conversation = server_data.get("is-conv")
+        self.is_room = server_data.get("is-room")
+        self.message_id = server_data.get("msg-id")
+        self.timestamp = server_data.get("timestamp", 0) / 1000
+        self.to = server_data.get("to")

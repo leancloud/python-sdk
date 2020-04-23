@@ -16,7 +16,7 @@ from leancloud.file_ import File
 from leancloud.object_ import Object
 from leancloud.errors import LeanCloudError
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 class CQLResult(object):
@@ -30,6 +30,7 @@ class CQLResult(object):
 
         class_name: 查询的 class 名称
     """
+
     def __init__(self, results, count, class_name):
         self.results = results
         self.count = count
@@ -40,28 +41,31 @@ class Cursor(object):
     """
     Query.scan 返回结果对象。
     """
+
     def __init__(self, query_class, batch_size, scan_key, params):
         self._params = params
         self._query_class = query_class
 
         if batch_size is not None:
-            self._params['limit'] = batch_size
+            self._params["limit"] = batch_size
 
         if scan_key is not None:
-            self._params['scan_key'] = scan_key
+            self._params["scan_key"] = scan_key
 
     def __iter__(self):
         while True:
-            content = client.get('/scan/classes/{}'.format(self._query_class._class_name), self._params).json()
-            for result in content['results']:
+            content = client.get(
+                "/scan/classes/{}".format(self._query_class._class_name), self._params
+            ).json()
+            for result in content["results"]:
                 obj = self._query_class()
                 obj._update_data(result)
                 yield obj
 
-            if not content.get('cursor'):
+            if not content.get("cursor"):
                 break
 
-            self._params['cursor'] = content['cursor']
+            self._params["cursor"] = content["cursor"]
 
 
 class Query(object):
@@ -72,13 +76,15 @@ class Query(object):
         :type query_class: string_types or leancloud.ObjectMeta
         """
         if isinstance(query_class, six.string_types):
-            if query_class in ('File', '_File'):
+            if query_class in ("File", "_File"):
                 query_class = File
             else:
                 query_class = Object.extend(query_class)
 
-        if not isinstance(query_class, (type, six.class_types)) or not issubclass(query_class, (File, Object)):
-            raise ValueError('Query takes string or LeanCloud Object')
+        if not isinstance(query_class, (type, six.class_types)) or not issubclass(
+            query_class, (File, Object)
+        ):
+            raise ValueError("Query takes string or LeanCloud Object")
 
         self._query_class = query_class
 
@@ -100,9 +106,12 @@ class Query(object):
         :rtype: Query
         """
         if len(queries) < 2:
-            raise ValueError('or_ need two queries at least')
-        if not all(x._query_class._class_name == queries[0]._query_class._class_name for x in queries):
-            raise TypeError('All queries must be for the same class')
+            raise ValueError("or_ need two queries at least")
+        if not all(
+            x._query_class._class_name == queries[0]._query_class._class_name
+            for x in queries
+        ):
+            raise TypeError("All queries must be for the same class")
         query = Query(queries[0]._query_class._class_name)
         query._or_query(queries)
         return query
@@ -116,9 +125,12 @@ class Query(object):
         :rtype: Query
         """
         if len(queries) < 2:
-            raise ValueError('and_ need two queries at least')
-        if not all(x._query_class._class_name == queries[0]._query_class._class_name for x in queries):
-            raise TypeError('All queries must be for the same class')
+            raise ValueError("and_ need two queries at least")
+        if not all(
+            x._query_class._class_name == queries[0]._query_class._class_name
+            for x in queries
+        ):
+            raise TypeError("All queries must be for the same class")
         query = Query(queries[0]._query_class._class_name)
         query._and_query(queries)
         return query
@@ -132,22 +144,22 @@ class Query(object):
         :param pvalues: 查询参数
         :rtype: CQLResult
         """
-        params = {'cql': cql}
+        params = {"cql": cql}
         if len(pvalues) == 1 and isinstance(pvalues[0], (tuple, list)):
             pvalues = json.dumps(pvalues[0])
         if len(pvalues) > 0:
-            params['pvalues'] = json.dumps(pvalues)
+            params["pvalues"] = json.dumps(pvalues)
 
-        content = client.get('/cloudQuery', params).json()
+        content = client.get("/cloudQuery", params).json()
 
         objs = []
-        query = cls(content['className'])
-        for result in content['results']:
+        query = cls(content["className"])
+        for result in content["results"]:
             obj = query._new_object()
             obj._update_data(query._process_result(result))
             objs.append(obj)
 
-        return CQLResult(objs, content.get('count'), content.get('className'))
+        return CQLResult(objs, content.get("count"), content.get("className"))
 
     def dump(self):
         """
@@ -155,20 +167,20 @@ class Query(object):
         :rtype: dict
         """
         params = {
-            'where': self._where,
+            "where": self._where,
         }
         if self._include:
-            params['include'] = ','.join(self._include)
+            params["include"] = ",".join(self._include)
         if self._select:
-            params['keys'] = ','.join(self._select)
+            params["keys"] = ",".join(self._select)
         if self._include_acl is not None:
-            params['returnACL'] = json.dumps(self._include_acl)
+            params["returnACL"] = json.dumps(self._include_acl)
         if self._limit >= 0:
-            params['limit'] = self._limit
+            params["limit"] = self._limit
         if self._skip > 0:
-            params['skip'] = self._skip
+            params["skip"] = self._skip
         if self._order:
-            params['order'] = ",".join(self._order)
+            params["order"] = ",".join(self._order)
         params.update(self._extra)
         return params
 
@@ -179,7 +191,9 @@ class Query(object):
         return obj
 
     def _do_request(self, params):
-        return client.get('/classes/{0}'.format(self._query_class._class_name), params).json()
+        return client.get(
+            "/classes/{0}".format(self._query_class._class_name), params
+        ).json()
 
     def first(self):
         """
@@ -190,11 +204,11 @@ class Query(object):
         :raise: LeanCloudError
         """
         params = self.dump()
-        params['limit'] = 1
+        params["limit"] = 1
         content = self._do_request(params)
-        results = content['results']
+        results = content["results"]
         if not results:
-            raise LeanCloudError(101, 'Object not found')
+            raise LeanCloudError(101, "Object not found")
         obj = self._new_object()
         obj._update_data(self._process_result(results[0]))
         return obj
@@ -208,7 +222,7 @@ class Query(object):
         :rtype: Object
         """
         if not object_id:
-            raise LeanCloudError(code=101, error='Object not found.')
+            raise LeanCloudError(code=101, error="Object not found.")
         obj = self._query_class.create_without_data(object_id)
         obj.fetch(select=self._select, include=self._include)
         return obj
@@ -222,7 +236,7 @@ class Query(object):
         content = self._do_request(self.dump())
 
         objs = []
-        for result in content['results']:
+        for result in content["results"]:
             obj = self._new_object()
             obj._update_data(self._process_result(result))
             objs.append(obj)
@@ -231,10 +245,10 @@ class Query(object):
 
     def scan(self, batch_size=None, scan_key=None):
         params = self.dump()
-        if 'skip' in params:
-            raise LeanCloudError(1, 'Query.scan dose not support skip option')
-        if 'limit' in params:
-            raise LeanCloudError(1, 'Query.scan dose not support limit option')
+        if "skip" in params:
+            raise LeanCloudError(1, "Query.scan dose not support skip option")
+        if "limit" in params:
+            raise LeanCloudError(1, "Query.scan dose not support limit option")
         return Cursor(self._query_class, batch_size, scan_key, params)
 
     def count(self):
@@ -244,10 +258,10 @@ class Query(object):
         :rtype: int
         """
         params = self.dump()
-        params['limit'] = 0
-        params['count'] = 1
+        params["limit"] = 0
+        params["count"] = 1
         content = self._do_request(params)
-        return content['count']
+        return content["count"]
 
     def skip(self, n):
         """
@@ -267,7 +281,7 @@ class Query(object):
         :rtype: Query
         """
         if n > 1000:
-            raise ValueError('limit only accept number less than or equal to 1000')
+            raise ValueError("limit only accept number less than or equal to 1000")
         self._limit = n
         return self
 
@@ -318,7 +332,7 @@ class Query(object):
         :param value: 查询条件值
         :rtype: Query
         """
-        self._add_condition(key, '$ne', value)
+        self._add_condition(key, "$ne", value)
         return self
 
     def less_than(self, key, value):
@@ -329,7 +343,7 @@ class Query(object):
         :param value: 查询条件值
         :rtype: Query
         """
-        self._add_condition(key, '$lt', value)
+        self._add_condition(key, "$lt", value)
         return self
 
     def greater_than(self, key, value):
@@ -340,7 +354,7 @@ class Query(object):
         :param value: 查询条件值
         :rtype: Query
         """
-        self._add_condition(key, '$gt', value)
+        self._add_condition(key, "$gt", value)
         return self
 
     def less_than_or_equal_to(self, key, value):
@@ -351,7 +365,7 @@ class Query(object):
         :param value: 查询条件值
         :rtype: Query
         """
-        self._add_condition(key, '$lte', value)
+        self._add_condition(key, "$lte", value)
         return self
 
     def greater_than_or_equal_to(self, key, value):
@@ -362,7 +376,7 @@ class Query(object):
         :param value: 查询条件值名
         :rtype: Query
         """
-        self._add_condition(key, '$gte', value)
+        self._add_condition(key, "$gte", value)
         return self
 
     def contained_in(self, key, values):
@@ -374,7 +388,7 @@ class Query(object):
         :type values: list or tuple
         :rtype: Query
         """
-        self._add_condition(key, '$in', values)
+        self._add_condition(key, "$in", values)
         return self
 
     def not_contained_in(self, key, values):
@@ -386,7 +400,7 @@ class Query(object):
         :type values: list or tuple
         :rtype: Query
         """
-        self._add_condition(key, '$nin', values)
+        self._add_condition(key, "$nin", values)
         return self
 
     def contains_all(self, key, values):
@@ -398,7 +412,7 @@ class Query(object):
         :type values: list or tuple
         :rtype: Query
         """
-        self._add_condition(key, '$all', values)
+        self._add_condition(key, "$all", values)
         return self
 
     def exists(self, key):
@@ -408,7 +422,7 @@ class Query(object):
         :param key: 查询条件字段名
         :rtype: Query
         """
-        self._add_condition(key, '$exists', True)
+        self._add_condition(key, "$exists", True)
         return self
 
     def does_not_exist(self, key):
@@ -418,7 +432,7 @@ class Query(object):
         :param key: 查询条件字段名
         :rtype: Query
         """
-        self._add_condition(key, '$exists', False)
+        self._add_condition(key, "$exists", False)
         return self
 
     def matched(self, key, regex, ignore_case=False, multi_line=False):
@@ -432,15 +446,15 @@ class Query(object):
         :rtype: Query
         """
         if not isinstance(regex, six.string_types):
-            raise TypeError('matched only accept str or unicode')
-        self._add_condition(key, '$regex', regex)
-        modifiers = ''
+            raise TypeError("matched only accept str or unicode")
+        self._add_condition(key, "$regex", regex)
+        modifiers = ""
         if ignore_case:
-            modifiers += 'i'
+            modifiers += "i"
         if multi_line:
-            modifiers += 'm'
+            modifiers += "m"
         if modifiers:
-            self._add_condition(key, '$options', modifiers)
+            self._add_condition(key, "$options", modifiers)
         return self
 
     def matches_query(self, key, query):
@@ -453,8 +467,8 @@ class Query(object):
         :rtype: Query
         """
         dumped = query.dump()
-        dumped['className'] = query._query_class._class_name
-        self._add_condition(key, '$inQuery', dumped)
+        dumped["className"] = query._query_class._class_name
+        self._add_condition(key, "$inQuery", dumped)
         return self
 
     def does_not_match_query(self, key, query):
@@ -467,8 +481,8 @@ class Query(object):
         :rtype: Query
         """
         dumped = query.dump()
-        dumped['className'] = query._query_class._class_name
-        self._add_condition(key, '$notInQuery', dumped)
+        dumped["className"] = query._query_class._class_name
+        self._add_condition(key, "$notInQuery", dumped)
         return self
 
     def matches_key_in_query(self, key, query_key, query):
@@ -482,8 +496,8 @@ class Query(object):
         :rtype: Query
         """
         dumped = query.dump()
-        dumped['className'] = query._query_class._class_name
-        self._add_condition(key, '$select', {'key': query_key, 'query': dumped})
+        dumped["className"] = query._query_class._class_name
+        self._add_condition(key, "$select", {"key": query_key, "query": dumped})
         return self
 
     def does_not_match_key_in_query(self, key, query_key, query):
@@ -497,18 +511,18 @@ class Query(object):
         :rtype: Query
         """
         dumped = query.dump()
-        dumped['className'] = query._query_class._class_name
-        self._add_condition(key, '$dontSelect', {'key': query_key, 'query': dumped})
+        dumped["className"] = query._query_class._class_name
+        self._add_condition(key, "$dontSelect", {"key": query_key, "query": dumped})
         return self
 
     def _or_query(self, queries):
-        dumped = [q.dump()['where'] for q in queries]
-        self._where['$or'] = dumped
+        dumped = [q.dump()["where"] for q in queries]
+        self._where["$or"] = dumped
         return self
 
     def _and_query(self, queries):
-        dumped = [q.dump()['where'] for q in queries]
-        self._where['$and'] = dumped
+        dumped = [q.dump()["where"] for q in queries]
+        self._where["$and"] = dumped
 
     def _quote(self, s):
         # return "\\Q" + s.replace("\\E", "\\E\\\\E\\Q") + "\\E"
@@ -522,7 +536,7 @@ class Query(object):
         :param value: 需要包含的字符串
         :rtype: Query
         """
-        self._add_condition(key, '$regex', self._quote(value))
+        self._add_condition(key, "$regex", self._quote(value))
         return self
 
     def startswith(self, key, value):
@@ -533,8 +547,8 @@ class Query(object):
         :param value: 需要查询的字符串
         :rtype: Query
         """
-        value = value if isinstance(value, six.text_type) else value.decode('utf-8')
-        self._add_condition(key, '$regex', '^' + self._quote(value))
+        value = value if isinstance(value, six.text_type) else value.decode("utf-8")
+        self._add_condition(key, "$regex", "^" + self._quote(value))
         return self
 
     def endswith(self, key, value):
@@ -545,8 +559,8 @@ class Query(object):
         :param value: 需要查询的字符串
         :rtype: Query
         """
-        value = value if isinstance(value, six.text_type) else value.decode('utf-8')
-        self._add_condition(key, '$regex', self._quote(value) + '$')
+        value = value if isinstance(value, six.text_type) else value.decode("utf-8")
+        self._add_condition(key, "$regex", self._quote(value) + "$")
         return self
 
     def ascending(self, key):
@@ -576,7 +590,7 @@ class Query(object):
         :param key: 排序字段名
         :rtype: Query
         """
-        self._order = ['-{0}'.format(key)]
+        self._order = ["-{0}".format(key)]
         return self
 
     def add_descending(self, key):
@@ -586,7 +600,7 @@ class Query(object):
         :param key: 排序字段名
         :rtype: Query
         """
-        self._order.append('-{0}'.format(key))
+        self._order.append("-{0}".format(key))
         return self
 
     def near(self, key, point):
@@ -598,9 +612,9 @@ class Query(object):
         :rtype: Query
         """
         if point is None:
-            raise ValueError('near query does not accept None')
+            raise ValueError("near query does not accept None")
 
-        self._add_condition(key, '$nearSphere', point)
+        self._add_condition(key, "$nearSphere", point)
         return self
 
     def within_radians(self, key, point, max_distance, min_distance=None):
@@ -614,9 +628,9 @@ class Query(object):
         :rtype: Query
         """
         self.near(key, point)
-        self._add_condition(key, '$maxDistance', max_distance)
+        self._add_condition(key, "$maxDistance", max_distance)
         if min_distance is not None:
-            self._add_condition(key, '$minDistance', min_distance)
+            self._add_condition(key, "$minDistance", min_distance)
         return self
 
     def within_miles(self, key, point, max_distance, min_distance=None):
@@ -656,7 +670,7 @@ class Query(object):
         :param northeast: 限制范围东北角坐标
         :rtype: Query
         """
-        self._add_condition(key, '$within', {'$box': [southwest, northeast]})
+        self._add_condition(key, "$within", {"$box": [southwest, northeast]})
         return self
 
     def include(self, *keys):
@@ -687,19 +701,19 @@ class Query(object):
 class FriendshipQuery(Query):
     def __init__(self, query_class):
         super(FriendshipQuery, self).__init__(query_class)
-        if query_class in ('_Follower', 'Follower'):
-            self._friendship_tag = 'follower'
-        elif query_class in ('_Followee', 'Followee'):
-            self._friendship_tag = 'followee'
+        if query_class in ("_Follower", "Follower"):
+            self._friendship_tag = "follower"
+        elif query_class in ("_Followee", "Followee"):
+            self._friendship_tag = "followee"
         else:
-            raise TypeError('FriendshipQuery takes only follower or followee')
+            raise TypeError("FriendshipQuery takes only follower or followee")
 
     def _new_object(self):
         return leancloud.User()
 
     def _process_result(self, obj):
         content = obj[self._friendship_tag]
-        if content['__type'] == 'Pointer' and content['className'] == '_User':
-            del content['__type']
-            del content['className']
+        if content["__type"] == "Pointer" and content["className"] == "_User":
+            del content["__type"]
+            del content["className"]
         return content

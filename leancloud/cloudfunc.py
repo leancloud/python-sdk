@@ -16,4 +16,4 @@ from .cloud import verify_captcha
 from .cloud import get_server_time
 
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"

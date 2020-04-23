@@ -18,34 +18,34 @@ import leancloud
 from leancloud import utils
 from leancloud.app_router import AppRouter
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 APP_ID = None
 APP_KEY = None
 MASTER_KEY = None
 HOOK_KEY = None
-if os.getenv('LEANCLOUD_APP_ENV') == 'production':
-    USE_PRODUCTION = '1'
-elif os.getenv('LEANCLOUD_APP_ENV') == 'stage':
-    USE_PRODUCTION = '0'
+if os.getenv("LEANCLOUD_APP_ENV") == "production":
+    USE_PRODUCTION = "1"
+elif os.getenv("LEANCLOUD_APP_ENV") == "stage":
+    USE_PRODUCTION = "0"
 else:  # probably on local machine
-    if os.getenv('LEAN_CLI_HAVE_STAGING') == 'true':
-        USE_PRODUCTION = '0'
+    if os.getenv("LEAN_CLI_HAVE_STAGING") == "true":
+        USE_PRODUCTION = "0"
     else:  # free trial instance only
-        USE_PRODUCTION = '1'
+        USE_PRODUCTION = "1"
 
 USE_HTTPS = True
 # 兼容老版本，如果 USE_MASTER_KEY 为 None ，并且 MASTER_KEY 不为 None，则使用 MASTER_KEY
 # 否则依据 USE_MASTER_KEY 来决定是否使用 MASTER_KEY
 USE_MASTER_KEY = None
-REGION = 'CN'
+REGION = "CN"
 
 app_router = None
 session = requests.Session()
 request_hooks = {}
 
-SERVER_VERSION = '1.1'
+SERVER_VERSION = "1.1"
 
 TIMEOUT_SECONDS = 15
 
@@ -63,7 +63,7 @@ def init(app_id, app_key=None, master_key=None, hook_key=None):
     :type hook_key: None or string_type
     """
     if (not app_key) and (not master_key):
-        raise RuntimeError('app_key or master_key must be specified')
+        raise RuntimeError("app_key or master_key must be specified")
     global APP_ID, APP_KEY, MASTER_KEY, HOOK_KEY
     APP_ID = app_id
     APP_KEY = app_key
@@ -71,66 +71,67 @@ def init(app_id, app_key=None, master_key=None, hook_key=None):
     if hook_key:
         HOOK_KEY = hook_key
     else:
-        HOOK_KEY = os.environ.get('LEANCLOUD_APP_HOOK_KEY')
+        HOOK_KEY = os.environ.get("LEANCLOUD_APP_HOOK_KEY")
 
 
 def need_init(func):
     @functools.wraps(func)
     def new_func(*args, **kwargs):
         if APP_ID is None:
-            raise RuntimeError('LeanCloud SDK must be initialized')
+            raise RuntimeError("LeanCloud SDK must be initialized")
 
         headers = {
-            'Content-Type': 'application/json;charset=utf-8',
-            'X-LC-Id': APP_ID,
-            'X-LC-Prod': USE_PRODUCTION,
-            'User-Agent': 'AVOS Cloud python-{0} SDK'.format(leancloud.__version__),
+            "Content-Type": "application/json;charset=utf-8",
+            "X-LC-Id": APP_ID,
+            "X-LC-Prod": USE_PRODUCTION,
+            "User-Agent": "AVOS Cloud python-{0} SDK".format(leancloud.__version__),
         }
         md5sum = hashlib.md5()
         current_time = six.text_type(int(time.time() * 1000))
         if (USE_MASTER_KEY is None and MASTER_KEY) or USE_MASTER_KEY is True:
-            md5sum.update((current_time + MASTER_KEY).encode('utf-8'))
-            headers['X-LC-Sign'] = md5sum.hexdigest() + ',' + current_time + ',master'
+            md5sum.update((current_time + MASTER_KEY).encode("utf-8"))
+            headers["X-LC-Sign"] = md5sum.hexdigest() + "," + current_time + ",master"
         else:
             # In python 2.x, you can feed this object with arbitrary
             # strings using the update() method, but in python 3.x,
             # you should feed with bytes-like objects.
-            md5sum.update((current_time + APP_KEY).encode('utf-8'))
-            headers['X-LC-Sign'] = md5sum.hexdigest() + ',' + current_time
+            md5sum.update((current_time + APP_KEY).encode("utf-8"))
+            headers["X-LC-Sign"] = md5sum.hexdigest() + "," + current_time
 
         user = leancloud.User.get_current()
         if user:
-            headers['X-LC-Session'] = user._session_token
+            headers["X-LC-Session"] = user._session_token
 
         return func(headers=headers, *args, **kwargs)
+
     return new_func
 
 
 def get_url(part):
     # try to use the base URL from environ
-    url = os.environ.get('LC_API_SERVER') or os.environ.get('LEANCLOUD_API_SERVER')
+    url = os.environ.get("LC_API_SERVER") or os.environ.get("LEANCLOUD_API_SERVER")
     if url:
-        return '{}/{}{}'.format(url, SERVER_VERSION, part)
+        return "{}/{}{}".format(url, SERVER_VERSION, part)
 
     global app_router
     if app_router is None:
         app_router = AppRouter(APP_ID, REGION)
 
-    if part.startswith('/push') or part.startswith('/installations'):
-        host = app_router.get('push')
-    elif part.startswith('/collect'):
-        host = app_router.get('stats')
-    elif part.startswith('/functions') or part.startswith('/call'):
-        host = app_router.get('engine')
+    if part.startswith("/push") or part.startswith("/installations"):
+        host = app_router.get("push")
+    elif part.startswith("/collect"):
+        host = app_router.get("stats")
+    elif part.startswith("/functions") or part.startswith("/call"):
+        host = app_router.get("engine")
     else:
-        host = app_router.get('api')
+        host = app_router.get("api")
     r = {
-        'schema': 'https' if USE_HTTPS else 'http',
-        'version': SERVER_VERSION,
-        'host': host,
-        'part': part,
+        "schema": "https" if USE_HTTPS else "http",
+        "version": SERVER_VERSION,
+        "host": host,
+        "part": part,
     }
-    return '{schema}://{host}/{version}{part}'.format(**r)
+    return "{schema}://{host}/{version}{part}".format(**r)
 
 
 def use_production(flag):
@@ -138,7 +139,7 @@ def use_production(flag):
     默认调用生产环境。
     """
     global USE_PRODUCTION
-    USE_PRODUCTION = '1' if flag else '0'
+    USE_PRODUCTION = "1" if flag else "0"
 
 
 def use_master_key(flag=True):
@@ -152,7 +153,7 @@ def use_master_key(flag=True):
         USE_MASTER_KEY = False
         return
     if not MASTER_KEY:
-        raise RuntimeError('LeanCloud SDK master key not specified')
+        raise RuntimeError("LeanCloud SDK master key not specified")
     USE_MASTER_KEY = True
 
 
@@ -161,37 +162,40 @@ def check_error(func):
     def new_func(*args, **kwargs):
         response = func(*args, **kwargs)
         assert isinstance(response, requests.Response)
-        if response.headers.get('Content-Type') == 'text/html':
-            raise leancloud.LeanCloudError(-1, 'Bad Request')
+        if response.headers.get("Content-Type") == "text/html":
+            raise leancloud.LeanCloudError(-1, "Bad Request")
 
         content = response.json()
 
-        if 'error' in content:
-            raise leancloud.LeanCloudError(content.get('code', 1), content.get('error', 'Unknown Error'))
+        if "error" in content:
+            raise leancloud.LeanCloudError(
+                content.get("code", 1), content.get("error", "Unknown Error")
+            )
 
         return response
+
     return new_func
 
 
 def use_region(region):
-    if region not in ('CN', 'US'):
-        raise ValueError('currently no nodes in the region')
+    if region not in ("CN", "US"):
+        raise ValueError("currently no nodes in the region")
 
     global REGION
     REGION = region
 
 
 def get_server_time():
-    response = check_error(session.get)(get_url('/date'), timeout=TIMEOUT_SECONDS)
-    return utils.decode('iso', response.json())
+    response = check_error(session.get)(get_url("/date"), timeout=TIMEOUT_SECONDS)
+    return utils.decode("iso", response.json())
 
 
 def get_app_info():
     return {
-        'app_id': APP_ID,
-        'app_key': APP_KEY,
-        'master_key': MASTER_KEY,
-        'hook_key': HOOK_KEY,
+        "app_id": APP_ID,
+        "app_key": APP_KEY,
+        "master_key": MASTER_KEY,
+        "hook_key": HOOK_KEY,
     }
 
 
@@ -203,7 +207,7 @@ def get(url, params=None, headers=None):
     else:
         for k, v in six.iteritems(params):
             if isinstance(v, dict):
-                params[k] = json.dumps(v, separators=(',', ':'))
+                params[k] = json.dumps(v, separators=(",", ":"))
     response = session.get(
         get_url(url),
         headers=headers,
@@ -220,7 +224,7 @@ def post(url, params, headers=None):
     response = session.post(
         get_url(url),
         headers=headers,
-        data=json.dumps(params, separators=(',', ':')),
+        data=json.dumps(params, separators=(",", ":")),
         timeout=TIMEOUT_SECONDS,
         hooks=request_hooks,
     )
@@ -233,7 +237,7 @@ def put(url, params, headers=None):
     response = session.put(
         get_url(url),
         headers=headers,
-        data=json.dumps(params, separators=(',', ':')),
+        data=json.dumps(params, separators=(",", ":")),
         timeout=TIMEOUT_SECONDS,
         hooks=request_hooks,
     )
@@ -246,7 +250,7 @@ def delete(url, params=None, headers=None):
     response = session.delete(
         get_url(url),
         headers=headers,
-        data=json.dumps(params, separators=(',', ':')),
+        data=json.dumps(params, separators=(",", ":")),
         timeout=TIMEOUT_SECONDS,
         hooks=request_hooks,
     )
