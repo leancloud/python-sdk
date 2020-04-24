@@ -12,10 +12,6 @@ from __future__ import unicode_literals
 import sys
 import logging
 import warnings
-
-logger = logging.getLogger("iso8601.iso8601")
-logger.setLevel(logging.CRITICAL)
-
 from . import client
 from . import cloud
 from . import cloudfunc
@@ -45,6 +41,9 @@ from .status import Status
 from .sys_message import SysMessage
 from .user import User
 
+
+logger = logging.getLogger("iso8601.iso8601")
+logger.setLevel(logging.CRITICAL)
 
 __author__ = "asaka <lan@leancloud.rocks>"
 __version__ = "2.1.9"
