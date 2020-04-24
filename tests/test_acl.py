@@ -26,7 +26,7 @@ def test_set_access():  # type: () -> None
 
 def test_get_access():  # type: () -> None
     user_acl = acl.ACL()
-    assert user_acl._get_access("read", "520") == False
+    assert user_acl._get_access("read", "520") is False
 
 
 def test_set_and_get_read_access():  # type: () -> None
