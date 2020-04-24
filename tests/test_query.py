@@ -377,6 +377,7 @@ def test_matched():  # type: () -> None
 def test_does_not_match_query():  # type: () -> None
     q = Query(GameScore).greater_than("score", -1)
     result = Query(GameScore).does_not_match_query("playerName", q).find()
+    assert len(result) == 10
 
 
 @with_setup(make_setup_func(), match_key_setup)
