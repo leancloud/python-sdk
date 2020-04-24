@@ -265,8 +265,8 @@ def test_register_cloud_func():  # type: () -> None
 
     try:
 
-        @engine.define
-        def ping():
+        @engine.define("ping")
+        def duplicated_cloud_function_name():
             pass
 
     except RuntimeError:
