@@ -18,9 +18,9 @@ import leancloud
 from . import utils
 from . import leanengine
 from .authorization import AuthorizationMiddleware
-from .cookie_session import CookieSessionMiddleware
+from .cookie_session import CookieSessionMiddleware  # noqa: F401
 from .cors import CORSMiddleware
-from .https_redirect_middleware import HttpsRedirectMiddleware
+from .https_redirect_middleware import HttpsRedirectMiddleware  # noqa: F401
 from .leanengine import LeanEngineApplication
 from .leanengine import LeanEngineError
 from .leanengine import after_delete

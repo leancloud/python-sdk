@@ -21,7 +21,7 @@ from .client import init
 from .client import use_master_key
 from .client import use_production
 from .client import use_region
-from .conversation import Conversation
+from .conversation import Conversation  # noqa: F401
 from .engine import Engine
 from .engine import LeanEngineError
 from .engine.https_redirect_middleware import HttpsRedirectMiddleware
@@ -29,7 +29,7 @@ from .errors import LeanCloudError
 from .errors import LeanCloudWarning
 from .file_ import File
 from .geo_point import GeoPoint
-from .message import Message
+from .message import Message    # noqa: F401
 from .object_ import Object
 from .push import Installation
 from .query import FriendshipQuery
