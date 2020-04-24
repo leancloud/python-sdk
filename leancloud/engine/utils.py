@@ -21,7 +21,7 @@ def sign_by_key(timestamp, key):
 if six.PY2:
 
     def to_native(s):
-        if isinstance(s, unicode):
+        if isinstance(s, unicode):  # noqa: F821
             return s.encode("utf-8")
         return s
 

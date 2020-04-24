@@ -65,7 +65,7 @@ class File(object):
             data.seek(0, os.SEEK_SET)
         except Exception:
             if (six.PY3 and isinstance(data, (memoryview, bytes))) or (
-                six.PY2 and isinstance(data, (buffer, memoryview, str))
+                six.PY2 and isinstance(data, (buffer, memoryview, str))  # noqa: F821
             ):
                 data = io.BytesIO(data)
             elif data.read:

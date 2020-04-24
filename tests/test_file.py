@@ -48,7 +48,7 @@ def test_basic():  # type: () -> None
 
         fn(StringIO.StringIO(b))
         fn(cStringIO.StringIO(b))
-        fn(buffer(b))
+        fn(buffer(b))  # noqa: F821
 
 
 def test_create_with_url():  # type: () -> None
