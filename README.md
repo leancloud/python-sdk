@@ -46,6 +46,11 @@ Run tests:
 nosetests
 ```
 
+## Linter and Formatter
+
+Currently, flake8 (linter) and black (formatter) are used.
+But we are still exploring.
+
 ## Release a New Version
 
 1. Edit `changelog` and `setup.py` (`version`).
