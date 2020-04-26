@@ -13,21 +13,18 @@ from nose.tools import with_setup  # type: ignore
 import leancloud
 from leancloud import push
 
-__author__ = 'asaka'
+__author__ = "asaka"
 
 
 def setup_func():
-    leancloud.init(
-        os.environ['APP_ID'],
-        os.environ['APP_KEY']
-    )
+    leancloud.init(os.environ["APP_ID"], os.environ["APP_KEY"])
 
 
 @with_setup(setup_func)
 def test_basic_push():  # type: () -> None
     installation = leancloud.Installation()
-    installation.set('deviceType', 'ios')
-    installation.set('deviceToken', 'xxx')
+    installation.set("deviceType", "ios")
+    installation.set("deviceToken", "xxx")
     installation.save()
 
     data = {
@@ -41,10 +38,16 @@ def test_basic_push():  # type: () -> None
             "launch-image": "",
         }
     }
-    query = leancloud.Query('_Installation').equal_to('objectId', 'xxx')
+    query = leancloud.Query("_Installation").equal_to("objectId", "xxx")
     now = datetime.now()
     two_hours_later = now + timedelta(hours=2)
-    notification = push.send(data, where=query, push_time=now, expiration_time=two_hours_later, flow_control=0)
+    notification = push.send(
+        data,
+        where=query,
+        push_time=now,
+        expiration_time=two_hours_later,
+        flow_control=0,
+    )
     # flow_control = 0 <=> flow_control = 1000 by rest api design
     time.sleep(5)  # notification write may have delay
     notification.fetch()

@@ -12,7 +12,7 @@ from leancloud import utils
 from leancloud.engine import leanengine
 
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 def run(_cloud_func_name, **params):
@@ -23,15 +23,19 @@ def run(_cloud_func_name, **params):
     :param params: 调用参数
     :return: 调用结果
     """
-    response = leancloud.client.post('/functions/{0}'.format(_cloud_func_name), params=params)
+    response = leancloud.client.post(
+        "/functions/{0}".format(_cloud_func_name), params=params
+    )
     content = response.json()
-    return utils.decode(None, content)['result']
+    return utils.decode(None, content)["result"]
 
 
 def _run_in_local(_cloud_func_name, **params):
     if not leanengine.root_engine:
         return
-    result = leanengine.dispatch_cloud_func(leanengine.root_engine.app.cloud_codes, {}, _cloud_func_name, False, params)
+    result = leanengine.dispatch_cloud_func(
+        leanengine.root_engine.app.cloud_codes, {}, _cloud_func_name, False, params
+    )
     return utils.decode(None, result)
 
 
@@ -54,15 +58,19 @@ def rpc(_cloud_rpc_name, **params):
             encoded_params[key] = utils.encode(value._dump())
         else:
             encoded_params[key] = utils.encode(value)
-    response = leancloud.client.post('/call/{}'.format(_cloud_rpc_name), params=encoded_params)
+    response = leancloud.client.post(
+        "/call/{}".format(_cloud_rpc_name), params=encoded_params
+    )
     content = response.json()
-    return utils.decode(None, content['result'])
+    return utils.decode(None, content["result"])
 
 
 def _rpc_in_local(_cloud_rpc_name, **params):
     if not leanengine.root_engine:
         return
-    result = leanengine.dispatch_cloud_func(leanengine.root_engine.app.cloud_codes, {}, _cloud_rpc_name, True, params)
+    result = leanengine.dispatch_cloud_func(
+        leanengine.root_engine.app.cloud_codes, {}, _cloud_rpc_name, True, params
+    )
     return utils.decode(None, result)
 
 
@@ -70,9 +78,15 @@ rpc.remote = rpc
 rpc.local = _rpc_in_local
 
 
-def request_sms_code(phone_number, idd='+86', sms_type='sms',
-                     validate_token=None, template=None, sign=None,
-                     params=None):
+def request_sms_code(
+    phone_number,
+    idd="+86",
+    sms_type="sms",
+    validate_token=None,
+    template=None,
+    sign=None,
+    params=None,
+):
     """
     请求发送手机验证码
     :param phone_number: 需要验证的手机号码
@@ -83,26 +97,26 @@ def request_sms_code(phone_number, idd='+86', sms_type='sms',
     :return: None
     """
     if not isinstance(phone_number, six.string_types):
-        raise TypeError('phone_number must be a string')
+        raise TypeError("phone_number must be a string")
 
     data = {
-        'mobilePhoneNumber': idd + phone_number,
-        'smsType': sms_type,
+        "mobilePhoneNumber": idd + phone_number,
+        "smsType": sms_type,
     }
 
     if template is not None:
-        data['template'] = template
+        data["template"] = template
 
     if sign is not None:
-        data['sign'] = sign
+        data["sign"] = sign
 
     if validate_token is not None:
-        data['validate_token'] = validate_token
+        data["validate_token"] = validate_token
 
     if params is not None:
         data.update(params)
 
-    leancloud.client.post('/requestSmsCode', params=data)
+    leancloud.client.post("/requestSmsCode", params=data)
 
 
 def verify_sms_code(phone_number, code):
@@ -113,9 +127,9 @@ def verify_sms_code(phone_number, code):
     :return: None
     """
     params = {
-        'mobilePhoneNumber': phone_number,
+        "mobilePhoneNumber": phone_number,
     }
-    leancloud.client.post('/verifySmsCode/{0}'.format(code), params=params)
+    leancloud.client.post("/verifySmsCode/{0}".format(code), params=params)
     return True
 
 
@@ -123,6 +137,7 @@ class Captcha(object):
     """
     表示图形验证码
     """
+
     def __init__(self, token, url):
         self.token = token
         self.url = url
@@ -141,16 +156,16 @@ def request_captcha(size=None, width=None, height=None, ttl=None):
     :return: Captcha
     """
     params = {
-        'size': size,
-        'width': width,
-        'height': height,
-        'ttl': ttl,
+        "size": size,
+        "width": width,
+        "height": height,
+        "ttl": ttl,
     }
     params = {k: v for k, v in params.items() if v is not None}
 
-    response = leancloud.client.get('/requestCaptcha', params)
+    response = leancloud.client.get("/requestCaptcha", params)
     content = response.json()
-    return Captcha(content['captcha_token'], content['captcha_url'])
+    return Captcha(content["captcha_token"], content["captcha_url"])
 
 
 def verify_captcha(code, token):
@@ -161,11 +176,11 @@ def verify_captcha(code, token):
     :return: validate token
     """
     params = {
-        'captcha_token': token,
-        'captcha_code': code,
+        "captcha_token": token,
+        "captcha_code": code,
     }
-    response = leancloud.client.post('/verifyCaptcha', params)
-    return response.json()['validate_token']
+    response = leancloud.client.post("/verifyCaptcha", params)
+    return response.json()["validate_token"]
 
 
 def get_server_time():

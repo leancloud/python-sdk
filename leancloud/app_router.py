@@ -20,26 +20,26 @@ class AppRouter(object):
         self.session = requests.Session()
         self.lock = threading.Lock()
         self.expired_at = 0
-        
+
         prefix = app_id[:8].lower()
-        domain = 'lncld.net'
+        domain = "lncld.net"
 
-        if region == 'US':
-            domain = 'lncldglobal.com'
-        elif region == 'CN':
-            if app_id.endswith('-9Nh9j0Va'):
-                domain = 'lncldapi.com'
-            elif app_id.endswith('-MdYXbMMI'):
-                domain = 'lncldglobal.com'
+        if region == "US":
+            domain = "lncldglobal.com"
+        elif region == "CN":
+            if app_id.endswith("-9Nh9j0Va"):
+                domain = "lncldapi.com"
+            elif app_id.endswith("-MdYXbMMI"):
+                domain = "lncldglobal.com"
             else:
-                domain = 'lncld.net'
+                domain = "lncld.net"
         else:
-            raise RuntimeError('invalid region: {}'.format(region))
+            raise RuntimeError("invalid region: {}".format(region))
 
-        self.hosts['api'] = '{}.api.{}'.format(prefix, domain)
-        self.hosts['engine'] = '{}.engine.{}'.format(prefix, domain)
-        self.hosts['stats'] = '{}.stats.{}'.format(prefix, domain)
-        self.hosts['push'] = '{}.push.{}'.format(prefix, domain)
+        self.hosts["api"] = "{}.api.{}".format(prefix, domain)
+        self.hosts["engine"] = "{}.engine.{}".format(prefix, domain)
+        self.hosts["stats"] = "{}.stats.{}".format(prefix, domain)
+        self.hosts["push"] = "{}.push.{}".format(prefix, domain)
 
     def get(self, type_):
         with self.lock:
@@ -49,17 +49,17 @@ class AppRouter(object):
             return self.hosts[type_]
 
     def refresh(self):
-        url = 'https://app-router.com/2/route?appId={}'.format(self.app_id)
+        url = "https://app-router.com/2/route?appId={}".format(self.app_id)
         try:
             result = self.session.get(url, timeout=5).json()
             with self.lock:
                 self.update(result)
         except Exception as e:
-            print('refresh app router failed:', e, file=sys.stderr)
+            print("refresh app router failed:", e, file=sys.stderr)
 
     def update(self, content):
-        self.hosts['api'] = content['api_server']
-        self.hosts['engine'] = content['engine_server']
-        self.hosts['stats'] = content['stats_server']
-        self.hosts['push'] = content['push_server']
-        self.expired_at = time.time() + content['ttl']
+        self.hosts["api"] = content["api_server"]
+        self.hosts["engine"] = content["engine_server"]
+        self.hosts["stats"] = content["stats_server"]
+        self.hosts["push"] = content["push_server"]
+        self.expired_at = time.time() + content["ttl"]

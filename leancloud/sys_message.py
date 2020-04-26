@@ -10,8 +10,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import arrow
-
-import leancloud
 from leancloud.object_ import Object
 
 
@@ -23,7 +21,7 @@ class SysMessage(Object):
 
         :rtype: leancloud.Conversation
         """
-        return self.get('conv')
+        return self.get("conv")
 
     @property
     def message_id(self):
@@ -32,7 +30,7 @@ class SysMessage(Object):
 
         :rtype: str
         """
-        return self.get('msgId')
+        return self.get("msgId")
 
     @property
     def is_binary(self):
@@ -41,7 +39,7 @@ class SysMessage(Object):
 
         :rtype: bool
         """
-        return self.get('bin')
+        return self.get("bin")
 
     @property
     def from_client(self):
@@ -50,8 +48,8 @@ class SysMessage(Object):
 
         :rtype: str
         """
-        return self.get('from')
-    
+        return self.get("from")
+
     @property
     def from_ip(self):
         """
@@ -59,7 +57,7 @@ class SysMessage(Object):
 
         :rtype: str
         """
-        return self.get('fromIp')
+        return self.get("fromIp")
 
     @property
     def data(self):
@@ -68,7 +66,7 @@ class SysMessage(Object):
 
         :rtype: str
         """
-        return self.get('data')
+        return self.get("data")
 
     @property
     def message_created_at(self):
@@ -77,7 +75,7 @@ class SysMessage(Object):
 
         :rtype: datetime
         """
-        return arrow.get(self.get('timestamp') / 1000).to('local').datetime
+        return arrow.get(self.get("timestamp") / 1000).to("local").datetime
 
     @property
     def ack_at(self):
@@ -86,4 +84,4 @@ class SysMessage(Object):
 
         :rtype: datetime
         """
-        return arrow.get(self.get('ackAt') / 1000).to('local').datetime
+        return arrow.get(self.get("ackAt") / 1000).to("local").datetime

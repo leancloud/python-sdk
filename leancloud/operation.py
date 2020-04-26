@@ -10,7 +10,7 @@ import copy
 import leancloud
 import leancloud.utils
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 class BaseOp(object):
@@ -50,9 +50,7 @@ class Unset(BaseOp):
         pass
 
     def dump(self):
-        return {
-            '__op': 'Delete'
-        }
+        return {"__op": "Delete"}
 
     def _merge(self, previous):
         return self
@@ -71,8 +69,8 @@ class Increment(BaseOp):
 
     def dump(self):
         return {
-            '__op': 'Increment',
-            'amount': self.amount,
+            "__op": "Increment",
+            "amount": self.amount,
         }
 
     def _merge(self, previous):
@@ -84,7 +82,7 @@ class Increment(BaseOp):
             return Set(previous.value + self.amount)
         elif isinstance(previous, Increment):
             return Increment(self.amount + previous.amount)
-        raise TypeError('invalid op')
+        raise TypeError("invalid op")
 
     def _apply(self, old, obj=None, key=None):
         if not old:
@@ -102,8 +100,8 @@ class BitAnd(BaseOp):
 
     def dump(self):
         return {
-            '__op': 'BitAnd',
-            'value': self.value,
+            "__op": "BitAnd",
+            "value": self.value,
         }
 
     def _merge(self, previous):
@@ -113,7 +111,7 @@ class BitAnd(BaseOp):
             return Set(0)
         if isinstance(previous, Set):
             return Set(previous.value & self.value)
-        raise TypeError('invalid op')
+        raise TypeError("invalid op")
 
     def _apply(self, old, obj=None, key=None):
         return old & self.value
@@ -129,8 +127,8 @@ class BitOr(BaseOp):
 
     def dump(self):
         return {
-            '__op': 'BitOr',
-            'value': self.value,
+            "__op": "BitOr",
+            "value": self.value,
         }
 
     def _merge(self, previous):
@@ -140,7 +138,7 @@ class BitOr(BaseOp):
             return Set(self.value)
         if isinstance(previous, Set):
             return Set(previous.value | self.value)
-        raise TypeError('invalid op')
+        raise TypeError("invalid op")
 
     def _apply(self, old, obj=None, key=None):
         return old | self.value
@@ -156,8 +154,8 @@ class BitXor(BaseOp):
 
     def dump(self):
         return {
-            '__op': 'BitXor',
-            'value': self.value,
+            "__op": "BitXor",
+            "value": self.value,
         }
 
     def _merge(self, previous):
@@ -167,7 +165,7 @@ class BitXor(BaseOp):
             return Set(self.value)
         if isinstance(previous, Set):
             return Set(previous.value ^ self.value)
-        raise TypeError('invalid op')
+        raise TypeError("invalid op")
 
     def _apply(self, old, obj=None, key=None):
         return old ^ self.value
@@ -176,7 +174,7 @@ class BitXor(BaseOp):
 class Add(BaseOp):
     def __init__(self, objects):
         if not isinstance(objects, (list, tuple)):
-            raise TypeError('Add op requires list or tuple as parameters')
+            raise TypeError("Add op requires list or tuple as parameters")
         self._objects = objects
 
     @property
@@ -185,8 +183,8 @@ class Add(BaseOp):
 
     def dump(self):
         return {
-            '__op': 'Add',
-            'objects': leancloud.utils.encode(self.objects),
+            "__op": "Add",
+            "objects": leancloud.utils.encode(self.objects),
         }
 
     def _merge(self, previous):
@@ -198,7 +196,7 @@ class Add(BaseOp):
             return Set(self._apply(previous.value))
         elif isinstance(previous, Add):
             return Add(previous.objects + self.objects)
-        raise TypeError('invalid op')
+        raise TypeError("invalid op")
 
     def _apply(self, old, obj=None, key=None):
         if not old:
@@ -209,7 +207,7 @@ class Add(BaseOp):
 class AddUnique(BaseOp):
     def __init__(self, objects):
         if not isinstance(objects, (list, tuple)):
-            raise TypeError('op.AddUnique requires list or tuple as parameters')
+            raise TypeError("op.AddUnique requires list or tuple as parameters")
         self._objects = list(set(objects))
 
     @property
@@ -218,8 +216,8 @@ class AddUnique(BaseOp):
 
     def dump(self):
         return {
-            '__op': 'AddUnique',
-            'objects': leancloud.utils.encode(self.objects),
+            "__op": "AddUnique",
+            "objects": leancloud.utils.encode(self.objects),
         }
 
     def _merge(self, previous):
@@ -231,7 +229,7 @@ class AddUnique(BaseOp):
             return Set(self._apply(previous.value))
         elif isinstance(previous, AddUnique):
             return AddUnique(self._apply(previous.objects))
-        raise TypeError('invalid op')
+        raise TypeError("invalid op")
 
     def _apply(self, old, obj=None, key=None):
         if not old:
@@ -254,7 +252,7 @@ class AddUnique(BaseOp):
 class Remove(BaseOp):
     def __init__(self, objects):
         if not isinstance(objects, (list, tuple)):
-            raise TypeError('op.Remove requires list or tuple as parameters')
+            raise TypeError("op.Remove requires list or tuple as parameters")
         self._objects = list(set(objects))
 
     @property
@@ -262,10 +260,7 @@ class Remove(BaseOp):
         return self._objects
 
     def dump(self):
-        return {
-            '__op': 'Remove',
-            'objects': leancloud.utils.encode(self.objects)
-        }
+        return {"__op": "Remove", "objects": leancloud.utils.encode(self.objects)}
 
     def _merge(self, previous):
         if not previous:
@@ -276,7 +271,7 @@ class Remove(BaseOp):
             return Set(self._apply(previous.value))
         elif isinstance(previous, Remove):
             return Remove(list(set(self.objects + previous.objects)))
-        raise TypeError('invalid op')
+        raise TypeError("invalid op")
 
     def _apply(self, old, obj=None, key=None):
         if not old:
@@ -284,7 +279,11 @@ class Remove(BaseOp):
         new = list(set(old) - set(self.objects))
         for obj in self.objects:
             if isinstance(obj, leancloud.Object) and obj.id:
-                new = [x for x in new if not (isinstance(x, leancloud.Object) and x.id == obj.id)]
+                new = [
+                    x
+                    for x in new
+                    if not (isinstance(x, leancloud.Object) and x.id == obj.id)
+                ]
         return new
 
 
@@ -298,11 +297,11 @@ class Relation(BaseOp):
     def _pointer_to_id(self, obj):
         if isinstance(obj, leancloud.Object):
             if obj.id is None:
-                raise TypeError('cant add an unsaved Object to a relation')
+                raise TypeError("cant add an unsaved Object to a relation")
             if self._target_class_name is None:
                 self._target_class_name = obj._class_name
             if self._target_class_name != obj._class_name:
-                raise TypeError('try to create a Relation with 2 different types')
+                raise TypeError("try to create a Relation with 2 different types")
             return obj.id
         return obj
 
@@ -330,26 +329,24 @@ class Relation(BaseOp):
 
         def id_to_pointer(id_):
             return {
-                '__type': 'Pointer',
-                'className': self._target_class_name,
-                'objectId': id_,
+                "__type": "Pointer",
+                "className": self._target_class_name,
+                "objectId": id_,
             }
+
         if len(self.relations_to_add) > 0:
             adds = {
-                '__op': 'AddRelation',
-                'objects': [id_to_pointer(x) for x in self.relations_to_add]
+                "__op": "AddRelation",
+                "objects": [id_to_pointer(x) for x in self.relations_to_add],
             }
         if len(self.relations_to_remove) > 0:
             removes = {
-                '__op': 'RemoveRelation',
-                'objects': [id_to_pointer(x) for x in self.relations_to_remove]
+                "__op": "RemoveRelation",
+                "objects": [id_to_pointer(x) for x in self.relations_to_remove],
             }
 
         if adds and removes:
-            return {
-                '__op': 'Batch',
-                'ops': [adds, removes]
-            }
+            return {"__op": "Batch", "ops": [adds, removes]}
 
         return adds or removes or {}
 
@@ -357,18 +354,28 @@ class Relation(BaseOp):
         if previous is None:
             return self
         elif isinstance(previous, Unset):
-            raise ValueError('can\'t modify a relation after deleting it.')
+            raise ValueError("can't modify a relation after deleting it.")
         elif isinstance(previous, Relation):
-            if (previous._target_class_name) and (previous._target_class_name != self._target_class_name):
-                raise TypeError('related object must be class of {0}'.format(previous._target_class_name))
-            new_add = (previous.relations_to_add - self.relations_to_remove) | self.relations_to_add
-            new_remove = (previous.relations_to_remove - self.relations_to_add) | self.relations_to_remove
+            if (previous._target_class_name) and (
+                previous._target_class_name != self._target_class_name
+            ):
+                raise TypeError(
+                    "related object must be class of {0}".format(
+                        previous._target_class_name
+                    )
+                )
+            new_add = (
+                previous.relations_to_add - self.relations_to_remove
+            ) | self.relations_to_add
+            new_remove = (
+                previous.relations_to_remove - self.relations_to_add
+            ) | self.relations_to_remove
 
             new_relation = Relation(new_add, new_remove)
             new_relation._target_class_name = self._target_class_name
             return new_relation
         else:
-            raise TypeError('invalid op')
+            raise TypeError("invalid op")
 
     def _apply(self, old, obj=None, key=None):
         if old is None:
@@ -377,9 +384,13 @@ class Relation(BaseOp):
             if self._target_class_name:
                 if old.target_class_name:
                     if old.target_class_name != self._target_class_name:
-                        raise TypeError('related object must be class of {0}'.format(old.target_class_name))
+                        raise TypeError(
+                            "related object must be class of {0}".format(
+                                old.target_class_name
+                            )
+                        )
                     else:
                         old.target_class_name = self._target_class_name
                 return old
             else:
-                raise TypeError('invalid op')
+                raise TypeError("invalid op")

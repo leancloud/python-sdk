@@ -18,9 +18,9 @@ import leancloud
 from . import utils
 from . import leanengine
 from .authorization import AuthorizationMiddleware
-from .cookie_session import CookieSessionMiddleware
+from .cookie_session import CookieSessionMiddleware  # noqa: F401
 from .cors import CORSMiddleware
-from .https_redirect_middleware import HttpsRedirectMiddleware
+from .https_redirect_middleware import HttpsRedirectMiddleware  # noqa: F401
 from .leanengine import LeanEngineApplication
 from .leanengine import LeanEngineError
 from .leanengine import after_delete
@@ -37,19 +37,21 @@ from .leanengine import register_on_login
 from .leanengine import register_on_verified
 from .leanengine import user
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 class Engine(object):
     """
     LeanEngine middleware.
     """
+
     def __init__(self, wsgi_app=None, fetch_user=True):
         """
         LeanEngine middleware constructor.
 
         :param wsgi_app: wsgi callable
-        :param fetch_user: should fetch user's data from server while prNoneocessing session token.
+        :param fetch_user:
+               should fetch user's data from server while prNoneocessing session token.
         :type fetch_user: bool
         """
         self.current = current
@@ -57,24 +59,44 @@ class Engine(object):
             leanengine.root_engine = self
         self.origin_app = wsgi_app
         self.app = LeanEngineApplication(fetch_user=fetch_user)
-        self.cloud_app = context.local_manager.make_middleware(CORSMiddleware(AuthorizationMiddleware(self.app)))
+        self.cloud_app = context.local_manager.make_middleware(
+            CORSMiddleware(AuthorizationMiddleware(self.app))
+        )
 
     def __call__(self, environ, start_response):
         request = Request(environ)
-        environ['leanengine.request'] = request  # cache werkzeug request for other middlewares
+        environ[
+            "leanengine.request"
+        ] = request  # cache werkzeug request for other middlewares
 
-        if request.path in ('/__engine/1/ping', '/__engine/1.1/ping/'):
-            start_response(utils.to_native('200 OK'), [(utils.to_native('Content-Type'), utils.to_native('application/json'))])
+        if request.path in ("/__engine/1/ping", "/__engine/1.1/ping/"):
+            start_response(
+                utils.to_native("200 OK"),
+                [
+                    (
+                        utils.to_native("Content-Type"),
+                        utils.to_native("application/json"),
+                    )
+                ],
+            )
             version = sys.version_info
-            return Response(json.dumps({
-                'version': leancloud.__version__,
-                'runtime': 'cpython-{0}.{1}.{2}'.format(version.major, version.minor, version.micro)
-            }))(environ, start_response)
-        if request.path.startswith('/__engine/'):
+            return Response(
+                json.dumps(
+                    {
+                        "version": leancloud.__version__,
+                        "runtime": "cpython-{0}.{1}.{2}".format(
+                            version.major, version.minor, version.micro
+                        ),
+                    }
+                )
+            )(environ, start_response)
+        if request.path.startswith("/__engine/"):
             return self.cloud_app(environ, start_response)
-        if request.path.startswith('/1/functions') or request.path.startswith('/1.1/functions'):
+        if request.path.startswith("/1/functions") or request.path.startswith(
+            "/1.1/functions"
+        ):
             return self.cloud_app(environ, start_response)
-        if request.path.startswith('/1/call') or request.path.startswith('/1.1/call'):
+        if request.path.startswith("/1/call") or request.path.startswith("/1.1/call"):
             return self.cloud_app(environ, start_response)
         return self.origin_app(environ, start_response)
 
@@ -100,7 +122,10 @@ class Engine(object):
         return register_on_login(self.app.cloud_codes, *args, **kwargs)
 
     def on_bigquery(self, *args, **kwargs):
-        warnings.warn('on_bigquery is deprecated, please use on_insight instead', leancloud.LeanCloudWarning)
+        warnings.warn(
+            "on_bigquery is deprecated, please use on_insight instead",
+            leancloud.LeanCloudWarning,
+        )
         return register_on_bigquery(self.app.cloud_codes, *args, **kwargs)
 
     def before_save(self, *args, **kwargs):
@@ -130,33 +155,34 @@ class Engine(object):
     def start(self):
         from gevent.pywsgi import WSGIServer
 
-        if not hasattr(leancloud, 'APP_ID'):
-            APP_ID = os.environ['LEANCLOUD_APP_ID']
-            APP_KEY = os.environ['LEANCLOUD_APP_KEY']
-            MASTER_KEY = os.environ['LEANCLOUD_APP_MASTER_KEY']
-            HOOK_KEY = os.environ['LEANCLOUD_APP_HOOK_KEY']
-            PORT = int(os.environ.get('LEANCLOUD_APP_PORT'))
-            leancloud.init(APP_ID, app_key=APP_KEY, master_key=MASTER_KEY, hook_key=HOOK_KEY)
+        if not hasattr(leancloud, "APP_ID"):
+            APP_ID = os.environ["LEANCLOUD_APP_ID"]
+            APP_KEY = os.environ["LEANCLOUD_APP_KEY"]
+            MASTER_KEY = os.environ["LEANCLOUD_APP_MASTER_KEY"]
+            HOOK_KEY = os.environ["LEANCLOUD_APP_HOOK_KEY"]
+            PORT = int(os.environ.get("LEANCLOUD_APP_PORT"))
+            leancloud.init(
+                APP_ID, app_key=APP_KEY, master_key=MASTER_KEY, hook_key=HOOK_KEY
+            )
 
         def application(environ, start_response):
-            start_response('200 OK'.encode('utf-8'), [('Content-Type'.encode('utf-8'), 'text/plain'.encode('utf-8'))])
-            return 'This is a LeanEngine application.'
+            start_response(
+                "200 OK".encode("utf-8"),
+                [("Content-Type".encode("utf-8"), "text/plain".encode("utf-8"))],
+            )
+            return "This is a LeanEngine application."
 
         class NopLogger(object):
             def write(self, s):
                 pass
 
         app = self.wrap(application)
-        self.server = WSGIServer(('', PORT), app, log=NopLogger())
-        print('LeanEngine Cloud Functions app is running, port:', PORT)
+        self.server = WSGIServer(("", PORT), app, log=NopLogger())
+        print("LeanEngine Cloud Functions app is running, port:", PORT)
         self.server.serve_forever()
 
     def stop(self):
         self.server.stop()
 
 
-__all__ = [
-    'user',
-    'Engine',
-    'LeanEngineError'
-]
+__all__ = ["user", "Engine", "LeanEngineError"]

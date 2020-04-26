@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import math
 
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 class GeoPoint(object):
@@ -28,16 +28,16 @@ class GeoPoint(object):
     @classmethod
     def _validate(cls, latitude, longitude):
         if latitude < -90.0:
-            raise ValueError('GeoPoint latitude {0} < -90.0'.format(latitude))
+            raise ValueError("GeoPoint latitude {0} < -90.0".format(latitude))
 
         if latitude > 90.0:
-            raise ValueError('GeoPoint latitude {0} > 90.0'.format(latitude))
+            raise ValueError("GeoPoint latitude {0} > 90.0".format(latitude))
 
         if longitude < -180.0:
-            raise ValueError('GeoPoint longitude {0} < -180.0'.format(longitude))
+            raise ValueError("GeoPoint longitude {0} < -180.0".format(longitude))
 
         if longitude > 180.0:
-            raise ValueError('GeoPoint longitude {0} > 180.0'.format(longitude))
+            raise ValueError("GeoPoint longitude {0} > 180.0".format(longitude))
 
     @property
     def latitude(self):
@@ -66,9 +66,9 @@ class GeoPoint(object):
     def dump(self):
         self._validate(self.latitude, self.longitude)
         return {
-            '__type': 'GeoPoint',
-            'latitude': self.latitude,
-            'longitude': self.longitude,
+            "__type": "GeoPoint",
+            "latitude": self.latitude,
+            "longitude": self.longitude,
         }
 
     def radians_to(self, other):
@@ -92,9 +92,12 @@ class GeoPoint(object):
         sin_delta_lat_div2 = math.sin(delta_lat / 2.0)
         sin_delta_long_div2 = math.sin(delta_long / 2.0)
 
-        a = ((sin_delta_lat_div2 * sin_delta_lat_div2) +
-             (math.cos(lat1rad) * math.cos(lat2rad) *
-              sin_delta_long_div2 * sin_delta_long_div2))
+        a = (sin_delta_lat_div2 * sin_delta_lat_div2) + (
+            math.cos(lat1rad)
+            * math.cos(lat2rad)
+            * sin_delta_long_div2
+            * sin_delta_long_div2
+        )
         a = min(1.0, a)
         return 2 * math.asin(math.sqrt(a))
 
@@ -119,7 +122,8 @@ class GeoPoint(object):
         return self.radians_to(other) * 3958.8
 
     def __eq__(self, other):
-        return \
-            isinstance(other, GeoPoint) and \
-            self.latitude == other.latitude and \
-            self.longitude == other.longitude
+        return (
+            isinstance(other, GeoPoint)
+            and self.latitude == other.latitude
+            and self.longitude == other.longitude
+        )

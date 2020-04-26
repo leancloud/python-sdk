@@ -13,7 +13,7 @@ from leancloud.errors import LeanCloudError
 from leancloud import client
 
 
-__author__ = 'asaka <lan@leancloud.rocks>'
+__author__ = "asaka <lan@leancloud.rocks>"
 
 
 class Installation(Object):
@@ -24,21 +24,30 @@ class Notification(Object):
     def fetch(self, *args, **kwargs):
         """同步服务器的 Notification 数据
         """
-        response = client.get('/tables/Notifications/{0}'.format(self.id))
+        response = client.get("/tables/Notifications/{0}".format(self.id))
         self._update_data(response.json())
 
     def save(self, *args, **kwargs):
-        raise LeanCloudError(code=1, error='Notification does not support modify')
+        raise LeanCloudError(code=1, error="Notification does not support modify")
 
 
 def _encode_time(time):
     tzinfo = time.tzinfo
     if tzinfo is None:
         tzinfo = tz.tzlocal()
-    return arrow.get(time, tzinfo).to('utc').format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z'
+    return arrow.get(time, tzinfo).to("utc").format("YYYY-MM-DDTHH:mm:ss.SSS") + "Z"
 
 
-def send(data, channels=None, push_time=None, expiration_time=None, expiration_interval=None, where=None, cql=None, flow_control=None):
+def send(
+    data,
+    channels=None,
+    push_time=None,
+    expiration_time=None,
+    expiration_interval=None,
+    where=None,
+    cql=None,
+    flow_control=None,
+):
     """
     发送推送消息。返回结果为此条推送对应的 _Notification 表中的对象，但是如果需要使用其中的数据，需要调用 fetch() 方法将数据同步至本地。
 
@@ -60,33 +69,34 @@ def send(data, channels=None, push_time=None, expiration_time=None, expiration_i
     :type: flow_control: int
     """
     if expiration_interval and expiration_time:
-        raise TypeError('Both expiration_time and expiration_interval can\'t be set')
+        raise TypeError("Both expiration_time and expiration_interval can't be set")
 
     params = {
-        'data': data,
+        "data": data,
     }
 
-    if client.USE_PRODUCTION == '0':
-        params['prod'] = 'dev'
+    if client.USE_PRODUCTION == "0":
+        params["prod"] = "dev"
 
     if channels:
-        params['channels'] = channels
+        params["channels"] = channels
     if push_time:
-        params['push_time'] = _encode_time(push_time)
+        params["push_time"] = _encode_time(push_time)
     if expiration_time:
-        params['expiration_time'] = _encode_time(expiration_time)
+        params["expiration_time"] = _encode_time(expiration_time)
     if expiration_interval:
-        params['expiration_interval'] = expiration_interval
+        params["expiration_interval"] = expiration_interval
     if where:
-        params['where'] = where.dump().get('where', {})
+        params["where"] = where.dump().get("where", {})
     if cql:
-        params['cql'] = cql
+        params["cql"] = cql
     # Do not change this to `if flow_control`, because 0 is falsy in Python,
-    # but `flow_control = 0` will enable smooth push, and it is in fact equivlent to `flow_control = 1000`.
+    # but `flow_control = 0` will enable smooth push,
+    # and it is in fact equivalent to `flow_control = 1000`.
     if flow_control is not None:
-        params['flow_control'] = flow_control
+        params["flow_control"] = flow_control
 
-    result = client.post('/push', params=params).json()
+    result = client.post("/push", params=params).json()
 
-    notification = Notification.create_without_data(result['objectId'])
+    notification = Notification.create_without_data(result["objectId"])
     return notification
