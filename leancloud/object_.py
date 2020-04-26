@@ -24,12 +24,12 @@ object_class_map = {}
 
 
 class ObjectMeta(type):
-    def __new__(cls, name, bases, attrs):
+    def __new__(mcs, name, bases, attrs):
         cached_class = object_class_map.get(name)
         if cached_class:
             return cached_class
 
-        super_new = super(ObjectMeta, cls).__new__
+        super_new = super(ObjectMeta, mcs).__new__
 
         # let user define their class_name at subclass-creation stage
         class_name = attrs.pop("class_name", None)
@@ -51,7 +51,7 @@ class ObjectMeta(type):
         else:
             attrs["_class_name"] = name
 
-        object_class = super_new(cls, name, bases, attrs)
+        object_class = super_new(mcs, name, bases, attrs)
         object_class_map[name] = object_class
         return object_class
 
@@ -168,7 +168,7 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         response = client.post("/batch", params={"requests": dumped_objs}).json()
 
         errors = []
-        for idx, obj in enumerate(objs):
+        for idx in range(len(objs)):
             content = response[idx]
             error = content.get("error")
             if error:

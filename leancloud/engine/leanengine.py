@@ -185,7 +185,7 @@ class LeanEngineApplication(object):
             return Response(json.dumps(result), mimetype="application/json")
         except LeanEngineError as e:
             return Response(
-                json.dumps({"code": e.code, "error": e.message}),
+                json.dumps({"code": e.code, "error": e.message}),  # noqa: B306
                 status=e.code if e.code else 400,
                 mimetype="application/json",
             )

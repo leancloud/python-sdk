@@ -100,8 +100,8 @@ class File(object):
         self._source = data
 
     @utils.classproperty
-    def query(cls):
-        return leancloud.Query(cls)
+    def query(self):
+        return leancloud.Query(self)
 
     @classmethod
     def create_with_url(cls, name, url, meta_data=None, mime_type=None):
