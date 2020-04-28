@@ -9,7 +9,7 @@ import os
 from nose.tools import assert_equal
 
 import leancloud
-from leancloud import Conversation
+from leancloud import Conversation, LeanCloudError
 
 
 def setup():
@@ -77,4 +77,8 @@ def test_send():
 def test_broadcast():
     conv = Conversation("test", is_system=True)
     conv.save()
-    conv.broadcast("system", {"b": 2})
+    try:
+        conv.broadcast("system", {"b": 2})
+    except LeanCloudError as e:
+        if e.code == 1 and e.error == "The daily quota of system messages is exceeded.":
+            pass
