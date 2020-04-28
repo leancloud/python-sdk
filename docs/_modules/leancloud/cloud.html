@@ -1,0 +1,377 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>leancloud.cloud &mdash; LeanCloud-Python-SDK 1.0.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> LeanCloud-Python-SDK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">LeanCloud-Python-SDK</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+        
+      <li>leancloud.cloud</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>leancloud.cloud 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">six</span>
+
+<span class="kn">import</span> <span class="nn">leancloud</span>
+<span class="kn">from</span> <span class="nn">leancloud</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">leancloud.engine</span> <span class="k">import</span> <span class="n">leanengine</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;asaka &lt;lan@leancloud.rocks&gt;&quot;</span>
+
+
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../index.html#leancloud.cloud.run">[文档]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">_cloud_func_name</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    调用 LeanEngine 上的远程代码</span>
+<span class="sd">    :param name: 需要调用的远程 Cloud Code 的名称</span>
+<span class="sd">    :type name: string_types</span>
+<span class="sd">    :param params: 调用参数</span>
+<span class="sd">    :return: 调用结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">leancloud</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;/functions/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_cloud_func_name</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span>
+    <span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">content</span><span class="p">)[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span></div>
+
+
+<span class="k">def</span> <span class="nf">_run_in_local</span><span class="p">(</span><span class="n">_cloud_func_name</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">leanengine</span><span class="o">.</span><span class="n">root_engine</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">leanengine</span><span class="o">.</span><span class="n">dispatch_cloud_func</span><span class="p">(</span>
+        <span class="n">leanengine</span><span class="o">.</span><span class="n">root_engine</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">cloud_codes</span><span class="p">,</span> <span class="p">{},</span> <span class="n">_cloud_func_name</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">params</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+
+<span class="n">run</span><span class="o">.</span><span class="n">remote</span> <span class="o">=</span> <span class="n">run</span>
+<span class="n">run</span><span class="o">.</span><span class="n">local</span> <span class="o">=</span> <span class="n">_run_in_local</span>
+
+
+<div class="viewcode-block" id="rpc"><a class="viewcode-back" href="../../index.html#leancloud.cloud.rpc">[文档]</a><span class="k">def</span> <span class="nf">rpc</span><span class="p">(</span><span class="n">_cloud_rpc_name</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    调用 LeanEngine 上的远程代码</span>
+<span class="sd">    与 cloud.run 类似，但是允许传入 leancloud.Object 作为参数，也允许传入 leancloud.Object 作为结果</span>
+<span class="sd">    :param name: 需要调用的远程 Cloud Code 的名称</span>
+<span class="sd">    :type name: basestring</span>
+<span class="sd">    :param params: 调用参数</span>
+<span class="sd">    :return: 调用结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">encoded_params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">leancloud</span><span class="o">.</span><span class="n">Object</span><span class="p">):</span>
+            <span class="n">encoded_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">_dump</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">encoded_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">leancloud</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">&quot;/call/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_cloud_rpc_name</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">encoded_params</span>
+    <span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">])</span></div>
+
+
+<span class="k">def</span> <span class="nf">_rpc_in_local</span><span class="p">(</span><span class="n">_cloud_rpc_name</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">leanengine</span><span class="o">.</span><span class="n">root_engine</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">leanengine</span><span class="o">.</span><span class="n">dispatch_cloud_func</span><span class="p">(</span>
+        <span class="n">leanengine</span><span class="o">.</span><span class="n">root_engine</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">cloud_codes</span><span class="p">,</span> <span class="p">{},</span> <span class="n">_cloud_rpc_name</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">params</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+
+<span class="n">rpc</span><span class="o">.</span><span class="n">remote</span> <span class="o">=</span> <span class="n">rpc</span>
+<span class="n">rpc</span><span class="o">.</span><span class="n">local</span> <span class="o">=</span> <span class="n">_rpc_in_local</span>
+
+
+<div class="viewcode-block" id="request_sms_code"><a class="viewcode-back" href="../../index.html#leancloud.cloud.request_sms_code">[文档]</a><span class="k">def</span> <span class="nf">request_sms_code</span><span class="p">(</span>
+    <span class="n">phone_number</span><span class="p">,</span>
+    <span class="n">idd</span><span class="o">=</span><span class="s2">&quot;+86&quot;</span><span class="p">,</span>
+    <span class="n">sms_type</span><span class="o">=</span><span class="s2">&quot;sms&quot;</span><span class="p">,</span>
+    <span class="n">validate_token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">template</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">sign</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    请求发送手机验证码</span>
+<span class="sd">    :param phone_number: 需要验证的手机号码</span>
+<span class="sd">    :param idd: 号码的所在地国家代码，默认为中国（+86）</span>
+<span class="sd">    :param sms_type: 验证码发送方式，&#39;voice&#39; 为语音，&#39;sms&#39; 为短信</span>
+<span class="sd">    :param template: 模版名称</span>
+<span class="sd">    :param sign: 短信签名名称</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phone_number</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;phone_number must be a string&quot;</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;mobilePhoneNumber&quot;</span><span class="p">:</span> <span class="n">idd</span> <span class="o">+</span> <span class="n">phone_number</span><span class="p">,</span>
+        <span class="s2">&quot;smsType&quot;</span><span class="p">:</span> <span class="n">sms_type</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">template</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
+
+    <span class="k">if</span> <span class="n">sign</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;sign&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sign</span>
+
+    <span class="k">if</span> <span class="n">validate_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;validate_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate_token</span>
+
+    <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="n">leancloud</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/requestSmsCode&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="verify_sms_code"><a class="viewcode-back" href="../../index.html#leancloud.cloud.verify_sms_code">[文档]</a><span class="k">def</span> <span class="nf">verify_sms_code</span><span class="p">(</span><span class="n">phone_number</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    获取到手机验证码之后，验证验证码是否正确。如果验证失败，抛出异常。</span>
+<span class="sd">    :param phone_number: 需要验证的手机号码</span>
+<span class="sd">    :param code: 接受到的验证码</span>
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;mobilePhoneNumber&quot;</span><span class="p">:</span> <span class="n">phone_number</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">leancloud</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/verifySmsCode/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="Captcha"><a class="viewcode-back" href="../../index.html#leancloud.cloud.Captcha">[文档]</a><span class="k">class</span> <span class="nc">Captcha</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    表示图形验证码</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+
+<div class="viewcode-block" id="Captcha.verify"><a class="viewcode-back" href="../../index.html#leancloud.cloud.Captcha.verify">[文档]</a>    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        验证用户输入与图形验证码是否匹配</span>
+<span class="sd">        :params code: 用户填写的验证码</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">verify_captcha</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="request_captcha"><a class="viewcode-back" href="../../index.html#leancloud.cloud.request_captcha">[文档]</a><span class="k">def</span> <span class="nf">request_captcha</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    请求生成新的图形验证码</span>
+<span class="sd">    :return: Captcha</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">size</span><span class="p">,</span>
+        <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">width</span><span class="p">,</span>
+        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">height</span><span class="p">,</span>
+        <span class="s2">&quot;ttl&quot;</span><span class="p">:</span> <span class="n">ttl</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">leancloud</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/requestCaptcha&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Captcha</span><span class="p">(</span><span class="n">content</span><span class="p">[</span><span class="s2">&quot;captcha_token&quot;</span><span class="p">],</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;captcha_url&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="verify_captcha"><a class="viewcode-back" href="../../index.html#leancloud.cloud.verify_captcha">[文档]</a><span class="k">def</span> <span class="nf">verify_captcha</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    验证用户输入与图形验证码是否匹配</span>
+<span class="sd">    :params code: 用户填写的验证码</span>
+<span class="sd">    :params token: 图形验证码对应的 token</span>
+<span class="sd">    :return: validate token</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;captcha_token&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span>
+        <span class="s2">&quot;captcha_code&quot;</span><span class="p">:</span> <span class="n">code</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">leancloud</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/verifyCaptcha&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;validate_token&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="get_server_time"><a class="viewcode-back" href="../../index.html#leancloud.cloud.get_server_time">[文档]</a><span class="k">def</span> <span class="nf">get_server_time</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">leancloud</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get_server_time</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, asaka
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

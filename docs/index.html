@@ -1,0 +1,2952 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>LeanCloud-Python-SDK API 文档 &mdash; LeanCloud-Python-SDK 1.0.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/translations.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> LeanCloud-Python-SDK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">LeanCloud-Python-SDK API 文档</a><ul>
+<li><a class="reference internal" href="#leancloud">leancloud</a><ul>
+<li><a class="reference internal" href="#object">Object</a></li>
+<li><a class="reference internal" href="#user">User</a></li>
+<li><a class="reference internal" href="#file">File</a></li>
+<li><a class="reference internal" href="#query">Query</a></li>
+<li><a class="reference internal" href="#relation">Relation</a></li>
+<li><a class="reference internal" href="#role">Role</a></li>
+<li><a class="reference internal" href="#acl">ACL</a></li>
+<li><a class="reference internal" href="#geopoint">GeoPoint</a></li>
+<li><a class="reference internal" href="#engine">Engine</a></li>
+<li><a class="reference internal" href="#httpsredirectmiddleware">HttpsRedirectMiddleware</a></li>
+<li><a class="reference internal" href="#cookiesessionmiddleware">CookieSessionMiddleware</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-leancloud.push">leancloud.push</a></li>
+<li><a class="reference internal" href="#module-leancloud.cloud">leancloud.cloud</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">LeanCloud-Python-SDK</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>LeanCloud-Python-SDK API 文档</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="leancloud-python-sdk-api">
+<h1>LeanCloud-Python-SDK API 文档<a class="headerlink" href="#leancloud-python-sdk-api" title="永久链接至标题">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="leancloud">
+<h2>leancloud<a class="headerlink" href="#leancloud" title="永久链接至标题">¶</a></h2>
+<dl class="py function">
+<dt id="leancloud.init">
+<code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app_id</span></em>, <em class="sig-param"><span class="n">app_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">master_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hook_key</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/client.html#init"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.init" title="永久链接至目标">¶</a></dt>
+<dd><p>初始化 LeanCloud 的 AppId / AppKey / MasterKey</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_id</strong> (<em>string_types</em>) – 应用的 Application ID</p></li>
+<li><p><strong>app_key</strong> (<em>None</em><em> or </em><em>string_types</em>) – 应用的 Application Key</p></li>
+<li><p><strong>master_key</strong> (<em>None</em><em> or </em><em>string_types</em>) – 应用的 Master Key</p></li>
+<li><p><strong>hook_key</strong> (<em>None</em><em> or </em><em>string_type</em>) – application’s hook key</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.use_master_key">
+<code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">use_master_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flag</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/client.html#use_master_key"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.use_master_key" title="永久链接至目标">¶</a></dt>
+<dd><p>是否使用 master key 发送请求。
+如果不调用此函数，会根据 leancloud.init 的参数来决定是否使用 master key。</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.use_production">
+<code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">use_production</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flag</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/client.html#use_production"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.use_production" title="永久链接至目标">¶</a></dt>
+<dd><p>调用生产环境 / 开发环境的 cloud func / cloud hook
+默认调用生产环境。</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.use_region">
+<code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">use_region</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">region</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/client.html#use_region"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.use_region" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="leancloud.FriendshipQuery">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">FriendshipQuery</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query_class</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#FriendshipQuery"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.FriendshipQuery" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">leancloud.query.Query</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="leancloud.LeanCloudError">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">LeanCloudError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em>, <em class="sig-param"><span class="n">error</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/errors.html#LeanCloudError"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.LeanCloudError" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="leancloud.LeanCloudWarning">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">LeanCloudWarning</code><a class="reference internal" href="_modules/leancloud/errors.html#LeanCloudWarning"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.LeanCloudWarning" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">UserWarning</span></code></p>
+</dd></dl>
+
+<div class="section" id="object">
+<h3>Object<a class="headerlink" href="#object" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.Object">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">Object</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">attrs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="leancloud.Object.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.add"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.add" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段对应的数组末尾添加指定对象。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>item</strong> – 要添加的对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.add_unique">
+<code class="sig-name descname">add_unique</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.add_unique"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.add_unique" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段对应的数组末尾添加指定对象，如果此对象并没有包含在字段中。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>item</strong> – 要添加的对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.as_class">
+<em class="property">static </em><code class="sig-name descname">as_class</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.as_class"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.as_class" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.bit_and">
+<code class="sig-name descname">bit_and</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.bit_and"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.bit_and" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.bit_or">
+<code class="sig-name descname">bit_or</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.bit_or"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.bit_or" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.bit_xor">
+<code class="sig-name descname">bit_xor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.bit_xor"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.bit_xor" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.clear"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.clear" title="永久链接至目标">¶</a></dt>
+<dd><p>将当前对象所有字段全部移除。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.create">
+<em class="property">classmethod </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">class_name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">attributes</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.create"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.create" title="永久链接至目标">¶</a></dt>
+<dd><p>根据参数创建一个 leancloud.Object 的子类的实例化对象</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_name</strong> (<em>string_types</em>) – 子类名称</p></li>
+<li><p><strong>attributes</strong> – 对象属性</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>派生子类的实例</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Object" title="leancloud.Object">Object</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.create_without_data">
+<em class="property">classmethod </em><code class="sig-name descname">create_without_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id_</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.create_without_data"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.create_without_data" title="永久链接至目标">¶</a></dt>
+<dd><p>根据 objectId 创建一个 leancloud.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>string_types</em>) – 对象的 objectId</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>没有数据的对象</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Object" title="leancloud.Object">Object</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.destroy"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>从服务器上删除这个对象</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.destroy_all">
+<em class="property">classmethod </em><code class="sig-name descname">destroy_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">objs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.destroy_all"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.destroy_all" title="永久链接至目标">¶</a></dt>
+<dd><p>在一个请求中 destroy 多个 leancloud.Object 对象实例。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>objs</strong> (<em>list</em>) – 需要 destroy 的对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.disable_after_hook">
+<code class="sig-name descname">disable_after_hook</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.disable_after_hook"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.disable_after_hook" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.disable_before_hook">
+<code class="sig-name descname">disable_before_hook</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.disable_before_hook"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.disable_before_hook" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.dump"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.dump" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.extend">
+<em class="property">classmethod </em><code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.extend"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.extend" title="永久链接至目标">¶</a></dt>
+<dd><p>派生一个新的 leancloud.Object 子类</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>string_types</em>) – 子类名称</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>派生的子类</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>ObjectMeta</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.fetch">
+<code class="sig-name descname">fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">select</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.fetch"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.fetch" title="永久链接至目标">¶</a></dt>
+<dd><p>从服务器获取当前对象所有的值，如果与本地值不同，将会覆盖本地的值。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">deafult</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.get"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.get" title="永久链接至目标">¶</a></dt>
+<dd><p>获取对象字段的值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> (<em>string_types</em>) – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>字段值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.get_acl">
+<code class="sig-name descname">get_acl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.get_acl"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.get_acl" title="永久链接至目标">¶</a></dt>
+<dd><p>返回当前对象的 ACL。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象的 ACL</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.ACL" title="leancloud.ACL">leancloud.ACL</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.has">
+<code class="sig-name descname">has</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.has"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.has" title="永久链接至目标">¶</a></dt>
+<dd><p>判断此字段是否有值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当有值时返回 True， 否则返回 False</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.ignore_hook">
+<code class="sig-name descname">ignore_hook</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hook_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.ignore_hook"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.ignore_hook" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.increment">
+<code class="sig-name descname">increment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">amount</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.increment"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.increment" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段上自增对应的数值，如果数值没有指定，默认为一。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>amount</strong> – 自增量</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.is_dirty">
+<code class="sig-name descname">is_dirty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.is_dirty"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.is_dirty" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.is_existed">
+<code class="sig-name descname">is_existed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.is_existed"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.is_existed" title="永久链接至目标">¶</a></dt>
+<dd><p>判断当前对象是否在服务器上已经存在。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.is_new">
+<code class="sig-name descname">is_new</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.is_new"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.is_new" title="永久链接至目标">¶</a></dt>
+<dd><p>判断当前对象是否已经保存至服务器。</p>
+<p>该方法为 SDK 内部使用（save 调用此方法 dispatch 保存操作为 REST API 的 POST 和 PUT 请求）。
+查询对象是否在服务器上存在请使用 is_existed 方法。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.relation">
+<code class="sig-name descname">relation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.relation"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.relation" title="永久链接至目标">¶</a></dt>
+<dd><p>返回对象上相应字段的 Relation</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> (<em>string_types</em>) – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>Relation</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Relation" title="leancloud.Relation">leancloud.Relation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.remove"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.remove" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段对应的数组中，将指定对象全部移除。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>item</strong> – 要移除的对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">where</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fetch_when_save</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.save"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.save" title="永久链接至目标">¶</a></dt>
+<dd><p>将对象数据保存至服务器</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.save_all">
+<em class="property">classmethod </em><code class="sig-name descname">save_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">objs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.save_all"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.save_all" title="永久链接至目标">¶</a></dt>
+<dd><p>在一个请求中 save 多个 leancloud.Object 对象实例。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>objs</strong> (<em>list</em>) – 需要 save 的对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.set">
+<code class="sig-name descname">set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key_or_attrs</span></em>, <em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">unset</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.set"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.set" title="永久链接至目标">¶</a></dt>
+<dd><p>在当前对象此字段上赋值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key_or_attrs</strong> (<em>string_types</em><em> or </em><em>dict</em>) – 字段名，或者一个包含 字段名 / 值的 dict</p></li>
+<li><p><strong>value</strong> – 字段值</p></li>
+<li><p><strong>unset</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象，供链式调用</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.set_acl">
+<code class="sig-name descname">set_acl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">acl</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.set_acl"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.set_acl" title="永久链接至目标">¶</a></dt>
+<dd><p>为当前对象设置 ACL</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.unset">
+<code class="sig-name descname">unset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.unset"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.unset" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象上移除此字段。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Object.validate">
+<code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attrs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/object_.html#Object.validate"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Object.validate" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="user">
+<h3>User<a class="headerlink" href="#user" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.User">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">attrs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">leancloud.object_.Object</span></code></p>
+<dl class="py method">
+<dt id="leancloud.User.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.add" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段对应的数组末尾添加指定对象。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>item</strong> – 要添加的对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.add_unique">
+<code class="sig-name descname">add_unique</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.add_unique" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段对应的数组末尾添加指定对象，如果此对象并没有包含在字段中。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>item</strong> – 要添加的对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.as_class">
+<em class="property">static </em><code class="sig-name descname">as_class</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.as_class" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.become">
+<em class="property">classmethod </em><code class="sig-name descname">become</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">session_token</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.become"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.become" title="永久链接至目标">¶</a></dt>
+<dd><p>通过 session token 获取用户对象</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>session_token</strong> – 用户的 session token</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>leancloud.User</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.bit_and">
+<code class="sig-name descname">bit_and</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.bit_and" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.bit_or">
+<code class="sig-name descname">bit_or</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.bit_or" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.bit_xor">
+<code class="sig-name descname">bit_xor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.bit_xor" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.clear" title="永久链接至目标">¶</a></dt>
+<dd><p>将当前对象所有字段全部移除。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.create">
+<em class="property">classmethod </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">class_name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">attributes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.create" title="永久链接至目标">¶</a></dt>
+<dd><p>根据参数创建一个 leancloud.Object 的子类的实例化对象</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_name</strong> (<em>string_types</em>) – 子类名称</p></li>
+<li><p><strong>attributes</strong> – 对象属性</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>派生子类的实例</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Object" title="leancloud.Object">Object</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.create_followee_query">
+<em class="property">classmethod </em><code class="sig-name descname">create_followee_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.create_followee_query"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.create_followee_query" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.create_follower_query">
+<em class="property">classmethod </em><code class="sig-name descname">create_follower_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.create_follower_query"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.create_follower_query" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.create_without_data">
+<em class="property">classmethod </em><code class="sig-name descname">create_without_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.create_without_data" title="永久链接至目标">¶</a></dt>
+<dd><p>根据 objectId 创建一个 leancloud.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>string_types</em>) – 对象的 objectId</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>没有数据的对象</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Object" title="leancloud.Object">Object</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>从服务器上删除这个对象</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.destroy_all">
+<em class="property">classmethod </em><code class="sig-name descname">destroy_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">objs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.destroy_all" title="永久链接至目标">¶</a></dt>
+<dd><p>在一个请求中 destroy 多个 leancloud.Object 对象实例。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>objs</strong> (<em>list</em>) – 需要 destroy 的对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.disable_after_hook">
+<code class="sig-name descname">disable_after_hook</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.disable_after_hook" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.disable_before_hook">
+<code class="sig-name descname">disable_before_hook</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.disable_before_hook" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.dump" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.extend">
+<em class="property">classmethod </em><code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.extend" title="永久链接至目标">¶</a></dt>
+<dd><p>派生一个新的 leancloud.Object 子类</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>string_types</em>) – 子类名称</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>派生的子类</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>ObjectMeta</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.fetch">
+<code class="sig-name descname">fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">select</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.fetch" title="永久链接至目标">¶</a></dt>
+<dd><p>从服务器获取当前对象所有的值，如果与本地值不同，将会覆盖本地的值。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.follow">
+<code class="sig-name descname">follow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.follow"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.follow" title="永久链接至目标">¶</a></dt>
+<dd><p>关注一个用户。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>target_id</strong> – 需要关注的用户的 id</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">deafult</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.get" title="永久链接至目标">¶</a></dt>
+<dd><p>获取对象字段的值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> (<em>string_types</em>) – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>字段值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.get_acl">
+<code class="sig-name descname">get_acl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.get_acl" title="永久链接至目标">¶</a></dt>
+<dd><p>返回当前对象的 ACL。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象的 ACL</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.ACL" title="leancloud.ACL">leancloud.ACL</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.get_current">
+<em class="property">classmethod </em><code class="sig-name descname">get_current</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Optional<span class="p">[</span>leancloud.user.User<span class="p">]</span><a class="reference internal" href="_modules/leancloud/user.html#User.get_current"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.get_current" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.get_email">
+<code class="sig-name descname">get_email</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.get_email"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.get_email" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.get_mobile_phone_number">
+<code class="sig-name descname">get_mobile_phone_number</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.get_mobile_phone_number"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.get_mobile_phone_number" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.get_roles">
+<code class="sig-name descname">get_roles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.get_roles"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.get_roles" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.get_session_token">
+<code class="sig-name descname">get_session_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.get_session_token"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.get_session_token" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.get_username">
+<code class="sig-name descname">get_username</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.get_username"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.get_username" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.has">
+<code class="sig-name descname">has</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.has" title="永久链接至目标">¶</a></dt>
+<dd><p>判断此字段是否有值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当有值时返回 True， 否则返回 False</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.ignore_hook">
+<code class="sig-name descname">ignore_hook</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hook_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.ignore_hook" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.increment">
+<code class="sig-name descname">increment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">amount</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.increment" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段上自增对应的数值，如果数值没有指定，默认为一。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>amount</strong> – 自增量</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.is_authenticated">
+<code class="sig-name descname">is_authenticated</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.is_authenticated"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.is_authenticated" title="永久链接至目标">¶</a></dt>
+<dd><p>判断当前用户对象是否已登录。
+会先检查此用户对象上是否有 <cite>session_token</cite>，如果有的话，会继续请求服务器验证 <cite>session_token</cite> 是否合法。</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.is_current">
+<em class="property">property </em><code class="sig-name descname">is_current</code><a class="headerlink" href="#leancloud.User.is_current" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.is_dirty">
+<code class="sig-name descname">is_dirty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.is_dirty" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.is_existed">
+<code class="sig-name descname">is_existed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.is_existed" title="永久链接至目标">¶</a></dt>
+<dd><p>判断当前对象是否在服务器上已经存在。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.is_linked">
+<code class="sig-name descname">is_linked</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">provider</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.is_linked"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.is_linked" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.is_new">
+<code class="sig-name descname">is_new</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.is_new" title="永久链接至目标">¶</a></dt>
+<dd><p>判断当前对象是否已经保存至服务器。</p>
+<p>该方法为 SDK 内部使用（save 调用此方法 dispatch 保存操作为 REST API 的 POST 和 PUT 请求）。
+查询对象是否在服务器上存在请使用 is_existed 方法。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.link_with">
+<code class="sig-name descname">link_with</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">provider</span></em>, <em class="sig-param"><span class="n">third_party_auth_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.link_with"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.link_with" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.login">
+<code class="sig-name descname">login</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">password</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">email</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.login"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.login" title="永久链接至目标">¶</a></dt>
+<dd><p>登录用户。成功登录后，服务器会返回用户的 sessionToken 。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> – 用户名</p></li>
+<li><p><strong>email</strong> – 邮箱地址（username 和 email 这两个参数必须传入一个且仅能传入一个）</p></li>
+<li><p><strong>password</strong> – 用户密码</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.login_with">
+<em class="property">classmethod </em><code class="sig-name descname">login_with</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">platform</span></em>, <em class="sig-param"><span class="n">third_party_auth_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.login_with"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.login_with" title="永久链接至目标">¶</a></dt>
+<dd><p>把第三方平台号绑定到 User 上</p>
+<p>：param platform: 第三方平台名称 base string</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.login_with_mobile_phone">
+<em class="property">classmethod </em><code class="sig-name descname">login_with_mobile_phone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phone_number</span></em>, <em class="sig-param"><span class="n">password</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.login_with_mobile_phone"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.login_with_mobile_phone" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.logout">
+<code class="sig-name descname">logout</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.logout"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.logout" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.refresh_session_token">
+<code class="sig-name descname">refresh_session_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.refresh_session_token"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.refresh_session_token" title="永久链接至目标">¶</a></dt>
+<dd><p>重置当前用户 <cite>session token</cite>。
+会使其他客户端已登录用户登录失效。</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.relation">
+<code class="sig-name descname">relation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.relation" title="永久链接至目标">¶</a></dt>
+<dd><p>返回对象上相应字段的 Relation</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> (<em>string_types</em>) – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>Relation</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Relation" title="leancloud.Relation">leancloud.Relation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.remove" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段对应的数组中，将指定对象全部移除。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>item</strong> – 要移除的对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.request_email_verify">
+<em class="property">classmethod </em><code class="sig-name descname">request_email_verify</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.request_email_verify"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.request_email_verify" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.request_login_sms_code">
+<em class="property">classmethod </em><code class="sig-name descname">request_login_sms_code</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phone_number</span></em>, <em class="sig-param"><span class="n">validate_token</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.request_login_sms_code"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.request_login_sms_code" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.request_mobile_phone_verify">
+<em class="property">classmethod </em><code class="sig-name descname">request_mobile_phone_verify</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phone_number</span></em>, <em class="sig-param"><span class="n">validate_token</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.request_mobile_phone_verify"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.request_mobile_phone_verify" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.request_password_reset">
+<em class="property">classmethod </em><code class="sig-name descname">request_password_reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.request_password_reset"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.request_password_reset" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.request_password_reset_by_sms_code">
+<em class="property">classmethod </em><code class="sig-name descname">request_password_reset_by_sms_code</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phone_number</span></em>, <em class="sig-param"><span class="n">validate_token</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.request_password_reset_by_sms_code"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.request_password_reset_by_sms_code" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.reset_password_by_sms_code">
+<em class="property">classmethod </em><code class="sig-name descname">reset_password_by_sms_code</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sms_code</span></em>, <em class="sig-param"><span class="n">new_password</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.reset_password_by_sms_code"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.reset_password_by_sms_code" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">make_current</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.save"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.save" title="永久链接至目标">¶</a></dt>
+<dd><p>将对象数据保存至服务器</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.save_all">
+<em class="property">classmethod </em><code class="sig-name descname">save_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">objs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.save_all" title="永久链接至目标">¶</a></dt>
+<dd><p>在一个请求中 save 多个 leancloud.Object 对象实例。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>objs</strong> (<em>list</em>) – 需要 save 的对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.session_token">
+<em class="property">property </em><code class="sig-name descname">session_token</code><a class="headerlink" href="#leancloud.User.session_token" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.set">
+<code class="sig-name descname">set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key_or_attrs</span></em>, <em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">unset</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.set" title="永久链接至目标">¶</a></dt>
+<dd><p>在当前对象此字段上赋值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key_or_attrs</strong> (<em>string_types</em><em> or </em><em>dict</em>) – 字段名，或者一个包含 字段名 / 值的 dict</p></li>
+<li><p><strong>value</strong> – 字段值</p></li>
+<li><p><strong>unset</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象，供链式调用</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.set_acl">
+<code class="sig-name descname">set_acl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">acl</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.set_acl" title="永久链接至目标">¶</a></dt>
+<dd><p>为当前对象设置 ACL</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.set_current">
+<em class="property">classmethod </em><code class="sig-name descname">set_current</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.set_current"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.set_current" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.set_email">
+<code class="sig-name descname">set_email</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">email</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.set_email"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.set_email" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.set_mobile_phone_number">
+<code class="sig-name descname">set_mobile_phone_number</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phone_number</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.set_mobile_phone_number"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.set_mobile_phone_number" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.set_password">
+<code class="sig-name descname">set_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">password</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.set_password"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.set_password" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.set_username">
+<code class="sig-name descname">set_username</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.set_username"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.set_username" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.sign_up">
+<code class="sig-name descname">sign_up</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">username</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">password</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.sign_up"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.sign_up" title="永久链接至目标">¶</a></dt>
+<dd><p>创建一个新用户。新创建的 User 对象，应该使用此方法来将数据保存至服务器，而不是使用 save 方法。
+用户对象上必须包含 username 和 password 两个字段</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.signup_or_login_with_mobile_phone">
+<em class="property">classmethod </em><code class="sig-name descname">signup_or_login_with_mobile_phone</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phone_number</span></em>, <em class="sig-param"><span class="n">sms_code</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.signup_or_login_with_mobile_phone"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.signup_or_login_with_mobile_phone" title="永久链接至目标">¶</a></dt>
+<dd><p>param phone_nubmer: string_types
+param sms_code: string_types</p>
+<p>在调用此方法前请先使用 request_sms_code 请求 sms code</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.unfollow">
+<code class="sig-name descname">unfollow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.unfollow"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.unfollow" title="永久链接至目标">¶</a></dt>
+<dd><p>取消关注一个用户。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>target_id</strong> – 需要关注的用户的 id</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.unlink_from">
+<code class="sig-name descname">unlink_from</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">provider</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.unlink_from"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.unlink_from" title="永久链接至目标">¶</a></dt>
+<dd><p>解绑特定第三方平台</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.unset">
+<code class="sig-name descname">unset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.unset" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象上移除此字段。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.update_password">
+<code class="sig-name descname">update_password</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">old_password</span></em>, <em class="sig-param"><span class="n">new_password</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.update_password"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.update_password" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.validate">
+<code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attrs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.User.validate" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.User.verify_mobile_phone_number">
+<em class="property">classmethod </em><code class="sig-name descname">verify_mobile_phone_number</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sms_code</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/user.html#User.verify_mobile_phone_number"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.User.verify_mobile_phone_number" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="file">
+<h3>File<a class="headerlink" href="#file" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.File">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">File</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mime_type</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/file_.html#File"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.File" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="leancloud.File.create_with_url">
+<em class="property">classmethod </em><code class="sig-name descname">create_with_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">meta_data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mime_type</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/file_.html#File.create_with_url"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.File.create_with_url" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.create_without_data">
+<em class="property">classmethod </em><code class="sig-name descname">create_without_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">object_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/file_.html#File.create_without_data"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.File.create_without_data" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/file_.html#File.destroy"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.File.destroy" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.fetch">
+<code class="sig-name descname">fetch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/file_.html#File.fetch"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.File.fetch" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.get_acl">
+<code class="sig-name descname">get_acl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/file_.html#File.get_acl"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.File.get_acl" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.get_thumbnail_url">
+<code class="sig-name descname">get_thumbnail_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">width</span></em>, <em class="sig-param"><span class="n">height</span></em>, <em class="sig-param"><span class="n">quality</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">scale_to_fit</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">fmt</span><span class="o">=</span><span class="default_value">'png'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/file_.html#File.get_thumbnail_url"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.File.get_thumbnail_url" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.metadata">
+<em class="property">property </em><code class="sig-name descname">metadata</code><a class="headerlink" href="#leancloud.File.metadata" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.mime_type">
+<em class="property">property </em><code class="sig-name descname">mime_type</code><a class="headerlink" href="#leancloud.File.mime_type" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#leancloud.File.name" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.owner_id">
+<em class="property">property </em><code class="sig-name descname">owner_id</code><a class="headerlink" href="#leancloud.File.owner_id" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="leancloud.File.query">
+<code class="sig-name descname">query</code><em class="property"> = &lt;leancloud.query.Query object&gt;</em><a class="headerlink" href="#leancloud.File.query" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/file_.html#File.save"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.File.save" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.set_acl">
+<code class="sig-name descname">set_acl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">acl</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/file_.html#File.set_acl"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.File.set_acl" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.set_mime_type">
+<em class="property">property </em><code class="sig-name descname">set_mime_type</code><a class="headerlink" href="#leancloud.File.set_mime_type" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.size">
+<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#leancloud.File.size" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.File.url">
+<em class="property">property </em><code class="sig-name descname">url</code><a class="headerlink" href="#leancloud.File.url" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="query">
+<h3>Query<a class="headerlink" href="#query" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.Query">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">query_class</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="leancloud.Query.add_ascending">
+<code class="sig-name descname">add_ascending</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.add_ascending"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.add_ascending" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询排序条件。之前指定的排序条件优先级更高。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>key</strong> – 排序字段名</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.add_descending">
+<code class="sig-name descname">add_descending</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.add_descending"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.add_descending" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询排序条件。之前指定的排序条件优先级更高。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>key</strong> – 排序字段名</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.and_">
+<em class="property">classmethod </em><code class="sig-name descname">and_</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">queries</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.and_"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.and_" title="永久链接至目标">¶</a></dt>
+<dd><p>根据传入的 Query 对象，构造一个新的 AND 查询。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>queries</strong> – 需要构造的子查询列表</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.ascending">
+<code class="sig-name descname">ascending</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.ascending"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.ascending" title="永久链接至目标">¶</a></dt>
+<dd><p>限制查询返回结果以指定字段升序排序。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>key</strong> – 排序字段名</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.contained_in">
+<code class="sig-name descname">contained_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.contained_in"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.contained_in" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果指定字段的值在查询值列表中</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>values</strong> (<em>list</em><em> or </em><em>tuple</em>) – 查询条件值</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.contains">
+<code class="sig-name descname">contains</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.contains"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.contains" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象指定最短的值，包含指定字符串。在数据量比较大的情况下会比较慢。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>value</strong> – 需要包含的字符串</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.contains_all">
+<code class="sig-name descname">contains_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.contains_all"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.contains_all" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果指定字段的值全部包含与查询值列表中</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>values</strong> (<em>list</em><em> or </em><em>tuple</em>) – 查询条件值</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.count">
+<code class="sig-name descname">count</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.count"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.count" title="永久链接至目标">¶</a></dt>
+<dd><p>返回满足查询条件的对象的数量。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.descending">
+<code class="sig-name descname">descending</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.descending"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.descending" title="永久链接至目标">¶</a></dt>
+<dd><p>限制查询返回结果以指定字段降序排序。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>key</strong> – 排序字段名</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.do_cloud_query">
+<em class="property">classmethod </em><code class="sig-name descname">do_cloud_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cql</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">pvalues</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.do_cloud_query"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.do_cloud_query" title="永久链接至目标">¶</a></dt>
+<dd><p>使用 CQL 来构造查询。CQL 语法参考 <a class="reference external" href="https://cn.avoscloud.com/docs/cql_guide.html">这里</a>。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cql</strong> – CQL 语句</p></li>
+<li><p><strong>pvalues</strong> – 查询参数</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>CQLResult</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.does_not_exist">
+<code class="sig-name descname">does_not_exist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.does_not_exist"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.does_not_exist" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象不包含指定字段</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>key</strong> – 查询条件字段名</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.does_not_match_key_in_query">
+<code class="sig-name descname">does_not_match_key_in_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">query_key</span></em>, <em class="sig-param"><span class="n">query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.does_not_match_key_in_query"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.does_not_match_key_in_query" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象指定字段的值，与另外一个查询对象的返回结果指定的值不相同。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>query_key</strong> – 查询对象返回结果的字段名</p></li>
+<li><p><strong>query</strong> (<a class="reference internal" href="#leancloud.Query" title="leancloud.Query"><em>Query</em></a>) – 查询对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.does_not_match_query">
+<code class="sig-name descname">does_not_match_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.does_not_match_query"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.does_not_match_query" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象指定字段的值，与另外一个查询对象的返回结果不相同。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>query</strong> (<a class="reference internal" href="#leancloud.Query" title="leancloud.Query"><em>Query</em></a>) – 查询对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.dump"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.dump" title="永久链接至目标">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象的序列化结果</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.endswith">
+<code class="sig-name descname">endswith</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.endswith"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.endswith" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象指定最短的值，以指定字符串结尾。在数据量比较大的情况下会比较慢。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>value</strong> – 需要查询的字符串</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.equal_to">
+<code class="sig-name descname">equal_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.equal_to"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.equal_to" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，查询字段的值必须为指定值。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件的字段名</p></li>
+<li><p><strong>value</strong> – 查询条件的值</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.exists">
+<code class="sig-name descname">exists</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.exists"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.exists" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象包含指定字段</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>key</strong> – 查询条件字段名</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.find">
+<code class="sig-name descname">find</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.find"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.find" title="永久链接至目标">¶</a></dt>
+<dd><p>根据查询条件，获取包含所有满足条件的对象。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.first">
+<code class="sig-name descname">first</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.first"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.first" title="永久链接至目标">¶</a></dt>
+<dd><p>根据查询获取最多一个对象。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>查询结果</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Object" title="leancloud.Object">Object</a></p>
+</dd>
+<dt class="field-odd">Raise</dt>
+<dd class="field-odd"><p>LeanCloudError</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">object_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.get"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.get" title="永久链接至目标">¶</a></dt>
+<dd><p>根据 objectId 查询。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>object_id</strong> – 要查询对象的 objectId</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>查询结果</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Object" title="leancloud.Object">Object</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.greater_than">
+<code class="sig-name descname">greater_than</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.greater_than"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.greater_than" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果指定字段的值大于查询值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>value</strong> – 查询条件值</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.greater_than_or_equal_to">
+<code class="sig-name descname">greater_than_or_equal_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.greater_than_or_equal_to"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.greater_than_or_equal_to" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果指定字段的值大于等于查询值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>value</strong> – 查询条件值名</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.include">
+<code class="sig-name descname">include</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">keys</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.include"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.include" title="永久链接至目标">¶</a></dt>
+<dd><p>指定查询返回结果中包含关联表字段。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>keys</strong> – 关联子表字段名</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.include_acl">
+<code class="sig-name descname">include_acl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.include_acl"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.include_acl" title="永久链接至目标">¶</a></dt>
+<dd><p>设置查询结果的对象，是否包含 ACL 字段。需要在控制台选项中开启对应选项才能生效。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>bool</em>) – 是否包含 ACL，默认为 True</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.less_than">
+<code class="sig-name descname">less_than</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.less_than"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.less_than" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果指定字段的值小于查询值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>value</strong> – 查询条件值</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.less_than_or_equal_to">
+<code class="sig-name descname">less_than_or_equal_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.less_than_or_equal_to"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.less_than_or_equal_to" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果指定字段的值小于等于查询值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>value</strong> – 查询条件值</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.limit">
+<code class="sig-name descname">limit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.limit"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.limit" title="永久链接至目标">¶</a></dt>
+<dd><p>设置查询返回结果的数量。如果不设置，默认为 100。最大返回数量为 1000，如果超过这个数量，需要使用多次查询来获取结果。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>n</strong> – 限制结果的数量</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.matched">
+<code class="sig-name descname">matched</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">regex</span></em>, <em class="sig-param"><span class="n">ignore_case</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">multi_line</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.matched"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.matched" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象指定字段满足指定的正则表达式。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>regex</strong> – 查询正则表达式</p></li>
+<li><p><strong>ignore_case</strong> – 查询是否忽略大小写，默认不忽略</p></li>
+<li><p><strong>multi_line</strong> – 查询是否匹配多行，默认不匹配</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.matches_key_in_query">
+<code class="sig-name descname">matches_key_in_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">query_key</span></em>, <em class="sig-param"><span class="n">query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.matches_key_in_query"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.matches_key_in_query" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象指定字段的值，与另外一个查询对象的返回结果指定的值相同。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>query_key</strong> – 查询对象返回结果的字段名</p></li>
+<li><p><strong>query</strong> (<a class="reference internal" href="#leancloud.Query" title="leancloud.Query"><em>Query</em></a>) – 查询对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.matches_query">
+<code class="sig-name descname">matches_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">query</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.matches_query"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.matches_query" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象指定字段的值，与另外一个查询对象的返回结果相同。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>query</strong> (<a class="reference internal" href="#leancloud.Query" title="leancloud.Query"><em>Query</em></a>) – 查询对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.near">
+<code class="sig-name descname">near</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">point</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.near"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.near" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制返回结果指定字段值的位置与给定地理位置临近。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>point</strong> – 需要查询的地理位置</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.not_contained_in">
+<code class="sig-name descname">not_contained_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.not_contained_in"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.not_contained_in" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果指定字段的值不在查询值列表中</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>values</strong> (<em>list</em><em> or </em><em>tuple</em>) – 查询条件值</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.not_equal_to">
+<code class="sig-name descname">not_equal_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.not_equal_to"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.not_equal_to" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果指定字段的值与查询值不同</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>value</strong> – 查询条件值</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.or_">
+<em class="property">classmethod </em><code class="sig-name descname">or_</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">queries</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.or_"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.or_" title="永久链接至目标">¶</a></dt>
+<dd><p>根据传入的 Query 对象，构造一个新的 OR 查询。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>queries</strong> – 需要构造的子查询列表</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.scan">
+<code class="sig-name descname">scan</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scan_key</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.scan"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.scan" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.select">
+<code class="sig-name descname">select</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">keys</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.select"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.select" title="永久链接至目标">¶</a></dt>
+<dd><p>指定查询返回结果中只包含某些字段。可以重复调用，每次调用的包含内容都将会被返回。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>keys</strong> – 包含字段名</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.size_equal_to">
+<code class="sig-name descname">size_equal_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">size</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.size_equal_to"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.size_equal_to" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果指定数组字段长度与查询值相同</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件数组字段名</p></li>
+<li><p><strong>size</strong> – 查询条件值</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.skip">
+<code class="sig-name descname">skip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.skip"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.skip" title="永久链接至目标">¶</a></dt>
+<dd><p>查询条件中跳过指定个数的对象，在做分页时很有帮助。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>n</strong> – 需要跳过对象的个数</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.startswith">
+<code class="sig-name descname">startswith</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.startswith"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.startswith" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制查询结果对象指定最短的值，以指定字符串开头。在数据量比较大的情况下会比较慢。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>value</strong> – 需要查询的字符串</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.within_geo_box">
+<code class="sig-name descname">within_geo_box</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">southwest</span></em>, <em class="sig-param"><span class="n">northeast</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.within_geo_box"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.within_geo_box" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制返回结果指定字段值的位置在指定坐标范围之内。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>southwest</strong> – 限制范围西南角坐标</p></li>
+<li><p><strong>northeast</strong> – 限制范围东北角坐标</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.within_kilometers">
+<code class="sig-name descname">within_kilometers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">point</span></em>, <em class="sig-param"><span class="n">max_distance</span></em>, <em class="sig-param"><span class="n">min_distance</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.within_kilometers"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.within_kilometers" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制返回结果指定字段值的位置在某点的一段距离之内。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>point</strong> – 查询地理位置</p></li>
+<li><p><strong>max_distance</strong> – 最大距离限定（千米）</p></li>
+<li><p><strong>min_distance</strong> – 最小距离限定（千米）</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.within_miles">
+<code class="sig-name descname">within_miles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">point</span></em>, <em class="sig-param"><span class="n">max_distance</span></em>, <em class="sig-param"><span class="n">min_distance</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.within_miles"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.within_miles" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制返回结果指定字段值的位置在某点的一段距离之内。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>point</strong> – 查询地理位置</p></li>
+<li><p><strong>max_distance</strong> – 最大距离限定（英里）</p></li>
+<li><p><strong>min_distance</strong> – 最小距离限定（英里）</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Query.within_radians">
+<code class="sig-name descname">within_radians</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">point</span></em>, <em class="sig-param"><span class="n">max_distance</span></em>, <em class="sig-param"><span class="n">min_distance</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/query.html#Query.within_radians"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Query.within_radians" title="永久链接至目标">¶</a></dt>
+<dd><p>增加查询条件，限制返回结果指定字段值的位置在某点的一段距离之内。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – 查询条件字段名</p></li>
+<li><p><strong>point</strong> – 查询地理位置</p></li>
+<li><p><strong>max_distance</strong> – 最大距离限定（弧度）</p></li>
+<li><p><strong>min_distance</strong> – 最小距离限定（弧度）</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="relation">
+<h3>Relation<a class="headerlink" href="#relation" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.Relation">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">Relation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent</span></em>, <em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/relation.html#Relation"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Relation" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="leancloud.Relation.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">obj_or_objs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/relation.html#Relation.add"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Relation.add" title="永久链接至目标">¶</a></dt>
+<dd><p>添加一个新的 leancloud.Object 至 Relation。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>obj_or_objs</strong> – 需要添加的对象或对象列表</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Relation.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/relation.html#Relation.dump"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Relation.dump" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Relation.query">
+<em class="property">property </em><code class="sig-name descname">query</code><a class="headerlink" href="#leancloud.Relation.query" title="永久链接至目标">¶</a></dt>
+<dd><p>获取指向 Relation 内容的 Query 对象。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Query" title="leancloud.Query">leancloud.Query</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Relation.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">obj_or_objs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/relation.html#Relation.remove"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Relation.remove" title="永久链接至目标">¶</a></dt>
+<dd><p>从一个 Relation 中删除一个 leancloud.Object 。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>obj_or_objs</strong> – 需要删除的对象或对象列表</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Relation.reverse_query">
+<em class="property">classmethod </em><code class="sig-name descname">reverse_query</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent_class</span></em>, <em class="sig-param"><span class="n">relation_key</span></em>, <em class="sig-param"><span class="n">child</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/relation.html#Relation.reverse_query"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Relation.reverse_query" title="永久链接至目标">¶</a></dt>
+<dd><p>创建一个新的 Query 对象，反向查询所有指向此 Relation 的父对象。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent_class</strong> – 父类名称</p></li>
+<li><p><strong>relation_key</strong> – 父类中 Relation 的字段名</p></li>
+<li><p><strong>child</strong> – 子类对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>leancloud.Query</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="role">
+<h3>Role<a class="headerlink" href="#role" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.Role">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">Role</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">acl</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/role.html#Role"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Role" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">leancloud.object_.Object</span></code></p>
+<dl class="py method">
+<dt id="leancloud.Role.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.add" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段对应的数组末尾添加指定对象。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>item</strong> – 要添加的对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.add_unique">
+<code class="sig-name descname">add_unique</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.add_unique" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段对应的数组末尾添加指定对象，如果此对象并没有包含在字段中。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>item</strong> – 要添加的对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.as_class">
+<em class="property">static </em><code class="sig-name descname">as_class</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.as_class" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.bit_and">
+<code class="sig-name descname">bit_and</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.bit_and" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.bit_or">
+<code class="sig-name descname">bit_or</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.bit_or" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.bit_xor">
+<code class="sig-name descname">bit_xor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.bit_xor" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.clear" title="永久链接至目标">¶</a></dt>
+<dd><p>将当前对象所有字段全部移除。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.create">
+<em class="property">classmethod </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">class_name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">attributes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.create" title="永久链接至目标">¶</a></dt>
+<dd><p>根据参数创建一个 leancloud.Object 的子类的实例化对象</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class_name</strong> (<em>string_types</em>) – 子类名称</p></li>
+<li><p><strong>attributes</strong> – 对象属性</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>派生子类的实例</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Object" title="leancloud.Object">Object</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.create_without_data">
+<em class="property">classmethod </em><code class="sig-name descname">create_without_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id_</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.create_without_data" title="永久链接至目标">¶</a></dt>
+<dd><p>根据 objectId 创建一个 leancloud.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>string_types</em>) – 对象的 objectId</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>没有数据的对象</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Object" title="leancloud.Object">Object</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.destroy">
+<code class="sig-name descname">destroy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>从服务器上删除这个对象</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.destroy_all">
+<em class="property">classmethod </em><code class="sig-name descname">destroy_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">objs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.destroy_all" title="永久链接至目标">¶</a></dt>
+<dd><p>在一个请求中 destroy 多个 leancloud.Object 对象实例。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>objs</strong> (<em>list</em>) – 需要 destroy 的对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.disable_after_hook">
+<code class="sig-name descname">disable_after_hook</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.disable_after_hook" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.disable_before_hook">
+<code class="sig-name descname">disable_before_hook</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.disable_before_hook" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.dump" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.extend">
+<em class="property">classmethod </em><code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.extend" title="永久链接至目标">¶</a></dt>
+<dd><p>派生一个新的 leancloud.Object 子类</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>string_types</em>) – 子类名称</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>派生的子类</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>ObjectMeta</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.fetch">
+<code class="sig-name descname">fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">select</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">include</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.fetch" title="永久链接至目标">¶</a></dt>
+<dd><p>从服务器获取当前对象所有的值，如果与本地值不同，将会覆盖本地的值。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">deafult</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.get" title="永久链接至目标">¶</a></dt>
+<dd><p>获取对象字段的值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> (<em>string_types</em>) – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>字段值</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.get_acl">
+<code class="sig-name descname">get_acl</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.get_acl" title="永久链接至目标">¶</a></dt>
+<dd><p>返回当前对象的 ACL。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象的 ACL</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.ACL" title="leancloud.ACL">leancloud.ACL</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.get_name">
+<code class="sig-name descname">get_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/role.html#Role.get_name"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Role.get_name" title="永久链接至目标">¶</a></dt>
+<dd><p>获取 Role 的 name，等同于 role.get(‘name’)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.get_roles">
+<code class="sig-name descname">get_roles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/role.html#Role.get_roles"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Role.get_roles" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.get_users">
+<code class="sig-name descname">get_users</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/role.html#Role.get_users"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Role.get_users" title="永久链接至目标">¶</a></dt>
+<dd><p>获取当前 Role 下所有绑定的用户。</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.has">
+<code class="sig-name descname">has</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.has" title="永久链接至目标">¶</a></dt>
+<dd><p>判断此字段是否有值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当有值时返回 True， 否则返回 False</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.ignore_hook">
+<code class="sig-name descname">ignore_hook</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">hook_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.ignore_hook" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.increment">
+<code class="sig-name descname">increment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">amount</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.increment" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段上自增对应的数值，如果数值没有指定，默认为一。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>amount</strong> – 自增量</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.is_dirty">
+<code class="sig-name descname">is_dirty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.is_dirty" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.is_existed">
+<code class="sig-name descname">is_existed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.is_existed" title="永久链接至目标">¶</a></dt>
+<dd><p>判断当前对象是否在服务器上已经存在。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.is_new">
+<code class="sig-name descname">is_new</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.is_new" title="永久链接至目标">¶</a></dt>
+<dd><p>判断当前对象是否已经保存至服务器。</p>
+<p>该方法为 SDK 内部使用（save 调用此方法 dispatch 保存操作为 REST API 的 POST 和 PUT 请求）。
+查询对象是否在服务器上存在请使用 is_existed 方法。</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#leancloud.Role.name" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.relation">
+<code class="sig-name descname">relation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.relation" title="永久链接至目标">¶</a></dt>
+<dd><p>返回对象上相应字段的 Relation</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> (<em>string_types</em>) – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>Relation</p>
+</dd>
+<dt class="field-odd">返回类型</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#leancloud.Relation" title="leancloud.Relation">leancloud.Relation</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em>, <em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.remove" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象此字段对应的数组中，将指定对象全部移除。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attr</strong> – 字段名</p></li>
+<li><p><strong>item</strong> – 要移除的对象</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.roles">
+<em class="property">property </em><code class="sig-name descname">roles</code><a class="headerlink" href="#leancloud.Role.roles" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">where</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fetch_when_save</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.save" title="永久链接至目标">¶</a></dt>
+<dd><p>将对象数据保存至服务器</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.save_all">
+<em class="property">classmethod </em><code class="sig-name descname">save_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">objs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.save_all" title="永久链接至目标">¶</a></dt>
+<dd><p>在一个请求中 save 多个 leancloud.Object 对象实例。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>objs</strong> (<em>list</em>) – 需要 save 的对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.set">
+<code class="sig-name descname">set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key_or_attrs</span></em>, <em class="sig-param"><span class="n">value</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">unset</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.set" title="永久链接至目标">¶</a></dt>
+<dd><p>在当前对象此字段上赋值</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key_or_attrs</strong> (<em>string_types</em><em> or </em><em>dict</em>) – 字段名，或者一个包含 字段名 / 值的 dict</p></li>
+<li><p><strong>value</strong> – 字段值</p></li>
+<li><p><strong>unset</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象，供链式调用</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.set_acl">
+<code class="sig-name descname">set_acl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">acl</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.set_acl" title="永久链接至目标">¶</a></dt>
+<dd><p>为当前对象设置 ACL</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.set_name">
+<code class="sig-name descname">set_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/role.html#Role.set_name"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Role.set_name" title="永久链接至目标">¶</a></dt>
+<dd><p>为 Role 设置 name，等同于 role.set(‘name’, name)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.unset">
+<code class="sig-name descname">unset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#leancloud.Role.unset" title="永久链接至目标">¶</a></dt>
+<dd><p>在对象上移除此字段。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>attr</strong> – 字段名</p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p>当前对象</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.users">
+<em class="property">property </em><code class="sig-name descname">users</code><a class="headerlink" href="#leancloud.Role.users" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Role.validate">
+<code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">attrs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/role.html#Role.validate"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Role.validate" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="acl">
+<h3>ACL<a class="headerlink" href="#acl" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.ACL">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">ACL</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">permissions_by_id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="leancloud.ACL.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.dump"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.dump" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.get_public_read_access">
+<code class="sig-name descname">get_public_read_access</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.get_public_read_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.get_public_read_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.get_public_write_access">
+<code class="sig-name descname">get_public_write_access</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.get_public_write_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.get_public_write_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.get_read_access">
+<code class="sig-name descname">get_read_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.get_read_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.get_read_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.get_role_read_access">
+<code class="sig-name descname">get_role_read_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">role</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.get_role_read_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.get_role_read_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.get_role_write_access">
+<code class="sig-name descname">get_role_write_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">role</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.get_role_write_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.get_role_write_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.get_write_access">
+<code class="sig-name descname">get_write_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.get_write_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.get_write_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.set_public_read_access">
+<code class="sig-name descname">set_public_read_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">allowed</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.set_public_read_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.set_public_read_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.set_public_write_access">
+<code class="sig-name descname">set_public_write_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">allowed</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.set_public_write_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.set_public_write_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.set_read_access">
+<code class="sig-name descname">set_read_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em>, <em class="sig-param"><span class="n">allowed</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.set_read_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.set_read_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.set_role_read_access">
+<code class="sig-name descname">set_role_read_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">role</span></em>, <em class="sig-param"><span class="n">allowed</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.set_role_read_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.set_role_read_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.set_role_write_access">
+<code class="sig-name descname">set_role_write_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">role</span></em>, <em class="sig-param"><span class="n">allowed</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.set_role_write_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.set_role_write_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.ACL.set_write_access">
+<code class="sig-name descname">set_write_access</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user_id</span></em>, <em class="sig-param"><span class="n">allowed</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/acl.html#ACL.set_write_access"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.ACL.set_write_access" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="geopoint">
+<h3>GeoPoint<a class="headerlink" href="#geopoint" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.GeoPoint">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">GeoPoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">latitude</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">longitude</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/geo_point.html#GeoPoint"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.GeoPoint" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="leancloud.GeoPoint.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/geo_point.html#GeoPoint.dump"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.GeoPoint.dump" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.GeoPoint.kilometers_to">
+<code class="sig-name descname">kilometers_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/geo_point.html#GeoPoint.kilometers_to"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.GeoPoint.kilometers_to" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the distance from this GeoPoint to another in kilometers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#leancloud.GeoPoint" title="leancloud.GeoPoint"><em>GeoPoint</em></a>) – point the other GeoPoint</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.GeoPoint.latitude">
+<em class="property">property </em><code class="sig-name descname">latitude</code><a class="headerlink" href="#leancloud.GeoPoint.latitude" title="永久链接至目标">¶</a></dt>
+<dd><p>当前对象的纬度</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.GeoPoint.longitude">
+<em class="property">property </em><code class="sig-name descname">longitude</code><a class="headerlink" href="#leancloud.GeoPoint.longitude" title="永久链接至目标">¶</a></dt>
+<dd><p>当前对象的经度</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.GeoPoint.miles_to">
+<code class="sig-name descname">miles_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/geo_point.html#GeoPoint.miles_to"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.GeoPoint.miles_to" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the distance from this GeoPoint to another in miles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#leancloud.GeoPoint" title="leancloud.GeoPoint"><em>GeoPoint</em></a>) – point the other GeoPoint</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.GeoPoint.radians_to">
+<code class="sig-name descname">radians_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/geo_point.html#GeoPoint.radians_to"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.GeoPoint.radians_to" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the distance from this GeoPoint to another in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#leancloud.GeoPoint" title="leancloud.GeoPoint"><em>GeoPoint</em></a>) – point the other GeoPoint</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="engine">
+<h3>Engine<a class="headerlink" href="#engine" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.Engine">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.</code><code class="sig-name descname">Engine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wsgi_app</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fetch_user</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>LeanEngine middleware.</p>
+<dl class="py method">
+<dt id="leancloud.Engine.after_delete">
+<code class="sig-name descname">after_delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.after_delete"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.after_delete" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.after_save">
+<code class="sig-name descname">after_save</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.after_save"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.after_save" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.after_update">
+<code class="sig-name descname">after_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.after_update"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.after_update" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.before_delete">
+<code class="sig-name descname">before_delete</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.before_delete"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.before_delete" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.before_save">
+<code class="sig-name descname">before_save</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.before_save"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.before_save" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.before_update">
+<code class="sig-name descname">before_update</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.before_update"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.before_update" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.define">
+<code class="sig-name descname">define</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.define"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.define" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.on_bigquery">
+<code class="sig-name descname">on_bigquery</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.on_bigquery"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.on_bigquery" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.on_insight">
+<code class="sig-name descname">on_insight</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.on_insight"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.on_insight" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.on_login">
+<code class="sig-name descname">on_login</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.on_login"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.on_login" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.on_verified">
+<code class="sig-name descname">on_verified</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.on_verified"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.on_verified" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">engine</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.register"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.register" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.run"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.run" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.start"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.start" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.stop"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.stop" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.Engine.wrap">
+<code class="sig-name descname">wrap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wsgi_app</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine.html#Engine.wrap"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.Engine.wrap" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="httpsredirectmiddleware">
+<h3>HttpsRedirectMiddleware<a class="headerlink" href="#httpsredirectmiddleware" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.engine.HttpsRedirectMiddleware">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.engine.</code><code class="sig-name descname">HttpsRedirectMiddleware</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wsgi_app</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine/https_redirect_middleware.html#HttpsRedirectMiddleware"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.engine.HttpsRedirectMiddleware" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="cookiesessionmiddleware">
+<h3>CookieSessionMiddleware<a class="headerlink" href="#cookiesessionmiddleware" title="永久链接至标题">¶</a></h3>
+<dl class="py class">
+<dt id="leancloud.engine.CookieSessionMiddleware">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.engine.</code><code class="sig-name descname">CookieSessionMiddleware</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app</span></em>, <em class="sig-param"><span class="n">secret</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'leancloud:session'</span></em>, <em class="sig-param"><span class="n">excluded_paths</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fetch_user</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">expires</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_age</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine/cookie_session.html#CookieSessionMiddleware"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.engine.CookieSessionMiddleware" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>用来在 webhosting 功能中实现自动管理 LeanCloud 用户登录状态的 WSGI 中间件。
+使用此中间件之后，在处理 web 请求中调用了 <cite>leancloud.User.login()</cite> 方法登录成功后，
+会将此用户 session token 写入到 cookie 中。
+后续此次会话都可以通过 <cite>leancloud.User.get_current()</cite> 获取到此用户对象。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>secret</strong> (<em>str</em>) – 对保存在 cookie 中的用户 session token 进行签名时需要的 key，可使用任意方法随机生成，请不要泄漏</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – 在 cookie 中保存的 session token 的 key 的名称，默认为 “leancloud:session”</p></li>
+<li><p><strong>excluded_paths</strong> (<em>list</em>) – 指定哪些 URL path 不处理 session token，比如在处理静态文件的 URL path 上不进行处理，防止无谓的性能浪费</p></li>
+<li><p><strong>fetch_user</strong> (<em>bool</em>) – 处理请求时是否要从存储服务获取用户数据，
+如果为 false 的话，
+leancloud.User.get_current() 获取到的用户数据上除了 session_token 之外没有任何其他数据，
+需要自己调用 fetch() 来获取。
+为 true 的话，会自动在用户对象上调用 fetch()，这样将会产生一次数据存储的 API 调用。
+默认为 false</p></li>
+<li><p><strong>expires</strong> (<em>int</em><em> or </em><em>datetime</em>) – 设置 cookie 的 expires</p></li>
+<li><p><strong>max_age</strong> (<em>int</em>) – 设置 cookie 的 max_age，单位为秒</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="leancloud.engine.CookieSessionMiddleware.post_process">
+<code class="sig-name descname">post_process</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">environ</span></em>, <em class="sig-param"><span class="n">headers</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine/cookie_session.html#CookieSessionMiddleware.post_process"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.engine.CookieSessionMiddleware.post_process" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.engine.CookieSessionMiddleware.pre_process">
+<code class="sig-name descname">pre_process</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">environ</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/engine/cookie_session.html#CookieSessionMiddleware.pre_process"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.engine.CookieSessionMiddleware.pre_process" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-leancloud.push">
+<span id="leancloud-push"></span><h2>leancloud.push<a class="headerlink" href="#module-leancloud.push" title="永久链接至标题">¶</a></h2>
+<dl class="py class">
+<dt id="leancloud.push.Installation">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.push.</code><code class="sig-name descname">Installation</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">attrs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/push.html#Installation"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.push.Installation" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">leancloud.object_.Object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="leancloud.push.Notification">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.push.</code><code class="sig-name descname">Notification</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">attrs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/push.html#Notification"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.push.Notification" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">leancloud.object_.Object</span></code></p>
+<dl class="py method">
+<dt id="leancloud.push.Notification.fetch">
+<code class="sig-name descname">fetch</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/push.html#Notification.fetch"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.push.Notification.fetch" title="永久链接至目标">¶</a></dt>
+<dd><p>同步服务器的 Notification 数据</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="leancloud.push.Notification.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/push.html#Notification.save"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.push.Notification.save" title="永久链接至目标">¶</a></dt>
+<dd><p>将对象数据保存至服务器</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.push.send">
+<code class="sig-prename descclassname">leancloud.push.</code><code class="sig-name descname">send</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">channels</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">push_time</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expiration_time</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">expiration_interval</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">where</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cql</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">flow_control</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/push.html#send"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.push.send" title="永久链接至目标">¶</a></dt>
+<dd><p>发送推送消息。返回结果为此条推送对应的 _Notification 表中的对象，但是如果需要使用其中的数据，需要调用 fetch() 方法将数据同步至本地。</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channels</strong> (<em>list</em><em> or </em><em>tuple</em>) – 需要推送的频道</p></li>
+<li><p><strong>push_time</strong> (<em>datetime</em>) – 推送的时间</p></li>
+<li><p><strong>expiration_time</strong> (<em>datetime</em>) – 消息过期的绝对日期时间</p></li>
+<li><p><strong>expiration_interval</strong> (<em>int</em>) – 消息过期的相对时间，从调用 API 的时间开始算起，单位是秒</p></li>
+<li><p><strong>where</strong> (<a class="reference internal" href="#leancloud.Query" title="leancloud.Query"><em>leancloud.Query</em></a>) – 一个查询 _Installation 表的查询条件 leancloud.Query 对象</p></li>
+<li><p><strong>cql</strong> (<em>string_types</em>) – 一个查询 _Installation 表的查询条件 CQL 语句</p></li>
+<li><p><strong>data</strong> – 推送给设备的具体信息，详情查看 <a class="reference external" href="https://leancloud.cn/docs/push_guide">https://leancloud.cn/docs/push_guide</a>.html#消息内容_Data</p></li>
+<li><p><strong>flow_control</strong> – 不为 None 时开启平滑推送，值为每秒推送的目标终端用户数。开启时指定低于 1000 的值，按 1000 计。</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回类型</dt>
+<dd class="field-even"><p><a class="reference internal" href="#leancloud.push.Notification" title="leancloud.push.Notification">Notification</a></p>
+</dd>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>flow_control: int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-leancloud.cloud">
+<span id="leancloud-cloud"></span><h2>leancloud.cloud<a class="headerlink" href="#module-leancloud.cloud" title="永久链接至标题">¶</a></h2>
+<dl class="py class">
+<dt id="leancloud.cloud.Captcha">
+<em class="property">class </em><code class="sig-prename descclassname">leancloud.cloud.</code><code class="sig-name descname">Captcha</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">token</span></em>, <em class="sig-param"><span class="n">url</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/cloud.html#Captcha"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.cloud.Captcha" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>表示图形验证码</p>
+<dl class="py method">
+<dt id="leancloud.cloud.Captcha.verify">
+<code class="sig-name descname">verify</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/cloud.html#Captcha.verify"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.cloud.Captcha.verify" title="永久链接至目标">¶</a></dt>
+<dd><p>验证用户输入与图形验证码是否匹配
+:params code: 用户填写的验证码</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.cloud.get_server_time">
+<code class="sig-prename descclassname">leancloud.cloud.</code><code class="sig-name descname">get_server_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/cloud.html#get_server_time"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.cloud.get_server_time" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.cloud.request_captcha">
+<code class="sig-prename descclassname">leancloud.cloud.</code><code class="sig-name descname">request_captcha</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ttl</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/cloud.html#request_captcha"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.cloud.request_captcha" title="永久链接至目标">¶</a></dt>
+<dd><p>请求生成新的图形验证码
+:return: Captcha</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.cloud.request_sms_code">
+<code class="sig-prename descclassname">leancloud.cloud.</code><code class="sig-name descname">request_sms_code</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phone_number</span></em>, <em class="sig-param"><span class="n">idd</span><span class="o">=</span><span class="default_value">'+86'</span></em>, <em class="sig-param"><span class="n">sms_type</span><span class="o">=</span><span class="default_value">'sms'</span></em>, <em class="sig-param"><span class="n">validate_token</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">template</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sign</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/cloud.html#request_sms_code"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.cloud.request_sms_code" title="永久链接至目标">¶</a></dt>
+<dd><p>请求发送手机验证码
+:param phone_number: 需要验证的手机号码
+:param idd: 号码的所在地国家代码，默认为中国（+86）
+:param sms_type: 验证码发送方式，’voice’ 为语音，’sms’ 为短信
+:param template: 模版名称
+:param sign: 短信签名名称
+:return: None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.cloud.rpc">
+<code class="sig-prename descclassname">leancloud.cloud.</code><code class="sig-name descname">rpc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_cloud_rpc_name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/cloud.html#rpc"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.cloud.rpc" title="永久链接至目标">¶</a></dt>
+<dd><p>调用 LeanEngine 上的远程代码
+与 cloud.run 类似，但是允许传入 leancloud.Object 作为参数，也允许传入 leancloud.Object 作为结果
+:param name: 需要调用的远程 Cloud Code 的名称
+:type name: basestring
+:param params: 调用参数
+:return: 调用结果</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.cloud.run">
+<code class="sig-prename descclassname">leancloud.cloud.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">_cloud_func_name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/cloud.html#run"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.cloud.run" title="永久链接至目标">¶</a></dt>
+<dd><p>调用 LeanEngine 上的远程代码
+:param name: 需要调用的远程 Cloud Code 的名称
+:type name: string_types
+:param params: 调用参数
+:return: 调用结果</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.cloud.verify_captcha">
+<code class="sig-prename descclassname">leancloud.cloud.</code><code class="sig-name descname">verify_captcha</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">code</span></em>, <em class="sig-param"><span class="n">token</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/cloud.html#verify_captcha"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.cloud.verify_captcha" title="永久链接至目标">¶</a></dt>
+<dd><p>验证用户输入与图形验证码是否匹配
+:params code: 用户填写的验证码
+:params token: 图形验证码对应的 token
+:return: validate token</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="leancloud.cloud.verify_sms_code">
+<code class="sig-prename descclassname">leancloud.cloud.</code><code class="sig-name descname">verify_sms_code</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phone_number</span></em>, <em class="sig-param"><span class="n">code</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/leancloud/cloud.html#verify_sms_code"><span class="viewcode-link">[源代码]</span></a><a class="headerlink" href="#leancloud.cloud.verify_sms_code" title="永久链接至目标">¶</a></dt>
+<dd><p>获取到手机验证码之后，验证验证码是否正确。如果验证失败，抛出异常。
+:param phone_number: 需要验证的手机号码
+:param code: 接受到的验证码
+:return: None</p>
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">索引</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">搜索页面</span></a></p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, asaka
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
