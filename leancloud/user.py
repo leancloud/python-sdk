@@ -311,12 +311,12 @@ class User(Object):
         return response.status_code == 200
 
     @classmethod
-    def request_password_reset(self, email):
+    def request_password_reset(cls, email):
         params = {"email": email}
         client.post("/requestPasswordReset", params)
 
     @classmethod
-    def request_email_verify(self, email):
+    def request_email_verify(cls, email):
         params = {"email": email}
         client.post("/requestEmailVerify", params)
 

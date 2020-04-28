@@ -87,7 +87,7 @@ def match_key_setup():
         for k in old2:
             k.destroy()
 
-        for i in range(5):
+        for _i in range(5):
             for k in range(10):
                 a = A()
                 a.set("age", k)
