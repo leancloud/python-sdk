@@ -20,8 +20,15 @@ Maybe you need the `sudo` prefix depends on your OS environment.
 
 ## Generate API document
 
-```bash
-cd docs
+Install dependencies:
+
+```sh
+pip install Sphinx
+pip install sphinx_rtd_theme
+```
+
+```sh
+cd apidoc
 make html
 ```
 

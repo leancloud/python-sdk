@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh-CN" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh-CN" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>leancloud.engine.cookie_session &mdash; LeanCloud-Python-SDK 1.0.0 文档</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> LeanCloud-Python-SDK
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">LeanCloud-Python-SDK</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+        
+          <li><a href="../engine.html">leancloud.engine</a> &raquo;</li>
+        
+      <li>leancloud.engine.cookie_session</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>leancloud.engine.cookie_session 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding: utf-8</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">werkzeug</span> <span class="k">import</span> <span class="n">http</span>
+<span class="kn">from</span> <span class="nn">werkzeug.wrappers</span> <span class="k">import</span> <span class="n">Request</span>
+<span class="kn">from</span> <span class="nn">secure_cookie.cookie</span> <span class="k">import</span> <span class="n">SecureCookie</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">leancloud.user</span> <span class="k">import</span> <span class="n">User</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;asaka &lt;lan@leancloud.rocks&gt;&quot;</span>
+
+
+<div class="viewcode-block" id="CookieSessionMiddleware"><a class="viewcode-back" href="../../../index.html#leancloud.engine.CookieSessionMiddleware">[文档]</a><span class="k">class</span> <span class="nc">CookieSessionMiddleware</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用来在 webhosting 功能中实现自动管理 LeanCloud 用户登录状态的 WSGI 中间件。</span>
+<span class="sd">    使用此中间件之后，在处理 web 请求中调用了 `leancloud.User.login()` 方法登录成功后，</span>
+<span class="sd">    会将此用户 session token 写入到 cookie 中。</span>
+<span class="sd">    后续此次会话都可以通过 `leancloud.User.get_current()` 获取到此用户对象。</span>
+
+<span class="sd">    :param secret: 对保存在 cookie 中的用户 session token 进行签名时需要的 key，可使用任意方法随机生成，请不要泄漏</span>
+<span class="sd">    :type secret: str</span>
+<span class="sd">    :param name: 在 cookie 中保存的 session token 的 key 的名称，默认为 &quot;leancloud:session&quot;</span>
+<span class="sd">    :type name: str</span>
+<span class="sd">    :param excluded_paths:</span>
+<span class="sd">           指定哪些 URL path 不处理 session token，比如在处理静态文件的 URL path 上不进行处理，防止无谓的性能浪费</span>
+<span class="sd">    :type excluded_paths: list</span>
+<span class="sd">    :param fetch_user: 处理请求时是否要从存储服务获取用户数据，</span>
+<span class="sd">           如果为 false 的话，</span>
+<span class="sd">           leancloud.User.get_current() 获取到的用户数据上除了 session_token 之外没有任何其他数据，</span>
+<span class="sd">           需要自己调用 fetch() 来获取。</span>
+<span class="sd">           为 true 的话，会自动在用户对象上调用 fetch()，这样将会产生一次数据存储的 API 调用。</span>
+<span class="sd">           默认为 false</span>
+<span class="sd">    :type fetch_user: bool</span>
+<span class="sd">    :param expires: 设置 cookie 的 expires</span>
+<span class="sd">    :type expires: int or datetime</span>
+<span class="sd">    :param max_age: 设置 cookie 的 max_age，单位为秒</span>
+<span class="sd">    :type max_age: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">app</span><span class="p">,</span>
+        <span class="n">secret</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;leancloud:session&quot;</span><span class="p">,</span>
+        <span class="n">excluded_paths</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fetch_user</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">expires</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_age</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">secret</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;secret is required&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fetch_user</span> <span class="o">=</span> <span class="n">fetch_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">secret</span> <span class="o">=</span> <span class="n">secret</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">excluded_paths</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;/__engine/&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;/1/functions/&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;/1.1/functions/&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;/1/call/&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;/1.1/call/&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expires</span> <span class="o">=</span> <span class="n">expires</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_age</span> <span class="o">=</span> <span class="n">max_age</span>
+        <span class="k">if</span> <span class="n">excluded_paths</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">excluded_paths</span> <span class="o">+=</span> <span class="n">excluded_paths</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_process</span><span class="p">(</span><span class="n">environ</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">new_start_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post_process</span><span class="p">(</span><span class="n">environ</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">start_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">response_headers</span><span class="p">,</span> <span class="n">exc_info</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">environ</span><span class="p">,</span> <span class="n">new_start_response</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CookieSessionMiddleware.pre_process"><a class="viewcode-back" href="../../../index.html#leancloud.engine.CookieSessionMiddleware.pre_process">[文档]</a>    <span class="k">def</span> <span class="nf">pre_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environ</span><span class="p">):</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">environ</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">excluded_paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+                <span class="k">return</span>
+
+        <span class="n">cookie</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cookie</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">session</span> <span class="o">=</span> <span class="n">SecureCookie</span><span class="o">.</span><span class="n">unserialize</span><span class="p">(</span><span class="n">cookie</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secret</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;session_token&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">session</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_user</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="p">()</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">_session_token</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;session_token&quot;</span><span class="p">]</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;uid&quot;</span><span class="p">]</span>
+            <span class="n">User</span><span class="o">.</span><span class="n">set_current</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">become</span><span class="p">(</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;session_token&quot;</span><span class="p">])</span>
+            <span class="n">User</span><span class="o">.</span><span class="n">set_current</span><span class="p">(</span><span class="n">user</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CookieSessionMiddleware.post_process"><a class="viewcode-back" href="../../../index.html#leancloud.engine.CookieSessionMiddleware.post_process">[文档]</a>    <span class="k">def</span> <span class="nf">post_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environ</span><span class="p">,</span> <span class="n">headers</span><span class="p">):</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">get_current</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+            <span class="n">cookies</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">parse_cookie</span><span class="p">(</span><span class="n">environ</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">cookies</span><span class="p">:</span>
+                <span class="n">raw</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">dump_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">expires</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">headers</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">utils</span><span class="o">.</span><span class="n">to_native</span><span class="p">(</span><span class="s2">&quot;Set-Cookie&quot;</span><span class="p">),</span> <span class="n">raw</span><span class="p">))</span>
+            <span class="k">return</span>
+        <span class="n">cookie</span> <span class="o">=</span> <span class="n">SecureCookie</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;session_token&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">get_session_token</span><span class="p">()},</span> <span class="bp">self</span><span class="o">.</span><span class="n">secret</span>
+        <span class="p">)</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">dump_cookie</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">cookie</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="n">expires</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">expires</span><span class="p">,</span> <span class="n">max_age</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_age</span>
+        <span class="p">)</span>
+        <span class="n">headers</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">utils</span><span class="o">.</span><span class="n">to_native</span><span class="p">(</span><span class="s2">&quot;Set-Cookie&quot;</span><span class="p">),</span> <span class="n">raw</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, asaka
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
