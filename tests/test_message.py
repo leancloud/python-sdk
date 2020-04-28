@@ -24,7 +24,7 @@ def test_message_find_by_conversation():
     conv = Conversation(name="test")
     conv.save()
     conv.send("foo", "what the hell")
-    time.sleep(1)  # wait for server sync
+    time.sleep(2)  # wait for server sync
     msgs = Message.find_by_conversation(conv.id, limit=1000, reversed=False)
     assert_equal(len(msgs), 1)
     msg = msgs[0]
