@@ -1,3 +1,8 @@
+## [2.6.1] - 2020-05-06
+### Fixed
+- HttpsRedirectMiddleware now works with projects not using cloud functions
+- regexp escaping issues
+
 ## [2.6.0] - 2020-04-09
 ### Added
 - `_conversationAdded` and `_conversationRemoved` hooks
