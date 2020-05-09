@@ -253,6 +253,7 @@ def dispatch_cloud_func(_cloud_codes, app_params, func_name, decode_object, para
         "_messageReceived",
         "_receiversOffline",
         "_messageSent",
+        "_messageUpdate",
         "_conversationStart",
         "_conversationStarted",
         "_conversationAdd",
