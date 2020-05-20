@@ -195,6 +195,7 @@
     <span class="n">where</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">cql</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">flow_control</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">prod</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    发送推送消息。返回结果为此条推送对应的 _Notification 表中的对象，但是如果需要使用其中的数据，需要调用 fetch() 方法将数据同步至本地。</span>
@@ -215,6 +216,8 @@
 <span class="sd">    :rtype: Notification</span>
 <span class="sd">    :param flow_control: 不为 None 时开启平滑推送，值为每秒推送的目标终端用户数。开启时指定低于 1000 的值，按 1000 计。</span>
 <span class="sd">    :type: flow_control: int</span>
+<span class="sd">    :param prod: 仅对 iOS 推送有效，设置将推送发至 APNs 的开发环境（dev）还是生产环境（prod）。</span>
+<span class="sd">    :type: prod: string</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">expiration_interval</span> <span class="ow">and</span> <span class="n">expiration_time</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Both expiration_time and expiration_interval can&#39;t be set&quot;</span><span class="p">)</span>
@@ -223,8 +226,11 @@
         <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">if</span> <span class="n">client</span><span class="o">.</span><span class="n">USE_PRODUCTION</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;prod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
+    <span class="k">if</span> <span class="n">prod</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">client</span><span class="o">.</span><span class="n">USE_PRODUCTION</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;prod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;prod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prod</span>
 
     <span class="k">if</span> <span class="n">channels</span><span class="p">:</span>
         <span class="n">params</span><span class="p">[</span><span class="s2">&quot;channels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">channels</span>
