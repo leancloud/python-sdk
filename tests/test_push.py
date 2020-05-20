@@ -46,6 +46,7 @@ def test_basic_push():  # type: () -> None
         where=query,
         push_time=now,
         expiration_time=two_hours_later,
+        prod="dev",
         flow_control=0,
     )
     # flow_control = 0 <=> flow_control = 1000 by rest api design
