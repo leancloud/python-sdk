@@ -47,6 +47,7 @@ def send(
     where=None,
     cql=None,
     flow_control=None,
+    prod=None,
 ):
     """
     发送推送消息。返回结果为此条推送对应的 _Notification 表中的对象，但是如果需要使用其中的数据，需要调用 fetch() 方法将数据同步至本地。
@@ -67,6 +68,8 @@ def send(
     :rtype: Notification
     :param flow_control: 不为 None 时开启平滑推送，值为每秒推送的目标终端用户数。开启时指定低于 1000 的值，按 1000 计。
     :type: flow_control: int
+    :param prod: 仅对 iOS 推送有效，设置将推送发至 APNs 的开发环境（dev）还是生产环境（prod）。
+    :type: prod: string
     """
     if expiration_interval and expiration_time:
         raise TypeError("Both expiration_time and expiration_interval can't be set")
@@ -75,8 +78,11 @@ def send(
         "data": data,
     }
 
-    if client.USE_PRODUCTION == "0":
-        params["prod"] = "dev"
+    if prod is None:
+        if client.USE_PRODUCTION == "0":
+            params["prod"] = "dev"
+    else:
+        params["prod"] = prod
 
     if channels:
         params["channels"] = channels
