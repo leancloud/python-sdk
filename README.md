@@ -60,7 +60,8 @@ But we are still exploring.
 
 ## Release a New Version
 
-1. Edit `changelog` and `setup.py` (`version`).
+0. Edit `changelog` and `setup.py` (`version`).
+1. Generate api doc and commit updates.
 2. Commit them and send a pull request.
 3. The maintainer will review and merge the pull request, then create a new release at GitHub web UI.
 4. A new version of the package will be published to PyPI automatically (via GitHub Actions).
