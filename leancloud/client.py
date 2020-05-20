@@ -84,7 +84,11 @@ def need_init(func):
             "Content-Type": "application/json;charset=utf-8",
             "X-LC-Id": APP_ID,
             "X-LC-Prod": USE_PRODUCTION,
-            "User-Agent": "AVOS Cloud python-{0} SDK".format(leancloud.__version__),
+            "User-Agent": "AVOS Cloud python-{0} SDK ({1}.{2})".format(
+                leancloud.__version__,
+                leancloud.version_info.major,
+                leancloud.version_info.minor,
+            ),
         }
         md5sum = hashlib.md5()
         current_time = six.text_type(int(time.time() * 1000))
