@@ -1,3 +1,8 @@
+## [2.7.0] - 2020-05-21
+### Added
+- `_messageUpdate` hook
+- `push.send` supports `prod` parameter
+
 ## [2.6.1] - 2020-05-06
 ### Fixed
 - HttpsRedirectMiddleware now works with projects not using cloud functions
