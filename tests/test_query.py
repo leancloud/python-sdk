@@ -505,6 +505,16 @@ def test_near_not_none():  # type: () -> None
 
 
 @with_setup(make_setup_func())
+def test_query_include_acl():
+    with_acl = Query(GameScore).include_acl(True).first()
+    assert with_acl.get_acl() is not None
+    explicit_without_acl = Query(GameScore).include_acl(False).first()
+    assert explicit_without_acl.get_acl() is None
+    implicit_without_acl = Query(GameScore).first()
+    assert implicit_without_acl.get_acl() is None
+
+
+@with_setup(make_setup_func())
 def test_save_with_query():
     Account = leancloud.Object.extend("Account")
     account = Account(balance=10)
