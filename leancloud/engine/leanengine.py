@@ -30,12 +30,31 @@ current = context.local("current")
 
 
 class LeanEngineError(Exception):
-    def __init__(self, code=400, message="error"):
-        if isinstance(code, six.string_types):
-            message = code
-            code = 400
-        self.code = code
-        self.message = message
+    def __init__(
+        self,
+        code=None,  # for backward compatibility, should be 400
+        message="error",  # for backward compatibility, should be required
+        status=None,  # for backward compatibility, should be 400
+    ):
+        if status is None:
+            if isinstance(code, six.string_types):
+                self.message = code
+                self.code = 400  # for backward compatibility, should be 1
+                self.status = 400
+            else:
+                self.message = message
+                # for backward compatibility, should be 1
+                self.code = 400 if code is None else code
+                self.status = self.code
+        else:
+            if isinstance(code, six.string_types):
+                self.message = code
+                self.code = 400
+                self.status = status
+            else:
+                self.status = status
+                self.code = 1 if code is None else code
+                self.message = message
 
 
 class LeanEngineApplication(object):
@@ -186,7 +205,7 @@ class LeanEngineApplication(object):
         except LeanEngineError as e:
             return Response(
                 json.dumps({"code": e.code, "error": e.message}),  # noqa: B306
-                status=e.code if e.code else 400,
+                status=e.status,
                 mimetype="application/json",
             )
         except Exception:
