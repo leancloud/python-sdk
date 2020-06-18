@@ -28,6 +28,69 @@ logger = logging.getLogger("leancloud.cloudcode.cloudcode")
 user = context.local("user")
 current = context.local("current")
 
+# http.HTTPStatus is not available in Python 2
+http_status_codes = {
+    100,
+    101,
+    102,
+    200,
+    201,
+    202,
+    203,
+    204,
+    205,
+    206,
+    207,
+    208,
+    226,
+    300,
+    301,
+    302,
+    303,
+    304,
+    305,
+    307,
+    308,
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    407,
+    408,
+    409,
+    410,
+    411,
+    412,
+    413,
+    414,
+    415,
+    416,
+    417,
+    421,
+    422,
+    423,
+    424,
+    426,
+    428,
+    429,
+    431,
+    451,
+    500,
+    501,
+    502,
+    503,
+    504,
+    505,
+    506,
+    507,
+    508,
+    510,
+    511,
+}
+
 
 class LeanEngineError(Exception):
     def __init__(
@@ -45,16 +108,16 @@ class LeanEngineError(Exception):
                 self.message = message
                 # for backward compatibility, should be 1
                 self.code = 400 if code is None else code
-                self.status = self.code
+                self.status = self.code if self.code in http_status_codes else 400
         else:
             if isinstance(code, six.string_types):
                 self.message = code
                 self.code = 400
                 self.status = status
             else:
-                self.status = status
-                self.code = 1 if code is None else code
                 self.message = message
+                self.code = 1 if code is None else code
+                self.status = status
 
 
 class LeanEngineApplication(object):
