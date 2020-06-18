@@ -45,7 +45,7 @@ class LeanEngineError(Exception):
                 self.message = message
                 # for backward compatibility, should be 1
                 self.code = 400 if code is None else code
-                self.status = code
+                self.status = self.code
         else:
             if isinstance(code, six.string_types):
                 self.message = code
