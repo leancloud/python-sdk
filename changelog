@@ -1,3 +1,10 @@
+## [2.7.1] - 2020-06-18
+### Fixed
+- LeanEngineError now encodes valid HTTP status code.
+  Previously it reused the `code` parameter, which would result in an invalid HTTP status code encoded,
+  if the value of the `code` parameter is not a valid HTTP status code.
+  You can also use the new status parameter to specify the HTTP status code now.
+
 ## [2.7.0] - 2020-05-21
 ### Added
 - `_messageUpdate` hook
