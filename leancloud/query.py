@@ -30,6 +30,7 @@ class CQLResult(object):
 
         class_name: 查询的 class 名称
     """
+
     __slots__ = ["results", "count", "class_name"]
 
     def __init__(self, results, count, class_name):

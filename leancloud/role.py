@@ -68,8 +68,10 @@ class Role(leancloud.Object):
                 raise TypeError("role name must be string_types")
             r = re.compile(r"^[0-9a-zA-Z\-_]+$")
             if not r.match(new_name):
-                raise TypeError("""
+                raise TypeError(
+                    """
                 role's name can only contain alphanumeric characters, _, -, and spaces.
-                """)
+                """
+                )
 
         return super(Role, self).validate(attrs)
