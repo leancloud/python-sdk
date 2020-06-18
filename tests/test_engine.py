@@ -93,12 +93,27 @@ def test_ping():  # type: () -> None
 
 
 def test_lean_engine_error():
+    err = leancloud.LeanEngineError(status=404, code=1234567, message="nowhere")
+    assert err.status == 404
+    assert err.code == 1234567
+    assert err.message == "nowhere"
+    # backward compatibility tests
+    err = leancloud.LeanEngineError(code=2020, message="eanCloud")
+    assert err.status == 2020
+    assert err.code == 2020
+    assert err.message == "eanCloud"
     err = leancloud.LeanEngineError(233, "llllleancloud")
+    assert err.status == 233
     assert err.code == 233
     assert err.message == "llllleancloud"
     err = leancloud.LeanEngineError("error messages")
+    assert err.status == 400
     assert err.code == 400
     assert err.message == "error messages"
+    err = leancloud.LeanEngineError()
+    assert err.status == 400
+    assert err.code == 400
+    assert err.message == "error"
 
 
 def test_origin_response():  # type: () -> None
@@ -309,6 +324,7 @@ def test_realtime_cloud_func():  # type: () -> None
     try:
         cloud.run.local("_messageReceived")
     except leancloud.LeanEngineError as e:
+        assert_equal(e.status, 401)
         assert_equal(e.code, 401)
     else:
         raise AssertionError
