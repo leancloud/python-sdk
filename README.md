@@ -50,7 +50,13 @@ pip install -e .'[test]'
 Run tests:
 
 ```sh
-nosetests
+python -m nose
+```
+
+Run a single test:
+
+```sh
+python -m nose tests/test_engine.py:test_lean_engine_error
 ```
 
 ## Linter and Formatter
