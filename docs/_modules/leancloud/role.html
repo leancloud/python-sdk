@@ -216,9 +216,11 @@
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;role name must be string_types&quot;</span><span class="p">)</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[0-9a-zA-Z\-_]+$&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">new_name</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                role&#39;s name can only contain alphanumeric characters, _, -, and spaces.</span>
-<span class="s2">                &quot;&quot;&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                role&#39;s name can only contain alphanumeric characters, _, -, and spaces.</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Role</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span></div></div>
 </pre></div>
