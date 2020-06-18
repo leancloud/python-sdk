@@ -99,13 +99,17 @@ def test_lean_engine_error():
     assert err.message == "nowhere"
     # backward compatibility tests
     err = leancloud.LeanEngineError(code=2020, message="eanCloud")
-    assert err.status == 2020
+    assert err.status == 400
     assert err.code == 2020
     assert err.message == "eanCloud"
     err = leancloud.LeanEngineError(233, "llllleancloud")
-    assert err.status == 233
+    assert err.status == 400
     assert err.code == 233
     assert err.message == "llllleancloud"
+    err = leancloud.LeanEngineError(226, "leancloud")
+    assert err.status == 226
+    assert err.code == 226
+    assert err.message == "leancloud"
     err = leancloud.LeanEngineError("error messages")
     assert err.status == 400
     assert err.code == 400
