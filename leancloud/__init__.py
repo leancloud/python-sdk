@@ -9,12 +9,12 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import sys
 import logging
+import sys
 import warnings
+
 from . import client
 from . import cloud
-from . import cloudfunc
 from . import push
 from .acl import ACL
 from .client import init
@@ -40,7 +40,6 @@ from .status import InboxQuery
 from .status import Status
 from .sys_message import SysMessage
 from .user import User
-
 
 logger = logging.getLogger("iso8601.iso8601")
 logger.setLevel(logging.CRITICAL)
@@ -69,7 +68,6 @@ __all__ = [
     "User",
     "client",
     "cloud",
-    "cloudfunc",
     "init",
     "push",
     "use_master_key",
