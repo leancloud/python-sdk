@@ -297,6 +297,24 @@ def test_reset_password_by_sms_code():  # type: () -> None
 
 
 @with_setup(get_setup_func())
+def test_request_change_phone_number():  # type: () -> None
+    try:
+        User.request_change_phone_number("18611111112")
+    except LeanCloudError as e:
+        if e.code not in (213, 601):
+            raise e
+
+
+@with_setup(get_setup_func())
+def test_change_phone_number():  # type: () -> None
+    try:
+        User.change_phone_number("123456", "18611111112")
+    except LeanCloudError as e:
+        if e.code != 603:
+            raise e
+
+
+@with_setup(get_setup_func())
 def test_request_login_sms_code():  # type: () -> None
     try:
         User.request_login_sms_code("18611111111")
