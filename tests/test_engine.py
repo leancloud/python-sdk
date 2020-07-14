@@ -534,7 +534,16 @@ def test_request_sms_code():  # type: () -> None
     if leancloud.client.REGION == "US":
         return
     try:
-        cloud.request_sms_code("13111111111")
+        # numbers come from http://www.z-sms.com/
+        cloud.request_sms_code("+8617180654515")
+        cloud.request_sms_code("17180654515")
+        cloud.request_sms_code("17180654515", idd="+86")
+        cloud.request_sms_code("+8617180654515", idd="+86")
+        cloud.request_sms_code("+8617180654515", idd="+44")  # +8617180654515
+        cloud.request_sms_code("+447365753569")
+        cloud.request_sms_code("7365753569", idd="+44")
+        cloud.request_sms_code("+447365753569", idd="+44")
+        cloud.request_sms_code("+447365753569", idd="+86")  # +447365753569
     except LeanCloudError as e:
         # 短信发送过于频繁或者欠费或者关闭短信功能
         if e.code in (601, 160, 119):
