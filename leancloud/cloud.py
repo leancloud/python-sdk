@@ -100,7 +100,9 @@ def request_sms_code(
         raise TypeError("phone_number must be a string")
 
     data = {
-        "mobilePhoneNumber": idd + phone_number,
+        "mobilePhoneNumber": phone_number
+        if phone_number.startswith("+")
+        else idd + phone_number,
         "smsType": sms_type,
     }
 
