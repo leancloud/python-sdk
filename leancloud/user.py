@@ -339,6 +339,25 @@ class User(Object):
         params = {"password": new_password}
         client.put("/resetPasswordBySmsCode/" + sms_code, params)
 
+    # This should be an instance method.
+    # However, to be consistent with other similar methods (`request_password_reset_by_sms_code`),
+    # it is implemented as a class method.
+    @classmethod
+    def request_change_phone_number(cls, phone_number, ttl=None, validate_token=None):
+        params = {"mobilePhoneNumber": phone_number}
+        if ttl is not None:
+            params["ttl"] = ttl
+        if validate_token is not None:
+            params["validate_token"] = validate_token
+        client.post("/requestChangePhoneNumber", params)
+
+    # This should be an instance method and update the local date,
+    # but it is implemented as a class method for the same reason as above.
+    @classmethod
+    def change_phone_number(cls, sms_code, phone_number):
+        params = {"mobilePhoneNumber": phone_number, "code": sms_code}
+        client.post("/changePhoneNumber", params)
+
     @classmethod
     def verify_mobile_phone_number(cls, sms_code):
         client.post("/verfyMobilePhone/" + sms_code, {})

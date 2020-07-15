@@ -275,6 +275,30 @@ def test_request_mobile_phone_verify():  # type: () -> None
 
 
 @with_setup(get_setup_func())
+def test_request_change_phone_number():  # type: () -> None
+    user1 = User()
+    user1.set("username", "user1_name")
+    user1.set("password", "password")
+    user1.login()
+    try:
+        User.request_change_phone_number("18611111112")
+    except LeanCloudError as e:
+        if e.code not in (119, 213, 601):
+            raise e
+    finally:
+        user1.logout()
+
+
+@with_setup(get_setup_func())
+def test_change_phone_number():  # type: () -> None
+    try:
+        User.change_phone_number("123456", "18611111112")
+    except LeanCloudError as e:
+        if e.code != 603:
+            raise e
+
+
+@with_setup(get_setup_func())
 def test_request_password_reset_by_sms_code():  # type: () -> None
     try:
         User.request_password_reset_by_sms_code(
