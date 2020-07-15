@@ -248,7 +248,9 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;phone_number must be a string&quot;</span><span class="p">)</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;mobilePhoneNumber&quot;</span><span class="p">:</span> <span class="n">idd</span> <span class="o">+</span> <span class="n">phone_number</span><span class="p">,</span>
+        <span class="s2">&quot;mobilePhoneNumber&quot;</span><span class="p">:</span> <span class="n">phone_number</span>
+        <span class="k">if</span> <span class="n">phone_number</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+        <span class="k">else</span> <span class="n">idd</span> <span class="o">+</span> <span class="n">phone_number</span><span class="p">,</span>
         <span class="s2">&quot;smsType&quot;</span><span class="p">:</span> <span class="n">sms_type</span><span class="p">,</span>
     <span class="p">}</span>
 

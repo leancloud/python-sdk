@@ -487,6 +487,25 @@
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">new_password</span><span class="p">}</span>
         <span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/resetPasswordBySmsCode/&quot;</span> <span class="o">+</span> <span class="n">sms_code</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
 
+    <span class="c1"># This should be an instance method.</span>
+    <span class="c1"># However, to be consistent with other similar methods (`request_password_reset_by_sms_code`),</span>
+    <span class="c1"># it is implemented as a class method.</span>
+<div class="viewcode-block" id="User.request_change_phone_number"><a class="viewcode-back" href="../../index.html#leancloud.User.request_change_phone_number">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">request_change_phone_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">phone_number</span><span class="p">,</span> <span class="n">ttl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validate_token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mobilePhoneNumber&quot;</span><span class="p">:</span> <span class="n">phone_number</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">ttl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;ttl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttl</span>
+        <span class="k">if</span> <span class="n">validate_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;validate_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate_token</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/requestChangePhoneNumber&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+    <span class="c1"># This should be an instance method and update the local date,</span>
+    <span class="c1"># but it is implemented as a class method for the same reason as above.</span>
+<div class="viewcode-block" id="User.change_phone_number"><a class="viewcode-back" href="../../index.html#leancloud.User.change_phone_number">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">change_phone_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sms_code</span><span class="p">,</span> <span class="n">phone_number</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mobilePhoneNumber&quot;</span><span class="p">:</span> <span class="n">phone_number</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">sms_code</span><span class="p">}</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/changePhoneNumber&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="User.verify_mobile_phone_number"><a class="viewcode-back" href="../../index.html#leancloud.User.verify_mobile_phone_number">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">verify_mobile_phone_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sms_code</span><span class="p">):</span>
         <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/verfyMobilePhone/&quot;</span> <span class="o">+</span> <span class="n">sms_code</span><span class="p">,</span> <span class="p">{})</span></div>
