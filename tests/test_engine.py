@@ -550,7 +550,7 @@ def test_request_sms_code():  # type: () -> None
         cloud.request_sms_code("+447365753569", idd="+86")  # +447365753569
     except LeanCloudError as e:
         # 短信发送过于频繁或者欠费或者关闭短信功能
-        if e.code in (601, 160, 119):
+        if e.code in (601, 605, 160, 119):
             pass
         else:
             raise e
