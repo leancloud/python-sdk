@@ -53,10 +53,10 @@ Run tests:
 python -m nose
 ```
 
-Run a single test:
+Run a single test without swallowing print:
 
 ```sh
-python -m nose tests/test_engine.py:test_lean_engine_error
+python -m nose -v --nocapture tests/test_engine.py:test_lean_engine_error
 ```
 
 ## Linter and Formatter
