@@ -38,25 +38,30 @@ def test_basic_push():  # type: () -> None
             "launch-image": "",
         }
     }
-    query = leancloud.Query("_Installation").equal_to("objectId", "xxx")
+    query = leancloud.Query("_Installation").equal_to("deviceToken", "xxx")
     now = datetime.now()
     two_hours_later = now + timedelta(hours=2)
-    notification = push.send(
-        data,
-        where=query,
-        push_time=now,
-        expiration_time=two_hours_later,
-        prod="dev",
-        flow_control=0,
-    )
-    # flow_control = 0 <=> flow_control = 1000 by rest api design
-    time.sleep(5)  # notification write may have delay
-    notification.fetch()
-    assert notification.id
-
     try:
-        notification.save()
+        notification = push.send(
+            data,
+            where=query,
+            push_time=now,
+            expiration_time=two_hours_later,
+            prod="dev",
+            flow_control=0,
+        )
     except leancloud.LeanCloudError as e:
+        # LeanCloudError: [1] The iOS certificate file is expired or disabled.
         assert e.code == 1
     else:
-        raise Exception()
+        # flow_control = 0 <=> flow_control = 1000 by rest api design
+        time.sleep(5)  # notification write may have delay
+        notification.fetch()
+        assert notification.id
+        # Test that notification is read only.
+        try:
+            notification.save()
+        except leancloud.LeanCloudError as e:
+            assert e.code == 1
+        else:
+            raise Exception()
