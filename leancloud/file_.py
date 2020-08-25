@@ -9,7 +9,6 @@ import os
 import re
 import io
 import hashlib
-import uuid
 import logging
 import threading
 
@@ -34,6 +33,7 @@ class File(object):
 
     def __init__(self, name="", data=None, mime_type=None):
         self._name = name
+        self.key = None
         self.id = None
         self._url = None
         self._acl = None
@@ -314,21 +314,19 @@ class File(object):
             self._metadata = server_data.get("metaData")
 
     def _get_file_token(self):
-        key = uuid.uuid4().hex
-        if self.extension:
-            key = "{0}.{1}".format(key, self.extension)
         data = {
             "name": self._name,
-            "key": key,
             "ACL": self._acl,
             "mime_type": self.mime_type,
             "metaData": self._metadata,
         }
+        if self.key is not None:
+            data["key"] = self.key
         response = client.post("/fileTokens", data)
         content = response.json()
         self.id = content["objectId"]
         self._url = content["url"]
-        content["key"] = key
+        self.key = content["key"]
         return content
 
     def fetch(self):
