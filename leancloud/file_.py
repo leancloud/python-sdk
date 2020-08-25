@@ -321,12 +321,8 @@ class File(object):
             self._metadata = server_data.get("metaData")
 
     def _get_file_token(self):
-        key = uuid.uuid4().hex
-        if self.extension:
-            key = "{0}.{1}".format(key, self.extension)
         data = {
             "name": self._name,
-            "key": key,
             "ACL": self._acl,
             "mime_type": self.mime_type,
             "metaData": self._metadata,
@@ -335,7 +331,6 @@ class File(object):
         content = response.json()
         self.id = content["objectId"]
         self._url = content["url"]
-        content["key"] = key
         return content
 
     def fetch(self):
