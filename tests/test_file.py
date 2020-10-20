@@ -111,11 +111,15 @@ def test_query():  # type: () -> None
 
 @with_setup(setup_func)
 def test_save_external():  # type: () -> None
-    f = File.create_with_url(
-        "lenna.jpg", "http://i1.wp.com/leancloud.cn/images/static/default-avatar.png"
-    )
+    file_name = "lenna.jpg"
+    file_url = "http://i1.wp.com/leancloud.cn/images/static/default-avatar.png"
+    f = File.create_with_url(file_name, file_url)
     f.save()
     assert f.id
+    file_on_cloud = File.create_without_data(f.id)
+    file_on_cloud.fetch()
+    assert file_on_cloud.name == file_name
+    assert file_on_cloud.url == file_url
 
 
 @raises(ValueError)
