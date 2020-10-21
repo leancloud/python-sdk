@@ -1,3 +1,7 @@
+## [2.8.1] - 2020-10-21
+### Changed
+- Remove deprecated internal interface invocation when saving external files.
+
 ## [2.8.0] - 2020-07-15
 ### Added
 - `request_change_phone_number` and `change_phone_number` to verify mobile number *before* updating it.
