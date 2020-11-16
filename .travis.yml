@@ -6,6 +6,7 @@ python:
   - 3.6
   - 3.7
   - 3.8
+  - 3.9
 
 env:
   - APP_ID=8FfQwpvihLHK4htqmtEvkNrv APP_KEY=eE9tNOcCiWoMHM1phxY41rAz MASTER_KEY=75zAjEJSj7lifKQqKSTryae9 USE_REGION=US
