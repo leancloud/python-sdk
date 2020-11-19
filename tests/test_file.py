@@ -8,6 +8,12 @@ import os
 import io
 
 import six
+
+if six.PY2:
+    from urlparse import urlparse
+if six.PY3:
+    from urllib.parse import urlparse
+
 import requests
 from nose.tools import with_setup  # type: ignore
 from nose.tools import assert_raises  # type: ignore
@@ -22,6 +28,10 @@ __author__ = "asaka"
 
 def setup_func():
     leancloud.init(os.environ["APP_ID"], master_key=os.environ["MASTER_KEY"])
+
+
+def setup_without_master_key():
+    leancloud.init(os.environ["APP_ID"], os.environ["APP_KEY"])
 
 
 def test_basic():  # type: () -> None
@@ -95,6 +105,34 @@ def test_save():  # type: () -> None
     assert f.name == "Blah.txt"
     assert f.mime_type == "text/plain"
     assert not f.url.endswith(".")
+
+
+@with_setup(setup_func)
+def test_save_with_specified_key():  # type: () -> None
+    f = File("Blah.txt", open("tests/sample_text.txt", "rb"))
+    user_specified_key = "abc"
+    f.key = user_specified_key
+    f.save()
+
+    assert f.id
+    assert f.name == "Blah.txt"
+    assert f.mime_type == "text/plain"
+    path = urlparse(f.url).path
+    if path.startswith("/avos-cloud-"):  # old school aws s3 file url
+        assert path.split("/")[2] == user_specified_key
+    else:
+        assert path == "/" + user_specified_key
+
+
+@with_setup(setup_without_master_key)
+def test_save_with_specified_key_but_without_master_key():  # type: () -> None
+    f = File("Blah.txt", open("tests/sample_text.txt", "rb"))
+    f.key = "abc"
+    try:
+        f.save()
+    except LeanCloudError as e:
+        if e.code == 1 and e.error.startswith("Unsupported file key"):
+            pass
 
 
 @with_setup(setup_func)
