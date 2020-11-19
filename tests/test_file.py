@@ -131,7 +131,7 @@ def test_save_with_specified_key_but_without_master_key():  # type: () -> None
     try:
         f.save()
     except LeanCloudError as e:
-        if e.code == 1 and e.message.startswith("Unsupported file key"):
+        if e.code == 1 and e.error.startswith("Unsupported file key"):
             pass
 
 
