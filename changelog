@@ -1,3 +1,8 @@
+## [2.9.0] - 2020-11-25
+### Added
+- Allow specifying uploaded file path with MasterKey.
+- Add Python 3.9 in CI tests.
+
 ## [2.8.1] - 2020-10-21
 ### Changed
 - Remove deprecated internal interface invocation when saving external files.
