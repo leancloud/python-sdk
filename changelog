@@ -1,4 +1,4 @@
-## [2.9.0] - 2020-11-25
+## [2.9.0] - 2020-11-26
 ### Added
 - Allow specifying uploaded file path with MasterKey.
 - Add Python 3.9 in CI tests.
