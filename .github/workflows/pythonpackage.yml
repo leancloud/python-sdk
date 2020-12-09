@@ -62,5 +62,5 @@ jobs:
         MASTER_KEY: 75zAjEJSj7lifKQqKSTryae9
         USE_REGION: US
       run:
-        nosetests -v --with-coverage --cover-package=leancloud 
+        nosetests -v
       
