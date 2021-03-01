@@ -20,7 +20,7 @@ Maybe you need the `sudo` prefix depends on your OS environment.
 
 ## Supported Python Versions
 
-Python 2.7 and Python 3.5+.
+Python 2.7 and Python 3.6+.
 
 ## Generate API document
 
