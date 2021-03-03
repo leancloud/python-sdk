@@ -6,16 +6,19 @@ import sys
 here = path.abspath(path.dirname(__file__))
 
 install_requires = [
-    'arrow',
-    'iso8601',
+    'iso8601>=0.1.14',
     'six>=1.11.0',
     'qiniu>=7.1.4,<7.2.4',
-    'requests>=2.20.0,<=2.22.0',
-    'urllib3>=1.24.3,<=1.25.3',
-    'Werkzeug>=0.16.0',
+    'requests>=2.25.1',
+    'Werkzeug>=0.16.0,<=2.0.0',
     'secure-cookie>=0.1.0,<1.0.0',
-    'gevent>=1.0.2,<2.0.0'
+    'gevent>=21.1.0,<22.0.0'
 ]
+
+if sys.version_info < (3, 6, 0):
+    install_requires.append('arrow>=0.17.0,<1.0.0')
+else:
+    install_requires.append('arrow>=1.0.0,<2.0.0')
 
 if sys.version_info < (3, 5, 0):
     install_requires.append('typing')
