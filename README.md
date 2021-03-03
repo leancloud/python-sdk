@@ -27,8 +27,7 @@ Python 2.7 and Python 3.6+.
 Install dependencies:
 
 ```sh
-pip install Sphinx
-pip install sphinx_rtd_theme
+pip install Sphinx sphinx_rtd_theme
 ```
 
 ```sh
