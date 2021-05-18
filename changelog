@@ -1,3 +1,7 @@
+## [2.9.3] - 2021-05-19
+### Fixed
+- dependency issues with werkzeug >= 2.0.0
+
 ## [2.9.2] - 2021-03-05
 ### Fixed
 - Python packaging issue causing installation failure on Python 2.7.
