@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>leancloud.query &mdash; LeanCloud-Python-SDK 2.6.1 文档</title>
   
@@ -13,10 +13,15 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
+
   
+  
+
   
 
   
@@ -26,10 +31,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
         <script src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
@@ -50,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> LeanCloud-Python-SDK
+            <a href="../../index.html" class="icon icon-home"> LeanCloud-Python-SDK
           
 
           
@@ -68,7 +73,7 @@
           
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="在文档中搜索" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -125,6 +130,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -151,21 +158,21 @@
   <h1>leancloud.query 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># coding: utf-8</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
 
 <span class="kn">import</span> <span class="nn">json</span>
 
 <span class="kn">import</span> <span class="nn">six</span>
 
 <span class="kn">import</span> <span class="nn">leancloud</span>
-<span class="kn">from</span> <span class="nn">leancloud</span> <span class="kn">import</span> <span class="n">client</span>
-<span class="kn">from</span> <span class="nn">leancloud</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">leancloud.file_</span> <span class="kn">import</span> <span class="n">File</span>
-<span class="kn">from</span> <span class="nn">leancloud.object_</span> <span class="kn">import</span> <span class="n">Object</span>
-<span class="kn">from</span> <span class="nn">leancloud.errors</span> <span class="kn">import</span> <span class="n">LeanCloudError</span>
+<span class="kn">from</span> <span class="nn">leancloud</span> <span class="k">import</span> <span class="n">client</span>
+<span class="kn">from</span> <span class="nn">leancloud</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">leancloud.file_</span> <span class="k">import</span> <span class="n">File</span>
+<span class="kn">from</span> <span class="nn">leancloud.object_</span> <span class="k">import</span> <span class="n">Object</span>
+<span class="kn">from</span> <span class="nn">leancloud.errors</span> <span class="k">import</span> <span class="n">LeanCloudError</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;asaka &lt;lan@leancloud.rocks&gt;&quot;</span>
 
@@ -184,7 +191,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">,</span> <span class="s2">&quot;class_name&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">class_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">class_name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">results</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">class_name</span> <span class="o">=</span> <span class="n">class_name</span>
@@ -195,7 +202,7 @@
 <span class="sd">    Query.scan 返回结果对象。</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_class</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">scan_key</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_class</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">scan_key</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="n">params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_query_class</span> <span class="o">=</span> <span class="n">query_class</span>
 
@@ -205,7 +212,7 @@
         <span class="k">if</span> <span class="n">scan_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s2">&quot;scan_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">scan_key</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">content</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
                 <span class="s2">&quot;/scan/classes/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_class</span><span class="o">.</span><span class="n">_class_name</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
@@ -222,7 +229,7 @@
 
 
 <div class="viewcode-block" id="Query"><a class="viewcode-back" href="../../index.html#leancloud.Query">[文档]</a><span class="k">class</span> <span class="nc">Query</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_class</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_class</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param query_class: 要查询的 class 名称或者对象</span>
@@ -852,7 +859,7 @@
 
 
 <div class="viewcode-block" id="FriendshipQuery"><a class="viewcode-back" href="../../index.html#leancloud.FriendshipQuery">[文档]</a><span class="k">class</span> <span class="nc">FriendshipQuery</span><span class="p">(</span><span class="n">Query</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_class</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_class</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FriendshipQuery</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">query_class</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">query_class</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;_Follower&quot;</span><span class="p">,</span> <span class="s2">&quot;Follower&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_friendship_tag</span> <span class="o">=</span> <span class="s2">&quot;follower&quot;</span>
@@ -876,28 +883,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; 版权所有 2015, asaka
+        &#169; 版权所有 2015, asaka.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
     
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
 
 </footer>
-
         </div>
       </div>
 

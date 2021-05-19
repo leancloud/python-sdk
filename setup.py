@@ -12,7 +12,7 @@ install_requires = [
     'six>=1.11.0',
     'qiniu>=7.1.4,<7.2.4',
     'requests>=2.25.1',
-    'Werkzeug>=0.16.0,<=2.0.0',
+    'Werkzeug>=0.16.0,<2.0.0',
     'secure-cookie>=0.1.0,<1.0.0',
     'gevent>=21.1.0,<22.0.0',
     "typing; python_version < '3.5'"
@@ -20,7 +20,7 @@ install_requires = [
 
 setup(
     name='leancloud',
-    version='2.9.2',
+    version='2.9.3',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
     author='asaka',
