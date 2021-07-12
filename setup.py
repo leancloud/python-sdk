@@ -10,7 +10,7 @@ install_requires = [
     "arrow>=1.0.0,<2.0.0; python_version >= '3.6'",
     'iso8601>=0.1.14',
     'six>=1.11.0',
-    'qiniu>=7.1.4,<7.2.4',
+    'qiniu==7.3.1',
     'requests>=2.25.1',
     'Werkzeug>=0.16.0,<2.0.0',
     'secure-cookie>=0.1.0,<1.0.0',
