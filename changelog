@@ -1,3 +1,9 @@
+## [2.9.4] - 2021-07-13
+### Fixed
+- update qiniu sdk to fix parameter mismatch exception (#521)
+
+Thank berry_shanghai for bringing this issue to our attention.
+
 ## [2.9.3] - 2021-05-19
 ### Fixed
 - dependency issues with werkzeug >= 2.0.0
