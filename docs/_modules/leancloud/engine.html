@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="zh-CN" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>leancloud.engine &mdash; LeanCloud-Python-SDK 2.6.1 文档</title>
   
@@ -13,15 +13,10 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
 
   
   
-
   
-  
-
   
 
   
@@ -31,10 +26,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
         <script src="../../_static/translations.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
@@ -55,7 +50,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> LeanCloud-Python-SDK
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> LeanCloud-Python-SDK
           
 
           
@@ -73,7 +68,7 @@
           
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -130,8 +125,6 @@
 
 
 
-
-
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -158,42 +151,42 @@
   <h1>leancloud.engine 源代码</h1><div class="highlight"><pre>
 <span></span><span class="c1"># coding: utf-8</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="kn">from</span> <span class="nn">werkzeug.wrappers</span> <span class="k">import</span> <span class="n">Request</span>
-<span class="kn">from</span> <span class="nn">werkzeug.wrappers</span> <span class="k">import</span> <span class="n">Response</span>
-<span class="kn">from</span> <span class="nn">werkzeug.serving</span> <span class="k">import</span> <span class="n">run_simple</span>
+<span class="kn">from</span> <span class="nn">werkzeug.wrappers</span> <span class="kn">import</span> <span class="n">Request</span>
+<span class="kn">from</span> <span class="nn">werkzeug.wrappers</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">werkzeug.serving</span> <span class="kn">import</span> <span class="n">run_simple</span>
 
 <span class="kn">import</span> <span class="nn">leancloud</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">leanengine</span>
-<span class="kn">from</span> <span class="nn">.authorization</span> <span class="k">import</span> <span class="n">AuthorizationMiddleware</span>
-<span class="kn">from</span> <span class="nn">.cookie_session</span> <span class="k">import</span> <span class="n">CookieSessionMiddleware</span>  <span class="c1"># noqa: F401</span>
-<span class="kn">from</span> <span class="nn">.cors</span> <span class="k">import</span> <span class="n">CORSMiddleware</span>
-<span class="kn">from</span> <span class="nn">.https_redirect_middleware</span> <span class="k">import</span> <span class="n">HttpsRedirectMiddleware</span>  <span class="c1"># noqa: F401</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">LeanEngineApplication</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">LeanEngineError</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">after_delete</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">after_save</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">after_update</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">before_delete</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">before_save</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">before_update</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">context</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">current</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">register_cloud_func</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">register_on_bigquery</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">register_on_login</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">register_on_verified</span>
-<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="k">import</span> <span class="n">user</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">leanengine</span>
+<span class="kn">from</span> <span class="nn">.authorization</span> <span class="kn">import</span> <span class="n">AuthorizationMiddleware</span>
+<span class="kn">from</span> <span class="nn">.cookie_session</span> <span class="kn">import</span> <span class="n">CookieSessionMiddleware</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span> <span class="nn">.cors</span> <span class="kn">import</span> <span class="n">CORSMiddleware</span>
+<span class="kn">from</span> <span class="nn">.https_redirect_middleware</span> <span class="kn">import</span> <span class="n">HttpsRedirectMiddleware</span>  <span class="c1"># noqa: F401</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">LeanEngineApplication</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">LeanEngineError</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">after_delete</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">after_save</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">after_update</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">before_delete</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">before_save</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">before_update</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">context</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">current</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">register_cloud_func</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">register_on_bigquery</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">register_on_login</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">register_on_verified</span>
+<span class="kn">from</span> <span class="nn">.leanengine</span> <span class="kn">import</span> <span class="n">user</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;asaka &lt;lan@leancloud.rocks&gt;&quot;</span>
 
@@ -203,7 +196,7 @@
 <span class="sd">    LeanEngine middleware.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wsgi_app</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fetch_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wsgi_app</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fetch_user</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        LeanEngine middleware constructor.</span>
 
@@ -221,7 +214,7 @@
             <span class="n">CORSMiddleware</span><span class="p">(</span><span class="n">AuthorizationMiddleware</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">))</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environ</span><span class="p">,</span> <span class="n">start_response</span><span class="p">):</span>
         <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">environ</span><span class="p">)</span>
         <span class="n">environ</span><span class="p">[</span>
             <span class="s2">&quot;leanengine.request&quot;</span>
@@ -311,7 +304,7 @@
         <span class="k">return</span> <span class="n">run_simple</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Engine.start"><a class="viewcode-back" href="../../index.html#leancloud.Engine.start">[文档]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">gevent.pywsgi</span> <span class="k">import</span> <span class="n">WSGIServer</span>
+        <span class="kn">from</span> <span class="nn">gevent.pywsgi</span> <span class="kn">import</span> <span class="n">WSGIServer</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">leancloud</span><span class="p">,</span> <span class="s2">&quot;APP_ID&quot;</span><span class="p">):</span>
             <span class="n">APP_ID</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LEANCLOUD_APP_ID&quot;</span><span class="p">]</span>
@@ -350,25 +343,28 @@
            
           </div>
           <footer>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &#169; 版权所有 2015, asaka.
+        
+        &copy; 版权所有 2015, asaka
 
     </p>
   </div>
     
     
     
-    利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
     
-    由 <a href="https://readthedocs.org">Read the Docs</a>开发. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
+
         </div>
       </div>
 
