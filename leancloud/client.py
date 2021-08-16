@@ -83,6 +83,7 @@ def need_init(func):
         headers = {
             "Content-Type": "application/json;charset=utf-8",
             "X-LC-Id": APP_ID,
+            "X-LC-Hook-Key": HOOK_KEY,
             "X-LC-Prod": USE_PRODUCTION,
             "User-Agent": "AVOS Cloud python-{0} SDK ({1}.{2})".format(
                 leancloud.__version__,
