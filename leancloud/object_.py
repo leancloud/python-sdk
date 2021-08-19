@@ -576,21 +576,25 @@ class Object(six.with_metaclass(ObjectMeta, object)):
 
     def disable_before_hook(self):
         hook_key = client.get_app_info().get("hook_key")
-        if not hook_key:
+        master_key = client.get_app_info().get("master_key")
+        if hook_key or master_key:
+            self.ignore_hook("beforeSave")
+            self.ignore_hook("beforeUpdate")
+            self.ignore_hook("beforeDelete")
+            return self
+        else:
             raise ValueError("disable_before_hook need LeanCloud hook key")
-        self.ignore_hook("beforeSave")
-        self.ignore_hook("beforeUpdate")
-        self.ignore_hook("beforeDelete")
-        return self
 
     def disable_after_hook(self):
         hook_key = client.get_app_info().get("hook_key")
-        if not hook_key:
+        master_key = client.get_app_info().get("master_key")
+        if hook_key or master_key:
+            self.ignore_hook("afterSave")
+            self.ignore_hook("afterUpdate")
+            self.ignore_hook("afterDelete")
+            return self
+        else:
             raise ValueError("`disable_before_hook` need LeanCloud hook key")
-        self.ignore_hook("afterSave")
-        self.ignore_hook("afterUpdate")
-        self.ignore_hook("afterDelete")
-        return self
 
     def ignore_hook(self, hook_name):
         if hook_name not in {
