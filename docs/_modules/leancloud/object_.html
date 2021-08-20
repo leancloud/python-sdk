@@ -727,21 +727,25 @@
 
 <div class="viewcode-block" id="Object.disable_before_hook"><a class="viewcode-back" href="../../index.html#leancloud.Object.disable_before_hook">[文档]</a>    <span class="k">def</span> <span class="nf">disable_before_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">hook_key</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_app_info</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hook_key&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">hook_key</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;disable_before_hook need LeanCloud hook key&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;beforeSave&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;beforeUpdate&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;beforeDelete&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="n">master_key</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_app_info</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;master_key&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hook_key</span> <span class="ow">or</span> <span class="n">master_key</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;beforeSave&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;beforeUpdate&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;beforeDelete&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;disable_before_hook needs master key or hook key&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Object.disable_after_hook"><a class="viewcode-back" href="../../index.html#leancloud.Object.disable_after_hook">[文档]</a>    <span class="k">def</span> <span class="nf">disable_after_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">hook_key</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_app_info</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hook_key&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">hook_key</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`disable_before_hook` need LeanCloud hook key&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;afterSave&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;afterUpdate&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;afterDelete&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
+        <span class="n">master_key</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_app_info</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;master_key&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hook_key</span> <span class="ow">or</span> <span class="n">master_key</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;afterSave&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;afterUpdate&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ignore_hook</span><span class="p">(</span><span class="s2">&quot;afterDelete&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;disable_after_hook needs master key or hook key&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Object.ignore_hook"><a class="viewcode-back" href="../../index.html#leancloud.Object.ignore_hook">[文档]</a>    <span class="k">def</span> <span class="nf">ignore_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook_name</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">hook_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span>
