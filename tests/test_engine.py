@@ -500,6 +500,32 @@ def test_on_login():  # type: () -> None
     assert response.ok
 
 
+def test_on_auth_data():  # type: () -> None
+    @engine.on_auth_data
+    def on_auth_data(auth_data):
+        if auth_data["foo"]["openid"] == "openid":
+            auth_data["foo"]["uid"] = "openid"
+        return auth_data
+
+    response = requests.post(
+        url + "/__engine/1.1/functions/_User/onAuthData",
+        json={"object": {
+            "foo": {
+                "openid": "openid",
+                "access_token": "access_token",
+                "expires_in": 123456789,
+            }
+        }},
+        headers={
+            "x-avoscloud-application-id": TEST_APP_ID,
+            "x-avoscloud-application-key": TEST_APP_KEY,
+            "x-lc-hook-key": TEST_HOOK_KEY,
+        },
+    )
+    assert response.ok
+    assert response.json()["result"]["foo"]["uid"] == "openid"
+
+
 def test_insight():  # type: () -> None
     @engine.on_insight("end")
     def on_insight_end(ok, data):

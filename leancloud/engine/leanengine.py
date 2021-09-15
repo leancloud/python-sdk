@@ -135,6 +135,8 @@ class LeanEngineApplication(object):
                 ),
                 Rule("/__engine/1.1/functions/_User/onLogin", endpoint="on_login"),
                 Rule("/__engine/1/functions/_User/onLogin", endpoint="on_login"),
+                Rule("/__engine/1.1/functions/_User/onAuthData", endpoint="on_auth_data"),
+                Rule("/__engine/1/functions/_User/onAuthData", endpoint="on_auth_data"),
                 Rule(
                     "/__engine/1/functions/<class_name>/<hook_name>",
                     endpoint="cloud_hook",
@@ -163,6 +165,8 @@ class LeanEngineApplication(object):
                 Rule("/1.1/functions/BigQuery/<event>", endpoint="on_bigquery"),
                 Rule("/1.1/functions/_User/onLogin", endpoint="on_login"),
                 Rule("/1/functions/_User/onLogin", endpoint="on_login"),
+                Rule("/1.1/functions/_User/onAuthData", endpoint="on_auth_data"),
+                Rule("/1/functions/_User/onAuthData", endpoint="on_auth_data"),
                 Rule("/1/functions/<class_name>/<hook_name>", endpoint="cloud_hook"),
                 Rule("/1.1/functions/<class_name>/<hook_name>", endpoint="cloud_hook"),
                 Rule("/1/functions/onVerified/<verify_type>", endpoint="on_verified"),
@@ -246,6 +250,10 @@ class LeanEngineApplication(object):
             elif endpoint == "on_login":
                 result = {
                     "result": dispatch_on_login(self.cloud_codes, app_params, **values)
+                }
+            elif endpoint == "on_auth_data":
+                result = {
+                    "result": dispatch_on_auth_data(self.cloud_codes, app_params, **values)
                 }
             elif endpoint == "ops_meta_data":
                 from .authorization import MASTER_KEY
@@ -508,6 +516,26 @@ def dispatch_on_login(_cloud_codes, app_params, params):
 
     return func(user)
 
+def register_on_auth_data(_cloud_codes, func):
+    func_name = "__on_auth_data__User"
+
+    if func_name in _cloud_codes:
+        raise RuntimeError("on authdata is already registered")
+    _cloud_codes[func_name] = func
+
+def dispatch_on_auth_data(_cloud_codes, app_params, params):
+    from .authorization import HOOK_KEY
+    current_hook_key = app_params.get("hook_key")
+    if not current_hook_key or current_hook_key != HOOK_KEY:
+        raise LeanEngineError(code=401, message="Unauthorized.")
+
+    func = _cloud_codes.get("__on_auth_data__User")
+    if not func:
+        return
+
+    auth_data = params["object"]
+    return func(auth_data)
+    
 
 def dispatch_ops_meta_data(_cloud_codes):
     return list(_cloud_codes.keys())

@@ -34,6 +34,7 @@ from .leanengine import current
 from .leanengine import register_cloud_func
 from .leanengine import register_on_bigquery
 from .leanengine import register_on_login
+from .leanengine import register_on_auth_data
 from .leanengine import register_on_verified
 from .leanengine import user
 
@@ -120,6 +121,9 @@ class Engine(object):
 
     def on_login(self, *args, **kwargs):
         return register_on_login(self.app.cloud_codes, *args, **kwargs)
+
+    def on_auth_data(self, *args, **kwargs):
+        return register_on_auth_data(self.app.cloud_codes, *args, **kwargs)
 
     def on_bigquery(self, *args, **kwargs):
         warnings.warn(
