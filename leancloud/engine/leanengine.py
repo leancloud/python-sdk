@@ -533,7 +533,7 @@ def dispatch_on_auth_data(_cloud_codes, app_params, params):
     if not func:
         return
 
-    auth_data = params["object"]
+    auth_data = params["authData"]
     return func(auth_data)
     
 
