@@ -517,7 +517,7 @@ def dispatch_on_login(_cloud_codes, app_params, params):
     return func(user)
 
 def register_on_auth_data(_cloud_codes, func):
-    func_name = "__on_auth_data__User"
+    func_name = "__on_authdata__User"
 
     if func_name in _cloud_codes:
         raise RuntimeError("on authdata is already registered")
@@ -529,7 +529,7 @@ def dispatch_on_auth_data(_cloud_codes, app_params, params):
     if not current_hook_key or current_hook_key != HOOK_KEY:
         raise LeanEngineError(code=401, message="Unauthorized.")
 
-    func = _cloud_codes.get("__on_auth_data__User")
+    func = _cloud_codes.get("__on_authdata__User")
     if not func:
         return
 
