@@ -60,6 +60,8 @@ def test_basic():  # type: () -> None
         fn(cStringIO.StringIO(b))
         fn(buffer(b))  # noqa: F821
 
+    if six.PY3:
+        fn(b)
 
 def test_create_with_url():  # type: () -> None
     f = File.create_with_url(
