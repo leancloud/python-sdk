@@ -509,7 +509,7 @@ def test_on_auth_data():  # type: () -> None
 
     response = requests.post(
         url + "/__engine/1.1/functions/_User/onAuthData",
-        json={"object": {
+        json={"authData": {
             "foo": {
                 "openid": "openid",
                 "access_token": "access_token",
