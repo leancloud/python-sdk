@@ -67,7 +67,8 @@ def test_create_with_url():  # type: () -> None
         u"http://i1.wp.com/leancloud.cn/images/static/default-avatar.png",
         meta_data={},
     )
-    assert f.url == "http://i1.wp.com/leancloud.cn/images/static/default-avatar.png"
+    assert f._url == "http://i1.wp.com/leancloud.cn/images/static/default-avatar.png"
+    assert f.url is None
 
 
 def test_create_without_data():  # type: () -> None

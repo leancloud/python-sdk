@@ -36,6 +36,7 @@ class File(object):
         self.key = None
         self.id = None
         self._url = None
+        self._successful_url = None
         self._acl = None
         self.current_user = leancloud.User.get_current()
         self.timeout = 30
@@ -137,7 +138,7 @@ class File(object):
 
     @property
     def url(self):
-        return self._url
+        return self._successful_url
 
     @property
     def mime_type(self):
@@ -162,7 +163,7 @@ class File(object):
     def get_thumbnail_url(
         self, width, height, quality=100, scale_to_fit=True, fmt="png"
     ):
-        if not self._url:
+        if not self.url:
             raise ValueError("invalid url")
 
         if width < 0 or height < 0:
@@ -226,6 +227,7 @@ class File(object):
         response = client.post("/files".format(self._name), data)
         content = response.json()
         self.id = content["objectId"]
+        self._successful_url = self._url
 
     def _save_to_qcloud(self, token, upload_url):
         headers = {
@@ -286,6 +288,7 @@ class File(object):
             self._name = server_data.get("name")
         if "url" in server_data:
             self._url = server_data.get("url")
+            self._successful_url = self._url
         if "mime_type" in server_data:
             self._mime_type = server_data["mime_type"]
         if "metaData" in server_data:
