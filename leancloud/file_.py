@@ -163,7 +163,7 @@ class File(object):
     def get_thumbnail_url(
         self, width, height, quality=100, scale_to_fit=True, fmt="png"
     ):
-        if not self._url:
+        if not self.url:
             raise ValueError("invalid url")
 
         if width < 0 or height < 0:
