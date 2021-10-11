@@ -1,3 +1,9 @@
+## [2.9.7] - 2021-10-11
+
+### Fixed
+- onAuthData hook
+- hide LCFile.url when failed to upload file
+
 ## [2.9.6] - 2021-09-15
 
 ### Added

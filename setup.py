@@ -20,7 +20,7 @@ install_requires = [
 
 setup(
     name='leancloud',
-    version='2.9.6',
+    version='2.9.7',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
     author='asaka',
