@@ -140,6 +140,7 @@ def decode(key, value):
         if meta_data:
             f._metadata = meta_data
         f._url = value["url"]
+        f._successful_url = value["url"]
         f.id = value["objectId"]
         return f
 

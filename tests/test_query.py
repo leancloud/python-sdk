@@ -17,6 +17,7 @@ import leancloud
 from leancloud import Query
 from leancloud import Object
 from leancloud import GeoPoint
+from leancloud.file_ import File
 
 __author__ = "asaka <lan@leancloud.rocks>"
 
@@ -68,6 +69,9 @@ def make_setup_func(use_master_key=False):
                 game_score.set("playerName", "张三")
                 game_score.set("location", GeoPoint(latitude=i, longitude=-i))
                 game_score.set("random", random.randrange(100))
+                f = File("Blah.txt", open("tests/sample_text.txt", "rb"))
+                f.save()
+                game_score.set("attachment", f)
                 game_score.save()
 
     return setup_func
@@ -468,6 +472,12 @@ def test_include():  # type: () -> None
     result = Query(GameScore).include(["score"]).find()
     assert len(result) == 10
 
+@with_setup(make_setup_func())
+def test_attachment():  # type: () -> None
+    result = Query(GameScore).first()
+    print(result.dump())
+    attachment = result.get('attachment')
+    assert attachment.url
 
 @with_setup(make_setup_func())
 def test_select():  # type: () -> None
