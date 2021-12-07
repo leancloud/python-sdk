@@ -123,6 +123,9 @@ def test_save_with_specified_key():  # type: () -> None
     path = urlparse(f.url).path
     if path.startswith("/avos-cloud-"):  # old school aws s3 file url
         assert path.split("/")[2] == user_specified_key
+    elif f.url.startswith("https://lc-gluttony"):  # new aws s3 gluttony bucket
+        gluttony_path = "/" + os.environ["APP_ID"][0:12] + "/" + user_specified_key
+        assert path == gluttony_path
     else:
         assert path == "/" + user_specified_key
 
