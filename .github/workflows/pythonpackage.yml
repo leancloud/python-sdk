@@ -57,9 +57,9 @@ jobs:
         pip install -e .'[test]'
     - name: Run tests with ${{ matrix.python-version }}
       env:
-        APP_ID: 8FfQwpvihLHK4htqmtEvkNrv
-        APP_KEY: eE9tNOcCiWoMHM1phxY41rAz
-        MASTER_KEY: 75zAjEJSj7lifKQqKSTryae9
+        APP_ID: YJRGphy60b8JCBib0vtDDtak-MdYXbMMI
+        APP_KEY: ${{ secrets.APP_KEY }}
+        MASTER_KEY: ${{ secrets.MASTER_KEY }}
         USE_REGION: US
       run:
         nosetests -v
