@@ -45,6 +45,22 @@ Configure the following environment variables:
 - `MASTER_KEY`
 - `USE_REGION`
 
+Make sure the following options are configured on the LeanCloud console:
+
+- Data Storage > Settings > Include ACL with objects being queried: **checked**
+- Push Notification > Push notification settings > Prevent clients from sending push notifications: **unchecked**
+- Settings > Security > Service switches > Push notifications: **enabled**
+- Settings > Security > Service switches > SMS: **disabled**
+
+And there is a cloud function naming `add` which returns `3` for `add(a=1, b=2)` deployed on the LeanEngine production environment of the application.
+For example:
+
+```js
+AV.Cloud.define('add', async function (request) {
+    return request.params["a"] + request.params["b"]
+})
+```
+
 Install dependencies:
 
 ```sh
