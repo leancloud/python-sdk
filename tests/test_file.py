@@ -152,6 +152,14 @@ def test_query():  # type: () -> None
 
     assert isinstance(leancloud.File.query.first(), File)
 
+@with_setup(setup_func)
+def test_scan():  # type: () -> None
+    files = leancloud.Query("File").scan()
+    for f in files:
+        assert isinstance(f, File)
+        assert f.key
+        assert f.name
+        assert f.metadata
 
 @with_setup(setup_func)
 def test_save_external():  # type: () -> None
