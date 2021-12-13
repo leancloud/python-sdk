@@ -146,6 +146,32 @@ def decode(key, value):
         return f
 
 
+def decode_date_string(date_or_string):
+    if date_or_string is None:
+        return None
+    elif isinstance(date_or_string, six.string_types):
+        return decode_date_string({"__type": "Date", "iso": date_or_string})
+    elif date_or_string["__type"] == "Date":
+        return arrow.get(iso8601.parse_date(date_or_string["iso"])).to("local").datetime
+    else:
+        raise TypeError("Invalid date type")
+
+
+def decode_updated_at(updated_at_date_string, created_at_datetime):
+    updated_at = decode_date_string(updated_at_date_string)
+    if updated_at is None:
+        if created_at_datetime is None:
+            return None
+        else:
+            # When a new object is created, updatedAt will be set as the same value as createdAt on the cloud.
+            # However, the cloud will only return objectId and createdAt in REST API response, without updatedAt.
+            # Thus we need to set updatedAt as the same value as createdAt, consistent with the value on the cloud.
+            # This behaviour is consistent with other SDKs such as JavaScript and Go.
+            return created_at_datetime
+    else:
+        return updated_at
+
+
 def traverse_object(obj, callback, seen=None):
     seen = seen or set()
 
