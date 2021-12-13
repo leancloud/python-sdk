@@ -108,6 +108,7 @@ def test_save():  # type: () -> None
     assert f.name == "Blah.txt"
     assert f.mime_type == "text/plain"
     assert not f.url.endswith(".")
+    assert f.created_at == f.updated_at
 
 
 @with_setup(setup_func)
@@ -118,6 +119,7 @@ def test_save_with_specified_key():  # type: () -> None
     f.save()
 
     assert f.id
+    assert f.created_at == f.updated_at
     assert f.name == "Blah.txt"
     assert f.mime_type == "text/plain"
     path = urlparse(f.url).path
@@ -146,9 +148,11 @@ def test_query():  # type: () -> None
     files = leancloud.Query("File").find()
     for f in files:
         assert isinstance(f, File)
+        assert f.id
         assert f.url
         assert f.name
         assert f.metadata
+        assert f.created_at == f.updated_at
         if f.metadata.get("__source") == 'external':
             assert f.url
         else:
@@ -161,6 +165,7 @@ def test_scan():  # type: () -> None
     files = leancloud.Query("File").scan()
     for f in files:
         assert isinstance(f, File)
+        assert f.created_at == f.updated_at
         assert f.name
         assert f.metadata
         if f.metadata.get("__source") == 'external':
@@ -176,6 +181,7 @@ def test_save_external():  # type: () -> None
     f = File.create_with_url(file_name, file_url)
     f.save()
     assert f.id
+    assert f.created_at == f.updated_at
     file_on_cloud = File.create_without_data(f.id)
     file_on_cloud.fetch()
     assert file_on_cloud.name == file_name

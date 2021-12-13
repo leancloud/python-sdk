@@ -137,12 +137,16 @@ def decode(key, value):
     if _type == "File":
         f = leancloud.File(value["name"])
         meta_data = value.get("metaData")
-        key = value.get("key")
-        if meta_data:
-            f._metadata = meta_data  
+        file_key = value.get("key")
+        if file_key is not None:
+            f.key = file_key
+        if meta_data is not None:
+            f._metadata = meta_data
         f._url = value["url"]
         f._successful_url = value["url"]
         f.id = value["objectId"]
+        f.created_at = decode_date_string(value.get("createdAt"))
+        f.updated_at = decode_date_string(value.get("updatedAt"))
         return f
 
 
