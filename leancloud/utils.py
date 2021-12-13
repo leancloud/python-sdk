@@ -137,8 +137,9 @@ def decode(key, value):
     if _type == "File":
         f = leancloud.File(value["name"])
         meta_data = value.get("metaData")
+        key = value.get("key")
         if meta_data:
-            f._metadata = meta_data
+            f._metadata = meta_data  
         f._url = value["url"]
         f._successful_url = value["url"]
         f.id = value["objectId"]

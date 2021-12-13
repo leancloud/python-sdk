@@ -289,6 +289,8 @@ class File(object):
         if "url" in server_data:
             self._url = server_data.get("url")
             self._successful_url = self._url
+        if "key" in server_data:
+            self.key = server_data.get("key")
         if "mime_type" in server_data:
             self._mime_type = server_data["mime_type"]
         if "metaData" in server_data:

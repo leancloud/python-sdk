@@ -149,6 +149,10 @@ def test_query():  # type: () -> None
         assert f.url
         assert f.name
         assert f.metadata
+        if f.metadata.get("__source") == 'external':
+            assert f.url
+        else:
+            assert f.key
 
     assert isinstance(leancloud.File.query.first(), File)
 
@@ -157,9 +161,13 @@ def test_scan():  # type: () -> None
     files = leancloud.Query("File").scan()
     for f in files:
         assert isinstance(f, File)
-        assert f.key
         assert f.name
         assert f.metadata
+        if f.metadata.get("__source") == 'external':
+            assert f.url
+        else:
+            assert f.key
+        
 
 @with_setup(setup_func)
 def test_save_external():  # type: () -> None
