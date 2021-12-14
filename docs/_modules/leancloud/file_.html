@@ -102,6 +102,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">created_at</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updated_at</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_successful_url</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_acl</span> <span class="o">=</span> <span class="kc">None</span>
@@ -293,8 +295,17 @@
         <span class="p">}</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/files&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">),</span> <span class="n">data</span><span class="p">)</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="s2">&quot;objectId&quot;</span><span class="p">]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_successful_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
+
+        <span class="n">_created_at</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">decode_date_string</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;createdAt&quot;</span><span class="p">))</span>
+        <span class="n">_updated_at</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">decode_updated_at</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;updatedAt&quot;</span><span class="p">),</span> <span class="n">_created_at</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_created_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">created_at</span> <span class="o">=</span> <span class="n">_created_at</span>
+        <span class="k">if</span> <span class="n">_updated_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updated_at</span> <span class="o">=</span> <span class="n">_updated_at</span>
 
     <span class="k">def</span> <span class="nf">_save_to_qcloud</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">upload_url</span><span class="p">):</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
@@ -356,10 +367,19 @@
         <span class="k">if</span> <span class="s2">&quot;url&quot;</span> <span class="ow">in</span> <span class="n">server_data</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">server_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_successful_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span>
+        <span class="k">if</span> <span class="s2">&quot;key&quot;</span> <span class="ow">in</span> <span class="n">server_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">server_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;mime_type&quot;</span> <span class="ow">in</span> <span class="n">server_data</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_mime_type</span> <span class="o">=</span> <span class="n">server_data</span><span class="p">[</span><span class="s2">&quot;mime_type&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s2">&quot;metaData&quot;</span> <span class="ow">in</span> <span class="n">server_data</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">server_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metaData&quot;</span><span class="p">)</span>
+        
+        <span class="n">_created_at</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">decode_date_string</span><span class="p">(</span><span class="n">server_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;createdAt&quot;</span><span class="p">))</span>
+        <span class="n">_updated_at</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">decode_updated_at</span><span class="p">(</span><span class="n">server_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;updatedAt&quot;</span><span class="p">),</span> <span class="n">_created_at</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_created_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">created_at</span> <span class="o">=</span> <span class="n">_created_at</span>
+        <span class="k">if</span> <span class="n">_updated_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">updated_at</span> <span class="o">=</span> <span class="n">_updated_at</span>
 
     <span class="k">def</span> <span class="nf">_get_file_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
