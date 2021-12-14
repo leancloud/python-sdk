@@ -1,3 +1,14 @@
+## [2.9.9] - 2021-12-14
+
+### Added
+
+- LCFile exposes the `key` attribute for non-external files.
+
+### Fixed
+
+- created_at and updated_at were missing on LCFile.
+- updated_at was missing on new created LCObject. 
+
 ## [2.9.8] - 2021-12-10
 
 ### Fixed
