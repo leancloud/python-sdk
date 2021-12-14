@@ -35,6 +35,8 @@ class File(object):
         self._name = name
         self.key = None
         self.id = None
+        self.created_at = None
+        self.updated_at = None
         self._url = None
         self._successful_url = None
         self._acl = None
@@ -226,8 +228,17 @@ class File(object):
         }
         response = client.post("/files".format(self._name), data)
         content = response.json()
+
         self.id = content["objectId"]
+
         self._successful_url = self._url
+
+        _created_at = utils.decode_date_string(content.get("createdAt"))
+        _updated_at = utils.decode_updated_at(content.get("updatedAt"), _created_at)
+        if _created_at is not None:
+            self.created_at = _created_at
+        if _updated_at is not None:
+            self.updated_at = _updated_at
 
     def _save_to_qcloud(self, token, upload_url):
         headers = {
@@ -289,10 +300,19 @@ class File(object):
         if "url" in server_data:
             self._url = server_data.get("url")
             self._successful_url = self._url
+        if "key" in server_data:
+            self.key = server_data.get("key")
         if "mime_type" in server_data:
             self._mime_type = server_data["mime_type"]
         if "metaData" in server_data:
             self._metadata = server_data.get("metaData")
+        
+        _created_at = utils.decode_date_string(server_data.get("createdAt"))
+        _updated_at = utils.decode_updated_at(server_data.get("updatedAt"), _created_at)
+        if _created_at is not None:
+            self.created_at = _created_at
+        if _updated_at is not None:
+            self.updated_at = _updated_at
 
     def _get_file_token(self):
         data = {

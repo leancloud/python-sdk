@@ -314,6 +314,7 @@ def test_fetch_when_save():  # type: () -> None
     foo = Foo()
     foo.set("counter", 1)
     foo.save()
+    assert foo.created_at == foo.updated_at
     assert foo.get("counter") == 1
 
     foo_from_other_thread = leancloud.Query(Foo).get(foo.id)

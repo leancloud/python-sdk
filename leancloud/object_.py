@@ -334,25 +334,18 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         }
 
     def _merge_metadata(self, server_data):
-        for key in ("objectId", "createdAt", "updatedAt"):
-            if server_data.get(key) is None:
-                continue
-            if key == "objectId":
-                self.id = server_data[key]
-            else:
-                if isinstance(server_data[key], six.string_types):
-                    dt = utils.decode(key, {"__type": "Date", "iso": server_data[key]})
-                elif server_data[key]["__type"] == "Date":
-                    dt = utils.decode(key, server_data[key])
-                else:
-                    raise TypeError("Invalid date type")
-                server_data[key] = dt
-                if key == "createdAt":
-                    self.created_at = dt
-                elif key == "updatedAt":
-                    self.updated_at = dt
-                else:
-                    raise TypeError
+        object_id = server_data.get("objectId")
+        _created_at = utils.decode_date_string(server_data.get("createdAt"))
+        _updated_at = utils.decode_updated_at(server_data.get("updatedAt"), _created_at)
+
+        if object_id is not None:
+            self.id = object_id
+        if _created_at is not None:
+            self.created_at = _created_at
+        if _updated_at is not None:
+            self.updated_at = _updated_at
+
+
 
     def validate(self, attrs):
         if "ACL" in attrs and not isinstance(attrs["ACL"], leancloud.ACL):
@@ -370,6 +363,23 @@ class Object(six.with_metaclass(ObjectMeta, object)):
         # for backward compatibility
         if (deafult is not None) and (default is None):
             default = deafult
+
+        # createdAt is stored as string in the cloud but used as datetime object on the client side.
+        # We need to make sure that `.created_at` and `.get("createdAt")` return the same value.
+        # Otherwise users will get confused.
+        if attr == "createdAt":
+            if self.created_at is None:
+                return None
+            else:
+                return self.created_at
+
+        # Similar to createdAt.
+        if attr == "updatedAt":
+            if self.updated_at is None:
+                return None
+            else:
+                return self.updated_at
+        
         return self._attributes.get(attr, default)
 
     def relation(self, attr):
