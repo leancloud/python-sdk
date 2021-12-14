@@ -1,3 +1,9 @@
+## [2.9.8] - 2021-12-10
+
+### Fixed
+
+- `url` was missing in included LCFile attribute
+
 ## [2.9.7] - 2021-10-11
 
 ### Fixed
