@@ -22,7 +22,7 @@ class AppRouter(object):
         self.expired_at = 0
 
         prefix = app_id[:8].lower()
-        domain = "lncld.net"
+        is_cn_n1 = False
 
         if region == "US":
             domain = "lncldglobal.com"
@@ -32,14 +32,19 @@ class AppRouter(object):
             elif app_id.endswith("-MdYXbMMI"):
                 domain = "lncldglobal.com"
             else:
-                domain = "lncld.net"
+                domain = "{}.lc-cn-n1-shared.com".format(prefix)
+                is_cn_n1 = True
         else:
             raise RuntimeError("invalid region: {}".format(region))
 
-        self.hosts["api"] = "{}.api.{}".format(prefix, domain)
-        self.hosts["engine"] = "{}.engine.{}".format(prefix, domain)
-        self.hosts["stats"] = "{}.stats.{}".format(prefix, domain)
-        self.hosts["push"] = "{}.push.{}".format(prefix, domain)
+        if is_cn_n1:
+            self.hosts.update(dict.fromkeys(
+                ["api", "engine", "stats", "push"], domain))
+        else:
+            self.hosts["api"] = "{}.api.{}".format(prefix, domain)
+            self.hosts["engine"] = "{}.engine.{}".format(prefix, domain)
+            self.hosts["stats"] = "{}.stats.{}".format(prefix, domain)
+            self.hosts["push"] = "{}.push.{}".format(prefix, domain)
 
     def get(self, type_):
         with self.lock:
