@@ -575,8 +575,9 @@ def test_request_sms_code():  # type: () -> None
         time.sleep(60)
         cloud.request_sms_code("+447365753569", idd="+86")  # +447365753569
     except LeanCloudError as e:
-        # 短信发送过于频繁或者欠费或者关闭短信功能
-        if e.code in (601, 605, 160, 119):
+        if e.code in (605, 160, 119):  # unverified template, insufficient balance, sms service disabled 
+            pass
+        elif e.code == 601 or e.error.startswith("SMS request too fast"):  # send sms too frequently
             pass
         else:
             raise e
