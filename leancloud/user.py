@@ -360,7 +360,7 @@ class User(Object):
 
     @classmethod
     def verify_mobile_phone_number(cls, sms_code):
-        client.post("/verfyMobilePhone/" + sms_code, {})
+        client.post("/verifyMobilePhone/" + sms_code, {})
 
     @classmethod
     def request_login_sms_code(cls, phone_number, validate_token=None):
