@@ -13,6 +13,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/translations.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -427,7 +428,7 @@
 
 <div class="viewcode-block" id="User.verify_mobile_phone_number"><a class="viewcode-back" href="../../index.html#leancloud.User.verify_mobile_phone_number">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">verify_mobile_phone_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sms_code</span><span class="p">):</span>
-        <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/verfyMobilePhone/&quot;</span> <span class="o">+</span> <span class="n">sms_code</span><span class="p">,</span> <span class="p">{})</span></div>
+        <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/verifyMobilePhone/&quot;</span> <span class="o">+</span> <span class="n">sms_code</span><span class="p">,</span> <span class="p">{})</span></div>
 
 <div class="viewcode-block" id="User.request_login_sms_code"><a class="viewcode-back" href="../../index.html#leancloud.User.request_login_sms_code">[文档]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">request_login_sms_code</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">phone_number</span><span class="p">,</span> <span class="n">validate_token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

@@ -1,3 +1,10 @@
+## [2.9.11] - 2022-06-23
+
+## Fixed
+
+- Fixed a typo in the API path used by `leancloud.User#verify_mobile_phone_number`.
+- Pinned MarkupSafe to 2.0.1 or earlier.
+
 ## [2.9.10] - 2022-01-28
 
 ## Fixed
