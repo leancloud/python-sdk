@@ -14,13 +14,14 @@ install_requires = [
     'requests>=2.25.1',
     'Werkzeug>=0.16.0,<2.0.0',
     'secure-cookie>=0.1.0,<1.0.0',
-    'gevent>=21.1.0,<22.0.0',
-    "typing; python_version < '3.5'"
+    'gevent>=22.10.2,<23.0.0',
+    "typing; python_version < '3.5'",
+    'markupsafe<=2.0.1',
 ]
 
 setup(
     name='leancloud',
-    version='2.9.11',
+    version='2.9.12',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
     author='asaka',
