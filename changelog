@@ -1,3 +1,9 @@
+## [2.9.13] - 2023-03-20
+
+## Fixed
+
+- Upgrade Werkzeug version to support 2.2.3
+
 ## [2.9.12] - 2022-11-24
 
 ## Fixed

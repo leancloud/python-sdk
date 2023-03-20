@@ -8,20 +8,21 @@ here = path.abspath(path.dirname(__file__))
 install_requires = [
     "arrow>=0.17.0,<1.0.0; python_version < '3.6'",
     "arrow>=1.0.0,<2.0.0; python_version >= '3.6'",
-    'iso8601>=0.1.14',
-    'six>=1.11.0',
-    'qiniu==7.3.1',
-    'requests>=2.25.1',
-    'Werkzeug>=0.16.0,<2.0.0',
-    'secure-cookie>=0.1.0,<1.0.0',
-    'gevent>=22.10.2,<23.0.0',
+    "iso8601>=0.1.14",
+    "six>=1.11.0",
+    "qiniu>=7.3.1",
+    "requests>=2.25.1",
+    "secure-cookie>=0.1.0,<1.0.0",
     "typing; python_version < '3.5'",
-    'markupsafe<=2.0.1',
+    "markupsafe<=2.0.1",
+    "Werkzeug>=0.16.0",
+    "gevent>=22.10.2,<23.0.0",
+
 ]
 
 setup(
     name='leancloud',
-    version='2.9.12',
+    version='2.9.13',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
     author='asaka',
@@ -35,6 +36,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.9',
     ],
     keywords='Leancloud SDK',
     packages=find_packages(exclude=['docs', 'tests*']),
