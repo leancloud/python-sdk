@@ -15,7 +15,6 @@ install_requires = [
     "secure-cookie>=0.1.0,<1.0.0",
     "typing; python_version < '3.5'",
     "markupsafe<=2.0.1",
-    "Werkzeug>=0.16.0,<=2.2.3",
     "gevent>=22.10.2,<23.0.0",
 
 ]

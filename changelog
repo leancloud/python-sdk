@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- Upgrade Werkzeug version to support 2.2.3
+- Remove Werkzeug dependent libraries
 
 ## [2.9.12] - 2022-11-24
 
