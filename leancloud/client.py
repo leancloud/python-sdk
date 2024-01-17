@@ -114,7 +114,7 @@ def need_init(func):
 
 def get_url(part):
     # try to use the base URL from environ
-    url = os.environ.get("LC_API_SERVER") or os.environ.get("LEANCLOUD_API_SERVER")
+    url = os.environ.get("LEANCLOUD_API_SERVER") or os.environ.get("LC_API_SERVER")
     if url:
         return "{}/{}{}".format(url, SERVER_VERSION, part)
 
