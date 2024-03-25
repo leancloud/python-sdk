@@ -13,6 +13,7 @@ import functools
 
 import six
 import requests
+from requests_toolbelt.adapters.socket_options import TCPKeepAliveAdapter
 
 import leancloud
 from leancloud import utils
@@ -43,6 +44,8 @@ REGION = "CN"
 
 app_router = None
 session = requests.Session()
+session.mount("http://", TCPKeepAliveAdapter())
+session.mount("https://", TCPKeepAliveAdapter())
 request_hooks = {}
 
 SERVER_VERSION = "1.1"
