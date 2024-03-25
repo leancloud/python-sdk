@@ -12,6 +12,7 @@ install_requires = [
     'six>=1.11.0',
     'qiniu==7.3.1',
     'requests>=2.25.1',
+    'requests-toolbelt>=1.0.0',
     'Werkzeug>=0.16.0,<2.0.0',
     'secure-cookie>=0.1.0,<1.0.0',
     'gevent>=22.10.2,<23.0.0',
