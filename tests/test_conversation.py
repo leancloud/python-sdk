@@ -19,7 +19,6 @@ def setup():
     leancloud.client.MASTER_KEY = None
     leancloud.init(os.environ["APP_ID"], master_key=os.environ["MASTER_KEY"])
 
-
 def test_create_conversation():
     conv = Conversation("testConversation")
     conv.save()
