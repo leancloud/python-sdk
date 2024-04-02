@@ -42,6 +42,6 @@ setup(
     install_requires=install_requires,
     extras_require={
         'dev': ['sphinx', 'sphinx_rtd_theme'],
-        'test': ['nose-py3', 'wsgi_intercept', 'flask'],
+        'test': ['nose', 'wsgi_intercept', 'flask'],
     }
 )
