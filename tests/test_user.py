@@ -286,7 +286,7 @@ def test_request_change_phone_number():  # type: () -> None
     except LeanCloudError as e:
         if e.code in (119, 213, 601, 605):
             pass
-        elif e.error.startswith("SMS sending exceeds limit"):
+        elif "SMS sending exceeds limit" in e.error:
             pass
         elif "send too frequently" in e.error:
             pass

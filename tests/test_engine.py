@@ -579,7 +579,7 @@ def test_request_sms_code():  # type: () -> None
             pass
         elif e.code == 601 or e.error.startswith("SMS request too fast"):  # send sms too frequently
             pass
-        elif e.error.startswith("SMS sending exceeds limit"):
+        elif "SMS sending exceeds limit" in e.error:
             pass
         elif "send too frequently" in e.error:
             pass
