@@ -284,7 +284,13 @@ def test_request_change_phone_number():  # type: () -> None
         # phone number is from http://www.z-sms.com
         User.request_change_phone_number("+8617180655340")
     except LeanCloudError as e:
-        if e.code not in (119, 213, 601, 605):
+        if e.code in (119, 213, 601, 605):
+            pass
+        elif e.error.startswith("SMS sending exceeds limit"):
+            pass
+        elif "send too frequently" in e.error:
+            pass
+        else:
             raise e
     finally:
         user1.logout()
