@@ -22,7 +22,7 @@ install_requires = [
 
 setup(
     name='leancloud',
-    version='2.9.12',
+    version='3.0.0',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
     author='asaka',
@@ -34,8 +34,8 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.9',
     ],
     keywords='Leancloud SDK',
     packages=find_packages(exclude=['docs', 'tests*']),

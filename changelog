@@ -1,3 +1,14 @@
+## [3.0.0] - 2022-11-24
+
+## Change
+
+- Drop support for python 2.7 and 3.5
+
+## Fixed
+
+- Require phone_number when verify sms code
+- Pinned urllib3 to 1.x
+
 ## [2.9.12] - 2022-11-24
 
 ## Fixed

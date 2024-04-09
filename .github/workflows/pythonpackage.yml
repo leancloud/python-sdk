@@ -43,7 +43,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.9]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 
@@ -57,7 +57,7 @@ jobs:
         pip install -e .'[test]'
     - name: Run tests with ${{ matrix.python-version }}
       env:
-        APP_ID: YJRGphy60b8JCBib0vtDDtak-MdYXbMMI
+        APP_ID: u5xB92MjVH94kH6p3M66DUua-MdYXbMMI
         APP_KEY: ${{ secrets.APP_KEY }}
         MASTER_KEY: ${{ secrets.MASTER_KEY }}
         USE_REGION: US

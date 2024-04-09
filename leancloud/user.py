@@ -335,8 +335,8 @@ class User(Object):
         client.post("/requestPasswordResetBySmsCode", params)
 
     @classmethod
-    def reset_password_by_sms_code(cls, sms_code, new_password):
-        params = {"password": new_password}
+    def reset_password_by_sms_code(cls, sms_code, new_password, phone_number):
+        params = {"password": new_password, "mobilePhoneNumber": phone_number}
         client.put("/resetPasswordBySmsCode/" + sms_code, params)
 
     # This should be an instance method.
@@ -359,8 +359,9 @@ class User(Object):
         client.post("/changePhoneNumber", params)
 
     @classmethod
-    def verify_mobile_phone_number(cls, sms_code):
-        client.post("/verifyMobilePhone/" + sms_code, {})
+    def verify_mobile_phone_number(cls, sms_code, phone_number):
+        params = {"mobilePhoneNumber": phone_number}
+        client.post("/verifyMobilePhone/" + sms_code, params)
 
     @classmethod
     def request_login_sms_code(cls, phone_number, validate_token=None):

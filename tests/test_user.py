@@ -284,7 +284,13 @@ def test_request_change_phone_number():  # type: () -> None
         # phone number is from http://www.z-sms.com
         User.request_change_phone_number("+8617180655340")
     except LeanCloudError as e:
-        if e.code not in (119, 213, 601, 605):
+        if e.code in (119, 213, 601, 605):
+            pass
+        elif "SMS sending exceeds limit" in e.error:
+            pass
+        elif "send too frequently" in e.error:
+            pass
+        else:
             raise e
     finally:
         user1.logout()
@@ -322,7 +328,9 @@ def test_request_password_reset_by_sms_code():  # type: () -> None
 def test_reset_password_by_sms_code():  # type: () -> None
     try:
         User.reset_password_by_sms_code(
-            str(random.randrange(100000, 999999)), "password"
+            str(random.randrange(100000, 999999)),
+            "password",
+            "1861111" + str(random.randrange(1000, 9999))
         )
     except LeanCloudError as e:
         if e.code != 603:
