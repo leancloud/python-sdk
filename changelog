@@ -1,4 +1,10 @@
-## [3.0.0] - 2022-11-24
+## [3.0.1] - 2024-06-25
+
+## Fixed
+
+- Enable TCP keepalive socket option to fix "Connection reset by peer" problem. https://github.com/psf/requests/issues/4664
+
+## [3.0.0] - 2024-04-08
 
 ## Change
 
@@ -37,7 +43,7 @@
 ### Fixed
 
 - created_at and updated_at were missing on LCFile.
-- updated_at was missing on new created LCObject. 
+- updated_at was missing on new created LCObject.
 
 ## [2.9.8] - 2021-12-10
 
