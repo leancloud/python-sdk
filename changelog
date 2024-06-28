@@ -2,7 +2,7 @@
 
 ## Fixed
 
-- TBD
+- Enable TCP keepalive socket option to fix "Connection reset by peer" problem. https://github.com/psf/requests/issues/4664
 
 ## [3.0.0] - 2024-04-08
 
