@@ -11,7 +11,8 @@ install_requires = [
     'iso8601>=0.1.14',
     'six>=1.11.0',
     'qiniu==7.3.1',
-    'requests>=2.25.1',
+    "requests<=2.31.0; python_version == '3.9'"
+    "urllib3<=1.26.18; python_version == '3.9'"
     'requests-toolbelt>=1.0.0',
     'Werkzeug>=0.16.0,<2.0.0',
     'secure-cookie>=0.1.0,<1.0.0',
@@ -22,7 +23,7 @@ install_requires = [
 
 setup(
     name='leancloud',
-    version='3.0.1',
+    version='3.0.2',
     description='LeanCloud Python SDK',
     url='https://leancloud.cn/',
     author='asaka',
