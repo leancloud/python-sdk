@@ -1,3 +1,9 @@
+## [3.0.2] - 2024-07-03
+
+## Chore
+
+- Pin requests/urllib version on Python 3.7+
+
 ## [3.0.1] - 2024-06-25
 
 ## Fixed
