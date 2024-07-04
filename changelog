@@ -2,7 +2,7 @@
 
 ## Chore
 
-- Pin requests/urllib version on Python 3.9
+- Pin requests/urllib version on Python 3.7+
 
 ## [3.0.1] - 2024-06-25
 
