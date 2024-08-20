@@ -1,0 +1,143 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://app-router.com/2/route?appId=8FfQwpvihLHK4htqmtEvkNrv
+  response:
+    body:
+      string: '{"ttl":3600,"stats_server":"8ffqwpvi.stats.lncldglobal.com","rtm_router_server":"8ffqwpvi.rtm.lncldglobal.com","push_server":"8ffqwpvi.push.lncldglobal.com","play_server":"8ffqwpvi.play.lncldglobal.com","engine_server":"8ffqwpvi.engine.lncldglobal.com","api_server":"8ffqwpvi.api.lncldglobal.com"}'
+    headers:
+      Connection:
+      - close
+      Content-Length:
+      - '297'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Sun, 26 Apr 2020 05:05:30 GMT
+      Server:
+      - openresty
+      Vary:
+      - Accept-Encoding
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - ''
+      cache-control:
+      - public,max-age=3600
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - SAMEORIGIN
+      x-request-id:
+      - 6c4aac8a9f27c8f6b2e42a294fcbfc17
+      x-xss-protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"username":"user1_name","password":"password","email":"wow@leancloud.rocks","mobilePhoneNumber":"18611111111"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '111'
+      Content-Type:
+      - application/json;charset=utf-8
+      User-Agent:
+      - AVOS Cloud python-2.1.9 SDK
+      X-LC-Id:
+      - 8FfQwpvihLHK4htqmtEvkNrv
+      X-LC-Prod:
+      - '1'
+      X-LC-Sign:
+      - 6cb7e4c8ea65a3cb9c0d54b5f2307630,1587877530775
+    method: POST
+    uri: https://8ffqwpvi.api.lncldglobal.com/1.1/classes/_User?fetchWhenSave=false
+  response:
+    body:
+      string: '{"email":"wow@leancloud.rocks","sessionToken":"0ffhmqs8myp3kyrfn0kk3lqrd","updatedAt":"2020-04-26T05:05:32.535Z","objectId":"5ea5169c2f040b00087f4d94","username":"user1_name","createdAt":"2020-04-26T05:05:32.535Z","emailVerified":false,"mobilePhoneNumber":"18611111111","mobilePhoneVerified":false}'
+    headers:
+      Cache-Control:
+      - no-cache,no-store
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Sun, 26 Apr 2020 05:05:32 GMT
+      Location:
+      - /1.1/classes/_User/5ea5169c2f040b00087f4d94
+      Pragma:
+      - no-cache
+      Server:
+      - openresty
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json;charset=utf-8
+      User-Agent:
+      - AVOS Cloud python-2.1.9 SDK
+      X-LC-Id:
+      - 8FfQwpvihLHK4htqmtEvkNrv
+      X-LC-Prod:
+      - '1'
+      X-LC-Sign:
+      - abf0817347fd69aaeb1e68491d15bb72,1587877549304,master
+    method: DELETE
+    uri: https://8ffqwpvi.api.lncldglobal.com/1.1/classes/_User/5ea5169c2f040b00087f4d94
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA6uuBQBDv6ajAgAAAA==
+    headers:
+      Cache-Control:
+      - no-cache,no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Sun, 26 Apr 2020 05:05:51 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - openresty
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

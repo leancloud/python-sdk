@@ -1,0 +1,103 @@
+interactions:
+- request:
+    body: '{"inboxType":"private","data":{"image":"http://www.example.com","message":"hello
+      world!"},"query":{"where":{"objectId":"5ea5169c2f040b00087f4d94"},"className":"_User"},"source":{"__type":"Pointer","className":"_User","objectId":"5ea5169c2f040b00087f4d94"}}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '256'
+      Content-Type:
+      - application/json;charset=utf-8
+      User-Agent:
+      - AVOS Cloud python-2.1.9 SDK
+      X-LC-Id:
+      - 8FfQwpvihLHK4htqmtEvkNrv
+      X-LC-Prod:
+      - '1'
+      X-LC-Session:
+      - 0ffhmqs8myp3kyrfn0kk3lqrd
+      X-LC-Sign:
+      - 3939b45f606a0973da95e1dbeda92bf9,1587877543983
+    method: POST
+    uri: https://8ffqwpvi.api.lncldglobal.com/1.1/statuses
+  response:
+    body:
+      string: '{"objectId":"5ea516a92f040b00087f4d9b","createdAt":"2020-04-26T05:05:45.653Z"}'
+    headers:
+      Cache-Control:
+      - no-cache,no-store
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Sun, 26 Apr 2020 05:05:45 GMT
+      Location:
+      - /1.1/classes/_Status/5ea516a92f040b00087f4d9b
+      Pragma:
+      - no-cache
+      Server:
+      - openresty
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json;charset=utf-8
+      User-Agent:
+      - AVOS Cloud python-2.1.9 SDK
+      X-LC-Id:
+      - 8FfQwpvihLHK4htqmtEvkNrv
+      X-LC-Prod:
+      - '1'
+      X-LC-Session:
+      - 0ffhmqs8myp3kyrfn0kk3lqrd
+      X-LC-Sign:
+      - 7c29f2b1e2151e8fc5565bce9cc79103,1587877545910
+    method: GET
+    uri: https://8ffqwpvi.api.lncldglobal.com/1.1/subscribe/statuses?where=%7B%7D&owner=%7B%22__type%22%3A%22Pointer%22%2C%22className%22%3A%22_User%22%2C%22objectId%22%3A%225ea5169c2f040b00087f4d94%22%7D&inboxType=private&sinceId=0&maxId=0&limit=1
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA43OvQ6CMBQF4FfRzvxcK0Vhc3RnUhwKvSimpU0pgiG8uyUxcTW5w8k533BnYrEf
+        pOtJfp1Jq/gdSU4ezpm8jMt4HMcIJ66MxKjWigREYd9/EUqpN6O2Umz90HaVnoq3WSdj2xd36Nva
+        og/i5HxLgUIISUjTAljuL2FRyvYXzwYj/mG6emLtzsIrhpztUp7RBhKoAOB4aBKRVb8XV0aXW0Cw
+        88nZAZcPjpQLgu4AAAA=
+    headers:
+      Cache-Control:
+      - no-cache,no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Sun, 26 Apr 2020 05:05:46 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - openresty
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1

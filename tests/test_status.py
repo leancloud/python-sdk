@@ -9,12 +9,14 @@ import os
 import time
 
 from nose.tools import assert_equal
+import vcr
 
 import leancloud
 from leancloud import Status
 from leancloud import InboxQuery
 
 
+@vcr.use_cassette(record_mode='new_episodes')
 def setup():
     leancloud.init(
         os.environ["APP_ID"],
@@ -35,6 +37,7 @@ def setup():
     user1.sign_up()
 
 
+@vcr.use_cassette()
 def test_send():
     status = Status(image="http://www.example.com", message="hello world!")
     status.inbox_type = "privateMessage"
@@ -45,6 +48,7 @@ def test_send():
     status.destroy()
 
 
+@vcr.use_cassette()
 def test_send_to_followers():
     status = Status(image="http://www.example.com", message="hello world!")
     status.send_to_followers()
@@ -53,6 +57,7 @@ def test_send_to_followers():
     status.destroy()
 
 
+@vcr.use_cassette()
 def test_send_private_status():
     status = Status(image="http://www.example.com", message="hello world!")
     target = leancloud.User.create_without_data("foo")
@@ -63,6 +68,7 @@ def test_send_private_status():
     status.destroy()
 
 
+@vcr.use_cassette()
 def test_statuses_count():
     status = Status(image="http://www.example.com", message="hello world!")
     status.send_private_status(leancloud.User.get_current())
@@ -73,6 +79,7 @@ def test_statuses_count():
     status.destroy()
 
 
+@vcr.use_cassette()
 def test_inbox_query():
     status = Status(image="http://www.example.com", message="hello world!")
     status.send_private_status(leancloud.User.get_current())

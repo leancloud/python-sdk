@@ -1,0 +1,151 @@
+interactions:
+- request:
+    body: '{"inboxType":"private","data":{"image":"http://www.example.com","message":"hello
+      world!"},"query":{"where":{"objectId":"5ea5169c2f040b00087f4d94"},"className":"_User"},"source":{"__type":"Pointer","className":"_User","objectId":"5ea5169c2f040b00087f4d94"}}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '256'
+      Content-Type:
+      - application/json;charset=utf-8
+      User-Agent:
+      - AVOS Cloud python-2.1.9 SDK
+      X-LC-Id:
+      - 8FfQwpvihLHK4htqmtEvkNrv
+      X-LC-Prod:
+      - '1'
+      X-LC-Session:
+      - 0ffhmqs8myp3kyrfn0kk3lqrd
+      X-LC-Sign:
+      - 639114a36e04e6ff9a87ea3e2ff2612a,1587877537121
+    method: POST
+    uri: https://8ffqwpvi.api.lncldglobal.com/1.1/statuses
+  response:
+    body:
+      string: '{"objectId":"5ea516a62f040b00087f4d99","createdAt":"2020-04-26T05:05:42.327Z"}'
+    headers:
+      Cache-Control:
+      - no-cache,no-store
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Sun, 26 Apr 2020 05:05:42 GMT
+      Location:
+      - /1.1/classes/_Status/5ea516a62f040b00087f4d99
+      Pragma:
+      - no-cache
+      Server:
+      - openresty
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json;charset=utf-8
+      User-Agent:
+      - AVOS Cloud python-2.1.9 SDK
+      X-LC-Id:
+      - 8FfQwpvihLHK4htqmtEvkNrv
+      X-LC-Prod:
+      - '1'
+      X-LC-Session:
+      - 0ffhmqs8myp3kyrfn0kk3lqrd
+      X-LC-Sign:
+      - b8345b7b8c2afcb12f9edcfd866760d3,1587877542602
+    method: GET
+    uri: https://8ffqwpvi.api.lncldglobal.com/1.1/subscribe/statuses/count?inboxType=private&owner=%7B%22__type%22%3A%22Pointer%22%2C%22className%22%3A%22_User%22%2C%22objectId%22%3A%225ea5169c2f040b00087f4d94%22%7D
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA6tWKskvScxRsjLUUSrNK0pNTAEyawGNvGwmFgAAAA==
+    headers:
+      Cache-Control:
+      - no-cache,no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Sun, 26 Apr 2020 05:05:43 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - openresty
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'null'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4'
+      Content-Type:
+      - application/json;charset=utf-8
+      User-Agent:
+      - AVOS Cloud python-2.1.9 SDK
+      X-LC-Id:
+      - 8FfQwpvihLHK4htqmtEvkNrv
+      X-LC-Prod:
+      - '1'
+      X-LC-Session:
+      - 0ffhmqs8myp3kyrfn0kk3lqrd
+      X-LC-Sign:
+      - b5cb5cad9f8e3a1408348e3d3495fee9,1587877542950
+    method: DELETE
+    uri: https://8ffqwpvi.api.lncldglobal.com/1.1/statuses/5ea516a62f040b00087f4d99
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA6uuBQBDv6ajAgAAAA==
+    headers:
+      Cache-Control:
+      - no-cache,no-store
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Sun, 26 Apr 2020 05:05:44 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - openresty
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1
