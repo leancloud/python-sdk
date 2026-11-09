@@ -210,7 +210,7 @@ class File(object):
     def _save_to_s3(self, token, upload_url):
         self._source.seek(0)
         response = requests.put(
-            upload_url, data=self._source, headers={"Content-Type": self.mime_type}
+            upload_url, data=self._source, headers={"Content-Type": self.mime_type}, timeout=30
         )
         if response.status_code != 200:
             self._save_callback(token, False)
@@ -249,7 +249,7 @@ class File(object):
             "op": "upload",
             "filecontent": self._source.read(),
         }
-        response = requests.post(upload_url, headers=headers, files=data)
+        response = requests.post(upload_url, headers=headers, files=data, timeout=30)
         self._source.seek(0)
         info = response.json()
         if info["code"] != 0:
